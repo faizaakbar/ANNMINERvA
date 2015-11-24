@@ -39,7 +39,11 @@ import theano.tensor as T
 from logistic_sgd import LogisticRegression, load_data
 
 
-best_picklejar = 'mlp_2h_best_model.pkl'
+BEST_PICKLEJAR = 'mlp_2h_best_model.pkl'
+NINPUT = 2200
+NOUT = 6
+NHIDDEN1 = 1000
+NHIDDEN2 = 500
 
 
 class HiddenLayer(object):
@@ -72,7 +76,7 @@ class HiddenLayer(object):
         self.input = input
 
         # `W` is initalized with `W_values` which is uniformly sampled from
-        # [-sqrt(6./(n_in + n_hidden)), sqrt(6./(n_in + n_hidden))] for a
+        # [-sqrt(6./(n_in + n_out)), sqrt(6./(n_in + n_out))] for a
         # `tanh` activation function.
         #
         # the output of unifrom is converted using `asarray` to dtype
@@ -114,7 +118,8 @@ class MLP(object):
     multi-layer perceptron with two hidden layers
     """
 
-    def __init__(self, rng, input, n_in, n_hidden, n_out,
+    def __init__(self, rng, input, n_in,
+                 n_hidden1, n_hidden2, n_out,
                  W_hidden1=None, b_hidden1=None,
                  W_hidden2=None, b_hidden2=None,
                  W_logreg=None, b_logreg=None):
@@ -130,7 +135,8 @@ class MLP(object):
         n_in - int - number of input units (dimension of the space of the
         datapoints)
 
-        n_hidden - int - number of hidden units
+        n_hidden1 - int - number of hidden units in 1st hidden layer
+        n_hidden2 - int - number of hidden units in 2nd hidden layer
 
         n_out - int - number of output units (dimension of the space of the
         labels)
@@ -151,7 +157,7 @@ class MLP(object):
             rng=rng,
             input=input,
             n_in=n_in,
-            n_out=n_hidden,
+            n_out=n_hidden1,
             W=W_hidden1,
             b=b_hidden1,
             activation=T.tanh
@@ -159,8 +165,8 @@ class MLP(object):
         self.hiddenLayer2 = HiddenLayer(
             rng=rng,
             input=self.hiddenLayer1.output,
-            n_in=n_hidden,
-            n_out=n_hidden,
+            n_in=n_hidden1,
+            n_out=n_hidden2,
             W=W_hidden2,
             b=b_hidden2,
             activation=T.tanh
@@ -170,7 +176,7 @@ class MLP(object):
         # hidden layer
         self.logRegressionLayer = LogisticRegression(
             input=self.hiddenLayer2.output,
-            n_in=n_hidden,
+            n_in=n_hidden2,
             n_out=n_out,
             W=W_logreg,
             b=b_logreg
@@ -212,7 +218,7 @@ class MLP(object):
 
 
 def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
-             dataset='skim_data_target0.pkl.gz', batch_size=20, n_hidden=500):
+             dataset='skim_data_target0.pkl.gz', batch_size=20):
     """
     stochastic gradient descent optimization for a MLP using MNIST
 
@@ -249,9 +255,10 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     classifier = MLP(
         rng=rng,
         input=x,
-        n_in=2200,
-        n_hidden=n_hidden,
-        n_out=6
+        n_in=NINPUT,
+        n_hidden1=NHIDDEN1,
+        n_hidden2=NHIDDEN2,
+        n_out=NOUT
     )
 
     # the cost we minimize during training is the negative log likelihood of
@@ -384,7 +391,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     # than debug, let's just save the params and use them to re-create the
     # model
     params = classifier.params
-    with open(best_picklejar, 'w') as f:
+    with open(BEST_PICKLEJAR, 'w') as f:
         cPickle.dump(params, f)
 
 
@@ -396,7 +403,7 @@ def predict(dataset):
     datasets = load_data(dataset)
     test_set_x, test_set_y = datasets[2]
     test_set_x = test_set_x.get_value()
-    pars = cPickle.load(open(best_picklejar))
+    pars = cPickle.load(open(BEST_PICKLEJAR))
 
     # load the saved weights and bias vectors
     for i, p in enumerate(pars):
@@ -406,16 +413,16 @@ def predict(dataset):
 
     # symbolic vars for the data
     x = T.matrix('x')        # rasterized image data
-    n_hidden = 500
     rng = numpy.random.RandomState(1234)
 
     # use our loaded params to init the model
     classifier = MLP(
         rng=rng,
         input=x,
-        n_in=28*28,
-        n_hidden=n_hidden,
-        n_out=10,
+        n_in=NINPUT,
+        n_hidden1=NHIDDEN1,
+        n_hidden2=NHIDDEN2,
+        n_out=NOUT,
         W_hidden1=pars[0],
         b_hidden1=pars[1],
         W_hidden2=pars[2],
