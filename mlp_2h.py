@@ -7,11 +7,17 @@ Usage:
                   [-p/--predict]
                   [-d/--data <path-to-dataset>]
                   [-n/--nepochs <# of epochs>]
+                  [--L1 <L1 regularization parameter>]
+                  [--L2 <L2 regularization parameter>]
+                  [-r/--rate <learning rate>]
 
     Default train False
             predict False
             dataset: "./skim_data_target0.pkl.gzDatasets/mnist.pkl.gz"
             N epochs: 1000
+            L1: 0.000
+            L2: 0.001
+            rate: 0.01
 
 Note:
     * The prediction requires a stored model.
@@ -248,7 +254,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     # symbolic vars for the data
     index = T.lscalar()      # minibatch index
     x = T.matrix('x')        # rasterized image data
-    y = T.ivector('y')       # labels 1, 2, 3, 4, 5
+    y = T.ivector('y')       # labels 1, 2, 3, 4, 5 (plus 0)
 
     rng = numpy.random.RandomState(1234)
 
@@ -437,11 +443,11 @@ def predict(dataset):
         outputs=classifier.logRegressionLayer.y_pred
     )
 
-    predicted_values = predict_model(test_set_x[:20])
-    print("Predicted values for the first 20:")
+    predicted_values = predict_model(test_set_x[:100])
+    print("Predicted values for the first 100:")
     print(predicted_values)
     print("Actual values:")
-    print(T.cast(test_set_y, 'int32').eval()[:20])
+    print(T.cast(test_set_y, 'int32').eval()[:100])
 
 
 if __name__ == '__main__':
@@ -460,6 +466,15 @@ if __name__ == '__main__':
     parser.add_option('-p', '--predict', dest='do_predict', default=False,
                       help='Run a prediction', metavar='DO_PREDICT',
                       action='store_true')
+    parser.add_option('-r', '--rate', dest='lrate', default=0.01,
+                      help='Learning rate', metavar='LRATE',
+                      type='float')
+    parser.add_option('--L1', dest='l1', default=0.0,
+                      help='L1 regularization', metavar='L1REG',
+                      type='float')
+    parser.add_option('--L2', dest='l2', default=0.001,
+                      help='L2 regularization', metavar='L2REG',
+                      type='float')
     (options, args) = parser.parse_args()
 
     if not options.do_train and not options.do_predict:
@@ -467,7 +482,11 @@ if __name__ == '__main__':
         print(__doc__)
 
     if options.do_train:
-        test_mlp(dataset=options.dataset, n_epochs=options.n_epochs)
+        test_mlp(learning_rate=options.lrate,
+                 L1_reg=options.l1,
+                 L2_reg=options.l2,
+                 dataset=options.dataset,
+                 n_epochs=options.n_epochs)
 
     if options.do_predict:
         predict(dataset=options.dataset)
