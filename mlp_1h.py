@@ -39,6 +39,11 @@ import theano.tensor as T
 from logistic_sgd import LogisticRegression, load_data
 
 
+BEST_PICKLEJAR = 'mlp_1h_best_model.pkl'
+NINPUT = 2200
+NOUT = 6
+
+
 class HiddenLayer(object):
 
     def __init__(self, rng, input, n_in, n_out,
@@ -69,7 +74,7 @@ class HiddenLayer(object):
         self.input = input
 
         # `W` is initalized with `W_values` which is uniformly sampled from
-        # [-sqrt(6./(n_in + n_hidden)), sqrt(6./(n_in + n_hidden))] for a
+        # [-sqrt(6./(n_in + n_out)), sqrt(6./(n_in + n_out))] for a
         # `tanh` activation function.
         #
         # the output of unifrom is converted using `asarray` to dtype
@@ -232,9 +237,9 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     classifier = MLP(
         rng=rng,
         input=x,
-        n_in=2200,
+        n_in=NINPUT,
         n_hidden=n_hidden,
-        n_out=6
+        n_out=NOUT
     )
 
     # the cost we minimize during training is the negative log likelihood of
@@ -367,7 +372,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     # than debug, let's just save the params and use them to re-create the
     # model
     params = classifier.params
-    with open('mlp_best_model.pkl', 'w') as f:
+    with open(BEST_PICKLEJAR, 'w') as f:
         cPickle.dump(params, f)
 
 
@@ -379,7 +384,7 @@ def predict(dataset):
     datasets = load_data(dataset)
     test_set_x, test_set_y = datasets[2]
     test_set_x = test_set_x.get_value()
-    pars = cPickle.load(open('mlp_best_model.pkl'))
+    pars = cPickle.load(open(BEST_PICKLEJAR))
 
     # load the saved weights and bias vectors
     for i, p in enumerate(pars):
@@ -396,9 +401,9 @@ def predict(dataset):
     classifier = MLP(
         rng=rng,
         input=x,
-        n_in=28*28,
+        n_in=NINPUT,
         n_hidden=n_hidden,
-        n_out=10,
+        n_out=NOUT,
         W_hidden=pars[0],
         b_hidden=pars[1],
         W_logreg=pars[2],
