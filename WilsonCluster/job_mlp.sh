@@ -34,9 +34,10 @@ echo "PBS_O_WORKDIR is `pwd`"
 
 cp /home/perdue/ANNMINERvA/logistic_sgd.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/mlp_1h.py ${PBS_O_WORKDIR}
+cp /home/perdue/ANNMINERvA/mlp_2h.py ${PBS_O_WORKDIR}
 
 export THEANO_FLAGS=device=gpu,floatX=float32
-python mlp_1h.py -t -p -d "/home/perdue/ANNMINERvA/skim_data_target0.pkl.gz"
+python mlp_2h.py -t -p -d "/home/perdue/ANNMINERvA/skim_data_target0.pkl.gz"
 
 # Always use fcp to copy any large result files you want to keep back
 # to the file server before exiting your script. The /scratch area on the
