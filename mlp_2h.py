@@ -438,9 +438,12 @@ def predict(dataset):
     )
 
     # compile a predictor fn
+    #  use classifier.logRegressionLayer.p_y_given_x to look at the full
+    #  softmax array prior to the argmax call.
     predict_model = theano.function(
         inputs=[classifier.input],
-        outputs=classifier.logRegressionLayer.y_pred
+        # outputs=classifier.logRegressionLayer.y_pred
+        outputs=classifier.logRegressionLayer.p_y_given_x
     )
 
     predicted_values = predict_model(test_set_x[:100])
