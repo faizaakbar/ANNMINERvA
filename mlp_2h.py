@@ -9,15 +9,17 @@ Usage:
                   [-n/--nepochs <# of epochs>]
                   [--L1 <L1 regularization parameter>]
                   [--L2 <L2 regularization parameter>]
-                  [-r/--rate <learning rate>]
+                  [-a/--alpha <learning rate factor>]
+                  [-k/--kconst <learning rate exponential decay>]
 
     Default train False
             predict False
-            dataset: "./skim_data_target0.pkl.gzDatasets/mnist.pkl.gz"
+            dataset: "./skim_data_target0.pkl.gz"
             N epochs: 1000
             L1: 0.000
             L2: 0.001
-            rate: 0.01
+            alpha: 0.01
+            kconst: 0.01
 
 Note:
     * The prediction requires a stored model.
@@ -223,12 +225,13 @@ class MLP(object):
         self.input = input
 
 
-def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
-             dataset='skim_data_target0.pkl.gz', batch_size=20):
+def train_mlp(alpha0=0.01, invk=0.01, L1_reg=0.00, L2_reg=0.0001,
+              n_epochs=1000, dataset='skim_data_target0.pkl.gz',
+              batch_size=20):
     """
     stochastic gradient descent optimization for a MLP using MNIST
 
-    learning_rate - float - rate factor for sgd
+    the learning rate will decay according to alpha0 / (1 - invk * batch)
 
     L1_reg - float - L1-norm's weight when added to the cost
 
@@ -250,9 +253,12 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     n_test_batches = test_set_x.get_value(borrow=True).shape[0] / batch_size
 
     print("...building the model")
+    print("    alpha0 = %f, k = %f, lr = alpha0 / (1 + k * epoch)" %
+          (alpha0, invk))
 
     # symbolic vars for the data
     index = T.lscalar()      # minibatch index
+    tepoch = T.lscalar()     # the epoch as a Theano scalar
     x = T.matrix('x')        # rasterized image data
     y = T.ivector('y')       # labels 1, 2, 3, 4, 5 (plus 0)
 
@@ -303,14 +309,14 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
     # specify how to update the parameters of the model as a list of
     # (variable, update_expression) pairs
     updates = [
-        (param, param - learning_rate * gparam)
+        (param, param - (alpha0 / (1 + invk * tepoch)) * gparam)
         for param, gparam in zip(classifier.params, gparams)
     ]
 
     # compile a Theano function to return the cost and update the parameters of
     # the model based on the rules defined in `updates`
     train_model = theano.function(
-        inputs=[index],
+        inputs=[index, tepoch],
         outputs=cost,
         updates=updates,
         givens={
@@ -339,7 +345,7 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
         epoch += 1
 
         for minibatch_index in xrange(n_train_batches):
-            minibatch_avg_cost = train_model(minibatch_index)
+            minibatch_avg_cost = train_model(minibatch_index, epoch)
             iter_num = (epoch - 1) * n_train_batches + minibatch_index
 
             if (iter_num + 1) % validation_frequency == 0:
@@ -347,9 +353,11 @@ def test_mlp(learning_rate=0.01, L1_reg=0.00, L2_reg=0.0001, n_epochs=1000,
                 validation_losses = [validate_model(i)
                                      for i in xrange(n_valid_batches)]
                 this_validation_loss = numpy.mean(validation_losses)
-                print("epoch %i, minibatch %i/%i, minibatch avg cost %f, "
+                print("epoch %i, minibatch %i/%i, learning rate %f, "
+                      "minibatch avg cost %f, "
                       "validation err %f %%" %
                       (epoch, minibatch_index + 1, n_train_batches,
+                       alpha0 / (1 + invk * epoch),
                        minibatch_avg_cost, this_validation_loss * 100.0))
 
                 # if this is our best validation score so far...
@@ -442,15 +450,24 @@ def predict(dataset):
     #  softmax array prior to the argmax call.
     predict_model = theano.function(
         inputs=[classifier.input],
-        # outputs=classifier.logRegressionLayer.y_pred
+        outputs=classifier.logRegressionLayer.y_pred
+        # outputs=classifier.logRegressionLayer.p_y_given_x
+    )
+    predict_model_show_probs = theano.function(
+        inputs=[classifier.input],
         outputs=classifier.logRegressionLayer.p_y_given_x
     )
 
-    predicted_values = predict_model(test_set_x[:100])
-    print("Predicted values for the first 100:")
+    show_size = 50
+
+    predicted_values_probs = predict_model_show_probs(test_set_x[:show_size])
+    predicted_values = predict_model(test_set_x[:show_size])
+    print("Predicted values (probs) for the first %d:" % (show_size))
+    print(predicted_values_probs)
+    print("Predicted values for the first %d:" % (show_size))
     print(predicted_values)
     print("Actual values:")
-    print(T.cast(test_set_y, 'int32').eval()[:100])
+    print(T.cast(test_set_y, 'int32').eval()[:show_size])
 
 
 if __name__ == '__main__':
@@ -469,8 +486,11 @@ if __name__ == '__main__':
     parser.add_option('-p', '--predict', dest='do_predict', default=False,
                       help='Run a prediction', metavar='DO_PREDICT',
                       action='store_true')
-    parser.add_option('-r', '--rate', dest='lrate', default=0.01,
-                      help='Learning rate', metavar='LRATE',
+    parser.add_option('-a', '--alpha', dest='alpha0', default=0.01,
+                      help='Learning rate alpha', metavar='LRATEALPHA',
+                      type='float')
+    parser.add_option('-k', '--kconst', dest='invk', default=0.01,
+                      help='Learning rate decay constant', metavar='LRATEK',
                       type='float')
     parser.add_option('--L1', dest='l1', default=0.0,
                       help='L1 regularization', metavar='L1REG',
@@ -485,11 +505,12 @@ if __name__ == '__main__':
         print(__doc__)
 
     if options.do_train:
-        test_mlp(learning_rate=options.lrate,
-                 L1_reg=options.l1,
-                 L2_reg=options.l2,
-                 dataset=options.dataset,
-                 n_epochs=options.n_epochs)
+        train_mlp(alpha0=options.alpha0,
+                  invk=options.invk,
+                  L1_reg=options.l1,
+                  L2_reg=options.l2,
+                  dataset=options.dataset,
+                  n_epochs=options.n_epochs)
 
     if options.do_predict:
         predict(dataset=options.dataset)
