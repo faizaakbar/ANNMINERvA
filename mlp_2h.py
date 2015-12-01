@@ -258,7 +258,7 @@ def train_mlp(alpha0=0.01, invk=0.01, L1_reg=0.00, L2_reg=0.0001,
 
     # symbolic vars for the data
     index = T.lscalar()      # minibatch index
-    tepoch = T.lscalar()     # the epoch as a Theano scalar
+    # tepoch = T.lscalar()     # the epoch as a Theano "matrix"
     x = T.matrix('x')        # rasterized image data
     y = T.ivector('y')       # labels 1, 2, 3, 4, 5 (plus 0)
 
@@ -309,14 +309,22 @@ def train_mlp(alpha0=0.01, invk=0.01, L1_reg=0.00, L2_reg=0.0001,
     # specify how to update the parameters of the model as a list of
     # (variable, update_expression) pairs
     updates = [
-        (param, param - (alpha0 / (1 + invk * tepoch)) * gparam)
+        (param, param - alpha0 * gparam)
         for param, gparam in zip(classifier.params, gparams)
     ]
+    # This doesn't work yet - need to turn `alpha0 / (1 + ...)` into a
+    # array type variable in order to do the multiplication... and, this
+    # is tricky here because we need different types for `W` and `b`
+    # updates = [
+    #     (param, param - (alpha0 / (1 + invk * tepoch)) * gparam)
+    #     for param, gparam in zip(classifier.params, gparams)
+    # ]
 
     # compile a Theano function to return the cost and update the parameters of
     # the model based on the rules defined in `updates`
+    #    inputs=[index, tepoch],
     train_model = theano.function(
-        inputs=[index, tepoch],
+        inputs=[index],
         outputs=cost,
         updates=updates,
         givens={
@@ -345,7 +353,8 @@ def train_mlp(alpha0=0.01, invk=0.01, L1_reg=0.00, L2_reg=0.0001,
         epoch += 1
 
         for minibatch_index in xrange(n_train_batches):
-            minibatch_avg_cost = train_model(minibatch_index, epoch)
+            minibatch_avg_cost = train_model(minibatch_index)
+            # minibatch_avg_cost = train_model(minibatch_index, epoch)
             iter_num = (epoch - 1) * n_train_batches + minibatch_index
 
             if (iter_num + 1) % validation_frequency == 0:
