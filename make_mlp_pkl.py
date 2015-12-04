@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-python make_pkl.py <target number>
+python make_mlp_pkl.py <target number>
 
 This script looks for three files like:
 
