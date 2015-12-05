@@ -378,7 +378,7 @@ def predict(dataset, nkerns=[20, 50]):
     # use this parameter to control the chunk of the data we evaluate
     # could set it to 1 and scan the predict function (see below) in a loop
     # instead perhaps
-    samp_size = 1
+    samp_size = 10
     filt_h = 3
     filt_w = 3
 
@@ -446,7 +446,7 @@ if __name__ == '__main__':
     parser.add_option('-r', '--rate', dest='lrate', default=0.01,
                       help='Learning rate', metavar='LRATE',
                       type='float')
-    parser.add_option('-b', '--batch', dest='batch_size', default=2,
+    parser.add_option('-b', '--batch', dest='batch_size', default=100,
                       help='Batch size', metavar='BSIZE',
                       type='int')
     parser.add_option('-t', '--train', dest='do_train', default=False,
