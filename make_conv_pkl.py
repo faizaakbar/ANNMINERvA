@@ -71,7 +71,7 @@ def get_data_from_file(filename):
             energies = np.asarray([hitsX, hitsU, hitsV])
             data.append(energies)
 
-    targs = np.asarray(targs, dtype=np.int32)
+    targs = np.asarray(targs, dtype=np.float32)
     data = np.asarray(data, dtype=np.float32)
     storedat = (data, targs)  # no need to zip, just store as a tuple
     return storedat
