@@ -38,7 +38,7 @@ cp /home/perdue/ANNMINERvA/mlp_2h.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/convolutional_mlp.py ${PBS_O_WORKDIR}
 
 export THEANO_FLAGS=device=gpu,floatX=float32
-python convolutional_mlp.py -t -p -d "/phihome/perdue/theano/data/skim_data_target0.pkl.gz"
+python convolutional_mlp.py -t -p -d "/phihome/perdue/theano/data/skim_data_convnet_target0.pkl.gz"
 
 # Always use fcp to copy any large result files you want to keep back
 # to the file server before exiting your script. The /scratch area on the
