@@ -15,6 +15,9 @@ import theano.tensor as T
 
 import lasagne
 
+SAVE_MODEL_FILE = 'ldoublemnist_model.npz'
+LOAD_PARAMS = True
+
 
 def load_dataset():
     from urllib import urlretrieve
@@ -133,7 +136,7 @@ def iterate_minibatches(inputs, targets, batchsize, shuffle=False):
         yield inputs[excerpt], targets[excerpt]
 
 
-def main(num_epochs=500):
+def main(num_epochs=500, ):
     print("Loading data...")
     X_train, y_train, X_val, y_val, X_test, y_test = load_dataset()
 
@@ -144,6 +147,10 @@ def main(num_epochs=500):
 
     # Build the model
     network = build_cnn(input_var1, input_var2)
+    if LOAD_PARAMS:
+        with np.load(SAVE_MODEL_FILE) as f:
+            param_values = [f['arr_%d' % i] for i in range(len(f.files))]
+        lasagne.layers.set_all_param_values(network, param_values)
 
     # Create a loss expression for training.
     prediction = lasagne.layers.get_output(network)
@@ -219,13 +226,9 @@ def main(num_epochs=500):
     print("  test accuracy:\t\t{:.2f} %".format(
         test_acc / test_batches * 100))
 
-    # Optionally, you could now dump the network weights to a file like this:
-    # np.savez('model.npz', *lasagne.layers.get_all_param_values(network))
-    #
-    # And load them again later on like this:
-    # with np.load('model.npz') as f:
-    #     param_values = [f['arr_%d' % i] for i in range(len(f.files))]
-    # lasagne.layers.set_all_param_values(network, param_values)
+    # Now dump the network weights to a file:
+    np.savez(SAVE_MODEL_FILE,
+             *lasagne.layers.get_all_param_values(network))
 
 
 if __name__ == '__main__':
