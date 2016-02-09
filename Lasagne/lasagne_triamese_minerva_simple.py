@@ -1,10 +1,22 @@
 #!/usr/bin/env python
 """
 This is an attempt at a "triamese" network operating on Minerva X, U, V.
+
+Execution:
+    python lasagne_triamese_minerva_simple.py -h / --help
+
+    At a minimum, we must supply either the `--train` or `--predict` flag.
 """
+# Several functions are borrowed from the Lasagne tutorials and docs.
+# See, e.g.: http://lasagne.readthedocs.org/en/latest/user/tutorial.html
+#
+# Several functions and snippets probably inherit from the Theano docs as
+# well. See, e.g.: http://deeplearning.net/tutorial/
+#
 from __future__ import print_function
 
 import time
+import os
 
 import numpy as np
 import theano
@@ -12,8 +24,9 @@ import theano.tensor as T
 
 import lasagne
 
-SAVE_MODEL_FILE = 'lminervatriamese_model.npz'
-LOAD_PARAMS = False
+# TODO: pass these in on the command line...
+SAVE_MODEL_FILE = './lminervatriamese_model.npz'
+START_WITH_SAVED_PARAMS = True
 
 
 def load_dataset(data_file='./skim_data_convnet_target0.pkl.gz'):
@@ -152,7 +165,7 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
 
     # Build the model
     network = build_cnn(input_var_x, input_var_u, input_var_v)
-    if LOAD_PARAMS:
+    if START_WITH_SAVED_PARAMS and os.path.isfile(SAVE_MODEL_FILE):
         with np.load(SAVE_MODEL_FILE) as f:
             param_values = [f['arr_%d' % i] for i in range(len(f.files))]
         lasagne.layers.set_all_param_values(network, param_values)
@@ -215,6 +228,10 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
             val_acc += acc
             val_batches += 1
 
+        # Dump the current network weights to file
+        np.savez(SAVE_MODEL_FILE,
+                 *lasagne.layers.get_all_param_values(network))
+
         # Then we print the results for this epoch:
         print("Epoch {} of {} took {:.3f}s".format(
             epoch + 1, num_epochs, time.time() - start_time))
@@ -239,18 +256,70 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
     print("  test accuracy:\t\t{:.2f} %".format(
         test_acc / test_batches * 100))
 
-    # Now dump the network weights to a file:
-    np.savez(SAVE_MODEL_FILE,
-             *lasagne.layers.get_all_param_values(network))
 
+def predict(data_file=None):
+    print("Loading data for prediction...")
+    _, _, _, _, X_test, y_test = load_dataset(data_file)
 
-def predict():
+    # Prepare Theano variables for inputs and targets
+    input_var_x = T.tensor4('inputs')
+    input_var_u = T.tensor4('inputs')
+    input_var_v = T.tensor4('inputs')
+    target_var = T.ivector('targets')
+
     # Build the model
-    # network = build_cnn(input_var_x, input_var_u, input_var_v)
-    # with np.load(SAVE_MODEL_FILE) as f:
-    #     param_values = [f['arr_%d' % i] for i in range(len(f.files))]
-    # lasagne.layers.set_all_param_values(network, param_values)
-    pass
+    network = build_cnn(input_var_x, input_var_u, input_var_v)
+    with np.load(SAVE_MODEL_FILE) as f:
+        param_values = [f['arr_%d' % i] for i in range(len(f.files))]
+    lasagne.layers.set_all_param_values(network, param_values)
+
+    # Create a loss expression for testing.
+    test_prediction = lasagne.layers.get_output(network, deterministic=True)
+    test_loss = lasagne.objectives.categorical_crossentropy(test_prediction,
+                                                            target_var)
+    test_loss = test_loss.mean()
+    # Also create an expression for the classification accuracy:
+    test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
+                      dtype=theano.config.floatX)
+    # Look at the classifications
+    test_prediction_values = T.argmax(test_prediction, axis=1)
+
+    # Compile a function computing the validation loss and accuracy:
+    val_fn = theano.function([input_var_x, input_var_u, input_var_v,
+                              target_var],
+                             [test_loss, test_acc],
+                             allow_input_downcast=True)
+    # Compute the actual predictions - also instructive is to look at
+    # `test_prediction` as an output (array of softmax probabilities)
+    # (but that prints a _lot_ of stuff to screen...)
+    pred_fn = theano.function([input_var_x, input_var_u, input_var_v],
+                              [test_prediction_values],
+                              allow_input_downcast=True)
+
+    # look at some concrete predictions
+    for batch in iterate_minibatches(X_test, y_test, 16, shuffle=False):
+        inputs, targets = batch
+        inputx, inputu, inputv = split_inputs_xuv(inputs)
+        pred = pred_fn(inputx, inputu, inputv)
+        print("predictions:", pred)
+        print("targets:", targets)
+        print("----------------")
+
+    # compute and print the test error:
+    test_err = 0
+    test_acc = 0
+    test_batches = 0
+    for batch in iterate_minibatches(X_test, y_test, 500, shuffle=False):
+        inputs, targets = batch
+        inputx, inputu, inputv = split_inputs_xuv(inputs)
+        err, acc = val_fn(inputx, inputu, inputv, targets)
+        test_err += err
+        test_acc += acc
+        test_batches += 1
+    print("Final results:")
+    print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
+    print("  test accuracy:\t\t{:.2f} %".format(
+        test_acc / test_batches * 100))
 
 
 if __name__ == '__main__':
@@ -281,6 +350,9 @@ if __name__ == '__main__':
         print("\nMust specify at least either train or predict:\n\n")
         print(__doc__)
 
+    print("Starting...")
+    print(" Begin with saved parameters?", START_WITH_SAVED_PARAMS)
+    print(" Saved parameters file:", SAVE_MODEL_FILE)
     if options.do_train:
         train(num_epochs=options.n_epochs,
               learning_rate=options.lrate,
@@ -288,6 +360,4 @@ if __name__ == '__main__':
               data_file=options.dataset)
 
     if options.do_predict:
-        pass
-        # predict(dataset=options.dataset,
-        #         nkerns=n_kerns)
+        predict(data_file=options.dataset)
