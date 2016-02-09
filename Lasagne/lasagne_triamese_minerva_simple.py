@@ -25,7 +25,7 @@ import theano.tensor as T
 import lasagne
 
 # TODO: pass these in on the command line...
-SAVE_MODEL_FILE = './lminervatriamese_model.npz'
+SAVE_MODEL_FILE = './lminervatriamese_simple_model.npz'
 START_WITH_SAVED_PARAMS = True
 
 
