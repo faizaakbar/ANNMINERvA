@@ -384,6 +384,15 @@ if __name__ == '__main__':
     print("Starting...")
     print(" Begin with saved parameters?", options.start_with_saved_params)
     print(" Saved parameters file:", options.save_model_file)
+    print(" Saved parameters file exists?",
+            os.path.isfile(options.save_model_file))
+    print(" Dataset:", options.dataset)
+    dataset_statsinfo = os.stat(options.dataset)
+    print(" Dataset size:", dataset_statsinfo.st_size)
+    print(" Planned number of epochs:", options.n_epochs)
+    print(" Learning rate:", options.lrate)
+    print(" Momentum:", options.momentum)
+
     if options.do_train:
         train(num_epochs=options.n_epochs,
               learning_rate=options.lrate,
