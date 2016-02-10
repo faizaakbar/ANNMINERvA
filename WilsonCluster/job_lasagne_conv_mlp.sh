@@ -7,6 +7,7 @@
 #PBS -A minervaG
 #PBS -q gpu
 #restore to turn off email #PBS -m n
+# OUTFILENAME="./lasagne_conv_out_job`date +%s`.txt"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
@@ -23,6 +24,8 @@ source python_bake_lasagne.sh
 
 cd ${PBS_O_WORKDIR}
 echo "PBS_O_WORKDIR is `pwd`"
+GIT_VERSION=`git describe --abbrev=12 --dirty --always`
+echo "Git repo version is $GIT_VERSION"
 
 # Always use fcp to stage any large input files from the cluster file server
 # to your job's control worker node. All worker nodes have attached 
