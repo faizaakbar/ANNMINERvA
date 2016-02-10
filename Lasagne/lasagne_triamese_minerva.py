@@ -127,10 +127,10 @@ def build_cnn(input_var_x=None, input_var_u=None, input_var_v=None):
     # Concatenate the two parallel inputs
     l_concat = lasagne.layers.ConcatLayer((l_dense1_x, l_dense1_u, l_dense1_v))
 
-    # And, finally, the 6-unit output layer with 50% dropout on its inputs:
+    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
     outp = lasagne.layers.DenseLayer(
         lasagne.layers.dropout(l_concat, p=.5),
-        num_units=6,
+        num_units=11,
         nonlinearity=lasagne.nonlinearities.softmax)
 
     return outp
