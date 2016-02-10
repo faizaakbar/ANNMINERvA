@@ -38,7 +38,7 @@ echo "Git repo version is $GIT_VERSION"
 cp /home/perdue/ANNMINERvA/Lasagne/lasagne_triamese_minerva.py ${PBS_O_WORKDIR}
 
 export THEANO_FLAGS=device=gpu,floatX=float32
-python lasagne_triamese_minerva.py -n 100 -t -r 0.0025 -d "/phihome/perdue/theano/data/skim_data_convnet_target0.pkl.gz"
+python lasagne_triamese_minerva.py -n 200 -t -r 0.001 -d "/phihome/perdue/theano/data/skim_data_convnet_target0.pkl.gz"
 
 # Always use fcp to copy any large result files you want to keep back
 # to the file server before exiting your script. The /scratch area on the
