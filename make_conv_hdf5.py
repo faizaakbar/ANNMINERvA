@@ -27,14 +27,13 @@ Because there are twice as many X as U or V planes in the target and tracker
 regions, we will add a zero in addition to the hit value read for each U and V.
 
 TODO: work on data files in chunks - they're getting to be too big to just
-read it all into memory... 
+read it all into memory...
 """
 from __future__ import print_function
 import h5py
 import numpy as np
 import sys
 import os
-import gzip
 
 if '-h' in sys.argv or '--help' in sys.argv:
     print(__doc__)
