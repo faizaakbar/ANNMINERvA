@@ -87,6 +87,8 @@ for filer in fileroots:
     dtuple = get_data_from_file(filen)
     final_data.append(dtuple)
 
+print("Loaded all data... attempting to pickle it...")
+
 filepkl = 'skim_data_convnet_target' + targnum + '.pkl.gz'
 
 if os.path.exists(filepkl):
