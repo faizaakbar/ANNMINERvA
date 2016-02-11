@@ -26,22 +26,42 @@ import lasagne
 
 
 def load_dataset(data_file='./skim_data_convnet_target0.pkl.gz'):
-    import gzip
-    import cPickle
-
     if os.path.exists(data_file):
-        f = gzip.open(data_file, 'rb')
-        learn_data, test_data, valid_data = cPickle.load(f)
-        f.close()
+        # check pickle vs hdf5
+        name_parts = data_file.split('.')
+        if 'pkl' in name_parts or 'pickle' in name_parts:
+            import gzip
+            import cPickle
+            f = gzip.open(data_file, 'rb')
+            learn_data, test_data, valid_data = cPickle.load(f)
+            f.close()
+            X_learn = learn_data[0]  # x, u, v
+            y_learn = learn_data[1]  # targets
+            X_valid = valid_data[0]
+            y_valid = valid_data[1]  # etc.
+            X_test = test_data[0]
+            y_test = test_data[1]
+        elif 'hdf5' in name_parts:
+            import h5py
+            f = h5py.File(data_file, 'r')
+            # learn
+            X_learn = np.zeros(np.shape(f['learn/hits']), dtype='f')
+            y_learn = np.zeros(np.shape(f['learn/segments']), dtype='f')
+            f['learn/hits'].read_direct(X_learn)
+            f['learn/segments'].read_direct(y_learn)
+            # valid
+            X_valid = np.zeros(np.shape(f['valid/hits']), dtype='f')
+            y_valid = np.zeros(np.shape(f['valid/segments']), dtype='f')
+            f['valid/hits'].read_direct(X_valid)
+            f['valid/segments'].read_direct(y_valid)
+            # test
+            X_test = np.zeros(np.shape(f['test/hits']), dtype='f')
+            y_test = np.zeros(np.shape(f['test/segments']), dtype='f')
+            f['test/hits'].read_direct(X_test)
+            f['test/segments'].read_direct(y_test)
+            f.close()
     else:
         raise Exception('Data file', data_file, 'not found!')
-
-    X_learn = learn_data[0]  # x, u, v
-    y_learn = learn_data[1]  # targets
-    X_valid = valid_data[0]
-    y_valid = valid_data[1]  # etc.
-    X_test = test_data[0]
-    y_test = test_data[1]
 
     # return all the arrays in order
     return X_learn, y_learn, X_valid, y_valid, X_test, y_test
@@ -385,7 +405,7 @@ if __name__ == '__main__':
     print(" Begin with saved parameters?", options.start_with_saved_params)
     print(" Saved parameters file:", options.save_model_file)
     print(" Saved parameters file exists?",
-            os.path.isfile(options.save_model_file))
+          os.path.isfile(options.save_model_file))
     print(" Dataset:", options.dataset)
     dataset_statsinfo = os.stat(options.dataset)
     print(" Dataset size:", dataset_statsinfo.st_size)
