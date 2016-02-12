@@ -76,11 +76,11 @@ def build_cnn(input_var_x=None, input_var_u=None, input_var_v=None):
     l_in1_v = lasagne.layers.InputLayer(shape=(None, 1, 50, 50),
                                         input_var=input_var_v)
 
-    # Convolutional layer with 32 kernels of size 5x5.
-    # Filtering reduces the image to (50-5+1, 50-5+1) = (46, 46), (ndim-filt+1)
-    # maxpooling reduces this further to (46/2, 46/2) = (23, 23), (dim/poolhw)
-    filt_h1 = 5
-    filt_w1 = 5
+    # Convolutional layer with 32 kernels of size 3x3.
+    # Filtering reduces the image to (50-3+1, 50-3+1) = (48, 48), (ndim-filt+1)
+    # maxpooling reduces this further to (48/2, 48/2) = (24, 24), (dim/poolhw)
+    filt_h1 = 3
+    filt_w1 = 3
     filter_size1 = (filt_h1, filt_w1)
     pool_size1 = (2, 2)
     l_conv2d1_x = lasagne.layers.Conv2DLayer(
@@ -104,10 +104,10 @@ def build_cnn(input_var_x=None, input_var_u=None, input_var_v=None):
                                                  pool_size=pool_size1)
 
     # More convolution and pooling layers...
-    # Filtering reduces the image to (23-4+1, 23-4+1) = (20, 20), (ndim-filt+1)
-    # maxpooling reduces this further to (20/2, 20/2) = (10, 10), (dim/poolhw)
-    filt_h2 = 4
-    filt_w2 = 4
+    # Filtering reduces the image to (24-3+1, 24-3+1) = (22, 22), (ndim-filt+1)
+    # maxpooling reduces this further to (22/2, 22/2) = (11, 11), (dim/poolhw)
+    filt_h2 = 3
+    filt_w2 = 3
     filter_size2 = (filt_h2, filt_w2)
     pool_size2 = (2, 2)
     l_conv2d2_x = lasagne.layers.Conv2DLayer(
