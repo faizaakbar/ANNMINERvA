@@ -1,0 +1,31 @@
+PBS prologue
+Job lasagne-conv-mnv submitted from mic.fnal.gov started Fri Feb 12 15:55:57 CST 2016 jobid 104795.tev.fnal.gov
+gpu1
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is 416c372f37a7
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+ Begin with saved parameters? False
+ Saved parameters file: ./lminervatriamese_model.npz
+ Saved parameters file exists? True
+ Dataset: /phihome/perdue/theano/data/skim_data_convnet.hdf5
+ Dataset size: 180998045
+ Planned number of epochs: 2
+ Learning rate: 0.001
+ Momentum: 0.9
+Loading data...
+Starting training...
+Epoch 1 of 2 took 214.649s
+  training loss:		2.264365
+  validation loss:		2.211016
+  validation accuracy:		21.93 %
+Epoch 2 of 2 took 214.589s
+  training loss:		2.236509
+  validation loss:		2.208246
+  validation accuracy:		21.93 %
+Final results:
+  test loss:			2.220251
+  test accuracy:		21.69 %
+PBS epilogue
