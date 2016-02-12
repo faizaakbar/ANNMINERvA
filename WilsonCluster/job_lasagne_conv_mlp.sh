@@ -7,7 +7,6 @@
 #PBS -A minervaG
 #PBS -q gpu
 #restore to turn off email #PBS -m n
-# OUTFILENAME="./lasagne_conv_out_job`date +%s`.txt"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
@@ -26,6 +25,13 @@ cd ${PBS_O_WORKDIR}
 echo "PBS_O_WORKDIR is `pwd`"
 GIT_VERSION=`git describe --abbrev=12 --dirty --always`
 echo "Git repo version is $GIT_VERSION"
+DIRTY=`echo $GIT_VERSION | perl -ne 'print if /dirty/'`
+if [[ $DIRTY != "" ]]; then
+  echo "Git repo contains uncomitted changes! Please commit your changes"
+  echo "before submitting a job. If you feel your changes are experimental,"
+  echo "just use a feature branch."
+  exit 0
+fi
 
 # Always use fcp to stage any large input files from the cluster file server
 # to your job's control worker node. All worker nodes have attached 
