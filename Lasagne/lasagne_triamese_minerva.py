@@ -69,18 +69,18 @@ def load_dataset(data_file='./skim_data_convnet_target0.pkl.gz'):
 
 def build_cnn(input_var_x=None, input_var_u=None, input_var_v=None):
     # Input layer
-    l_in1_x = lasagne.layers.InputLayer(shape=(None, 1, 22, 50),
+    l_in1_x = lasagne.layers.InputLayer(shape=(None, 1, 50, 50),
                                         input_var=input_var_x)
-    l_in1_u = lasagne.layers.InputLayer(shape=(None, 1, 22, 50),
+    l_in1_u = lasagne.layers.InputLayer(shape=(None, 1, 50, 50),
                                         input_var=input_var_u)
-    l_in1_v = lasagne.layers.InputLayer(shape=(None, 1, 22, 50),
+    l_in1_v = lasagne.layers.InputLayer(shape=(None, 1, 50, 50),
                                         input_var=input_var_v)
 
-    # Convolutional layer with 32 kernels of size 3x3.
-    # Filtering reduces the image to (22-3+1, 50-3+1) = (20, 48) (ndim-filt+1),
-    # maxpooling reduces this further to (20/2, 48/2) = (10, 24), (dim/poolhw),
-    filt_h1 = 3
-    filt_w1 = 3
+    # Convolutional layer with 32 kernels of size 5x5.
+    # Filtering reduces the image to (50-5+1, 50-5+1) = (46, 46), (ndim-filt+1)
+    # maxpooling reduces this further to (46/2, 46/2) = (23, 23), (dim/poolhw)
+    filt_h1 = 5
+    filt_w1 = 5
     filter_size1 = (filt_h1, filt_w1)
     pool_size1 = (2, 2)
     l_conv2d1_x = lasagne.layers.Conv2DLayer(
@@ -104,10 +104,10 @@ def build_cnn(input_var_x=None, input_var_u=None, input_var_v=None):
                                                  pool_size=pool_size1)
 
     # More convolution and pooling layers...
-    # Filtering reduces the image to (10-3+1, 24-3+1) = (8, 22) (ndim-filt+1),
-    # maxpooling reduces this further to (8/2, 22/2) = (4, 11), (dim/poolhw),
-    filt_h2 = 3
-    filt_w2 = 3
+    # Filtering reduces the image to (23-4+1, 23-4+1) = (20, 20), (ndim-filt+1)
+    # maxpooling reduces this further to (20/2, 20/2) = (10, 10), (dim/poolhw)
+    filt_h2 = 4
+    filt_w2 = 4
     filter_size2 = (filt_h2, filt_w2)
     pool_size2 = (2, 2)
     l_conv2d2_x = lasagne.layers.Conv2DLayer(
@@ -371,7 +371,7 @@ if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser(usage=__doc__)
     parser.add_option('-d', '--data', dest='dataset',
-                      default='./skim_data_convnet_target0.pkl.gz',
+                      default='./skim_data_convnet.hdf5',
                       help='Data set', metavar='DATASET')
     parser.add_option('-n', '--nepochs', dest='n_epochs', default=200,
                       help='Number of epochs', metavar='N_EPOCHS',
