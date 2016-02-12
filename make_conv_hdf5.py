@@ -73,9 +73,9 @@ def get_data_from_file(filename):
                 elif view == 'V':
                     hitsV.append(energy)
                     hitsV.append(0.0)
-            hitsX = np.asarray(hitsX, dtype=np.float32).reshape(22, 50)
-            hitsU = np.asarray(hitsU, dtype=np.float32).reshape(22, 50)
-            hitsV = np.asarray(hitsV, dtype=np.float32).reshape(22, 50)
+            hitsX = np.asarray(hitsX, dtype=np.float32).reshape(50, 50)
+            hitsU = np.asarray(hitsU, dtype=np.float32).reshape(50, 50)
+            hitsV = np.asarray(hitsV, dtype=np.float32).reshape(50, 50)
             energies = np.asarray([hitsX, hitsU, hitsV])
             data.append(energies)
 
