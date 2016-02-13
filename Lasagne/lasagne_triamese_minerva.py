@@ -50,6 +50,7 @@ def load_dataset(data_file='./skim_data_convnet_target0.pkl.gz'):
             y_learn = np.zeros(np.shape(f['learn/segments']), dtype='f')
             f['learn/hits'].read_direct(X_learn)
             f['learn/segments'].read_direct(y_learn)
+            print("Learning data size:", np.shape(f['learn/hits']))
             # valid
             X_valid = np.zeros(np.shape(f['valid/hits']), dtype='f')
             y_valid = np.zeros(np.shape(f['valid/segments']), dtype='f')
