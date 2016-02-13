@@ -23,6 +23,7 @@ import theano
 import theano.tensor as T
 
 import lasagne
+import network_repr
 
 
 def load_dataset(data_file='./skim_data_convnet_target0.pkl.gz'):
@@ -209,6 +210,9 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
 
     # Build the model
     network = build_cnn(input_var_x, input_var_u, input_var_v)
+    print(network_repr.get_network_str(
+        lasagne.layers.get_all_layers(network),
+        get_network=False, incomings=True, outgoings=True))
     if start_with_saved_params and os.path.isfile(save_model_file):
         with np.load(save_model_file) as f:
             param_values = [f['arr_%d' % i] for i in range(len(f.files))]
