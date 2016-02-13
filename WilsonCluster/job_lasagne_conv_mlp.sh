@@ -42,6 +42,7 @@ fi
 # ls /scratch
 
 cp /home/perdue/ANNMINERvA/Lasagne/lasagne_triamese_minerva.py ${PBS_O_WORKDIR}
+cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
 
 export THEANO_FLAGS=device=gpu,floatX=float32
 python lasagne_triamese_minerva.py -n 200 -t -r 0.001 -d "/phihome/perdue/theano/data/skim_data_convnet.hdf5"
