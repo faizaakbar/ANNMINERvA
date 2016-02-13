@@ -3,10 +3,9 @@
 Usage:
     python dset_visualize.py [opt: max # of evts, def==10]
 """
-import gzip
-import cPickle
 import pylab
 import sys
+import h5py
 
 max_evts = 10
 evt_plotted = 0
@@ -18,14 +17,17 @@ if '-h' in sys.argv or '--help' in sys.argv:
 if len(sys.argv) > 1:
     max_evts = int(sys.argv[1])
 
-f = gzip.open('skim_data_convnet_target0.pkl.gz', 'rb')
-learn_data, test_data, valid_data = cPickle.load(f)
+f = h5py.File('./skim_data_convnet.hdf5', 'r')
+valid_data = pylab.zeros(pylab.shape(f['valid/hits']), dtype='f')
+valid_labels = pylab.zeros(pylab.shape(f['valid/segments']), dtype='f')
+f['valid/hits'].read_direct(valid_data)
+f['valid/segments'].read_direct(valid_labels)
 f.close()
 
-for counter, evt in enumerate(valid_data[0]):
+for counter, evt in enumerate(valid_data):
     if evt_plotted > max_evts:
         break
-    targ = valid_data[1][counter]
+    targ = valid_labels[counter]
     fig = pylab.figure(figsize=(9, 3))
     gs = pylab.GridSpec(1, 3)
     for i in range(3):
