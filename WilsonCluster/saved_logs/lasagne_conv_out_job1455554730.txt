@@ -1,0 +1,66 @@
+PBS prologue
+Job lasagne-conv-mnv submitted from mic.fnal.gov started Mon Feb 15 10:45:32 CST 2016 jobid 104970.tev.fnal.gov
+gpu1
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is 2c138ef6d700-dirty
+Git repo contains uncomitted changes! Please commit your changes
+before submitting a job. If you feel your changes are experimental,
+just use a feature branch.
+
+Changed files:
+WilsonCluster/job_lasagne_conv_mlp.sh
+
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+ Begin with saved parameters? False
+ Saved parameters file: ./lminervatriamese_model.npz
+ Saved parameters file exists? True
+ Dataset: /phihome/perdue/theano/data/skim_data_convnet.hdf5
+ Dataset size: 479032538
+ Planned number of epochs: 2
+ Learning rate: 0.001
+ Momentum: 0.9
+Loading data...
+Learning data size: (319073, 3, 50, 50)
+
+In -->         Layer    --> Out    Description                                                  
+-------        -----    -------    -----------                                                  
+[]             0        [1]        <lasagne.layers.input.InputLayer object at 0x2aef5a8154d0>   
+[0]            1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2aef5a8155d0>   
+[1]            2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2aef5a815590>
+[2]            3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2aef5a834a50>   
+[3]            4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2aef5a834ad0>
+[4]            5        [6]        <lasagne.layers.noise.DropoutLayer object at 0x2aef5a846350> 
+[5]            6        [21]       <lasagne.layers.dense.DenseLayer object at 0x2aef5a846390>   
+[]             7        [8]        <lasagne.layers.input.InputLayer object at 0x2aef5a815510>   
+[7]            8        [9]        <lasagne.layers.conv.Conv2DLayer object at 0x2aef5a815610>   
+[8]            9        [10]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2aef5a834810>
+[9]            10       [11]       <lasagne.layers.conv.Conv2DLayer object at 0x2aef5a834b10>   
+[10]           11       [12]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2aef5a846050>
+[11]           12       [13]       <lasagne.layers.noise.DropoutLayer object at 0x2aef5a8463d0> 
+[12]           13       [21]       <lasagne.layers.dense.DenseLayer object at 0x2aef5a846a50>   
+[]             14       [15]       <lasagne.layers.input.InputLayer object at 0x2aef5a815550>   
+[14]           15       [16]       <lasagne.layers.conv.Conv2DLayer object at 0x2aef5a834590>   
+[15]           16       [17]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2aef5a834a90>
+[16]           17       [18]       <lasagne.layers.conv.Conv2DLayer object at 0x2aef5a834dd0>   
+[17]           18       [19]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2aef5a846310>
+[18]           19       [20]       <lasagne.layers.noise.DropoutLayer object at 0x2aef5a8469d0> 
+[19]           20       [21]       <lasagne.layers.dense.DenseLayer object at 0x2aef5a846d50>   
+[6, 13, 20]    21       [22]       <lasagne.layers.merge.ConcatLayer object at 0x2aef5a846cd0>  
+[21]           22       [23]       <lasagne.layers.noise.DropoutLayer object at 0x2aef5a846fd0> 
+[22]           23       []         <lasagne.layers.dense.DenseLayer object at 0x2af223de1090>   
+Starting training...
+Epoch 1 of 2 took 531.788s
+  training loss:		2.247049
+  validation loss:		2.210968
+  validation accuracy:		21.97 %
+Epoch 2 of 2 took 531.917s
+  training loss:		2.225473
+  validation loss:		2.202732
+  validation accuracy:		21.97 %
+Final results:
+  test loss:			2.210667
+  test accuracy:		21.52 %
+PBS epilogue
