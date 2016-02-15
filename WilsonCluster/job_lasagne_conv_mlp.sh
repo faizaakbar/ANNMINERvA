@@ -30,6 +30,7 @@ if [[ $DIRTY != "" ]]; then
   echo "Git repo contains uncomitted changes! Please commit your changes"
   echo "before submitting a job. If you feel your changes are experimental,"
   echo "just use a feature branch."
+  git diff --name-only
   # exit 0
 fi
 
