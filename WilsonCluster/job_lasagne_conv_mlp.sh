@@ -30,7 +30,10 @@ if [[ $DIRTY != "" ]]; then
   echo "Git repo contains uncomitted changes! Please commit your changes"
   echo "before submitting a job. If you feel your changes are experimental,"
   echo "just use a feature branch."
+  echo ""
+  echo "Changed files:"
   git diff --name-only
+  echo ""
   # exit 0
 fi
 
@@ -46,7 +49,7 @@ cp /home/perdue/ANNMINERvA/Lasagne/lasagne_triamese_minerva.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
 
 export THEANO_FLAGS=device=gpu,floatX=float32
-python lasagne_triamese_minerva.py -n 200 -t -r 0.001 -d "/phihome/perdue/theano/data/skim_data_convnet.hdf5"
+python lasagne_triamese_minerva.py -n 100 -t -r 0.001 -d "/phihome/perdue/theano/data/skim_data_convnet.hdf5"
 
 # Always use fcp to copy any large result files you want to keep back
 # to the file server before exiting your script. The /scratch area on the
