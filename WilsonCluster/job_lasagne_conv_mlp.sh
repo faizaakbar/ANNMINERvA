@@ -30,7 +30,7 @@ if [[ $DIRTY != "" ]]; then
   echo "Git repo contains uncomitted changes! Please commit your changes"
   echo "before submitting a job. If you feel your changes are experimental,"
   echo "just use a feature branch."
-  exit 0
+  # exit 0
 fi
 
 # Always use fcp to stage any large input files from the cluster file server
