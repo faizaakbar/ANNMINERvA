@@ -16,7 +16,7 @@ import theano.tensor as T
 import lasagne
 
 SAVE_MODEL_FILE = 'ldoublemnist_model.npz'
-LOAD_PARAMS = True
+LOAD_PARAMS = False
 
 
 def load_dataset():
