@@ -8,6 +8,12 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
+SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
+NEPOCHS=100
+LRATE=0.01
+DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
+
+
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
 
@@ -49,7 +55,18 @@ cp /home/perdue/ANNMINERvA/Lasagne/lasagne_triamese_minerva.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
 
 export THEANO_FLAGS=device=gpu,floatX=float32
-python lasagne_triamese_minerva.py -n 100 -t -r 0.0001 -d "/phihome/perdue/theano/data/skim_data_convnet.hdf5"
+python lasagne_triamese_minerva.py -t \
+  -n $NEPOCHS \
+  -r $LRATE \
+  -d $DATAFILENAME \
+  -s $SAVEMODELNAME
+# nepochs and lrate don't matter for prediction, but setting them for log-file
+# homogeneity
+python lasagne_triamese_minerva.py -p \
+  -n $NEPOCHS \
+  -r $LRATE \
+  -d $DATAFILENAME \
+  -s $SAVEMODELNAME
 
 # Always use fcp to copy any large result files you want to keep back
 # to the file server before exiting your script. The /scratch area on the
