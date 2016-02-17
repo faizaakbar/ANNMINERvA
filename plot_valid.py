@@ -24,6 +24,9 @@ val_accs = []
 val_loss = []
 run_times = []
 
+tstamp = int(re.findall(r"[0-9]+", logname)[0])
+print("Log timestamp =", tstamp)
+
 with open(logname, 'r') as f:
     lines = f.readlines()
     for line in lines:
@@ -36,13 +39,13 @@ with open(logname, 'r') as f:
         vl_m = re.search(val_loss_match, line)
         if gt_m:
             repo = line.split()[-1]
-            print(repo)
+            print("repo hash =", repo)
         if lr_m:
             lr = float(line.split(':')[-1])
-            print(lr)
+            print("learning rate =", lr)
         if mm_m:
             mm = float(line.split(':')[-1])
-            print(mm)
+            print("momentum = ", mm)
         if ds_m:
             nums_m = re.findall(r"[0-9]+", line)
             num_learn = int(nums_m[0])
@@ -63,16 +66,70 @@ with open(logname, 'r') as f:
 epochs = np.asarray(epochs)
 val_accs = np.asarray(val_accs)
 val_loss = np.asarray(val_loss)
-run_times = np.asarray(run_times)
+run_times = np.cumsum(np.asarray(run_times)) / 60.0
 
 fig = pylab.figure(figsize=(5, 5))
 pylab.title('Validation accuracy vs epoch')
 pylab.plot(epochs, val_accs)
-pylab.savefig('val_acc_vs_epoch_%s.pdf' % (repo))
+pylab.xlabel('epoch')
+pylab.ylabel('validation accuracy (%)')
+pylab.annotate(repo,
+               xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]), 
+               xytext=(0.35, 0.5), textcoords='figure fraction')
+pylab.annotate("Learning rate = %f" % (lr),
+               xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]), 
+               xytext=(0.35, 0.45), textcoords='figure fraction')
+pylab.annotate("Momentum = %f" % (mm),
+               xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]), 
+               xytext=(0.35, 0.40), textcoords='figure fraction')
+pylab.annotate("Training size = %d" % (num_learn),
+               xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]), 
+               xytext=(0.35, 0.35), textcoords='figure fraction')
+pylab.annotate("Final accuracy = %f%%" % (val_accs[-1]),
+               xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]), 
+               xytext=(0.35, 0.3), textcoords='figure fraction')
+pylab.savefig('lasagne_conv_out_job%d_val_acc_vs_epoch_%s.pdf' % (tstamp, repo))
 pylab.close()
 
 fig = pylab.figure(figsize=(5, 5))
 pylab.title('Validation loss vs epoch')
 pylab.plot(epochs, val_loss)
-pylab.savefig('val_loss_vs_epoch_%s.pdf' % (repo))
+pylab.xlabel('epoch')
+pylab.ylabel('validation loss')
+pylab.annotate(repo,
+               xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]), 
+               xytext=(0.4, 0.6), textcoords='figure fraction')
+pylab.annotate("Learning rate = %f" % (lr),
+               xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]), 
+               xytext=(0.4, 0.55), textcoords='figure fraction')
+pylab.annotate("Momentum = %f" % (mm),
+               xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]), 
+               xytext=(0.4, 0.50), textcoords='figure fraction')
+pylab.annotate("Training size = %d" % (num_learn),
+               xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]), 
+               xytext=(0.4, 0.45), textcoords='figure fraction')
+pylab.savefig('lasagne_conv_out_job%d_val_loss_vs_epoch_%s.pdf' % (tstamp, repo))
+pylab.close()
+
+fig = pylab.figure(figsize=(5, 5))
+pylab.title('Cumulative run time vs epoch')
+pylab.plot(epochs, run_times)
+pylab.xlabel('epoch')
+pylab.ylabel('run time (m)')
+pylab.annotate(repo,
+               xy=(epochs[len(epochs) // 2], run_times[len(run_times) // 2]), 
+               xytext=(0.25, 0.8), textcoords='figure fraction')
+pylab.annotate("Learning rate = %f" % (lr),
+               xy=(epochs[len(epochs) // 2], run_times[len(run_times) // 2]), 
+               xytext=(0.25, 0.75), textcoords='figure fraction')
+pylab.annotate("Momentum = %f" % (mm),
+               xy=(epochs[len(epochs) // 2], run_times[len(run_times) // 2]), 
+               xytext=(0.25, 0.70), textcoords='figure fraction')
+pylab.annotate("Training size = %d" % (num_learn),
+               xy=(epochs[len(epochs) // 2], run_times[len(run_times) // 2]), 
+               xytext=(0.35, 0.25), textcoords='figure fraction')
+pylab.annotate("Total time = %f m" % (run_times[-1]),
+               xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]), 
+               xytext=(0.35, 0.2), textcoords='figure fraction')
+pylab.savefig('lasagne_conv_out_job%d_run_times_vs_epoch_%s.pdf' % (tstamp, repo))
 pylab.close()
