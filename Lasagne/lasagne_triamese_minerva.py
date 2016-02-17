@@ -306,7 +306,8 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
         test_acc / test_batches * 100))
 
 
-def predict(data_file=None, save_model_file='./params_file.npz'):
+def predict(data_file=None, save_model_file='./params_file.npz',
+        be_verbose=False):
     print("Loading data for prediction...")
     _, _, _, _, X_test, y_test = load_dataset(data_file)
 
@@ -354,10 +355,9 @@ def predict(data_file=None, save_model_file='./params_file.npz'):
         inputx, inputu, inputv = split_inputs_xuv(inputs)
         pred = pred_fn(inputx, inputu, inputv)
         pred_targ = zip(pred[0], targets)
-        print("predictions :", pred)
-        print("true targets:", targets)
-        print("(prediction, true target):", pred_targ)
-        print("----------------")
+        if be_verbose:
+            print("(prediction, true target):", pred_targ)
+            print("----------------")
         for p, t in pred_targ:
             if t in targ_numbers:
                 true_target[t-1] += 1
@@ -408,6 +408,9 @@ if __name__ == '__main__':
     parser.add_option('-p', '--predict', dest='do_predict', default=False,
                       help='Run a prediction', metavar='DO_PREDICT',
                       action='store_true')
+    parser.add_option('-v', '--verbose', dest='be_verbose', default=False,
+                      help='Verbose predictions', metavar='BE_VERBOSE',
+                      action='store_true')
     parser.add_option('-s', '--save_file', dest='save_model_file',
                       default='./lminervatriamese_model.npz',
                       help='File name for parameters',
@@ -443,4 +446,5 @@ if __name__ == '__main__':
 
     if options.do_predict:
         predict(data_file=options.dataset,
-                save_model_file=options.save_model_file)
+                save_model_file=options.save_model_file,
+                be_verbose=options.be_verbose)
