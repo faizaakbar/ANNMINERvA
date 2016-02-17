@@ -346,6 +346,9 @@ def predict(data_file=None, save_model_file='./params_file.npz'):
                               allow_input_downcast=True)
 
     # look at some concrete predictions
+    targ_numbers = [1, 2, 3, 4, 5]
+    pred_target = np.array([0, 0, 0, 0, 0])
+    true_target = np.array([0, 0, 0, 0, 0])
     for batch in iterate_minibatches(X_test, y_test, 16, shuffle=False):
         inputs, targets = batch
         inputx, inputu, inputv = split_inputs_xuv(inputs)
@@ -353,6 +356,14 @@ def predict(data_file=None, save_model_file='./params_file.npz'):
         print("predictions:", pred)
         print("targets:", targets)
         print("----------------")
+        pred_targ = zip(pred, targets)
+        for p, t in pred_targ:
+            if t in targ_numbers:
+                true_target[t-1] += 1
+                if p == t:
+                    pred_target[p-1] += 1
+
+    acc_target = 100.0 * pred_target / true_target.astype('float32')
 
     # compute and print the test error:
     test_err = 0
@@ -369,6 +380,9 @@ def predict(data_file=None, save_model_file='./params_file.npz'):
     print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
     print("  test accuracy:\t\t{:.2f} %".format(
         test_acc / test_batches * 100))
+    for i, v in enumerate(acc_target):
+        print("   target {} accuracy:\t\t\t{:.3f} %".format(
+            (i + 1), acc_target[i]))
 
 
 if __name__ == '__main__':
