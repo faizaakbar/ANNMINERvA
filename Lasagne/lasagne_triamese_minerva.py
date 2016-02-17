@@ -349,14 +349,15 @@ def predict(data_file=None, save_model_file='./params_file.npz'):
     targ_numbers = [1, 2, 3, 4, 5]
     pred_target = np.array([0, 0, 0, 0, 0])
     true_target = np.array([0, 0, 0, 0, 0])
-    for batch in iterate_minibatches(X_test, y_test, 16, shuffle=False):
+    for batch in iterate_minibatches(X_test, y_test, 5, shuffle=False):
         inputs, targets = batch
         inputx, inputu, inputv = split_inputs_xuv(inputs)
         pred = pred_fn(inputx, inputu, inputv)
-        print("predictions:", pred)
-        print("targets:", targets)
+        pred_targ = zip(pred[0], targets)
+        print("predictions :", pred)
+        print("true targets:", targets)
+        print("(prediction, true target):", pred_targ)
         print("----------------")
-        pred_targ = zip(pred, targets)
         for p, t in pred_targ:
             if t in targ_numbers:
                 true_target[t-1] += 1
