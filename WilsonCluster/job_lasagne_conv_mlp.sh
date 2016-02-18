@@ -11,7 +11,8 @@
 SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
 NEPOCHS=100
 LRATE=0.01
-DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
+L2REG=0.0001
+DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet_small.hdf5"
 
 
 # print identifying info for this job
@@ -58,6 +59,7 @@ export THEANO_FLAGS=device=gpu,floatX=float32
 python lasagne_triamese_minerva.py -t \
   -n $NEPOCHS \
   -r $LRATE \
+  -g $L2REG \
   -d $DATAFILENAME \
   -s $SAVEMODELNAME
 # nepochs and lrate don't matter for prediction, but setting them for log-file
@@ -65,6 +67,7 @@ python lasagne_triamese_minerva.py -t \
 python lasagne_triamese_minerva.py -p \
   -n $NEPOCHS \
   -r $LRATE \
+  -g $L2REG \
   -d $DATAFILENAME \
   -s $SAVEMODELNAME
 
