@@ -24,6 +24,7 @@ import theano.tensor as T
 
 import lasagne
 import network_repr
+from lasagne.objectives import categorical_crossentropy
 
 
 def load_dataset(data_file='./skim_data_convnet_target0.pkl.gz'):
@@ -81,6 +82,8 @@ def build_cnn(input_var_x=None, input_var_u=None, input_var_v=None):
     # Convolutional layer with 32 kernels of size 3x3.
     # Filtering reduces the image to (50-3+1, 50-3+1) = (48, 48), (ndim-filt+1)
     # maxpooling reduces this further to (48/2, 48/2) = (24, 24), (dim/poolhw)
+    #
+    # NOTE: it isn't obvious I have h & w in the right "order" here...
     filt_h1 = 3
     filt_w1 = 3
     filter_size1 = (filt_h1, filt_w1)
@@ -223,38 +226,37 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
     # Create a loss expression for training.
     prediction = lasagne.layers.get_output(network)
     l2_penalty = lasagne.regularization.regularize_layer_params(
-            lasagne.layers.get_all_layers(network),
-            lasagne.regularization.l2) * l2_penalty_scale
-    loss = lasagne.objectives.categorical_crossentropy(prediction,
-            target_var) + l2_penalty
+        lasagne.layers.get_all_layers(network),
+        lasagne.regularization.l2) * l2_penalty_scale
+    loss = categorical_crossentropy(prediction, target_var) + l2_penalty
     loss = loss.mean()
 
     # Create update expressions for training.
     params = lasagne.layers.get_all_params(network, trainable=True)
     print(
-    """
-    ////
-    Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
-    Singer (2011) "Adaptive subgradient methods for online learning and
-    stochasitic optimization." JMLR, 12:2121-2159
-    ////
-    """)
+        """
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        """)
     updates_adagrad = lasagne.updates.adagrad(
         loss, params, learning_rate=learning_rate, epsilon=1e-06)
     print(
-    """
-    ////
-    Apply Nesterov momentum using Lisa Lab's modifications. 
-    ////
-    """)
+        """
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        """)
     updates = lasagne.updates.apply_nesterov_momentum(
         updates_adagrad, params, momentum=momentum)
 
     # Create a loss expression for validation/testing. Note we do a
     # deterministic forward pass through the network, disabling dropout.
     test_prediction = lasagne.layers.get_output(network, deterministic=True)
-    test_loss = lasagne.objectives.categorical_crossentropy(test_prediction,
-                                                            target_var)
+    test_loss = categorical_crossentropy(test_prediction, target_var) + \
+        l2_penalty
     test_loss = test_loss.mean()
     # As a bonus, also create an expression for the classification accuracy:
     test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
@@ -328,7 +330,7 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
 
 
 def predict(data_file=None, save_model_file='./params_file.npz',
-        be_verbose=False):
+            be_verbose=False):
     print("Loading data for prediction...")
     _, _, _, _, X_test, y_test = load_dataset(data_file)
 
@@ -346,8 +348,7 @@ def predict(data_file=None, save_model_file='./params_file.npz',
 
     # Create a loss expression for testing.
     test_prediction = lasagne.layers.get_output(network, deterministic=True)
-    test_loss = lasagne.objectives.categorical_crossentropy(test_prediction,
-                                                            target_var)
+    test_loss = categorical_crossentropy(test_prediction, target_var)
     test_loss = test_loss.mean()
     # Also create an expression for the classification accuracy:
     test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
