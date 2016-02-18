@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
-python make_conv_hdf5.py <file key>
+python make_conv_hdf5.py <file key> [output name - optional]
+
+The default output name is 'skim_data_convnet.hdf5'
 
 This script looks for three files like:
 
@@ -33,12 +35,16 @@ if '-h' in sys.argv or '--help' in sys.argv:
     print(__doc__)
     sys.exit(1)
 
-if not len(sys.argv) == 2:
-    print('The target number argument is mandatory.')
+if len(sys.argv) < 2:
+    print('The filekey argument is mandatory.')
     print(__doc__)
     sys.exit(1)
 
 filekey = sys.argv[1]
+
+hdf5file = 'skim_data_convnet.hdf5'
+if len(sys.argv) > 2:
+    hdf5file = sys.argv[2]
 
 # "pixel" size of data images
 IMGW = 50
@@ -97,7 +103,6 @@ files = {'learn': learn_files,
          'valid': valid_files,
          'test': test_files}
 
-hdf5file = 'skim_data_convnet.hdf5'
 if os.path.exists(hdf5file):
     os.remove(hdf5file)
 f = h5py.File(hdf5file, 'w')
