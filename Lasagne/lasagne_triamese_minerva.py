@@ -200,7 +200,7 @@ def split_inputs_xuv(inputs):
 
 
 def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
-          l2_penalty_scale=1e-04,
+          l2_penalty_scale=1e-04, batchsize=500,
           data_file=None, save_model_file='./params_file.npz',
           start_with_saved_params=False):
     print("Loading data...")
@@ -282,7 +282,8 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
         train_err = 0
         train_batches = 0
         start_time = time.time()
-        for batch in iterate_minibatches(X_train, y_train, 500, shuffle=True):
+        for batch in iterate_minibatches(X_train, y_train, batchsize,
+                                         shuffle=True):
             inputs, targets = batch
             inputx, inputu, inputv = split_inputs_xuv(inputs)
             train_err += train_fn(inputx, inputu, inputv, targets)
@@ -292,7 +293,8 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
         val_err = 0
         val_acc = 0
         val_batches = 0
-        for batch in iterate_minibatches(X_val, y_val, 500, shuffle=False):
+        for batch in iterate_minibatches(X_val, y_val, batchsize,
+                                         shuffle=False):
             inputs, targets = batch
             inputx, inputu, inputv = split_inputs_xuv(inputs)
             err, acc = val_fn(inputx, inputu, inputv, targets)
@@ -316,7 +318,7 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
     test_err = 0
     test_acc = 0
     test_batches = 0
-    for batch in iterate_minibatches(X_test, y_test, 500, shuffle=False):
+    for batch in iterate_minibatches(X_test, y_test, batchsize, shuffle=False):
         inputs, targets = batch
         inputx, inputu, inputv = split_inputs_xuv(inputs)
         err, acc = val_fn(inputx, inputu, inputv, targets)
@@ -330,7 +332,7 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
 
 
 def predict(data_file=None, save_model_file='./params_file.npz',
-            be_verbose=False):
+            batchsize=500, be_verbose=False):
     print("Loading data for prediction...")
     _, _, _, _, X_test, y_test = load_dataset(data_file)
 
@@ -392,7 +394,7 @@ def predict(data_file=None, save_model_file='./params_file.npz',
     test_err = 0
     test_acc = 0
     test_batches = 0
-    for batch in iterate_minibatches(X_test, y_test, 500, shuffle=False):
+    for batch in iterate_minibatches(X_test, y_test, batchsize, shuffle=False):
         inputs, targets = batch
         inputx, inputu, inputv = split_inputs_xuv(inputs)
         err, acc = val_fn(inputx, inputu, inputv, targets)
@@ -417,6 +419,9 @@ if __name__ == '__main__':
                       help='Data set', metavar='DATASET')
     parser.add_option('-n', '--nepochs', dest='n_epochs', default=200,
                       help='Number of epochs', metavar='N_EPOCHS',
+                      type='int')
+    parser.add_option('-b', '--batch_size', dest='batchsize', default=500,
+                      help='Batch size for SGD', metavar='BATCH_SIZE',
                       type='int')
     parser.add_option('-r', '--rate', dest='lrate', default=0.01,
                       help='Learning rate', metavar='LRATE',
@@ -461,12 +466,14 @@ if __name__ == '__main__':
     print(" Learning rate:", options.lrate)
     print(" Momentum:", options.momentum)
     print(" L2 regularization penalty scale:", options.l2_penalty_scale)
+    print(" Batch size:", options.batchsize)
 
     if options.do_train:
         train(num_epochs=options.n_epochs,
               learning_rate=options.lrate,
               momentum=options.momentum,
               l2_penalty_scale=options.l2_penalty_scale,
+              batchsize=options.batchsize,
               data_file=options.dataset,
               save_model_file=options.save_model_file,
               start_with_saved_params=options.start_with_saved_params)
@@ -474,4 +481,5 @@ if __name__ == '__main__':
     if options.do_predict:
         predict(data_file=options.dataset,
                 save_model_file=options.save_model_file,
+                batchsize=options.batchsize,
                 be_verbose=options.be_verbose)
