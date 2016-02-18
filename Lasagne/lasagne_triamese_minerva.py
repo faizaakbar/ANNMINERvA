@@ -197,6 +197,7 @@ def split_inputs_xuv(inputs):
 
 
 def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
+          l2_penalty_scale=1e-04,
           data_file=None, save_model_file='./params_file.npz',
           start_with_saved_params=False):
     print("Loading data...")
@@ -221,13 +222,33 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
 
     # Create a loss expression for training.
     prediction = lasagne.layers.get_output(network)
-    loss = lasagne.objectives.categorical_crossentropy(prediction, target_var)
+    l2_penalty = lasagne.regularization.regularize_layer_params(
+            lasagne.layers.get_all_layers(network),
+            lasagne.regularization.l2) * l2_penalty_scale
+    loss = lasagne.objectives.categorical_crossentropy(prediction,
+            target_var) + l2_penalty
     loss = loss.mean()
 
     # Create update expressions for training.
     params = lasagne.layers.get_all_params(network, trainable=True)
-    updates = lasagne.updates.nesterov_momentum(
-        loss, params, learning_rate=learning_rate, momentum=momentum)
+    print(
+    """
+    ////
+    Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+    Singer (2011) "Adaptive subgradient methods for online learning and
+    stochasitic optimization." JMLR, 12:2121-2159
+    ////
+    """)
+    updates_adagrad = lasagne.updates.adagrad(
+        loss, params, learning_rate=learning_rate, epsilon=1e-06)
+    print(
+    """
+    ////
+    Apply Nesterov momentum using Lisa Lab's modifications. 
+    ////
+    """)
+    updates = lasagne.updates.apply_nesterov_momentum(
+        updates_adagrad, params, momentum=momentum)
 
     # Create a loss expression for validation/testing. Note we do a
     # deterministic forward pass through the network, disabling dropout.
@@ -399,6 +420,9 @@ if __name__ == '__main__':
     parser.add_option('-r', '--rate', dest='lrate', default=0.01,
                       help='Learning rate', metavar='LRATE',
                       type='float')
+    parser.add_option('-g', '--regularization', dest='l2_penalty_scale',
+                      default=1e-04, help='L2 regularization scale',
+                      metavar='L2_REG_SCALE', type='float')
     parser.add_option('-m', '--momentum', dest='momentum', default=0.9,
                       help='Momentum', metavar='MOMENTUM',
                       type='float')
@@ -435,11 +459,13 @@ if __name__ == '__main__':
     print(" Planned number of epochs:", options.n_epochs)
     print(" Learning rate:", options.lrate)
     print(" Momentum:", options.momentum)
+    print(" L2 regularization penalty scale:", options.l2_penalty_scale)
 
     if options.do_train:
         train(num_epochs=options.n_epochs,
               learning_rate=options.lrate,
               momentum=options.momentum,
+              l2_penalty_scale=options.l2_penalty_scale,
               data_file=options.dataset,
               save_model_file=options.save_model_file,
               start_with_saved_params=options.start_with_saved_params)
