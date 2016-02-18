@@ -12,7 +12,7 @@ SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
 NEPOCHS=100
 LRATE=0.01
 L2REG=0.0001
-DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet_small.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
 
 
 # print identifying info for this job
