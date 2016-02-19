@@ -45,11 +45,15 @@ def load_dataset(data_file):
 
 def make_scheme_and_stream(dset, batchsize, shuffle=True):
     if shuffle:
+        print("-Preparing shuffled datastream for {} examples.".format(
+            dset.num_examples))
         scheme = ShuffledScheme(examples=dset.num_examples,
-                                batchsize=batchsize)
+                                batch_size=batchsize)
     else:
+        print("-Preparing sequential datastream for {} examples.".format(
+            dset.num_examples))
         scheme = SequentialScheme(examples=dset.num_examples,
-                                  batchsize=batchsize)
+                                  batch_size=batchsize)
     data_stream = DataStream(dataset=dset,
                              iteration_scheme=scheme)
     return scheme, data_stream
@@ -151,6 +155,9 @@ def split_inputs_xuv(inputs):
     inputs has shape (# items, 3 views, w, h)
     we want to split into three 4-tensors, 1 for each view
     -> each should have shape: (# items, 1, w, h)
+
+    TODO: pre-split while preparing HDF5 files so we don't waste time doing
+    this every time we run...
     """
     shpvar = np.shape(inputs)
     # print(shpvar)
@@ -242,8 +249,15 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
                              allow_input_downcast=True)
 
     print("Starting training...")
+    print("Preparing training data:") 
     _, train_dstream = make_scheme_and_stream(train_set, batchsize)
+    print("Preparing validation data:") 
     _, valid_dstream = make_scheme_and_stream(valid_set, batchsize)
+
+    #
+    # TODO: early stopping logic goes here...
+    #
+
     for epoch in range(num_epochs):
 
         # In each epoch, we do a full pass over the training data:
@@ -330,6 +344,7 @@ def predict(data_file, l2_penalty_scale, save_model_file='./params_file.npz',
     targ_numbers = [1, 2, 3, 4, 5]
     pred_target = np.array([0, 0, 0, 0, 0])
     true_target = np.array([0, 0, 0, 0, 0])
+    print("Preparing test data:") 
     _, test_dstream = make_scheme_and_stream(test_set, 5, shuffle=False)
     for data in test_dstream.get_epoch_iterator():
         inputs, targets = data[0], data[1]
