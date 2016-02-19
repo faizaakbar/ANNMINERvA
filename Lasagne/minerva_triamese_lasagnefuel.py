@@ -5,14 +5,12 @@ This is an attempt at a "triamese" network operating on Minerva X, U, V.
 Execution:
     python minerva_triamese_lasagnefuel.py -h / --help
 
-    At a minimum, we must supply either the `--train` or `--predict` flag.
+At a minimum, we must supply either the `--train` or `--predict` flag.
+
+See ANNMINERvA/fuel_up_convdata.py for an HDF5 builder that sets up an
+appropriate data file.
+
 """
-# Several functions are borrowed from the Lasagne tutorials and docs.
-# See, e.g.: http://lasagne.readthedocs.org/en/latest/user/tutorial.html
-#
-# Several functions and snippets probably inherit from the Theano docs as
-# well. See, e.g.: http://deeplearning.net/tutorial/
-#
 from __future__ import print_function
 
 import time
@@ -33,6 +31,10 @@ from fuel.streams import DataStream
 
 
 def load_dataset(data_file):
+    """
+    See ANNMINERvA/fuel_up_convdata.py for an HDF5 builder that sets up an
+    appropriate data file.
+    """
     if os.path.exists(data_file):
         train_set = H5PYDataset(data_file, which_sets=('train',))
         valid_set = H5PYDataset(data_file, which_sets=('valid',))
@@ -44,6 +46,10 @@ def load_dataset(data_file):
 
 
 def make_scheme_and_stream(dset, batchsize, shuffle=True):
+    """
+    dset is a Fuel `DataSet` and batchsize is an int representing the number of
+    examples requested per minibatch
+    """
     if shuffle:
         print("-Preparing shuffled datastream for {} examples.".format(
             dset.num_examples))
@@ -160,16 +166,13 @@ def split_inputs_xuv(inputs):
     this every time we run...
     """
     shpvar = np.shape(inputs)
-    # print(shpvar)
     shpvar = (shpvar[0], 1, shpvar[2], shpvar[3])
-    # print(shpvar)
     inputx = inputs[:, 0, :, :]
     inputu = inputs[:, 1, :, :]
     inputv = inputs[:, 2, :, :]
     inputx = np.reshape(inputx, shpvar)
     inputu = np.reshape(inputu, shpvar)
     inputv = np.reshape(inputv, shpvar)
-    # print(np.shape(inputx))
     return inputx, inputu, inputv
 
 
@@ -231,7 +234,7 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
     test_loss = categorical_crossentropy(test_prediction, target_var) + \
         l2_penalty
     test_loss = test_loss.mean()
-    # As a bonus, also create an expression for the classification accuracy:
+    # Also create an expression for the classification accuracy:
     test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
                       dtype=theano.config.floatX)
 
