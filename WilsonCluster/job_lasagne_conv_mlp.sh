@@ -9,8 +9,8 @@
 #restore to turn off email #PBS -m n
 
 SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
-NEPOCHS=100
-LRATE=0.01
+NEPOCHS=125
+LRATE=0.005
 L2REG=0.0001
 DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
 
