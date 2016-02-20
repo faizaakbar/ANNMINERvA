@@ -77,8 +77,9 @@ def get_data_from_file(filename):
     return storedat
 
 
+# TODO: let the user pass in the base string here too
 # get all the files and organize into a dictionary by category
-filebase = re.compile(r"^skim_data.*dat$")
+filebase = re.compile(r"^nukecc_skim_data.*dat$")
 files = os.listdir('.')
 files = [f for f in files if re.match(filebase, f)]
 files = [f for f in files if re.search(filekey, f)]

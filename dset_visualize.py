@@ -17,11 +17,11 @@ if '-h' in sys.argv or '--help' in sys.argv:
 if len(sys.argv) > 1:
     max_evts = int(sys.argv[1])
 
-f = h5py.File('./skim_data_convnet.hdf5', 'r')
-valid_data = pylab.zeros(pylab.shape(f['valid/hits']), dtype='f')
-valid_labels = pylab.zeros(pylab.shape(f['valid/segments']), dtype='f')
-f['valid/hits'].read_direct(valid_data)
-f['valid/segments'].read_direct(valid_labels)
+f = h5py.File('./nukecc_convdata_fuel.hdf5', 'r')
+valid_data = pylab.zeros(pylab.shape(f['hits']), dtype='f')
+valid_labels = pylab.zeros(pylab.shape(f['segments']), dtype='f')
+f['hits'].read_direct(valid_data)
+f['segments'].read_direct(valid_labels)
 f.close()
 
 for counter, evt in enumerate(valid_data):
