@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Usage:
-    python fuel_up_convdata.py <file key> [output name - optional]
+    python fuel_up_convdata.py <file base> [output name - optional]
 
 The default output name is 'convdata_fuel.hdf5'
 """
@@ -21,11 +21,11 @@ if '-h' in sys.argv or '--help' in sys.argv:
     sys.exit(1)
 
 if len(sys.argv) < 2:
-    print('The filekey argument is mandatory.')
+    print('The filebase argument is mandatory.')
     print(__doc__)
     sys.exit(1)
 
-filekey = sys.argv[1]
+filebase = sys.argv[1]
 
 hdf5file = 'convdata_fuel.hdf5'
 if len(sys.argv) > 2:
@@ -76,13 +76,11 @@ def get_data_from_file(filename):
     print("...finished loading")
     return storedat
 
-
-# TODO: let the user pass in the base string here too
-# get all the files and organize into a dictionary by category
-filebase = re.compile(r"^nukecc_skim_data.*dat$")
+# look for "filebase"+(_learn/_valid/_test/ - zero or more times)+whatever
+filebase = re.compile(r"^%s(_learn|_test|_valid)*.*dat$" % filebase)
 files = os.listdir('.')
 files = [f for f in files if re.match(filebase, f)]
-files = [f for f in files if re.search(filekey, f)]
+print(files)
 
 if os.path.exists(hdf5file):
     os.remove(hdf5file)
@@ -120,6 +118,8 @@ for fname in files:
     f['hits'][existing_examples: total_examples] = data
     f['segments'][existing_examples: total_examples] = targs
 
+# TODO: investiage the "reference" stuff so we can pluck validation
+# and testing events evenly from the sample
 final_train_index = int(total_examples * 0.8)
 final_valid_index = int(total_examples * 0.9)
 
