@@ -9,10 +9,17 @@
 #restore to turn off email #PBS -m n
 
 SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
-NEPOCHS=125
+NEPOCHS=2
 LRATE=0.005
 L2REG=0.0001
-DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
+
+# lasagne_triamese_minerva.py style...
+# DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
+# PYTHONPROG="lasagne_triamese_minerva.py"
+
+# minerva_triamese_lasagnefuel.py style...
+DATAFILENAME="/phihome/perdue/theano/data/convdata_fuel_117200_117201.hdf5"
+PYTHONPROG="minerva_triamese_lasagnefuel.py"
 
 
 # print identifying info for this job
@@ -52,11 +59,11 @@ fi
 # /usr/local/bin/fcp -c /usr/bin/rcp tevnfsp:/home/perdue/Datasets/mnist.pkl.gz /scratch
 # ls /scratch
 
-cp /home/perdue/ANNMINERvA/Lasagne/lasagne_triamese_minerva.py ${PBS_O_WORKDIR}
+cp /home/perdue/ANNMINERvA/Lasagne/${PYTHONPROG} ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
 
 export THEANO_FLAGS=device=gpu,floatX=float32
-python lasagne_triamese_minerva.py -t \
+python ${PYTHONPROG} -t \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
@@ -64,7 +71,7 @@ python lasagne_triamese_minerva.py -t \
   -s $SAVEMODELNAME
 # nepochs and lrate don't matter for prediction, but setting them for log-file
 # homogeneity
-python lasagne_triamese_minerva.py -p \
+python ${PYTHONPROG} -p \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
