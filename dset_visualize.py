@@ -1,12 +1,21 @@
 #!/usr/bin/env python
 """
 Usage:
-    python dset_visualize.py [opt: max # of evts, def==10]
+    python dset_visualize.py [file name] [opt: max # of evts, def==10]
+
+The default file name is: "./nukecc_convdata_fuel.hdf5".
 """
 import pylab
 import sys
 import h5py
-
+# Note, one can, if one wants, when working with `Fuel`d data sets, do:
+# from fuel.datasets import H5PYDataset
+# train_set = H5PYDataset('./nukecc_convdata_fuel.hdf5', which_sets=('train',))
+# handle = train_set.open()
+# nexamp = train_set.num_examples
+# data = train_set.get_data(handle, slice(0, nexamp))
+# ...work with the data
+# train_set.close(handle)
 max_evts = 10
 evt_plotted = 0
 
@@ -14,10 +23,13 @@ if '-h' in sys.argv or '--help' in sys.argv:
     print(__doc__)
     sys.exit(1)
 
+filename = './nukecc_convdata_fuel.hdf5'
 if len(sys.argv) > 1:
-    max_evts = int(sys.argv[1])
+    filename = sys.argv[1]
+if len(sys.argv) > 2:
+    max_evts = int(sys.argv[2])
 
-f = h5py.File('./nukecc_convdata_fuel.hdf5', 'r')
+f = h5py.File(filename, 'r')
 valid_data = pylab.zeros(pylab.shape(f['hits']), dtype='f')
 valid_labels = pylab.zeros(pylab.shape(f['segments']), dtype='f')
 f['hits'].read_direct(valid_data)
