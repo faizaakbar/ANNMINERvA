@@ -3,7 +3,7 @@
 Usage:
     python dset_visualize.py [file name] [opt: max # of evts, def==10]
 
-The default file name is: "./nukecc_convdata_fuel.hdf5".
+The default file name is: "./nukecc_fuel.hdf5".
 """
 import pylab
 import sys
@@ -23,7 +23,7 @@ if '-h' in sys.argv or '--help' in sys.argv:
     print(__doc__)
     sys.exit(1)
 
-filename = './nukecc_convdata_fuel.hdf5'
+filename = './nukecc_fuel.hdf5'
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 if len(sys.argv) > 2:
