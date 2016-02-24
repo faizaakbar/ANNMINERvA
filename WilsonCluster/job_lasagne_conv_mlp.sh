@@ -9,17 +9,17 @@
 #restore to turn off email #PBS -m n
 
 SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
-NEPOCHS=150
+NEPOCHS=2
 LRATE=0.005
-L2REG=0.0005
+L2REG=0.0001
 
 # lasagne_triamese_minerva.py style...
-DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
-PYTHONPROG="lasagne_triamese_minerva.py"
+# DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
+# PYTHONPROG="lasagne_triamese_minerva.py"
 
 # minerva_triamese_lasagnefuel.py style...
-# DATAFILENAME="/phihome/perdue/theano/data/convdata_fuel_117200_117201.hdf5"
-# PYTHONPROG="minerva_triamese_lasagnefuel.py"
+DATAFILENAME="/phihome/perdue/theano/data/convdata_fuel_117200_117201.hdf5"
+PYTHONPROG="minerva_triamese_lasagnefuel.py"
 
 
 # print identifying info for this job
