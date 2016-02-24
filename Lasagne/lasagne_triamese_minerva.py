@@ -336,6 +336,14 @@ def predict(data_file=None, save_model_file='./params_file.npz',
     print("Loading data for prediction...")
     _, _, _, _, X_test, y_test = load_dataset(data_file)
 
+    # extract timestamp from model file 
+    import re
+    import time
+    tstamp = str(time.time()).split('.')[0]
+    m = re.search(r"[0-9]+", save_model_file)
+    if m:
+        tstamp = m.group(0)
+
     # Prepare Theano variables for inputs and targets
     input_var_x = T.tensor4('inputs')
     input_var_u = T.tensor4('inputs')
@@ -374,6 +382,7 @@ def predict(data_file=None, save_model_file='./params_file.npz',
     targ_numbers = [1, 2, 3, 4, 5]
     pred_target = np.array([0, 0, 0, 0, 0])
     true_target = np.array([0, 0, 0, 0, 0])
+    targs_mat = np.zeros(11 * 11).reshape(11, 11)
     for batch in iterate_minibatches(X_test, y_test, 5, shuffle=False):
         inputs, targets = batch
         inputx, inputu, inputv = split_inputs_xuv(inputs)
@@ -383,12 +392,16 @@ def predict(data_file=None, save_model_file='./params_file.npz',
             print("(prediction, true target):", pred_targ)
             print("----------------")
         for p, t in pred_targ:
+            targs_mat[t][p] += 1
             if t in targ_numbers:
                 true_target[t-1] += 1
                 if p == t:
                     pred_target[p-1] += 1
 
     acc_target = 100.0 * pred_target / true_target.astype('float32')
+    print(targs_mat)
+    perf_file = 'perfmat' + tstamp + '.npy'
+    np.save(perf_file, targs_mat)
 
     # compute and print the test error:
     test_err = 0
@@ -455,6 +468,7 @@ if __name__ == '__main__':
         print(__doc__)
 
     print("Starting...")
+    print(__file__)
     print(" Begin with saved parameters?", options.start_with_saved_params)
     print(" Saved parameters file:", options.save_model_file)
     print(" Saved parameters file exists?",
