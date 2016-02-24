@@ -430,6 +430,7 @@ if __name__ == '__main__':
         print(__doc__)
 
     print("Starting...")
+    print(__file__)
     print(" Begin with saved parameters?", options.start_with_saved_params)
     print(" Saved parameters file:", options.save_model_file)
     print(" Saved parameters file exists?",
