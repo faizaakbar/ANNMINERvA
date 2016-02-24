@@ -45,19 +45,21 @@ def load_dataset(data_file):
     return train_set, valid_set, test_set
 
 
-def make_scheme_and_stream(dset, batchsize, shuffle=True):
+def make_scheme_and_stream(dset, batchsize, msg_string, shuffle=True):
     """
     dset is a Fuel `DataSet` and batchsize is an int representing the number of
     examples requested per minibatch
     """
     if shuffle:
-        print("-Preparing shuffled datastream for {} examples.".format(
-            dset.num_examples))
+        print(msg_string +
+              " Preparing shuffled datastream for {} examples.".format(
+                  dset.num_examples))
         scheme = ShuffledScheme(examples=dset.num_examples,
                                 batch_size=batchsize)
     else:
-        print("-Preparing sequential datastream for {} examples.".format(
-            dset.num_examples))
+        print(msg_string +
+              "Preparing sequential datastream for {} examples.".format(
+                  dset.num_examples))
         scheme = SequentialScheme(examples=dset.num_examples,
                                   batch_size=batchsize)
     data_stream = DataStream(dataset=dset,
@@ -252,10 +254,10 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
                              allow_input_downcast=True)
 
     print("Starting training...")
-    print("Preparing training data:") 
-    _, train_dstream = make_scheme_and_stream(train_set, batchsize)
-    print("Preparing validation data:") 
-    _, valid_dstream = make_scheme_and_stream(valid_set, batchsize)
+    _, train_dstream = make_scheme_and_stream(train_set, batchsize,
+                                              "Preparing training data:")
+    _, valid_dstream = make_scheme_and_stream(valid_set, batchsize,
+                                              "Preparing validation data:")
 
     #
     # TODO: early stopping logic goes here...
@@ -305,6 +307,15 @@ def predict(data_file, l2_penalty_scale, save_model_file='./params_file.npz',
     print("Loading data for prediction...")
     _, _, test_set = load_dataset(data_file)
 
+    # extract timestamp from model file - assume it is the first set of numbers
+    # otherwise just use "now"
+    import re
+    import time
+    tstamp = str(time.time()).split('.')[0]
+    m = re.search(r"[0-9]+", save_model_file)
+    if m:
+        tstamp = m.group(0)
+
     # Prepare Theano variables for inputs and targets
     input_var_x = T.tensor4('inputs')
     input_var_u = T.tensor4('inputs')
@@ -347,8 +358,10 @@ def predict(data_file, l2_penalty_scale, save_model_file='./params_file.npz',
     targ_numbers = [1, 2, 3, 4, 5]
     pred_target = np.array([0, 0, 0, 0, 0])
     true_target = np.array([0, 0, 0, 0, 0])
-    print("Preparing test data:") 
-    _, test_dstream = make_scheme_and_stream(test_set, 5, shuffle=False)
+    targs_mat = np.zeros(11 * 11).reshape(11, 11)
+    _, test_dstream = make_scheme_and_stream(test_set, 5,
+                                             "Preparing test data:",
+                                             shuffle=False)
     for data in test_dstream.get_epoch_iterator():
         inputs, targets = data[0], data[1]
         inputx, inputu, inputv = split_inputs_xuv(inputs)
@@ -358,12 +371,15 @@ def predict(data_file, l2_penalty_scale, save_model_file='./params_file.npz',
             print("(prediction, true target):", pred_targ)
             print("----------------")
         for p, t in pred_targ:
+            targs_mat[t][p] += 1
             if t in targ_numbers:
                 true_target[t-1] += 1
                 if p == t:
                     pred_target[p-1] += 1
 
     acc_target = 100.0 * pred_target / true_target.astype('float32')
+    perf_file = 'perfmat' + tstamp + '.npy'
+    np.save(perf_file, targs_mat)
 
     # compute and print the test error:
     test_err = 0
