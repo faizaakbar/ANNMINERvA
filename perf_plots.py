@@ -28,7 +28,7 @@ for i, v in enumerate(zsegs):
     ax.set_autoscaley_on(False)
     ax.set_ylim([0.0, 1.0])
     ax.set_ylabel('fraction of events')
-    ax.set_title(str(v) + ':' + zdesc[v], loc='right')
+    ax.set_title('true ' + str(v) + ':' + zdesc[v], loc='right')
     ax.plot(pylab.arange(len(zsegs)), arr[v]/pylab.sum(arr[v]))
 figname = filebase + '.pdf'
 pylab.savefig(figname)
