@@ -336,7 +336,8 @@ def predict(data_file=None, save_model_file='./params_file.npz',
     print("Loading data for prediction...")
     _, _, _, _, X_test, y_test = load_dataset(data_file)
 
-    # extract timestamp from model file 
+    # extract timestamp from model file - assume it is the first set of numbers
+    # otherwise just use "now"
     import re
     import time
     tstamp = str(time.time()).split('.')[0]
@@ -399,7 +400,6 @@ def predict(data_file=None, save_model_file='./params_file.npz',
                     pred_target[p-1] += 1
 
     acc_target = 100.0 * pred_target / true_target.astype('float32')
-    print(targs_mat)
     perf_file = 'perfmat' + tstamp + '.npy'
     np.save(perf_file, targs_mat)
 
