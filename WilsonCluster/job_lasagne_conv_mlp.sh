@@ -9,8 +9,8 @@
 #restore to turn off email #PBS -m n
 
 SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
-NEPOCHS=2
-LRATE=0.005
+NEPOCHS=125
+LRATE=0.0025
 L2REG=0.0001
 
 # lasagne_triamese_minerva.py style...
