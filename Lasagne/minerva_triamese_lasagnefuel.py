@@ -270,7 +270,7 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
         train_batches = 0
         start_time = time.time()
         for data in train_dstream.get_epoch_iterator():
-            inputs, targets = data[0], data[1]
+            _, inputs, targets = data[0], data[1], data[2]
             inputx, inputu, inputv = split_inputs_xuv(inputs)
             train_err += train_fn(inputx, inputu, inputv, targets)
             train_batches += 1
@@ -280,7 +280,7 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
         val_acc = 0
         val_batches = 0
         for data in valid_dstream.get_epoch_iterator():
-            inputs, targets = data[0], data[1]
+            _, inputs, targets = data[0], data[1], data[2]
             inputx, inputu, inputv = split_inputs_xuv(inputs)
             err, acc = val_fn(inputx, inputu, inputv, targets)
             val_err += err
@@ -363,7 +363,7 @@ def predict(data_file, l2_penalty_scale, save_model_file='./params_file.npz',
                                              "Preparing test data:",
                                              shuffle=False)
     for data in test_dstream.get_epoch_iterator():
-        inputs, targets = data[0], data[1]
+        _, inputs, targets = data[0], data[1], data[2]
         inputx, inputu, inputv = split_inputs_xuv(inputs)
         pred = pred_fn(inputx, inputu, inputv)
         pred_targ = zip(pred[0], targets)
@@ -386,7 +386,7 @@ def predict(data_file, l2_penalty_scale, save_model_file='./params_file.npz',
     test_acc = 0
     test_batches = 0
     for data in test_dstream.get_epoch_iterator():
-        inputs, targets = data[0], data[1]
+        _, inputs, targets = data[0], data[1], data[2]
         inputx, inputu, inputv = split_inputs_xuv(inputs)
         err, acc = val_fn(inputx, inputu, inputv, targets)
         test_err += err
