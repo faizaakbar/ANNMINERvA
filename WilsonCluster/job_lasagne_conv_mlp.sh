@@ -18,9 +18,11 @@ L2REG=0.0001
 # PYTHONPROG="lasagne_triamese_minerva.py"
 
 # minerva_triamese_lasagnefuel.py style...
-DATAFILENAME="/phihome/perdue/theano/data/convdata_fuel_117200_117201.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/nukecc_fuel_112200-112201.hdf5"
 PYTHONPROG="minerva_triamese_lasagnefuel.py"
 
+LOAD_WHOLE_DSET_IN_MEMORY=""
+LOAD_WHOLE_DSET_IN_MEMORY="-y"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
@@ -68,7 +70,7 @@ python ${PYTHONPROG} -t \
   -r $LRATE \
   -g $L2REG \
   -d $DATAFILENAME \
-  -s $SAVEMODELNAME
+  -s $SAVEMODELNAME $LOAD_WHOLE_DSET_IN_MEMORY
 # nepochs and lrate don't matter for prediction, but setting them for log-file
 # homogeneity
 python ${PYTHONPROG} -p \
@@ -76,7 +78,7 @@ python ${PYTHONPROG} -p \
   -r $LRATE \
   -g $L2REG \
   -d $DATAFILENAME \
-  -s $SAVEMODELNAME
+  -s $SAVEMODELNAME $LOAD_WHOLE_DSET_IN_MEMORY
 
 # Always use fcp to copy any large result files you want to keep back
 # to the file server before exiting your script. The /scratch area on the
