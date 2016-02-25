@@ -29,16 +29,21 @@ from fuel.schemes import ShuffledScheme
 from fuel.schemes import SequentialScheme
 from fuel.streams import DataStream
 
+from six.moves import range
 
-def load_dataset(data_file):
+
+def load_dataset(data_file, load_in_memory=False):
     """
     See ANNMINERvA/fuel_up_convdata.py for an HDF5 builder that sets up an
     appropriate data file.
     """
     if os.path.exists(data_file):
-        train_set = H5PYDataset(data_file, which_sets=('train',))
-        valid_set = H5PYDataset(data_file, which_sets=('valid',))
-        test_set = H5PYDataset(data_file, which_sets=('test',))
+        train_set = H5PYDataset(data_file, which_sets=('train',),
+                                load_in_memory=load_in_memory)
+        valid_set = H5PYDataset(data_file, which_sets=('valid',),
+                                load_in_memory=load_in_memory)
+        test_set = H5PYDataset(data_file, which_sets=('test',),
+                                load_in_memory=load_in_memory)
     else:
         raise Exception('Data file', data_file, 'not found!')
 
@@ -181,9 +186,9 @@ def split_inputs_xuv(inputs):
 def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
           l2_penalty_scale=1e-04, batchsize=500,
           data_file=None, save_model_file='./params_file.npz',
-          start_with_saved_params=False):
+          start_with_saved_params=False, load_in_memory=False):
     print("Loading data...")
-    train_set, valid_set, _ = load_dataset(data_file)
+    train_set, valid_set, _ = load_dataset(data_file, load_in_memory)
 
     # Prepare Theano variables for inputs and targets
     input_var_x = T.tensor4('inputs')
@@ -303,9 +308,9 @@ def train(num_epochs=500, learning_rate=0.01, momentum=0.9,
 
 
 def predict(data_file, l2_penalty_scale, save_model_file='./params_file.npz',
-            batchsize=500, be_verbose=False):
+            batchsize=500, load_in_memory=False, be_verbose=False):
     print("Loading data for prediction...")
-    _, _, test_set = load_dataset(data_file)
+    _, _, test_set = load_dataset(data_file, load_in_memory)
 
     # extract timestamp from model file - assume it is the first set of numbers
     # otherwise just use "now"
@@ -439,6 +444,9 @@ if __name__ == '__main__':
     parser.add_option('-l', '--load_params', dest='start_with_saved_params',
                       default=False, help='Begin training with saved pars',
                       metavar='LOAD_PARAMS', action='store_true')
+    parser.add_option('-y', '--load_in_memory', dest='load_in_memory',
+                      default=False, help='Attempt to load full dset in memory',
+                      metavar='LOAD_IN_MEMORY', action='store_true')
     (options, args) = parser.parse_args()
 
     if not options.do_train and not options.do_predict:
@@ -468,11 +476,13 @@ if __name__ == '__main__':
               batchsize=options.batchsize,
               data_file=options.dataset,
               save_model_file=options.save_model_file,
-              start_with_saved_params=options.start_with_saved_params)
+              start_with_saved_params=options.start_with_saved_params,
+              load_in_memory=options.load_in_memory)
 
     if options.do_predict:
         predict(data_file=options.dataset,
                 l2_penalty_scale=options.l2_penalty_scale,
                 save_model_file=options.save_model_file,
                 batchsize=options.batchsize,
+                load_in_memory=options.load_in_memory,
                 be_verbose=options.be_verbose)
