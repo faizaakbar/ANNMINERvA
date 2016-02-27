@@ -214,7 +214,9 @@ def train(port=55557, num_epochs=500, learning_rate=0.01, momentum=0.9,
                              allow_input_downcast=True)
 
     print("Starting training...")
-    train_dstream = ServerDataStream(('train',), port=port)
+    train_dstream = ServerDataStream(('train',),
+                                     port=port,
+                                     produces_examples=False)
 
     #
     # TODO: early stopping logic goes here...
