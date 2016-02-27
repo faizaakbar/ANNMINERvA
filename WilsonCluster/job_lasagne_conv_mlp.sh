@@ -11,7 +11,7 @@
 SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
 NEPOCHS=150
 LRATE=0.001
-L2REG=0.0001
+L2REG=0.001
 
 # lasagne_triamese_minerva.py style...
 # DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
