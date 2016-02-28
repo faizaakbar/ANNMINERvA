@@ -64,6 +64,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
         lasagne.layers.get_all_layers(network),
         get_network=False, incomings=True, outgoings=True))
     if start_with_saved_params and os.path.isfile(save_model_file):
+        print(" Loading parameters file:", save_model_file)
         with np.load(save_model_file) as f:
             param_values = [f['arr_%d' % i] for i in range(len(f.files))]
         lasagne.layers.set_all_param_values(network, param_values)
