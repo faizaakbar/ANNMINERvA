@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 
 import lasagne
 from lasagne.layers import InputLayer
@@ -11,7 +12,8 @@ from lasagne.layers import flatten
 
 
 def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
-                         imgh=50, imgw=50):
+                         imgh=50, imgw=50,
+                         convpool1dict=None, convpool2dict=None):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
@@ -21,6 +23,20 @@ def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
     l_in1_x = InputLayer(shape=tshape, input_var=input_var_x)
     l_in1_u = InputLayer(shape=tshape, input_var=input_var_u)
     l_in1_v = InputLayer(shape=tshape, input_var=input_var_v)
+
+    if convpool1dict is None:
+        convpool1dict = {}
+        convpool1dict['nfilters'] = 32
+        convpool1dict['filter_size'] = (3, 3)
+        convpool1dict['pool_size'] = (2, 2)
+    print("Convpool1 params:", convpool1dict)
+
+    if convpool2dict is None:
+        convpool2dict = {}
+        convpool2dict['nfilters'] = 32
+        convpool2dict['filter_size'] = (3, 3)
+        convpool2dict['pool_size'] = (2, 2)
+    print("Convpool2 params:", convpool2dict)
 
     def make_branch(input_layer,
                     num_filters1, filter_size1, pool_size1,
@@ -44,12 +60,27 @@ def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
             nonlinearity=lasagne.nonlinearities.rectify)
         return dense1
 
-    l_branch_x = make_branch(l_in1_x, 32, (3, 3), (2, 2),
-                             32, (3, 3), (2, 2))
-    l_branch_u = make_branch(l_in1_u, 32, (3, 3), (2, 2),
-                             32, (3, 3), (2, 2))
-    l_branch_v = make_branch(l_in1_v, 32, (3, 3), (2, 2),
-                             32, (3, 3), (2, 2))
+    l_branch_x = make_branch(l_in1_x,
+                             convpool1dict['nfilters'],
+                             convpool1dict['filter_size'],
+                             convpool1dict['pool_size'],
+                             convpool2dict['nfilters'],
+                             convpool2dict['filter_size'],
+                             convpool2dict['pool_size'])
+    l_branch_u = make_branch(l_in1_u, 
+                             convpool1dict['nfilters'],
+                             convpool1dict['filter_size'],
+                             convpool1dict['pool_size'],
+                             convpool2dict['nfilters'],
+                             convpool2dict['filter_size'],
+                             convpool2dict['pool_size'])
+    l_branch_v = make_branch(l_in1_v,
+                             convpool1dict['nfilters'],
+                             convpool1dict['filter_size'],
+                             convpool1dict['pool_size'],
+                             convpool2dict['nfilters'],
+                             convpool2dict['filter_size'],
+                             convpool2dict['pool_size'])
 
     # Concatenate the two parallel inputs
     l_concat = ConcatLayer((l_branch_x, l_branch_u, l_branch_v))
