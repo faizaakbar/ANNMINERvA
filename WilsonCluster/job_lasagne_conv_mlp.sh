@@ -62,10 +62,11 @@ fi
 # ls /scratch
 
 cp /home/perdue/ANNMINERvA/Lasagne/${PYTHONPROG} ${PBS_O_WORKDIR}
+cp /home/perdue/ANNMINERvA/Lasagne/minerva_ann_*.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
 
 export THEANO_FLAGS=device=gpu,floatX=float32
-python ${PYTHONPROG} -t \
+python ${PYTHONPROG} -l \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
@@ -73,7 +74,7 @@ python ${PYTHONPROG} -t \
   -s $SAVEMODELNAME $LOAD_WHOLE_DSET_IN_MEMORY
 # nepochs and lrate don't matter for prediction, but setting them for log-file
 # homogeneity
-python ${PYTHONPROG} -p \
+python ${PYTHONPROG} -t \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
