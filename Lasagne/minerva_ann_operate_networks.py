@@ -131,6 +131,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     # TODO: early stopping logic goes here...
     #
 
+    epoch = 0
     for epoch in range(num_epochs):
 
         # In each epoch, we do a full pass over the training data:
