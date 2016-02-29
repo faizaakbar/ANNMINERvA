@@ -22,7 +22,7 @@ if '-h' in sys.argv or '--help' in sys.argv:
     print(__doc__)
     sys.exit(1)
 
-filebase = 'nukecc_skim_data'
+filebase = 'nukecc_skim_me1Bmc'
 
 hdf5file = 'nukecc_fuel.hdf5'
 if len(sys.argv) > 1:
