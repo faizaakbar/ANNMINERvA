@@ -277,13 +277,15 @@ def categorical_test(build_cnn=None, data_file=None, l2_penalty_scale=1e-04,
 
 
 def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
-                                   learning_rate=0.01, momentum=0.9,
-                                   l2_penalty_scale=1e-04, batchsize=500,
-                                   data_file=None,
-                                   save_model_file='./params_file.npz',
-                                   start_with_saved_params=False,
-                                   load_in_memory=False,
-                                   do_validation_pass=True):
+                                    learning_rate=0.01, momentum=0.9,
+                                    l2_penalty_scale=1e-04, batchsize=500,
+                                    data_file=None,
+                                    save_model_file='./params_file.npz',
+                                    start_with_saved_params=False,
+                                    load_in_memory=False,
+                                    do_validation_pass=True,
+                                    convpooldictlist=None,
+                                    nhidden=None, dropoutp=None):
     """
     Run learning and validation for triamese networks using AdaGrad for
     learning rate evolution, nesterov momentum; read the data files in
@@ -301,7 +303,9 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
     target_var = T.ivector('targets')
 
     # Build the model
-    network = build_cnn(input_var_x, input_var_u, input_var_v)
+    network = build_cnn(input_var_x, input_var_u, input_var_v,
+                        convpooldictlist=convpooldictlist, nhidden=nhidden,
+                        dropoutp=dropoutp)
     print(network_repr.get_network_str(
         lasagne.layers.get_all_layers(network),
         get_network=False, incomings=True, outgoings=True))
@@ -441,7 +445,8 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
 def categorical_test_memdt(build_cnn=None, data_file=None,
                            l2_penalty_scale=1e-04,
                            save_model_file='./params_file.npz', batchsize=500,
-                           be_verbose=False):
+                           be_verbose=False, convpooldictlist=None,
+                           nhidden=None, dropoutp=None):
     """
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the
@@ -466,7 +471,9 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
     target_var = T.ivector('targets')
 
     # Build the model
-    network = build_cnn(input_var_x, input_var_u, input_var_v)
+    network = build_cnn(input_var_x, input_var_u, input_var_v,
+                        convpooldictlist=convpooldictlist, nhidden=nhidden,
+                        dropoutp=dropoutp)
     with np.load(save_model_file) as f:
         param_values = [f['arr_%d' % i] for i in range(len(f.files))]
     lasagne.layers.set_all_param_values(network, param_values)
