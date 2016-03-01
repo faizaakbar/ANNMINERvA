@@ -360,8 +360,8 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
     #
     # TODO: early stopping logic goes here...
     #
-    train_slices = slices_maker(train_size, slice_size=10000)
-    valid_slices = slices_maker(valid_size, slice_size=10000)
+    train_slices = slices_maker(train_size, slice_size=50000)
+    valid_slices = slices_maker(valid_size, slice_size=50000)
     print(train_slices)
 
     epoch = 0
