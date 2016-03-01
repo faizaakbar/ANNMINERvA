@@ -282,7 +282,6 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
                                     data_file=None,
                                     save_model_file='./params_file.npz',
                                     start_with_saved_params=False,
-                                    load_in_memory=False,
                                     do_validation_pass=True,
                                     convpooldictlist=None,
                                     nhidden=None, dropoutp=None):

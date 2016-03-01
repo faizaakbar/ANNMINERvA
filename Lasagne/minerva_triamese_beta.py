@@ -58,9 +58,6 @@ if __name__ == '__main__':
     parser.add_option('-p', '--load_params', dest='start_with_saved_params',
                       default=False, help='Begin training with saved pars',
                       metavar='LOAD_PARAMS', action='store_true')
-    parser.add_option('-y', '--load_in_memory', dest='load_in_memory',
-                      default=False, help='Attempt to load full dset in memory',
-                      metavar='LOAD_IN_MEMORY', action='store_true')
     (options, args) = parser.parse_args()
 
     if not options.do_learn and not options.do_test:
@@ -111,7 +108,6 @@ if __name__ == '__main__':
               data_file=options.dataset,
               save_model_file=options.save_model_file,
               start_with_saved_params=options.start_with_saved_params,
-              load_in_memory=options.load_in_memory,
               convpooldictlist=convpooldictlist)
 
     if options.do_test:
@@ -120,6 +116,5 @@ if __name__ == '__main__':
              l2_penalty_scale=options.l2_penalty_scale,
              save_model_file=options.save_model_file,
              batchsize=options.batchsize,
-             load_in_memory=options.load_in_memory,
              be_verbose=options.be_verbose,
              convpooldictlist=convpooldictlist)
