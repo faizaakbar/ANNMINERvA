@@ -16,7 +16,8 @@ from __future__ import print_function
 import os
 
 from minerva_ann_networks import build_triamese_alpha
-from minerva_ann_operate_networks import categorical_learn_and_validate
+# from minerva_ann_operate_networks import categorical_learn_and_validate
+from minerva_ann_operate_networks import categorical_learn_and_val_memdt
 from minerva_ann_operate_networks import categorical_test
 
 
@@ -83,7 +84,7 @@ if __name__ == '__main__':
     print(" Batch size:", options.batchsize)
 
     build_network_function = build_triamese_alpha
-    learn = categorical_learn_and_validate
+    learn = categorical_learn_and_val_memdt
     test = categorical_test
 
     if options.do_learn:
