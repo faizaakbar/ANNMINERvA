@@ -1,0 +1,99 @@
+PBS prologue
+Job mnv-conv-1456799232 submitted from mic.fnal.gov started Mon Feb 29 20:27:13 CST 2016 jobid 106283.tev.fnal.gov
+gpu1
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is 9fa9b881578e-dirty
+Git repo contains uncomitted changes! Please commit your changes
+before submitting a job. If you feel your changes are experimental,
+just use a feature branch.
+
+Changed files:
+Lasagne/minerva_ann_operate_networks.py
+WilsonCluster/job_lasagne_conv_mlp.sh
+
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+minerva_triamese_lasagnefuel.py
+ Begin with saved parameters? False
+ Saved parameters file: ./lminervatriamese_model1456799233.npz
+ Saved parameters file exists? False
+ Dataset: /phihome/perdue/theano/data/nukecc_fuel_me1B.hdf5
+ Dataset size: 1375177720
+ Planned number of epochs: 1
+ Learning rate: 0.001
+ Momentum: 0.9
+ L2 regularization penalty scale: 0.0001
+ Batch size: 500
+Loading data...
+ Learning sample size = 943444 examples
+ Validation sample size = 117930 examples
+Convpool1 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool2 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+
+In -->         Layer    --> Out    Description                                                  
+-------        -----    -------    -----------                                                  
+[]             0        [1]        <lasagne.layers.input.InputLayer object at 0x2b2d9e476750>   
+[0]            1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2b2d9e476850>   
+[1]            2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b2d9e476810>
+[2]            3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2b2d7aa40850>   
+[3]            4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b2d9e476890>
+[4]            5        [6]        <lasagne.layers.noise.DropoutLayer object at 0x2b2d7aa40810> 
+[5]            6        [21]       <lasagne.layers.dense.DenseLayer object at 0x2b2d7aa40ad0>   
+[]             7        [8]        <lasagne.layers.input.InputLayer object at 0x2b2d9e476790>   
+[7]            8        [9]        <lasagne.layers.conv.Conv2DLayer object at 0x2b2d7aa511d0>   
+[8]            9        [10]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b2d7aa40b50>
+[9]            10       [11]       <lasagne.layers.conv.Conv2DLayer object at 0x2b2d7aa51490>   
+[10]           11       [12]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b2d7aa51190>
+[11]           12       [13]       <lasagne.layers.noise.DropoutLayer object at 0x2b2d7aa51450> 
+[12]           13       [21]       <lasagne.layers.dense.DenseLayer object at 0x2b2d7aa51710>   
+[]             14       [15]       <lasagne.layers.input.InputLayer object at 0x2b2d9e4767d0>   
+[14]           15       [16]       <lasagne.layers.conv.Conv2DLayer object at 0x2b2d7aa51a50>   
+[15]           16       [17]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b2d7aa51790>
+[16]           17       [18]       <lasagne.layers.conv.Conv2DLayer object at 0x2b2d7aa51d10>   
+[17]           18       [19]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b2d7aa51a10>
+[18]           19       [20]       <lasagne.layers.noise.DropoutLayer object at 0x2b2d7aa51cd0> 
+[19]           20       [21]       <lasagne.layers.dense.DenseLayer object at 0x2b2d7aa51f90>   
+[6, 13, 20]    21       [22]       <lasagne.layers.merge.ConcatLayer object at 0x2b2d7aa51f50>  
+[21]           22       [23]       <lasagne.layers.noise.DropoutLayer object at 0x2b2d7aa5e310> 
+[22]           23       []         <lasagne.layers.dense.DenseLayer object at 0x2b2d7aa5e350>   
+
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        
+
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        
+Starting training...
+[(0, 50000), (50000, 100000), (100000, 150000), (150000, 200000), (200000, 250000), (250000, 300000), (300000, 350000), (350000, 400000), (400000, 450000), (450000, 500000), (500000, 550000), (550000, 600000), (600000, 650000), (650000, 700000), (700000, 750000), (750000, 800000), (800000, 850000), (850000, 900000), (900000, 943444)]
+(0, 50000)
+(50000, 100000)
+(100000, 150000)
+(150000, 200000)
+(200000, 250000)
+(250000, 300000)
+(300000, 350000)
+(350000, 400000)
+(400000, 450000)
+(450000, 500000)
+(500000, 550000)
+(550000, 600000)
+(600000, 650000)
+(650000, 700000)
+(700000, 750000)
+(750000, 800000)
+(800000, 850000)
+(850000, 900000)
+(900000, 943444)
+Epoch 1 of 1 took 170.516s
+  training loss:		0.835953
+  validation loss:		0.788158
+  validation accuracy:		76.56 %
+Finished 1 epochs.
+PBS epilogue
