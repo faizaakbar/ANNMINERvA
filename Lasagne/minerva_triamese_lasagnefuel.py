@@ -17,8 +17,9 @@ import os
 
 from minerva_ann_networks import build_triamese_alpha
 # from minerva_ann_operate_networks import categorical_learn_and_validate
+# from minerva_ann_operate_networks import categorical_test
 from minerva_ann_operate_networks import categorical_learn_and_val_memdt
-from minerva_ann_operate_networks import categorical_test
+from minerva_ann_operate_networks import categorical_test_memdt
 
 
 if __name__ == '__main__':
@@ -85,7 +86,7 @@ if __name__ == '__main__':
 
     build_network_function = build_triamese_alpha
     learn = categorical_learn_and_val_memdt
-    test = categorical_test
+    test = categorical_test_memdt
 
     if options.do_learn:
         learn(build_cnn=build_network_function,
@@ -105,5 +106,4 @@ if __name__ == '__main__':
              l2_penalty_scale=options.l2_penalty_scale,
              save_model_file=options.save_model_file,
              batchsize=options.batchsize,
-             load_in_memory=options.load_in_memory,
              be_verbose=options.be_verbose)
