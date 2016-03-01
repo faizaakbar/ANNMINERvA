@@ -16,6 +16,7 @@ momentum_match = re.compile(r"^ Momentum:")
 datasize_match = \
     re.compile(r"^Learning data size: ")
 datasize_match2 = re.compile(r"^Preparing training data: ")
+datasize_match3 = re.compile(r"^ Learning sample size =")
 epoch_match = re.compile(r"^Epoch [0-9]+ of [0-9]+ took")
 val_acc_match = re.compile(r"^  validation accuracy:")
 val_loss_match = re.compile(r"^  validation loss:")
@@ -59,6 +60,7 @@ with open(logname, 'r') as f:
         momentum_m = re.search(momentum_match, line)
         datasize_m = re.search(datasize_match, line)
         datasize2_m = re.search(datasize_match2, line)
+        datasize3_m = re.search(datasize_match3, line)
         epoch_m = re.search(epoch_match, line)
         val_acc_m = re.search(val_acc_match, line)
         val_loss_m = re.search(val_loss_match, line)
@@ -86,6 +88,11 @@ with open(logname, 'r') as f:
             img_h = int(nums_m[3])
             print("img w, h = ", img_w, ",", img_h)
         if datasize2_m and not datasize_found:
+            datasize_found = True
+            nums_m = re.findall(r"[0-9]+", line)
+            num_learn = int(nums_m[0])
+            print(num_learn)
+        if datasize3_m and not datasize_found:
             datasize_found = True
             nums_m = re.findall(r"[0-9]+", line)
             num_learn = int(nums_m[0])
