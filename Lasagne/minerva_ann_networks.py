@@ -13,7 +13,9 @@ from lasagne.layers import flatten
 
 def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
                          imgh=50, imgw=50,
-                         convpool1dict=None, convpool2dict=None):
+                         convpool1dict=None, convpool2dict=None,
+                         convpooldictlist=None, nhidden=None,
+                         dropoutp=None):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
