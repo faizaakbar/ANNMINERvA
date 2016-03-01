@@ -50,7 +50,8 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                                    do_validation_pass=True):
     """
     Run learning and validation for triamese networks using AdaGrad for
-    learning rate evolution, nesterov momentum
+    learning rate evolution, nesterov momentum. Read either the entire
+    file into memory or read each example from disk.
     """
     print("Loading data...")
     train_set, valid_set, _ = load_dataset(data_file, load_in_memory)
@@ -180,7 +181,12 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
 def categorical_test(build_cnn=None, data_file=None, l2_penalty_scale=1e-04,
                      save_model_file='./params_file.npz', batchsize=500,
                      load_in_memory=False, be_verbose=False):
-    print("Loading data for prediction...")
+    """
+    Run tests on the reserved test sample ("trainiing" examples with true
+    values to check that were not used for learning or validation); read the
+    entire data files into memory or read each example from disk.
+    """
+    print("Loading data for testing...")
     _, _, test_set = load_dataset(data_file, load_in_memory)
 
     # extract timestamp from model file - assume it is the first set of numbers
@@ -280,7 +286,8 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
                                    do_validation_pass=True):
     """
     Run learning and validation for triamese networks using AdaGrad for
-    learning rate evolution, nesterov momentum
+    learning rate evolution, nesterov momentum; read the data files in
+    chunks into memory.
     """
     print("Loading data...")
     train_size, valid_size, _ = get_dataset_sizes(data_file)
@@ -362,32 +369,38 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
     #
     train_slices = slices_maker(train_size, slice_size=50000)
     valid_slices = slices_maker(valid_size, slice_size=50000)
-    print(train_slices)
 
     epoch = 0
     for epoch in range(num_epochs):
 
+        start_time = time.time()
+        # In each epoch, we do a full pass over the training data:
         for tslice in train_slices:
 
-            print(tslice)
+            t0 = time.time()
             train_set = load_datasubset(data_file, 'train', tslice)
             _, train_dstream = make_scheme_and_stream(train_set, batchsize)
+            t1 = time.time()
+            print("  Loading slice {} took {:.3f}s.".format(
+                tslice, t1 - t0))
 
-            # In each epoch, we do a full pass over the training data:
+            t0 = time.time()
             train_err = 0
             train_batches = 0
-            start_time = time.time()
             for data in train_dstream.get_epoch_iterator():
                 _, inputs, targets = data[0], data[1], data[2]
                 inputx, inputu, inputv = split_inputs_xuv(inputs)
                 train_err += train_fn(inputx, inputu, inputv, targets)
                 train_batches += 1
+            t1 = time.time()
+            print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
 
             del train_set       # hint to garbage collector
             del train_dstream   # hint to garbage collector
 
         # And a full pass over the validation data
         if do_validation_pass:
+            t0 = time.time()
             for vslice in valid_slices:
                 valid_set = load_datasubset(data_file, 'valid', vslice)
                 _, valid_dstream = make_scheme_and_stream(valid_set, batchsize)
@@ -406,6 +419,9 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
                 del valid_set
                 del valid_dstream
 
+            t1 = time.time()
+            print("  The validation pass took {:.3f}s.".format(t1 - t0))
+
         # Dump the current network weights to file
         np.savez(save_model_file,
                  *lasagne.layers.get_all_param_values(network))
@@ -420,3 +436,111 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
                 val_acc / val_batches * 100))
 
     print("Finished {} epochs.".format(epoch + 1))
+
+
+def categorical_test_memdt(build_cnn=None, data_file=None,
+                           l2_penalty_scale=1e-04,
+                           save_model_file='./params_file.npz', batchsize=500,
+                           be_verbose=False):
+    """
+    Run tests on the reserved test sample ("trainiing" examples with true
+    values to check that were not used for learning or validation); read the
+    data files in chunks into memory.
+    """
+    print("Loading data for testing...")
+    _, _, test_size = get_dataset_sizes(data_file)
+    print(" Testing sample size = {} examples".format(test_size))
+
+    # extract timestamp from model file - assume it is the first set of numbers
+    # otherwise just use "now"
+    import re
+    tstamp = str(time.time()).split('.')[0]
+    m = re.search(r"[0-9]+", save_model_file)
+    if m:
+        tstamp = m.group(0)
+
+    # Prepare Theano variables for inputs and targets
+    input_var_x = T.tensor4('inputs')
+    input_var_u = T.tensor4('inputs')
+    input_var_v = T.tensor4('inputs')
+    target_var = T.ivector('targets')
+
+    # Build the model
+    network = build_cnn(input_var_x, input_var_u, input_var_v)
+    with np.load(save_model_file) as f:
+        param_values = [f['arr_%d' % i] for i in range(len(f.files))]
+    lasagne.layers.set_all_param_values(network, param_values)
+
+    # Create a loss expression for testing.
+    test_prediction = lasagne.layers.get_output(network, deterministic=True)
+    l2_penalty = lasagne.regularization.regularize_layer_params(
+        lasagne.layers.get_all_layers(network),
+        lasagne.regularization.l2) * l2_penalty_scale
+    test_loss = categorical_crossentropy(test_prediction, target_var) + \
+                l2_penalty
+    test_loss = test_loss.mean()
+    # Also create an expression for the classification accuracy:
+    test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
+                      dtype=theano.config.floatX)
+    # Look at the classifications
+    test_prediction_values = T.argmax(test_prediction, axis=1)
+
+    # Compile a function computing the validation loss and accuracy:
+    val_fn = theano.function([input_var_x, input_var_u, input_var_v,
+                              target_var],
+                             [test_loss, test_acc],
+                             allow_input_downcast=True)
+    # Compute the actual predictions - also instructive is to look at
+    # `test_prediction` as an output (array of softmax probabilities)
+    # (but that prints a _lot_ of stuff to screen...)
+    pred_fn = theano.function([input_var_x, input_var_u, input_var_v],
+                              [test_prediction_values],
+                              allow_input_downcast=True)
+
+    print("Starting testing...")
+    test_slices = slices_maker(test_size, slice_size=50000)
+    # compute and print the test error and...
+    test_err = 0
+    test_acc = 0
+    test_batches = 0
+    # look at some concrete predictions
+    targ_numbers = [1, 2, 3, 4, 5]
+    pred_target = np.array([0, 0, 0, 0, 0])
+    true_target = np.array([0, 0, 0, 0, 0])
+    targs_mat = np.zeros(11 * 11).reshape(11, 11)
+
+    for tslice in test_slices:
+        test_set = load_datasubset(data_file, 'test', tslice)
+        _, test_dstream = make_scheme_and_stream(test_set, 5, shuffle=False)
+        for data in test_dstream.get_epoch_iterator():
+            _, inputs, targets = data[0], data[1], data[2]
+            inputx, inputu, inputv = split_inputs_xuv(inputs)
+            err, acc = val_fn(inputx, inputu, inputv, targets)
+            test_err += err
+            test_acc += acc
+            test_batches += 1
+            pred = pred_fn(inputx, inputu, inputv)
+            pred_targ = zip(pred[0], targets)
+            if be_verbose:
+                print("(prediction, true target):", pred_targ)
+                print("----------------")
+            for p, t in pred_targ:
+                targs_mat[t][p] += 1
+                if t in targ_numbers:
+                    true_target[t-1] += 1
+                    if p == t:
+                        pred_target[p-1] += 1
+
+        del test_set
+        del test_dstream
+
+    acc_target = 100.0 * pred_target / true_target.astype('float32')
+    perf_file = 'perfmat' + tstamp + '.npy'
+    np.save(perf_file, targs_mat)
+    print("Final results:")
+    print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
+    print("  test accuracy:\t\t{:.2f} %".format(
+        test_acc / test_batches * 100))
+    for i, v in enumerate(acc_target):
+        print("   target {} accuracy:\t\t\t{:.3f} %".format(
+            (i + 1), acc_target[i]))
