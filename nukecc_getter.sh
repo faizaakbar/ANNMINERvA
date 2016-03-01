@@ -12,6 +12,7 @@ fi
 
 echo "Grabbing runs $START to $STOP..."
 
+fileroots="minosmatch_skim_me1Bmc_zsegments"
 fileroots="nukecc_skim_me1Bmc_zsegments"
 
 MINERVA_RELEASE="v10r8p8"
