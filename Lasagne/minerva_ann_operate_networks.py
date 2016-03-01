@@ -229,6 +229,10 @@ def categorical_test(build_cnn=None, data_file=None, l2_penalty_scale=1e-04,
                               [test_prediction_values],
                               allow_input_downcast=True)
 
+    # compute and print the test error and...
+    test_err = 0
+    test_acc = 0
+    test_batches = 0
     # look at some concrete predictions
     targ_numbers = [1, 2, 3, 4, 5]
     pred_target = np.array([0, 0, 0, 0, 0])
@@ -238,6 +242,10 @@ def categorical_test(build_cnn=None, data_file=None, l2_penalty_scale=1e-04,
     for data in test_dstream.get_epoch_iterator():
         _, inputs, targets = data[0], data[1], data[2]
         inputx, inputu, inputv = split_inputs_xuv(inputs)
+        err, acc = val_fn(inputx, inputu, inputv, targets)
+        test_err += err
+        test_acc += acc
+        test_batches += 1
         pred = pred_fn(inputx, inputu, inputv)
         pred_targ = zip(pred[0], targets)
         if be_verbose:
@@ -253,18 +261,6 @@ def categorical_test(build_cnn=None, data_file=None, l2_penalty_scale=1e-04,
     acc_target = 100.0 * pred_target / true_target.astype('float32')
     perf_file = 'perfmat' + tstamp + '.npy'
     np.save(perf_file, targs_mat)
-
-    # compute and print the test error:
-    test_err = 0
-    test_acc = 0
-    test_batches = 0
-    for data in test_dstream.get_epoch_iterator():
-        _, inputs, targets = data[0], data[1], data[2]
-        inputx, inputu, inputv = split_inputs_xuv(inputs)
-        err, acc = val_fn(inputx, inputu, inputv, targets)
-        test_err += err
-        test_acc += acc
-        test_batches += 1
     print("Final results:")
     print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
     print("  test accuracy:\t\t{:.2f} %".format(
