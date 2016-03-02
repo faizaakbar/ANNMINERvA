@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # assume 50x50 images
     convpooldictlist = []
     convpool1dict = {}
-    convpool1dict['nfilters'] = 48
+    convpool1dict['nfilters'] = 64
     convpool1dict['filter_size'] = (5, 5)
     convpool1dict['pool_size'] = (2, 2)
     convpooldictlist.append(convpool1dict)
@@ -97,12 +97,6 @@ if __name__ == '__main__':
     convpool2dict['pool_size'] = (2, 2)
     convpooldictlist.append(convpool2dict)
     # after 4x4 filters -> 20x20 image, then maxpool -> 10x10
-    convpool3dict = {}
-    convpool3dict['nfilters'] = 16
-    convpool3dict['filter_size'] = (3, 3)
-    convpool3dict['pool_size'] = (2, 2)
-    convpooldictlist.append(convpool3dict)
-    # after 3x3 filters -> 8x8 image, then maxpool -> 4x4
 
     if options.do_learn:
         learn(build_cnn=build_network_function,
