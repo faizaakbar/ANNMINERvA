@@ -12,7 +12,7 @@
 # PYTHONPROG="minerva_triamese_lasagnefuel.py"
 
 NEPOCHS=1
-NEPOCHS=20
+NEPOCHS=30
 LRATE=0.005
 L2REG=0.0001
 
