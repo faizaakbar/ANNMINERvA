@@ -215,7 +215,7 @@ def categorical_test(build_cnn=None, data_file=None, l2_penalty_scale=1e-04,
         lasagne.layers.get_all_layers(network),
         lasagne.regularization.l2) * l2_penalty_scale
     test_loss = categorical_crossentropy(test_prediction, target_var) + \
-                l2_penalty
+        l2_penalty
     test_loss = test_loss.mean()
     # Also create an expression for the classification accuracy:
     test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),
@@ -437,6 +437,7 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
             print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
             print("  validation accuracy:\t\t{:.2f} %".format(
                 val_acc / val_batches * 100))
+            print("---")
 
     print("Finished {} epochs.".format(epoch + 1))
 
@@ -483,7 +484,7 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
         lasagne.layers.get_all_layers(network),
         lasagne.regularization.l2) * l2_penalty_scale
     test_loss = categorical_crossentropy(test_prediction, target_var) + \
-                l2_penalty
+        l2_penalty
     test_loss = test_loss.mean()
     # Also create an expression for the classification accuracy:
     test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), target_var),

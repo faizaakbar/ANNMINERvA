@@ -47,14 +47,14 @@ def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
         see: http://lasagne.readthedocs.org/en/latest/modules/layers.html
         """
         convlayer1 = Conv2DLayer(input_layer, num_filters=num_filters1,
-                                filter_size=filter_size1,
-                                nonlinearity=lasagne.nonlinearities.rectify,
-                                W=lasagne.init.GlorotUniform())
+                                 filter_size=filter_size1,
+                                 nonlinearity=lasagne.nonlinearities.rectify,
+                                 W=lasagne.init.GlorotUniform())
         maxpoollayer1 = MaxPool2DLayer(convlayer1, pool_size=pool_size1)
         convlayer2 = Conv2DLayer(maxpoollayer1, num_filters=num_filters2,
-                                filter_size=filter_size1,
-                                nonlinearity=lasagne.nonlinearities.rectify,
-                                W=lasagne.init.GlorotUniform())
+                                 filter_size=filter_size1,
+                                 nonlinearity=lasagne.nonlinearities.rectify,
+                                 W=lasagne.init.GlorotUniform())
         maxpoollayer2 = MaxPool2DLayer(convlayer2, pool_size=pool_size2)
         dense1 = DenseLayer(
             dropout(maxpoollayer2, p=.5),
@@ -69,7 +69,7 @@ def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
                              convpool2dict['nfilters'],
                              convpool2dict['filter_size'],
                              convpool2dict['pool_size'])
-    l_branch_u = make_branch(l_in1_u, 
+    l_branch_u = make_branch(l_in1_u,
                              convpool1dict['nfilters'],
                              convpool1dict['filter_size'],
                              convpool1dict['pool_size'],
@@ -122,7 +122,7 @@ def build_inception_module(name, input_layer, nfilters):
         net['5x5'],
         net['pool_proj'],
     ])
-    
+
     return {'{}/{}'.format(name, k): v for k, v in net.items()}
 
 
@@ -248,9 +248,15 @@ def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
                                  net['dense-u'],
                                  net['dense-v']))
 
+    # One more dense layer
+    net['dense-across'] = DenseLayer(
+        dropout(net['concat'], p=dropoutp),
+        num_units=(nhidden // 2),
+        nonlinearity=lasagne.nonlinearities.rectify)
+
     # And, finally, the 11-unit output layer with 50% dropout on its inputs:
     net['output_prob'] = DenseLayer(
-        dropout(net['concat'], p=.5),
+        dropout(net['dense-across'], p=dropoutp),
         num_units=11,
         nonlinearity=lasagne.nonlinearities.softmax)
 
