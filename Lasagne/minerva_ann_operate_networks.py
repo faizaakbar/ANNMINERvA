@@ -502,6 +502,9 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
     pred_fn = theano.function([input_var_x, input_var_u, input_var_v],
                               [test_prediction_values],
                               allow_input_downcast=True)
+    probs_fn = theano.function([input_var_x, input_var_u, input_var_v],
+                               [test_prediction],
+                               allow_input_downcast=True)
 
     print("Starting testing...")
     test_slices = slices_maker(test_size, slice_size=50000)
@@ -515,9 +518,14 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
     true_target = np.array([0, 0, 0, 0, 0])
     targs_mat = np.zeros(11 * 11).reshape(11, 11)
 
+    step_size = 5
+    if be_verbose:
+        step_size = 1
+
     for tslice in test_slices:
         test_set = load_datasubset(data_file, 'test', tslice)
-        _, test_dstream = make_scheme_and_stream(test_set, 5, shuffle=False)
+        _, test_dstream = make_scheme_and_stream(test_set, step_size,
+                                                 shuffle=False)
         for data in test_dstream.get_epoch_iterator():
             _, inputs, targets = data[0], data[1], data[2]
             inputx, inputu, inputv = split_inputs_xuv(inputs)
@@ -526,9 +534,10 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
             test_acc += acc
             test_batches += 1
             pred = pred_fn(inputx, inputu, inputv)
+            probs = probs_fn(inputx, inputu, inputv)
             pred_targ = zip(pred[0], targets)
             if be_verbose:
-                print("(prediction, true target):", pred_targ)
+                print("(prediction, true target):", pred_targ, probs)
                 print("----------------")
             for p, t in pred_targ:
                 targs_mat[t][p] += 1
