@@ -8,21 +8,28 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
-NEPOCHS=150
-LRATE=0.001
-L2REG=0.001
+# SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
+# PYTHONPROG="minerva_triamese_lasagnefuel.py"
 
-# lasagne_triamese_minerva.py style...
-# DATAFILENAME="/phihome/perdue/theano/data/skim_data_convnet.hdf5"
-# PYTHONPROG="lasagne_triamese_minerva.py"
+NEPOCHS=1
+NEPOCHS=20
+LRATE=0.005
+L2REG=0.0001
 
 # minerva_triamese_lasagnefuel.py style...
-DATAFILENAME="/phihome/perdue/theano/data/nukecc_fuel_112200-112201.hdf5"
-PYTHONPROG="minerva_triamese_lasagnefuel.py"
+DATAFILENAME="/phihome/perdue/theano/data/nukecc_fuel_me1B_subset93k.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/nukecc_fuel_me1B.hdf5"
+SAVEMODELNAME="./lminervatriamese_beta`date +%s`.npz"
+PYTHONPROG="minerva_triamese_beta.py"
 
-LOAD_WHOLE_DSET_IN_MEMORY=""
-LOAD_WHOLE_DSET_IN_MEMORY="-y"
+# obsoltete...
+# LOAD_WHOLE_DSET_IN_MEMORY="-y"
+# LOAD_WHOLE_DSET_IN_MEMORY=""
+
+# TODO: try passing this in 
+# SAVEMODELNAME="./lminervatriamese_betaBBBBB.npz"
+# START_FROM="-p -s $SAVEMODELNAME"
+START_FROM=""
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
@@ -71,7 +78,7 @@ python ${PYTHONPROG} -l \
   -r $LRATE \
   -g $L2REG \
   -d $DATAFILENAME \
-  -s $SAVEMODELNAME $LOAD_WHOLE_DSET_IN_MEMORY
+  -s $SAVEMODELNAME
 # nepochs and lrate don't matter for prediction, but setting them for log-file
 # homogeneity
 python ${PYTHONPROG} -t \
@@ -79,7 +86,7 @@ python ${PYTHONPROG} -t \
   -r $LRATE \
   -g $L2REG \
   -d $DATAFILENAME \
-  -s $SAVEMODELNAME $LOAD_WHOLE_DSET_IN_MEMORY
+  -s $SAVEMODELNAME
 
 # Always use fcp to copy any large result files you want to keep back
 # to the file server before exiting your script. The /scratch area on the
@@ -89,4 +96,5 @@ python ${PYTHONPROG} -t \
 # /usr/local/bin/fcp -c /usr/bin/rcp mlp_best_model.pkl /home/perdue
 # the pkl should just be in my launch dir...
 
+echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
