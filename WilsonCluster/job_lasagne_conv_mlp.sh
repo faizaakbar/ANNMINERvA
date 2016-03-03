@@ -12,13 +12,14 @@
 # PYTHONPROG="minerva_triamese_lasagnefuel.py"
 
 NEPOCHS=1
-NEPOCHS=30
+NEPOCHS=24
 LRATE=0.005
 L2REG=0.0001
 
 # minerva_triamese_lasagnefuel.py style...
 DATAFILENAME="/phihome/perdue/theano/data/nukecc_fuel_me1B_subset93k.hdf5"
 DATAFILENAME="/phihome/perdue/theano/data/nukecc_fuel_me1B.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5"
 SAVEMODELNAME="./lminervatriamese_beta`date +%s`.npz"
 PYTHONPROG="minerva_triamese_beta.py"
 
