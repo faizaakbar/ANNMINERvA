@@ -524,9 +524,15 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
         step_size = 1
 
     for tslice in test_slices:
+        t0 = time.time()
         test_set = load_datasubset(data_file, 'test', tslice)
         _, test_dstream = make_scheme_and_stream(test_set, step_size,
                                                  shuffle=False)
+        t1 = time.time()
+        print("  Loading slice {} took {:.3f}s.".format(
+            tslice, t1 - t0))
+
+        t0 = time.time()
         for data in test_dstream.get_epoch_iterator():
             _, inputs, targets = data[0], data[1], data[2]
             inputx, inputu, inputv = split_inputs_xuv(inputs)
@@ -546,6 +552,8 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
                     true_target[t-1] += 1
                     if p == t:
                         pred_target[p-1] += 1
+        t1 = time.time()
+        print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
 
         del test_set
         del test_dstream
