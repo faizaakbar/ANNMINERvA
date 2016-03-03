@@ -86,19 +86,19 @@ if __name__ == '__main__':
     # assume 50x50 images
     convpooldictlist = []
     convpool1dict = {}
-    convpool1dict['nfilters'] = 12
+    convpool1dict['nfilters'] = 16
     convpool1dict['filter_size'] = (5, 5)
     convpool1dict['pool_size'] = (2, 2)
     convpooldictlist.append(convpool1dict)
     # after 5x5 filters -> 46x46 image, then maxpool -> 23x23
     convpool2dict = {}
-    convpool2dict['nfilters'] = 8
+    convpool2dict['nfilters'] = 12
     convpool2dict['filter_size'] = (4, 4)
     convpool2dict['pool_size'] = (2, 2)
     convpooldictlist.append(convpool2dict)
     # after 4x4 filters -> 20x20 image, then maxpool -> 10x10
     convpool3dict = {}
-    convpool3dict['nfilters'] = 4
+    convpool3dict['nfilters'] = 8
     convpool3dict['filter_size'] = (3, 3)
     convpool3dict['pool_size'] = (2, 2)
     convpooldictlist.append(convpool3dict)
