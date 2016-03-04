@@ -8,29 +8,23 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-# SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
-# PYTHONPROG="minerva_triamese_lasagnefuel.py"
-
-NEPOCHS=1
 NEPOCHS=24
 LRATE=0.005
 L2REG=0.0001
 
 # minerva_triamese_lasagnefuel.py style...
-DATAFILENAME="/phihome/perdue/theano/data/nukecc_fuel_me1B_subset93k.hdf5"
-DATAFILENAME="/phihome/perdue/theano/data/nukecc_fuel_me1B.hdf5"
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5"
-SAVEMODELNAME="./lminervatriamese_beta`date +%s`.npz"
-PYTHONPROG="minerva_triamese_beta.py"
 
-# obsoltete...
-# LOAD_WHOLE_DSET_IN_MEMORY="-y"
-# LOAD_WHOLE_DSET_IN_MEMORY=""
+# SAVEMODELNAME="./lminervatriamese_beta`date +%s`.npz"
+# PYTHONPROG="minerva_triamese_beta.py"
+
+SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
+PYTHONPROG="minerva_triamese_lasagnefuel.py"
 
 # TODO: try passing this in 
 # SAVEMODELNAME="./lminervatriamese_betaBBBBB.npz"
 # START_FROM="-p -s $SAVEMODELNAME"
-START_FROM=""
+# START_FROM=""
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
