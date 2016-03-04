@@ -20,8 +20,13 @@ from fuel.datasets.hdf5 import H5PYDataset
 def get_data_from_file(filename, imgh, imgw):
     print("...loading data")
     targs = []
-    data = []
+    zs = []
+    planeids = []
     eventids = []
+    data = []
+    # format:
+    # 0   1   2   3   4   5   6   7
+    # seg z   pln run sub gt  slc data...
 
     with open(filename, 'r') as f:
         for line in f.readlines():
@@ -29,10 +34,12 @@ def get_data_from_file(filename, imgh, imgw):
                 continue
             elems = line.split()
             targs.append(int(elems[0]))
-            eventid = elems[1] + elems[2].zfill(4) + elems[3].zfill(4) \
-                + elems[4].zfill(2)
+            zs.append(float(elems[1]))
+            planeids.append(int(elems[2]))
+            eventid = elems[3] + elems[4].zfill(4) + elems[5].zfill(4) \
+                + elems[6].zfill(2)
             eventids.append(eventid)
-            rowdat = elems[5:]
+            rowdat = elems[7:]
             hitsX = []
             hitsU = []
             hitsV = []
@@ -54,10 +61,12 @@ def get_data_from_file(filename, imgh, imgw):
             energies = np.asarray([hitsX, hitsU, hitsV])
             data.append(energies)
 
-    targs = np.asarray(targs, dtype=np.float32)
-    eventids = np.asarray(eventids, dtype=np.int64)
+    targs = np.asarray(targs, dtype=np.uint8)
+    zs = np.asarray(zs, dtype=np.float32)
+    planeids = np.asarray(planeids, dtype=np.uint16)
+    eventids = np.asarray(eventids, dtype=np.uint64)
     data = np.asarray(data, dtype=np.float32)
-    storedat = (data, targs, eventids)
+    storedat = (data, targs, zs, planeids, eventids)
     print("...finished loading")
     return storedat
 
@@ -104,6 +113,12 @@ if __name__ == '__main__':
     target_set = f.create_dataset('segments', (0,),
                                   dtype='uint8', compression='gzip',
                                   maxshape=(None,))
+    zs_set = f.create_dataset('zs', (0,),
+                              dtype='float32', compression='gzip',
+                              maxshape=(None,))
+    plane_set = f.create_dataset('planecodes', (0,),
+                                 dtype='uint16', compression='gzip',
+                                 maxshape=(None,))
     events_set = f.create_dataset('eventids', (0,),
                                   dtype='uint64', compression='gzip',
                                   maxshape=(None,))
@@ -115,13 +130,16 @@ if __name__ == '__main__':
     data_set.dims[2].label = 'height(view-coord)'
     data_set.dims[3].label = 'width(z)'
     target_set.dims[0].label = 'z-segment'
+    zs_set.dims[0].label = 'z'
+    plane_set.dims[0].label = 'plane-id-code'
     events_set.dims[0].label = 'run+subrun+gate+slices[0]'
 
     total_examples = 0
 
     for fname in files:
         print("Iterating over file:", fname)
-        data, targs, eventids = get_data_from_file(fname, imgh, imgw)
+        data, targs, zs, planecodes, eventids = \
+            get_data_from_file(fname, imgh, imgw)
         examples_in_file = len(targs)
         print(" examples_in_file =", examples_in_file)
         existing_examples = np.shape(f['hits'])[0]
@@ -131,9 +149,13 @@ if __name__ == '__main__':
         print(" idx slice = %d:%d" % (existing_examples, total_examples))
         f['hits'].resize(total_examples, axis=0)
         f['segments'].resize(total_examples, axis=0)
+        f['zs'].resize(total_examples, axis=0)
+        f['planecodes'].resize(total_examples, axis=0)
         f['eventids'].resize(total_examples, axis=0)
         f['hits'][existing_examples: total_examples] = data
         f['segments'][existing_examples: total_examples] = targs
+        f['zs'][existing_examples: total_examples] = zs
+        f['planecodes'][existing_examples: total_examples] = planecodes
         f['eventids'][existing_examples: total_examples] = eventids
 
     # TODO: investiage the "reference" stuff so we can pluck validation
