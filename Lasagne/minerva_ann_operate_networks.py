@@ -144,7 +144,8 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
         train_batches = 0
         start_time = time.time()
         for data in train_dstream.get_epoch_iterator():
-            _, inputs, targets = data[0], data[1], data[2]
+            _, inputs, _, targets, _ = \
+                data[0], data[1], data[2], data[3], data[4]
             inputx, inputu, inputv = split_inputs_xuv(inputs)
             train_err += train_fn(inputx, inputu, inputv, targets)
             train_batches += 1
@@ -155,7 +156,8 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
             val_acc = 0
             val_batches = 0
             for data in valid_dstream.get_epoch_iterator():
-                _, inputs, targets = data[0], data[1], data[2]
+                _, inputs, _, targets, _ = \
+                    data[0], data[1], data[2], data[3], data[4]
                 inputx, inputu, inputv = split_inputs_xuv(inputs)
                 err, acc = val_fn(inputx, inputu, inputv, targets)
                 val_err += err
@@ -246,7 +248,8 @@ def categorical_test(build_cnn=None, data_file=None, l2_penalty_scale=1e-04,
     targs_mat = np.zeros(11 * 11).reshape(11, 11)
     _, test_dstream = make_scheme_and_stream(test_set, 5, shuffle=False)
     for data in test_dstream.get_epoch_iterator():
-        _, inputs, targets = data[0], data[1], data[2]
+        _, inputs, _, targets, _ = \
+            data[0], data[1], data[2], data[3], data[4]
         inputx, inputu, inputv = split_inputs_xuv(inputs)
         err, acc = val_fn(inputx, inputu, inputv, targets)
         test_err += err
@@ -386,12 +389,14 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
             t1 = time.time()
             print("  Loading slice {} took {:.3f}s.".format(
                 tslice, t1 - t0))
+            print("   dset sources:", train_set.provides_sources)
 
             t0 = time.time()
             train_err = 0
             train_batches = 0
             for data in train_dstream.get_epoch_iterator():
-                _, inputs, targets = data[0], data[1], data[2]
+                _, inputs, _, targets, _ = \
+                    data[0], data[1], data[2], data[3], data[4]
                 inputx, inputu, inputv = split_inputs_xuv(inputs)
                 train_err += train_fn(inputx, inputu, inputv, targets)
                 train_batches += 1
@@ -412,7 +417,8 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
                 val_acc = 0
                 val_batches = 0
                 for data in valid_dstream.get_epoch_iterator():
-                    _, inputs, targets = data[0], data[1], data[2]
+                    _, inputs, _, targets, _ = \
+                        data[0], data[1], data[2], data[3], data[4]
                     inputx, inputu, inputv = split_inputs_xuv(inputs)
                     err, acc = val_fn(inputx, inputu, inputv, targets)
                     val_err += err
@@ -531,10 +537,12 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
         t1 = time.time()
         print("  Loading slice {} took {:.3f}s.".format(
             tslice, t1 - t0))
+        print("   dset sources:", test_set.provides_sources)
 
         t0 = time.time()
         for data in test_dstream.get_epoch_iterator():
-            _, inputs, targets = data[0], data[1], data[2]
+            _, inputs, _, targets, _ = \
+                data[0], data[1], data[2], data[3], data[4]
             inputx, inputu, inputv = split_inputs_xuv(inputs)
             err, acc = val_fn(inputx, inputu, inputv, targets)
             test_err += err
