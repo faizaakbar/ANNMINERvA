@@ -15,6 +15,7 @@ import re
 import h5py
 
 from fuel.datasets.hdf5 import H5PYDataset
+from plane_codes import build_indexed_codes
 
 
 def get_data_from_file(filename, imgh, imgw):
@@ -24,6 +25,7 @@ def get_data_from_file(filename, imgh, imgw):
     planeids = []
     eventids = []
     data = []
+    icodes = build_indexed_codes()
     # format:
     # 0   1   2   3   4   5   6   7
     # seg z   pln run sub gt  slc data...
@@ -35,7 +37,9 @@ def get_data_from_file(filename, imgh, imgw):
             elems = line.split()
             targs.append(int(elems[0]))
             zs.append(float(elems[1]))
-            planeids.append(int(elems[2]))
+            rawid = int(elems[2])
+            planeid = icodes[rawid]
+            planeids.append(planeid)
             eventid = elems[3] + elems[4].zfill(4) + elems[5].zfill(4) \
                 + elems[6].zfill(2)
             eventids.append(eventid)
@@ -160,20 +164,26 @@ if __name__ == '__main__':
 
     # TODO: investiage the "reference" stuff so we can pluck validation
     # and testing events evenly from the sample
-    final_train_index = int(total_examples * 0.8)
-    final_valid_index = int(total_examples * 0.9)
+    final_train_index = int(total_examples * 0.83)
+    final_valid_index = int(total_examples * 0.93)
 
     split_dict = {
         'train': {'hits': (0, final_train_index),
                   'segments': (0, final_train_index),
+                  'zs': (0, final_train_index),
+                  'planecodes': (0, final_train_index),
                   'eventids': (0, final_train_index)
                   },
         'valid': {'hits': (final_train_index, final_valid_index),
                   'segments': (final_train_index, final_valid_index),
+                  'zs': (final_train_index, final_valid_index),
+                  'planecodes': (final_train_index, final_valid_index),
                   'eventids': (final_train_index, final_valid_index)
                   },
         'test': {'hits': (final_valid_index, total_examples),
                  'segments': (final_valid_index, total_examples),
+                 'zs': (final_valid_index, total_examples),
+                 'planecodes': (final_valid_index, total_examples),
                  'eventids': (final_valid_index, total_examples)
                  }
     }
