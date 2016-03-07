@@ -452,12 +452,19 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
                            l2_penalty_scale=1e-04,
                            save_model_file='./params_file.npz', batchsize=500,
                            be_verbose=False, convpooldictlist=None,
-                           nhidden=None, dropoutp=None):
+                           nhidden=None, dropoutp=None, write_db=True):
     """
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the
     data files in chunks into memory.
     """
+    metadata = None
+    try:
+        import predictiondb
+        from sqlalchemy import MetaData
+    except ImportError:
+        print("Cannot import sqlalchemy...")
+        write_db = False
     print("Loading data for testing...")
     _, _, test_size = get_dataset_sizes(data_file)
     print(" Testing sample size = {} examples".format(test_size))
@@ -469,6 +476,12 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
     m = re.search(r"[0-9]+", save_model_file)
     if m:
         tstamp = m.group(0)
+    if write_db:
+        metadata = MetaData()
+        dbname = 'prediction' + tstamp
+        eng = predictiondb.get_engine(dbname)
+        con = predictiondb.get_connection(eng)
+        tbl = predictiondb.get_active_table(metadata, eng)
 
     # Prepare Theano variables for inputs and targets
     input_var_x = T.tensor4('inputs')
@@ -525,14 +538,10 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
     true_target = np.array([0, 0, 0, 0, 0])
     targs_mat = np.zeros(11 * 11).reshape(11, 11)
 
-    step_size = 5
-    if be_verbose:
-        step_size = 1
-
     for tslice in test_slices:
         t0 = time.time()
         test_set = load_datasubset(data_file, 'test', tslice)
-        _, test_dstream = make_scheme_and_stream(test_set, step_size,
+        _, test_dstream = make_scheme_and_stream(test_set, 1,
                                                  shuffle=False)
         t1 = time.time()
         print("  Loading slice {} took {:.3f}s.".format(
@@ -541,7 +550,7 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
 
         t0 = time.time()
         for data in test_dstream.get_epoch_iterator():
-            _, inputs, _, targets, _ = \
+            eventids, inputs, _, targets, _ = \
                 data[0], data[1], data[2], data[3], data[4]
             inputx, inputu, inputv = split_inputs_xuv(inputs)
             err, acc = val_fn(inputx, inputu, inputv, targets)
@@ -550,8 +559,10 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
             test_batches += 1
             pred = pred_fn(inputx, inputu, inputv)
             pred_targ = zip(pred[0], targets)
+            probs = probs_fn(inputx, inputu, inputv)
+            if write_db:
+                filldb(tbl, con, eventids, pred, probs)
             if be_verbose:
-                probs = probs_fn(inputx, inputu, inputv)
                 print("(prediction, true target):", pred_targ, probs)
                 print("----------------")
             for p, t in pred_targ:
@@ -576,3 +587,55 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
     for i, v in enumerate(acc_target):
         print("   target {} accuracy:\t\t\t{:.3f} %".format(
             (i + 1), acc_target[i]))
+
+
+def decode_eventid(eventid):
+    """
+    assume encoding from fuel_up_nukecc.py, etc.
+    """
+    eventid = str(eventid)
+    phys_evt = eventid[-2:]
+    eventid = eventid[:-2]
+    gate = eventid[-4:]
+    eventid = eventid[:-4]
+    subrun = eventid[-4:]
+    eventid = eventid[:-4]
+    run = eventid
+    return (run, subrun, gate, phys_evt)
+
+
+def filldb(dbtable, dbconnection,
+           eventid, pred, probs, db='sqlite-zsegment_prediction'):
+    """
+    expect pred to have shape (batch, prediction) and probs to have
+    shape (batch?, ?, probability)
+    """
+    result = None
+    if db == 'sqlite-zsegment_prediction':
+        run, sub, gate, pevt = decode_eventid(eventid[0])
+        ins = dbtable.insert().values(
+            run=run,
+            subrun=sub,
+            gate=gate,
+            phys_evt=pevt,
+            segment=pred[0][0],
+            prob00=probs[0][0][0],
+            prob01=probs[0][0][1],
+            prob02=probs[0][0][2],
+            prob03=probs[0][0][3],
+            prob04=probs[0][0][4],
+            prob05=probs[0][0][5],
+            prob06=probs[0][0][6],
+            prob07=probs[0][0][7],
+            prob08=probs[0][0][8],
+            prob09=probs[0][0][9],
+            prob10=probs[0][0][10])
+        try:
+            result = dbconnection.execute(ins)
+        except:
+            import sys
+            e = sys.exc_info()[0]
+            print('db error: {}'.format(e))
+        return result
+    print('unknown database interface!')
+    return None
