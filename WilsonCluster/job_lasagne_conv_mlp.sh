@@ -8,8 +8,8 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=24
-LRATE=0.005
+NEPOCHS=12
+LRATE=0.02
 L2REG=0.0001
 
 # minerva_triamese_lasagnefuel.py style...
