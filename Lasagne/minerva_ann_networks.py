@@ -39,6 +39,7 @@ def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
         convpool2dict['filter_size'] = (3, 3)
         convpool2dict['pool_size'] = (2, 2)
     print("Convpool2 params:", convpool2dict)
+    print("Network: one dense layer per column...")
 
     def make_branch(input_layer,
                     num_filters1, filter_size1, pool_size1,
@@ -84,14 +85,16 @@ def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
                              convpool2dict['filter_size'],
                              convpool2dict['pool_size'])
 
-    # Concatenate the two parallel inputs
+    # Concatenate the parallel inputs
     l_concat = ConcatLayer((l_branch_x, l_branch_u, l_branch_v))
+    print("Network: Concat all three columns...")
 
     # And, finally, the 11-unit output layer with 50% dropout on its inputs:
     outp = DenseLayer(
         dropout(l_concat, p=.5),
         num_units=11,
         nonlinearity=lasagne.nonlinearities.softmax)
+    print("Network: Softmax classification layer.")
 
     return outp
 
@@ -203,9 +206,6 @@ def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
     if dropoutp is None:
         dropoutp = 0.5
 
-    for i, cp in enumerate(convpooldictlist):
-        print("Convpool {} params: {}".format(i, cp))
-
     def make_branch(view, input_layer, cpdictlist, nhidden=256, dropoutp=0.5):
         """
         see: http://lasagne.readthedocs.org/en/latest/modules/layers.html
@@ -215,6 +215,7 @@ def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
         mpname = ''
         for i, cpdict in enumerate(cpdictlist):
             convname = 'conv-{}-{}'.format(view, i)
+            print("Convpool {} params: {}".format(convname, cpdict))
             # the first time through, use `input`, after use the last layer
             # from the previous iteration - ah loose scoping rules...
             if i == 0:
@@ -229,11 +230,14 @@ def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
             mpname = 'maxpool-{}-{}'.format(view, i)
             net[mpname] = MaxPool2DLayer(
                 net[convname], pool_size=cpdict['pool_size'])
+            print("Convpool {}".format(mpname))
         densename = 'dense-{}'.format(view)
         net[densename] = DenseLayer(
             dropout(net[mpname], p=dropoutp),
             num_units=nhidden,
             nonlinearity=lasagne.nonlinearities.rectify)
+        print("Dense {} with nhidden = {}, dropout = {}".format(
+            densename, nhidden, dropoutp))
         return net
 
     net.update(make_branch('x', net['input-x'], convpooldictlist,
@@ -247,17 +251,22 @@ def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
     net['concat'] = ConcatLayer((net['dense-x'],
                                  net['dense-u'],
                                  net['dense-v']))
+    print("Network: concat columns...")
 
     # One more dense layer
     net['dense-across'] = DenseLayer(
         dropout(net['concat'], p=dropoutp),
         num_units=(nhidden // 2),
         nonlinearity=lasagne.nonlinearities.rectify)
+    print("Dense {} with nhidden = {}, dropout = {}".format(
+        'dense-across', nhidden // 2, dropoutp))
 
     # And, finally, the 11-unit output layer with 50% dropout on its inputs:
     net['output_prob'] = DenseLayer(
         dropout(net['dense-across'], p=dropoutp),
         num_units=11,
         nonlinearity=lasagne.nonlinearities.softmax)
+    print("Softmax output prob with n_units = {}, dropout = {}".format(
+        11, dropoutp))
 
     return net['output_prob']

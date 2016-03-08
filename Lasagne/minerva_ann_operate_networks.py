@@ -287,7 +287,8 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
                                     start_with_saved_params=False,
                                     do_validation_pass=True,
                                     convpooldictlist=None,
-                                    nhidden=None, dropoutp=None):
+                                    nhidden=None, dropoutp=None,
+                                    debug_print=False):
     """
     Run learning and validation for triamese networks using AdaGrad for
     learning rate evolution, nesterov momentum; read the data files in
@@ -389,7 +390,8 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
             t1 = time.time()
             print("  Loading slice {} took {:.3f}s.".format(
                 tslice, t1 - t0))
-            print("   dset sources:", train_set.provides_sources)
+            if debug_print:
+                print("   dset sources:", train_set.provides_sources)
 
             t0 = time.time()
             train_err = 0
@@ -452,7 +454,8 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
                            l2_penalty_scale=1e-04,
                            save_model_file='./params_file.npz', batchsize=500,
                            be_verbose=False, convpooldictlist=None,
-                           nhidden=None, dropoutp=None, write_db=True):
+                           nhidden=None, dropoutp=None, write_db=True,
+                           debug_print=False):
     """
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the
@@ -546,7 +549,8 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
         t1 = time.time()
         print("  Loading slice {} took {:.3f}s.".format(
             tslice, t1 - t0))
-        print("   dset sources:", test_set.provides_sources)
+        if debug_print:
+            print("   dset sources:", test_set.provides_sources)
 
         t0 = time.time()
         for data in test_dstream.get_epoch_iterator():
