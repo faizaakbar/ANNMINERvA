@@ -9,7 +9,6 @@
 #restore to turn off email #PBS -m n
 
 NEPOCHS=30
-NEPOCHS=1
 LRATE=0.0025
 L2REG=0.0001
 
