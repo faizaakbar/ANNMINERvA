@@ -23,7 +23,7 @@ def load_dataset(data_file, load_in_memory=False):
         valid_set = H5PYDataset(data_file, which_sets=('valid',),
                                 load_in_memory=load_in_memory)
         test_set = H5PYDataset(data_file, which_sets=('test',),
-                                load_in_memory=load_in_memory)
+                               load_in_memory=load_in_memory)
     else:
         raise Exception('Data file', data_file, 'not found!')
 
@@ -33,7 +33,8 @@ def load_dataset(data_file, load_in_memory=False):
 def make_scheme_and_stream(dset, batchsize, shuffle=True):
     """
     dset is a Fuel `DataSet` and batchsize is an int representing the number of
-    examples requested per minibatch
+    examples requested per minibatch - note assume we are always operating
+    on minibatches (although they can be size 1)
     """
     if shuffle:
         scheme = ShuffledScheme(examples=dset.num_examples,
@@ -59,7 +60,7 @@ def get_dataset_sizes(data_file):
                                 load_in_memory=False)
         valid_size = valid_set.num_examples
         test_set = H5PYDataset(data_file, which_sets=('test',),
-                                load_in_memory=False)
+                               load_in_memory=False)
         test_size = test_set.num_examples
     else:
         raise Exception('Data file', data_file, 'not found!')
@@ -97,5 +98,3 @@ def load_datasubset(data_file, subset, slice_to_load):
         raise Exception('Data file', data_file, 'not found!')
 
     return dset
-
-

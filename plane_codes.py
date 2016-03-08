@@ -90,3 +90,17 @@ def build_indexed_codes():
         indexed_codes[t[0]] = i
 
     return indexed_codes
+
+
+def build_reversed_indexed_codes():
+    """
+    use this dictionary to map an index in the classifier output to a position
+    in the detector
+    """
+    icodes = build_indexed_codes()
+    pcodes = build_planecode_dict()
+    rcodes = dict(zip(icodes.values(), icodes.keys()))
+    index_to_detector = dict()
+    for k, v in rcodes.items():
+        index_to_detector[k] = pcodes[v]
+    return index_to_detector
