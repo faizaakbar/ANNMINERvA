@@ -15,6 +15,7 @@ from lasagne.objectives import categorical_crossentropy
 
 from minerva_ann_datasets import load_dataset
 from minerva_ann_datasets import load_datasubset
+from minerva_ann_datasets import load_all_datasubsets
 from minerva_ann_datasets import get_dataset_sizes
 from minerva_ann_datasets import slices_maker
 from minerva_ann_datasets import make_scheme_and_stream
@@ -455,7 +456,7 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
                            save_model_file='./params_file.npz', batchsize=500,
                            be_verbose=False, convpooldictlist=None,
                            nhidden=None, dropoutp=None, write_db=True,
-                           debug_print=False):
+                           test_all_data=False, debug_print=False):
     """
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the
@@ -469,8 +470,11 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
         print("Cannot import sqlalchemy...")
         write_db = False
     print("Loading data for testing...")
-    _, _, test_size = get_dataset_sizes(data_file)
-    print(" Testing sample size = {} examples".format(test_size))
+    train_size, valid_size, test_size = get_dataset_sizes(data_file)
+    used_data_size = test_size
+    if test_all_data:
+        used_data_size = train_size + valid_size + test_size
+    print(" Testing sample size = {} examples".format(used_data_size))
 
     # extract timestamp from model file - assume it is the first set of numbers
     # otherwise just use "now"
@@ -530,7 +534,7 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
                                allow_input_downcast=True)
 
     print("Starting testing...")
-    test_slices = slices_maker(test_size, slice_size=50000)
+    test_slices = slices_maker(used_data_size, slice_size=50000)
     # compute and print the test error and...
     test_err = 0
     test_acc = 0
@@ -543,7 +547,11 @@ def categorical_test_memdt(build_cnn=None, data_file=None,
 
     for tslice in test_slices:
         t0 = time.time()
-        test_set = load_datasubset(data_file, 'test', tslice)
+        test_set = None
+        if test_all_data:
+            test_set = load_all_datasubsets(data_file, tslice)
+        else:
+            test_set = load_datasubset(data_file, 'test', tslice)
         _, test_dstream = make_scheme_and_stream(test_set, 1,
                                                  shuffle=False)
         t1 = time.time()

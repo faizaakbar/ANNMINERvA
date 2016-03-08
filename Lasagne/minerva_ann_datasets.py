@@ -98,3 +98,19 @@ def load_datasubset(data_file, subset, slice_to_load):
         raise Exception('Data file', data_file, 'not found!')
 
     return dset
+
+
+def load_all_datasubsets(data_file, slice_to_load):
+    """
+    Always load data in memory - get all of 'train', 'valid', and 'test'
+    subsets
+    """
+    if os.path.exists(data_file):
+        dset = H5PYDataset(data_file,
+                           which_sets=('train', 'valid', 'test'),
+                           subset=slice(slice_to_load[0], slice_to_load[1]),
+                           load_in_memory=True)
+    else:
+        raise Exception('Data file', data_file, 'not found!')
+
+    return dset
