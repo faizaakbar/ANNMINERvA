@@ -1,0 +1,1948 @@
+PBS prologue
+Job mnv-conv-1457480018 submitted from mic.fnal.gov started Tue Mar 8 17:33:39 CST 2016 jobid 106806.tev.fnal.gov
+gpu1
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is e9331f9d55cc
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+minerva_triamese_beta.py
+ Begin with saved parameters? False
+ Saved parameters file: ./lminervatriamese_beta1457480019.npz
+ Saved parameters file exists? False
+ Dataset: /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5
+ Dataset size: 2019204195
+ Planned number of epochs: 30
+ Learning rate: 0.0025
+ Momentum: 0.9
+ L2 regularization penalty scale: 0.0001
+ Batch size: 500
+Loading data...
+ Learning sample size = 1396621 examples
+ Validation sample size = 168267 examples
+Convpool conv-x-0 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-x-0
+Convpool conv-x-1 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-x-1
+Dense dense-x with nhidden = 256, dropout = 0.5
+Convpool conv-u-0 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-u-0
+Convpool conv-u-1 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-u-1
+Dense dense-u with nhidden = 256, dropout = 0.5
+Convpool conv-v-0 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-v-0
+Convpool conv-v-1 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-v-1
+Dense dense-v with nhidden = 256, dropout = 0.5
+Network: concat columns...
+Dense dense-across with nhidden = 128, dropout = 0.5
+Softmax output prob with n_units = 11, dropout = 0.5
+
+In -->         Layer    --> Out    Description                                                  
+-------        -----    -------    -----------                                                  
+[]             0        [1]        <lasagne.layers.input.InputLayer object at 0x2b6cd37b0150>   
+[0]            1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2b6cd37b0250>   
+[1]            2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b6cd37b0290>
+[2]            3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2b6cd37cc250>   
+[3]            4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b6cd37b02d0>
+[4]            5        [6]        <lasagne.layers.noise.DropoutLayer object at 0x2b6cd37b0210> 
+[5]            6        [21]       <lasagne.layers.dense.DenseLayer object at 0x2b6cd37cc510>   
+[]             7        [8]        <lasagne.layers.input.InputLayer object at 0x2b6cd37b0190>   
+[7]            8        [9]        <lasagne.layers.conv.Conv2DLayer object at 0x2b6cd37ccb50>   
+[8]            9        [10]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b6cd37ccb90>
+[9]            10       [11]       <lasagne.layers.conv.Conv2DLayer object at 0x2b6cd37ccb10>   
+[10]           11       [12]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b6cd37cce50>
+[11]           12       [13]       <lasagne.layers.noise.DropoutLayer object at 0x2b6cd37cc550> 
+[12]           13       [21]       <lasagne.layers.dense.DenseLayer object at 0x2b6cd37da150>   
+[]             14       [15]       <lasagne.layers.input.InputLayer object at 0x2b6cd37b01d0>   
+[14]           15       [16]       <lasagne.layers.conv.Conv2DLayer object at 0x2b6cd37da410>   
+[15]           16       [17]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b6cd37da450>
+[16]           17       [18]       <lasagne.layers.conv.Conv2DLayer object at 0x2b6cd37da3d0>   
+[17]           18       [19]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b6cd37da710>
+[18]           19       [20]       <lasagne.layers.noise.DropoutLayer object at 0x2b6cd37da190> 
+[19]           20       [21]       <lasagne.layers.dense.DenseLayer object at 0x2b6cd37da9d0>   
+[6, 13, 20]    21       [22]       <lasagne.layers.merge.ConcatLayer object at 0x2b6cd37daa10>  
+[21]           22       [23]       <lasagne.layers.noise.DropoutLayer object at 0x2b6cd37dac90> 
+[22]           23       [24]       <lasagne.layers.dense.DenseLayer object at 0x2b6cd37dac50>   
+[23]           24       [25]       <lasagne.layers.noise.DropoutLayer object at 0x2b6cd37dad10> 
+[24]           25       []         <lasagne.layers.dense.DenseLayer object at 0x2b6cd37daf90>   
+
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        
+
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        
+Starting training...
+  Loading slice (0, 50000) took 8.645s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (50000, 100000) took 8.631s.
+  -Iterating over the slice took 80.510s.
+  Loading slice (100000, 150000) took 8.606s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (150000, 200000) took 8.604s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (200000, 250000) took 8.582s.
+  -Iterating over the slice took 80.485s.
+  Loading slice (250000, 300000) took 8.576s.
+  -Iterating over the slice took 80.490s.
+  Loading slice (300000, 350000) took 8.587s.
+  -Iterating over the slice took 80.490s.
+  Loading slice (350000, 400000) took 8.596s.
+  -Iterating over the slice took 80.498s.
+  Loading slice (400000, 450000) took 8.583s.
+  -Iterating over the slice took 80.491s.
+  Loading slice (450000, 500000) took 8.615s.
+  -Iterating over the slice took 80.494s.
+  Loading slice (500000, 550000) took 8.569s.
+  -Iterating over the slice took 81.208s.
+  Loading slice (550000, 600000) took 8.591s.
+  -Iterating over the slice took 80.494s.
+  Loading slice (600000, 650000) took 8.683s.
+  -Iterating over the slice took 81.194s.
+  Loading slice (650000, 700000) took 8.581s.
+  -Iterating over the slice took 80.496s.
+  Loading slice (700000, 750000) took 8.613s.
+  -Iterating over the slice took 81.072s.
+  Loading slice (750000, 800000) took 8.638s.
+  -Iterating over the slice took 81.183s.
+  Loading slice (800000, 850000) took 8.627s.
+  -Iterating over the slice took 81.180s.
+  Loading slice (850000, 900000) took 8.599s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (900000, 950000) took 8.574s.
+  -Iterating over the slice took 80.501s.
+  Loading slice (950000, 1000000) took 8.592s.
+  -Iterating over the slice took 80.500s.
+  Loading slice (1000000, 1050000) took 8.599s.
+  -Iterating over the slice took 80.498s.
+  Loading slice (1050000, 1100000) took 8.583s.
+  -Iterating over the slice took 80.911s.
+  Loading slice (1100000, 1150000) took 8.613s.
+  -Iterating over the slice took 80.492s.
+  Loading slice (1150000, 1200000) took 8.574s.
+  -Iterating over the slice took 80.508s.
+  Loading slice (1200000, 1250000) took 8.588s.
+  -Iterating over the slice took 80.507s.
+  Loading slice (1250000, 1300000) took 8.607s.
+  -Iterating over the slice took 80.499s.
+  Loading slice (1300000, 1350000) took 8.588s.
+  -Iterating over the slice took 80.501s.
+  Loading slice (1350000, 1396621) took 8.026s.
+  -Iterating over the slice took 75.136s.
+  The validation pass took 140.834s.
+Epoch 1 of 30 took 2635.141s
+  training loss:		0.574061
+  validation loss:		0.509127
+  validation accuracy:		85.64 %
+---
+  Loading slice (0, 50000) took 8.572s.
+  -Iterating over the slice took 80.504s.
+  Loading slice (50000, 100000) took 8.585s.
+  -Iterating over the slice took 81.135s.
+  Loading slice (100000, 150000) took 8.578s.
+  -Iterating over the slice took 80.512s.
+  Loading slice (150000, 200000) took 8.662s.
+  -Iterating over the slice took 81.216s.
+  Loading slice (200000, 250000) took 8.604s.
+  -Iterating over the slice took 80.501s.
+  Loading slice (250000, 300000) took 8.601s.
+  -Iterating over the slice took 80.497s.
+  Loading slice (300000, 350000) took 8.608s.
+  -Iterating over the slice took 81.133s.
+  Loading slice (350000, 400000) took 8.576s.
+  -Iterating over the slice took 80.507s.
+  Loading slice (400000, 450000) took 8.582s.
+  -Iterating over the slice took 80.492s.
+  Loading slice (450000, 500000) took 8.599s.
+  -Iterating over the slice took 80.498s.
+  Loading slice (500000, 550000) took 8.586s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (550000, 600000) took 8.591s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (600000, 650000) took 8.618s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (650000, 700000) took 8.580s.
+  -Iterating over the slice took 80.509s.
+  Loading slice (700000, 750000) took 8.580s.
+  -Iterating over the slice took 80.580s.
+  Loading slice (750000, 800000) took 8.585s.
+  -Iterating over the slice took 80.504s.
+  Loading slice (800000, 850000) took 8.597s.
+  -Iterating over the slice took 80.507s.
+  Loading slice (850000, 900000) took 8.599s.
+  -Iterating over the slice took 80.495s.
+  Loading slice (900000, 950000) took 8.566s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (950000, 1000000) took 8.596s.
+  -Iterating over the slice took 80.510s.
+  Loading slice (1000000, 1050000) took 8.585s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (1050000, 1100000) took 8.587s.
+  -Iterating over the slice took 80.496s.
+  Loading slice (1100000, 1150000) took 8.616s.
+  -Iterating over the slice took 80.500s.
+  Loading slice (1150000, 1200000) took 8.577s.
+  -Iterating over the slice took 80.495s.
+  Loading slice (1200000, 1250000) took 8.578s.
+  -Iterating over the slice took 80.495s.
+  Loading slice (1250000, 1300000) took 8.612s.
+  -Iterating over the slice took 80.499s.
+  Loading slice (1300000, 1350000) took 8.577s.
+  -Iterating over the slice took 80.489s.
+  Loading slice (1350000, 1396621) took 8.017s.
+  -Iterating over the slice took 75.123s.
+  The validation pass took 140.865s.
+Epoch 2 of 30 took 2633.391s
+  training loss:		0.540274
+  validation loss:		0.477948
+  validation accuracy:		86.27 %
+---
+  Loading slice (0, 50000) took 8.570s.
+  -Iterating over the slice took 80.509s.
+  Loading slice (50000, 100000) took 8.583s.
+  -Iterating over the slice took 80.499s.
+  Loading slice (100000, 150000) took 8.591s.
+  -Iterating over the slice took 80.489s.
+  Loading slice (150000, 200000) took 8.616s.
+  -Iterating over the slice took 80.495s.
+  Loading slice (200000, 250000) took 8.595s.
+  -Iterating over the slice took 80.500s.
+  Loading slice (250000, 300000) took 8.589s.
+  -Iterating over the slice took 80.495s.
+  Loading slice (300000, 350000) took 8.585s.
+  -Iterating over the slice took 80.505s.
+  Loading slice (350000, 400000) took 8.580s.
+  -Iterating over the slice took 80.500s.
+  Loading slice (400000, 450000) took 8.583s.
+  -Iterating over the slice took 80.506s.
+  Loading slice (450000, 500000) took 8.591s.
+  -Iterating over the slice took 80.510s.
+  Loading slice (500000, 550000) took 8.582s.
+  -Iterating over the slice took 80.502s.
+  Loading slice (550000, 600000) took 8.615s.
+  -Iterating over the slice took 80.495s.
+  Loading slice (600000, 650000) took 8.613s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (650000, 700000) took 8.574s.
+  -Iterating over the slice took 81.133s.
+  Loading slice (700000, 750000) took 8.582s.
+  -Iterating over the slice took 80.956s.
+  Loading slice (750000, 800000) took 8.625s.
+  -Iterating over the slice took 81.186s.
+  Loading slice (800000, 850000) took 8.602s.
+  -Iterating over the slice took 81.175s.
+  Loading slice (850000, 900000) took 8.599s.
+  -Iterating over the slice took 80.587s.
+  Loading slice (900000, 950000) took 8.640s.
+  -Iterating over the slice took 81.171s.
+  Loading slice (950000, 1000000) took 8.592s.
+  -Iterating over the slice took 80.499s.
+  Loading slice (1000000, 1050000) took 8.608s.
+  -Iterating over the slice took 80.502s.
+  Loading slice (1050000, 1100000) took 8.578s.
+  -Iterating over the slice took 80.501s.
+  Loading slice (1100000, 1150000) took 8.657s.
+  -Iterating over the slice took 80.501s.
+  Loading slice (1150000, 1200000) took 8.571s.
+  -Iterating over the slice took 80.492s.
+  Loading slice (1200000, 1250000) took 8.573s.
+  -Iterating over the slice took 80.501s.
+  Loading slice (1250000, 1300000) took 8.606s.
+  -Iterating over the slice took 80.498s.
+  Loading slice (1300000, 1350000) took 8.577s.
+  -Iterating over the slice took 80.509s.
+  Loading slice (1350000, 1396621) took 8.025s.
+  -Iterating over the slice took 75.169s.
+  The validation pass took 140.863s.
+Epoch 3 of 30 took 2634.550s
+  training loss:		0.523826
+  validation loss:		0.464994
+  validation accuracy:		86.53 %
+---
+  Loading slice (0, 50000) took 8.607s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (50000, 100000) took 8.602s.
+  -Iterating over the slice took 80.504s.
+  Loading slice (100000, 150000) took 8.578s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (150000, 200000) took 8.600s.
+  -Iterating over the slice took 80.490s.
+  Loading slice (200000, 250000) took 8.590s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (250000, 300000) took 8.574s.
+  -Iterating over the slice took 80.499s.
+  Loading slice (300000, 350000) took 8.618s.
+  -Iterating over the slice took 80.509s.
+  Loading slice (350000, 400000) took 8.582s.
+  -Iterating over the slice took 80.500s.
+  Loading slice (400000, 450000) took 8.579s.
+  -Iterating over the slice took 80.501s.
+  Loading slice (450000, 500000) took 8.596s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (500000, 550000) took 8.575s.
+  -Iterating over the slice took 80.496s.
+  Loading slice (550000, 600000) took 8.598s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (600000, 650000) took 8.612s.
+  -Iterating over the slice took 80.501s.
+  Loading slice (650000, 700000) took 8.601s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (700000, 750000) took 8.618s.
+  -Iterating over the slice took 80.510s.
+  Loading slice (750000, 800000) took 8.599s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (800000, 850000) took 8.597s.
+  -Iterating over the slice took 80.507s.
+  Loading slice (850000, 900000) took 8.610s.
+  -Iterating over the slice took 80.516s.
+  Loading slice (900000, 950000) took 8.593s.
+  -Iterating over the slice took 80.517s.
+  Loading slice (950000, 1000000) took 8.608s.
+  -Iterating over the slice took 80.518s.
+  Loading slice (1000000, 1050000) took 8.589s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (1050000, 1100000) took 8.576s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1100000, 1150000) took 8.603s.
+  -Iterating over the slice took 80.516s.
+  Loading slice (1150000, 1200000) took 8.574s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (1200000, 1250000) took 8.572s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (1250000, 1300000) took 8.599s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1300000, 1350000) took 8.576s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (1350000, 1396621) took 8.012s.
+  -Iterating over the slice took 75.149s.
+  The validation pass took 140.871s.
+Epoch 4 of 30 took 2631.625s
+  training loss:		0.512114
+  validation loss:		0.455222
+  validation accuracy:		86.95 %
+---
+  Loading slice (0, 50000) took 8.582s.
+  -Iterating over the slice took 80.517s.
+  Loading slice (50000, 100000) took 8.587s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (100000, 150000) took 8.579s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (150000, 200000) took 8.604s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (200000, 250000) took 8.597s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (250000, 300000) took 8.597s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (300000, 350000) took 8.598s.
+  -Iterating over the slice took 80.519s.
+  Loading slice (350000, 400000) took 8.602s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (400000, 450000) took 8.581s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (450000, 500000) took 8.600s.
+  -Iterating over the slice took 80.899s.
+  Loading slice (500000, 550000) took 8.593s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (550000, 600000) took 8.643s.
+  -Iterating over the slice took 81.227s.
+  Loading slice (600000, 650000) took 8.616s.
+  -Iterating over the slice took 80.744s.
+  Loading slice (650000, 700000) took 8.590s.
+  -Iterating over the slice took 81.273s.
+  Loading slice (700000, 750000) took 8.609s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (750000, 800000) took 8.599s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (800000, 850000) took 8.588s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (850000, 900000) took 8.592s.
+  -Iterating over the slice took 81.162s.
+  Loading slice (900000, 950000) took 8.583s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (950000, 1000000) took 8.608s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (1000000, 1050000) took 8.593s.
+  -Iterating over the slice took 80.550s.
+  Loading slice (1050000, 1100000) took 8.583s.
+  -Iterating over the slice took 80.545s.
+  Loading slice (1100000, 1150000) took 8.603s.
+  -Iterating over the slice took 80.573s.
+  Loading slice (1150000, 1200000) took 8.594s.
+  -Iterating over the slice took 80.564s.
+  Loading slice (1200000, 1250000) took 8.580s.
+  -Iterating over the slice took 80.566s.
+  Loading slice (1250000, 1300000) took 8.638s.
+  -Iterating over the slice took 80.557s.
+  Loading slice (1300000, 1350000) took 8.579s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (1350000, 1396621) took 8.032s.
+  -Iterating over the slice took 75.171s.
+  The validation pass took 140.870s.
+Epoch 5 of 30 took 2635.135s
+  training loss:		0.507766
+  validation loss:		0.449140
+  validation accuracy:		87.14 %
+---
+  Loading slice (0, 50000) took 8.586s.
+  -Iterating over the slice took 80.549s.
+  Loading slice (50000, 100000) took 8.614s.
+  -Iterating over the slice took 80.551s.
+  Loading slice (100000, 150000) took 8.575s.
+  -Iterating over the slice took 80.552s.
+  Loading slice (150000, 200000) took 8.610s.
+  -Iterating over the slice took 80.552s.
+  Loading slice (200000, 250000) took 8.601s.
+  -Iterating over the slice took 80.565s.
+  Loading slice (250000, 300000) took 8.579s.
+  -Iterating over the slice took 80.570s.
+  Loading slice (300000, 350000) took 8.602s.
+  -Iterating over the slice took 80.564s.
+  Loading slice (350000, 400000) took 8.588s.
+  -Iterating over the slice took 80.558s.
+  Loading slice (400000, 450000) took 8.600s.
+  -Iterating over the slice took 80.560s.
+  Loading slice (450000, 500000) took 8.604s.
+  -Iterating over the slice took 80.555s.
+  Loading slice (500000, 550000) took 8.576s.
+  -Iterating over the slice took 80.563s.
+  Loading slice (550000, 600000) took 8.613s.
+  -Iterating over the slice took 80.558s.
+  Loading slice (600000, 650000) took 8.622s.
+  -Iterating over the slice took 80.562s.
+  Loading slice (650000, 700000) took 8.582s.
+  -Iterating over the slice took 80.568s.
+  Loading slice (700000, 750000) took 8.619s.
+  -Iterating over the slice took 80.561s.
+  Loading slice (750000, 800000) took 8.577s.
+  -Iterating over the slice took 80.553s.
+  Loading slice (800000, 850000) took 8.583s.
+  -Iterating over the slice took 80.563s.
+  Loading slice (850000, 900000) took 8.587s.
+  -Iterating over the slice took 80.552s.
+  Loading slice (900000, 950000) took 8.585s.
+  -Iterating over the slice took 80.567s.
+  Loading slice (950000, 1000000) took 8.604s.
+  -Iterating over the slice took 80.565s.
+  Loading slice (1000000, 1050000) took 8.608s.
+  -Iterating over the slice took 80.548s.
+  Loading slice (1050000, 1100000) took 8.575s.
+  -Iterating over the slice took 80.558s.
+  Loading slice (1100000, 1150000) took 8.612s.
+  -Iterating over the slice took 80.563s.
+  Loading slice (1150000, 1200000) took 8.572s.
+  -Iterating over the slice took 80.557s.
+  Loading slice (1200000, 1250000) took 8.601s.
+  -Iterating over the slice took 80.552s.
+  Loading slice (1250000, 1300000) took 8.600s.
+  -Iterating over the slice took 80.588s.
+  Loading slice (1300000, 1350000) took 8.589s.
+  -Iterating over the slice took 80.899s.
+  Loading slice (1350000, 1396621) took 8.016s.
+  -Iterating over the slice took 75.169s.
+  The validation pass took 140.879s.
+Epoch 6 of 30 took 2633.383s
+  training loss:		0.500933
+  validation loss:		0.444040
+  validation accuracy:		87.35 %
+---
+  Loading slice (0, 50000) took 8.577s.
+  -Iterating over the slice took 80.553s.
+  Loading slice (50000, 100000) took 8.593s.
+  -Iterating over the slice took 80.550s.
+  Loading slice (100000, 150000) took 8.601s.
+  -Iterating over the slice took 80.567s.
+  Loading slice (150000, 200000) took 8.595s.
+  -Iterating over the slice took 80.552s.
+  Loading slice (200000, 250000) took 8.616s.
+  -Iterating over the slice took 80.563s.
+  Loading slice (250000, 300000) took 8.587s.
+  -Iterating over the slice took 80.561s.
+  Loading slice (300000, 350000) took 8.614s.
+  -Iterating over the slice took 80.562s.
+  Loading slice (350000, 400000) took 8.583s.
+  -Iterating over the slice took 80.559s.
+  Loading slice (400000, 450000) took 8.585s.
+  -Iterating over the slice took 80.563s.
+  Loading slice (450000, 500000) took 8.611s.
+  -Iterating over the slice took 80.548s.
+  Loading slice (500000, 550000) took 8.600s.
+  -Iterating over the slice took 80.562s.
+  Loading slice (550000, 600000) took 8.591s.
+  -Iterating over the slice took 80.561s.
+  Loading slice (600000, 650000) took 8.612s.
+  -Iterating over the slice took 80.550s.
+  Loading slice (650000, 700000) took 8.586s.
+  -Iterating over the slice took 80.558s.
+  Loading slice (700000, 750000) took 8.615s.
+  -Iterating over the slice took 80.552s.
+  Loading slice (750000, 800000) took 8.576s.
+  -Iterating over the slice took 80.552s.
+  Loading slice (800000, 850000) took 8.600s.
+  -Iterating over the slice took 80.561s.
+  Loading slice (850000, 900000) took 8.594s.
+  -Iterating over the slice took 80.554s.
+  Loading slice (900000, 950000) took 8.589s.
+  -Iterating over the slice took 80.546s.
+  Loading slice (950000, 1000000) took 8.582s.
+  -Iterating over the slice took 80.546s.
+  Loading slice (1000000, 1050000) took 8.607s.
+  -Iterating over the slice took 80.550s.
+  Loading slice (1050000, 1100000) took 8.578s.
+  -Iterating over the slice took 80.547s.
+  Loading slice (1100000, 1150000) took 8.595s.
+  -Iterating over the slice took 80.546s.
+  Loading slice (1150000, 1200000) took 8.585s.
+  -Iterating over the slice took 80.544s.
+  Loading slice (1200000, 1250000) took 8.571s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1250000, 1300000) took 8.606s.
+  -Iterating over the slice took 80.549s.
+  Loading slice (1300000, 1350000) took 8.580s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (1350000, 1396621) took 8.034s.
+  -Iterating over the slice took 75.153s.
+  The validation pass took 140.905s.
+Epoch 7 of 30 took 2632.859s
+  training loss:		0.495524
+  validation loss:		0.439007
+  validation accuracy:		87.50 %
+---
+  Loading slice (0, 50000) took 8.573s.
+  -Iterating over the slice took 80.551s.
+  Loading slice (50000, 100000) took 8.599s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (100000, 150000) took 8.582s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (150000, 200000) took 8.596s.
+  -Iterating over the slice took 80.542s.
+  Loading slice (200000, 250000) took 8.595s.
+  -Iterating over the slice took 80.544s.
+  Loading slice (250000, 300000) took 8.603s.
+  -Iterating over the slice took 80.551s.
+  Loading slice (300000, 350000) took 8.608s.
+  -Iterating over the slice took 80.552s.
+  Loading slice (350000, 400000) took 8.588s.
+  -Iterating over the slice took 80.547s.
+  Loading slice (400000, 450000) took 8.598s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (450000, 500000) took 8.614s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (500000, 550000) took 8.572s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (550000, 600000) took 8.600s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (600000, 650000) took 8.613s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (650000, 700000) took 8.585s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (700000, 750000) took 8.617s.
+  -Iterating over the slice took 80.551s.
+  Loading slice (750000, 800000) took 8.599s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (800000, 850000) took 8.602s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (850000, 900000) took 8.600s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (900000, 950000) took 8.566s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (950000, 1000000) took 8.609s.
+  -Iterating over the slice took 80.562s.
+  Loading slice (1000000, 1050000) took 8.583s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (1050000, 1100000) took 8.596s.
+  -Iterating over the slice took 80.545s.
+  Loading slice (1100000, 1150000) took 8.605s.
+  -Iterating over the slice took 80.542s.
+  Loading slice (1150000, 1200000) took 8.584s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1200000, 1250000) took 8.594s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (1250000, 1300000) took 8.594s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1300000, 1350000) took 8.586s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (1350000, 1396621) took 8.017s.
+  -Iterating over the slice took 75.155s.
+  The validation pass took 140.904s.
+Epoch 8 of 30 took 2632.491s
+  training loss:		0.492105
+  validation loss:		0.437085
+  validation accuracy:		87.54 %
+---
+  Loading slice (0, 50000) took 8.570s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (50000, 100000) took 8.597s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (100000, 150000) took 8.586s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (150000, 200000) took 8.595s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (200000, 250000) took 8.588s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (250000, 300000) took 8.596s.
+  -Iterating over the slice took 80.549s.
+  Loading slice (300000, 350000) took 8.585s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (350000, 400000) took 8.599s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (400000, 450000) took 8.603s.
+  -Iterating over the slice took 80.550s.
+  Loading slice (450000, 500000) took 8.594s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (500000, 550000) took 8.580s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (550000, 600000) took 8.596s.
+  -Iterating over the slice took 80.550s.
+  Loading slice (600000, 650000) took 8.623s.
+  -Iterating over the slice took 80.545s.
+  Loading slice (650000, 700000) took 8.600s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (700000, 750000) took 8.608s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (750000, 800000) took 8.590s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (800000, 850000) took 8.598s.
+  -Iterating over the slice took 80.544s.
+  Loading slice (850000, 900000) took 8.596s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (900000, 950000) took 8.591s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (950000, 1000000) took 8.585s.
+  -Iterating over the slice took 80.546s.
+  Loading slice (1000000, 1050000) took 8.594s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1050000, 1100000) took 8.596s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1100000, 1150000) took 8.598s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1150000, 1200000) took 8.598s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1200000, 1250000) took 8.593s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1250000, 1300000) took 8.595s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1300000, 1350000) took 8.580s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (1350000, 1396621) took 8.018s.
+  -Iterating over the slice took 75.150s.
+  The validation pass took 140.879s.
+Epoch 9 of 30 took 2632.438s
+  training loss:		0.492620
+  validation loss:		0.433563
+  validation accuracy:		87.56 %
+---
+  Loading slice (0, 50000) took 8.571s.
+  -Iterating over the slice took 80.548s.
+  Loading slice (50000, 100000) took 8.621s.
+  -Iterating over the slice took 80.546s.
+  Loading slice (100000, 150000) took 8.590s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (150000, 200000) took 8.611s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (200000, 250000) took 8.599s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (250000, 300000) took 8.589s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (300000, 350000) took 8.585s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (350000, 400000) took 8.572s.
+  -Iterating over the slice took 80.556s.
+  Loading slice (400000, 450000) took 8.595s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (450000, 500000) took 8.592s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (500000, 550000) took 8.647s.
+  -Iterating over the slice took 81.214s.
+  Loading slice (550000, 600000) took 8.600s.
+  -Iterating over the slice took 80.699s.
+  Loading slice (600000, 650000) took 8.595s.
+  -Iterating over the slice took 81.141s.
+  Loading slice (650000, 700000) took 8.576s.
+  -Iterating over the slice took 81.234s.
+  Loading slice (700000, 750000) took 8.587s.
+  -Iterating over the slice took 80.546s.
+  Loading slice (750000, 800000) took 8.583s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (800000, 850000) took 8.662s.
+  -Iterating over the slice took 81.276s.
+  Loading slice (850000, 900000) took 8.592s.
+  -Iterating over the slice took 81.013s.
+  Loading slice (900000, 950000) took 8.658s.
+  -Iterating over the slice took 81.222s.
+  Loading slice (950000, 1000000) took 8.598s.
+  -Iterating over the slice took 80.854s.
+  Loading slice (1000000, 1050000) took 8.643s.
+  -Iterating over the slice took 81.186s.
+  Loading slice (1050000, 1100000) took 8.573s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (1100000, 1150000) took 8.598s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (1150000, 1200000) took 8.569s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1200000, 1250000) took 8.583s.
+  -Iterating over the slice took 80.544s.
+  Loading slice (1250000, 1300000) took 8.619s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (1300000, 1350000) took 8.584s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (1350000, 1396621) took 8.030s.
+  -Iterating over the slice took 75.146s.
+  The validation pass took 140.893s.
+Epoch 10 of 30 took 2637.487s
+  training loss:		0.489541
+  validation loss:		0.432594
+  validation accuracy:		87.67 %
+---
+  Loading slice (0, 50000) took 8.592s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (50000, 100000) took 8.593s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (100000, 150000) took 8.583s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (150000, 200000) took 8.592s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (200000, 250000) took 8.600s.
+  -Iterating over the slice took 80.542s.
+  Loading slice (250000, 300000) took 8.595s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (300000, 350000) took 8.609s.
+  -Iterating over the slice took 80.548s.
+  Loading slice (350000, 400000) took 8.587s.
+  -Iterating over the slice took 80.553s.
+  Loading slice (400000, 450000) took 8.596s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (450000, 500000) took 8.613s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (500000, 550000) took 8.578s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (550000, 600000) took 8.613s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (600000, 650000) took 8.619s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (650000, 700000) took 8.618s.
+  -Iterating over the slice took 80.542s.
+  Loading slice (700000, 750000) took 8.589s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (750000, 800000) took 8.585s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (800000, 850000) took 8.574s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (850000, 900000) took 8.611s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (900000, 950000) took 8.566s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (950000, 1000000) took 8.594s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1000000, 1050000) took 8.606s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1050000, 1100000) took 8.585s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (1100000, 1150000) took 8.614s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (1150000, 1200000) took 8.584s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (1200000, 1250000) took 8.596s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (1250000, 1300000) took 8.603s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (1300000, 1350000) took 8.567s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (1350000, 1396621) took 8.038s.
+  -Iterating over the slice took 75.153s.
+  The validation pass took 140.865s.
+Epoch 11 of 30 took 2632.192s
+  training loss:		0.484206
+  validation loss:		0.430128
+  validation accuracy:		87.73 %
+---
+  Loading slice (0, 50000) took 8.570s.
+  -Iterating over the slice took 80.841s.
+  Loading slice (50000, 100000) took 8.616s.
+  -Iterating over the slice took 80.926s.
+  Loading slice (100000, 150000) took 8.641s.
+  -Iterating over the slice took 81.257s.
+  Loading slice (150000, 200000) took 8.612s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (200000, 250000) took 8.595s.
+  -Iterating over the slice took 81.186s.
+  Loading slice (250000, 300000) took 8.567s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (300000, 350000) took 8.586s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (350000, 400000) took 8.601s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (400000, 450000) took 8.604s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (450000, 500000) took 8.604s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (500000, 550000) took 8.582s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (550000, 600000) took 8.591s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (600000, 650000) took 8.606s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (650000, 700000) took 8.599s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (700000, 750000) took 8.579s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (750000, 800000) took 8.592s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (800000, 850000) took 8.604s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (850000, 900000) took 8.601s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (900000, 950000) took 8.564s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (950000, 1000000) took 8.577s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1000000, 1050000) took 8.605s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1050000, 1100000) took 8.574s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (1100000, 1150000) took 8.621s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (1150000, 1200000) took 8.572s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (1200000, 1250000) took 8.597s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (1250000, 1300000) took 8.602s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (1300000, 1350000) took 8.577s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (1350000, 1396621) took 8.044s.
+  -Iterating over the slice took 75.149s.
+  The validation pass took 140.863s.
+Epoch 12 of 30 took 2634.444s
+  training loss:		0.482416
+  validation loss:		0.427877
+  validation accuracy:		87.75 %
+---
+  Loading slice (0, 50000) took 8.591s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (50000, 100000) took 8.621s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (100000, 150000) took 8.573s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (150000, 200000) took 8.586s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (200000, 250000) took 8.598s.
+  -Iterating over the slice took 80.550s.
+  Loading slice (250000, 300000) took 8.592s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (300000, 350000) took 8.580s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (350000, 400000) took 8.580s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (400000, 450000) took 8.583s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (450000, 500000) took 8.598s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (500000, 550000) took 8.571s.
+  -Iterating over the slice took 80.544s.
+  Loading slice (550000, 600000) took 8.596s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (600000, 650000) took 8.615s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (650000, 700000) took 8.582s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (700000, 750000) took 8.594s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (750000, 800000) took 8.596s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (800000, 850000) took 8.591s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (850000, 900000) took 8.614s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (900000, 950000) took 8.571s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (950000, 1000000) took 8.612s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (1000000, 1050000) took 8.592s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1050000, 1100000) took 8.598s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (1100000, 1150000) took 8.581s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1150000, 1200000) took 8.579s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (1200000, 1250000) took 8.566s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (1250000, 1300000) took 8.612s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1300000, 1350000) took 8.596s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (1350000, 1396621) took 8.032s.
+  -Iterating over the slice took 75.152s.
+  The validation pass took 140.895s.
+Epoch 13 of 30 took 2632.264s
+  training loss:		0.480406
+  validation loss:		0.425664
+  validation accuracy:		88.07 %
+---
+  Loading slice (0, 50000) took 8.587s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (50000, 100000) took 8.584s.
+  -Iterating over the slice took 80.544s.
+  Loading slice (100000, 150000) took 8.602s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (150000, 200000) took 8.604s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (200000, 250000) took 8.590s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (250000, 300000) took 8.569s.
+  -Iterating over the slice took 80.782s.
+  Loading slice (300000, 350000) took 8.609s.
+  -Iterating over the slice took 81.066s.
+  Loading slice (350000, 400000) took 8.647s.
+  -Iterating over the slice took 81.256s.
+  Loading slice (400000, 450000) took 8.622s.
+  -Iterating over the slice took 81.237s.
+  Loading slice (450000, 500000) took 8.601s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (500000, 550000) took 8.577s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (550000, 600000) took 8.597s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (600000, 650000) took 8.610s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (650000, 700000) took 8.572s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (700000, 750000) took 8.588s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (750000, 800000) took 8.577s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (800000, 850000) took 8.575s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (850000, 900000) took 8.609s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (900000, 950000) took 8.572s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (950000, 1000000) took 8.592s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (1000000, 1050000) took 8.610s.
+  -Iterating over the slice took 81.198s.
+  Loading slice (1050000, 1100000) took 8.573s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1100000, 1150000) took 8.608s.
+  -Iterating over the slice took 81.185s.
+  Loading slice (1150000, 1200000) took 8.569s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (1200000, 1250000) took 8.590s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (1250000, 1300000) took 8.618s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1300000, 1350000) took 8.570s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (1350000, 1396621) took 8.015s.
+  -Iterating over the slice took 75.154s.
+  The validation pass took 140.956s.
+Epoch 14 of 30 took 2635.788s
+  training loss:		0.481827
+  validation loss:		0.424992
+  validation accuracy:		87.91 %
+---
+  Loading slice (0, 50000) took 8.573s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (50000, 100000) took 8.624s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (100000, 150000) took 8.580s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (150000, 200000) took 8.601s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (200000, 250000) took 8.595s.
+  -Iterating over the slice took 80.549s.
+  Loading slice (250000, 300000) took 8.588s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (300000, 350000) took 8.590s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (350000, 400000) took 8.587s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (400000, 450000) took 8.586s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (450000, 500000) took 8.600s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (500000, 550000) took 8.570s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (550000, 600000) took 8.615s.
+  -Iterating over the slice took 80.545s.
+  Loading slice (600000, 650000) took 8.602s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (650000, 700000) took 8.613s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (700000, 750000) took 8.587s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (750000, 800000) took 8.582s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (800000, 850000) took 8.600s.
+  -Iterating over the slice took 80.518s.
+  Loading slice (850000, 900000) took 8.606s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (900000, 950000) took 8.566s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (950000, 1000000) took 8.595s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (1000000, 1050000) took 8.608s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1050000, 1100000) took 8.566s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (1100000, 1150000) took 8.612s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1150000, 1200000) took 8.599s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (1200000, 1250000) took 8.578s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (1250000, 1300000) took 8.599s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (1300000, 1350000) took 8.574s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1350000, 1396621) took 8.043s.
+  -Iterating over the slice took 75.146s.
+  The validation pass took 140.863s.
+Epoch 15 of 30 took 2632.190s
+  training loss:		0.477517
+  validation loss:		0.424561
+  validation accuracy:		87.82 %
+---
+  Loading slice (0, 50000) took 8.571s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (50000, 100000) took 8.618s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (100000, 150000) took 8.581s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (150000, 200000) took 8.597s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (200000, 250000) took 8.607s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (250000, 300000) took 8.600s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (300000, 350000) took 8.604s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (350000, 400000) took 8.574s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (400000, 450000) took 8.573s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (450000, 500000) took 8.605s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (500000, 550000) took 8.576s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (550000, 600000) took 8.590s.
+  -Iterating over the slice took 80.558s.
+  Loading slice (600000, 650000) took 8.609s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (650000, 700000) took 8.582s.
+  -Iterating over the slice took 80.548s.
+  Loading slice (700000, 750000) took 8.597s.
+  -Iterating over the slice took 80.542s.
+  Loading slice (750000, 800000) took 8.581s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (800000, 850000) took 8.592s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (850000, 900000) took 8.594s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (900000, 950000) took 8.570s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (950000, 1000000) took 8.593s.
+  -Iterating over the slice took 80.547s.
+  Loading slice (1000000, 1050000) took 8.609s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1050000, 1100000) took 8.593s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (1100000, 1150000) took 8.583s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1150000, 1200000) took 8.584s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1200000, 1250000) took 8.576s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (1250000, 1300000) took 8.613s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (1300000, 1350000) took 8.579s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (1350000, 1396621) took 8.026s.
+  -Iterating over the slice took 75.165s.
+  The validation pass took 140.901s.
+Epoch 16 of 30 took 2632.215s
+  training loss:		0.478664
+  validation loss:		0.422728
+  validation accuracy:		88.09 %
+---
+  Loading slice (0, 50000) took 8.570s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (50000, 100000) took 8.597s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (100000, 150000) took 8.582s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (150000, 200000) took 8.604s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (200000, 250000) took 8.608s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (250000, 300000) took 8.594s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (300000, 350000) took 8.580s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (350000, 400000) took 8.584s.
+  -Iterating over the slice took 80.519s.
+  Loading slice (400000, 450000) took 8.582s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (450000, 500000) took 8.595s.
+  -Iterating over the slice took 80.512s.
+  Loading slice (500000, 550000) took 8.590s.
+  -Iterating over the slice took 80.551s.
+  Loading slice (550000, 600000) took 8.590s.
+  -Iterating over the slice took 80.792s.
+  Loading slice (600000, 650000) took 8.599s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (650000, 700000) took 8.598s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (700000, 750000) took 8.576s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (750000, 800000) took 8.588s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (800000, 850000) took 8.598s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (850000, 900000) took 8.593s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (900000, 950000) took 8.574s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (950000, 1000000) took 8.585s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (1000000, 1050000) took 8.588s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1050000, 1100000) took 8.583s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1100000, 1150000) took 8.587s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1150000, 1200000) took 8.654s.
+  -Iterating over the slice took 81.244s.
+  Loading slice (1200000, 1250000) took 8.566s.
+  -Iterating over the slice took 81.242s.
+  Loading slice (1250000, 1300000) took 8.615s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1300000, 1350000) took 8.633s.
+  -Iterating over the slice took 81.264s.
+  Loading slice (1350000, 1396621) took 8.008s.
+  -Iterating over the slice took 75.476s.
+  The validation pass took 141.677s.
+Epoch 17 of 30 took 2635.609s
+  training loss:		0.476168
+  validation loss:		0.421765
+  validation accuracy:		88.00 %
+---
+  Loading slice (0, 50000) took 8.573s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (50000, 100000) took 8.588s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (100000, 150000) took 8.583s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (150000, 200000) took 8.610s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (200000, 250000) took 8.595s.
+  -Iterating over the slice took 80.569s.
+  Loading slice (250000, 300000) took 8.600s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (300000, 350000) took 8.616s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (350000, 400000) took 8.584s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (400000, 450000) took 8.580s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (450000, 500000) took 8.588s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (500000, 550000) took 8.581s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (550000, 600000) took 8.594s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (600000, 650000) took 8.597s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (650000, 700000) took 8.617s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (700000, 750000) took 8.595s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (750000, 800000) took 8.587s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (800000, 850000) took 8.585s.
+  -Iterating over the slice took 80.544s.
+  Loading slice (850000, 900000) took 8.607s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (900000, 950000) took 8.555s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (950000, 1000000) took 8.592s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1000000, 1050000) took 8.607s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (1050000, 1100000) took 8.585s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (1100000, 1150000) took 8.603s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (1150000, 1200000) took 8.574s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1200000, 1250000) took 8.567s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1250000, 1300000) took 8.611s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (1300000, 1350000) took 8.588s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1350000, 1396621) took 8.043s.
+  -Iterating over the slice took 75.164s.
+  The validation pass took 140.893s.
+Epoch 18 of 30 took 2632.179s
+  training loss:		0.472153
+  validation loss:		0.421134
+  validation accuracy:		88.01 %
+---
+  Loading slice (0, 50000) took 8.573s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (50000, 100000) took 8.617s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (100000, 150000) took 8.588s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (150000, 200000) took 8.616s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (200000, 250000) took 8.608s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (250000, 300000) took 8.598s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (300000, 350000) took 8.593s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (350000, 400000) took 8.579s.
+  -Iterating over the slice took 81.046s.
+  Loading slice (400000, 450000) took 8.599s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (450000, 500000) took 8.599s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (500000, 550000) took 8.574s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (550000, 600000) took 8.604s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (600000, 650000) took 8.636s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (650000, 700000) took 8.574s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (700000, 750000) took 8.601s.
+  -Iterating over the slice took 80.517s.
+  Loading slice (750000, 800000) took 8.580s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (800000, 850000) took 8.575s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (850000, 900000) took 8.596s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (900000, 950000) took 8.567s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (950000, 1000000) took 8.628s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (1000000, 1050000) took 8.612s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1050000, 1100000) took 8.588s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (1100000, 1150000) took 8.593s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (1150000, 1200000) took 8.595s.
+  -Iterating over the slice took 80.516s.
+  Loading slice (1200000, 1250000) took 8.601s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (1250000, 1300000) took 8.599s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1300000, 1350000) took 8.579s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1350000, 1396621) took 8.023s.
+  -Iterating over the slice took 75.148s.
+  The validation pass took 140.884s.
+Epoch 19 of 30 took 2632.737s
+  training loss:		0.474203
+  validation loss:		0.420500
+  validation accuracy:		88.05 %
+---
+  Loading slice (0, 50000) took 8.573s.
+  -Iterating over the slice took 80.547s.
+  Loading slice (50000, 100000) took 8.619s.
+  -Iterating over the slice took 80.990s.
+  Loading slice (100000, 150000) took 8.636s.
+  -Iterating over the slice took 81.200s.
+  Loading slice (150000, 200000) took 8.600s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (200000, 250000) took 8.597s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (250000, 300000) took 8.587s.
+  -Iterating over the slice took 80.519s.
+  Loading slice (300000, 350000) took 8.597s.
+  -Iterating over the slice took 80.519s.
+  Loading slice (350000, 400000) took 8.576s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (400000, 450000) took 8.594s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (450000, 500000) took 8.602s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (500000, 550000) took 8.593s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (550000, 600000) took 8.605s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (600000, 650000) took 8.603s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (650000, 700000) took 8.598s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (700000, 750000) took 8.615s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (750000, 800000) took 8.580s.
+  -Iterating over the slice took 80.547s.
+  Loading slice (800000, 850000) took 8.586s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (850000, 900000) took 8.588s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (900000, 950000) took 8.594s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (950000, 1000000) took 8.600s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1000000, 1050000) took 8.609s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1050000, 1100000) took 8.581s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (1100000, 1150000) took 8.611s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1150000, 1200000) took 8.578s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (1200000, 1250000) took 8.582s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (1250000, 1300000) took 8.611s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (1300000, 1350000) took 8.577s.
+  -Iterating over the slice took 80.547s.
+  Loading slice (1350000, 1396621) took 8.043s.
+  -Iterating over the slice took 75.172s.
+  The validation pass took 140.888s.
+Epoch 20 of 30 took 2633.437s
+  training loss:		0.474560
+  validation loss:		0.419917
+  validation accuracy:		87.97 %
+---
+  Loading slice (0, 50000) took 8.572s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (50000, 100000) took 8.621s.
+  -Iterating over the slice took 80.544s.
+  Loading slice (100000, 150000) took 8.587s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (150000, 200000) took 8.613s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (200000, 250000) took 8.600s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (250000, 300000) took 8.590s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (300000, 350000) took 8.596s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (350000, 400000) took 8.580s.
+  -Iterating over the slice took 80.547s.
+  Loading slice (400000, 450000) took 8.595s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (450000, 500000) took 8.601s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (500000, 550000) took 8.589s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (550000, 600000) took 8.624s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (600000, 650000) took 8.601s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (650000, 700000) took 8.574s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (700000, 750000) took 8.595s.
+  -Iterating over the slice took 80.554s.
+  Loading slice (750000, 800000) took 8.580s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (800000, 850000) took 8.588s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (850000, 900000) took 8.603s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (900000, 950000) took 8.591s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (950000, 1000000) took 8.596s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1000000, 1050000) took 8.593s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1050000, 1100000) took 8.585s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1100000, 1150000) took 8.591s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1150000, 1200000) took 8.582s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (1200000, 1250000) took 8.597s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1250000, 1300000) took 8.616s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1300000, 1350000) took 8.577s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (1350000, 1396621) took 8.027s.
+  -Iterating over the slice took 75.150s.
+  The validation pass took 140.901s.
+Epoch 21 of 30 took 2632.226s
+  training loss:		0.476455
+  validation loss:		0.419483
+  validation accuracy:		88.08 %
+---
+  Loading slice (0, 50000) took 8.572s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (50000, 100000) took 8.619s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (100000, 150000) took 8.573s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (150000, 200000) took 8.596s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (200000, 250000) took 8.594s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (250000, 300000) took 8.571s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (300000, 350000) took 8.596s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (350000, 400000) took 8.595s.
+  -Iterating over the slice took 80.517s.
+  Loading slice (400000, 450000) took 8.599s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (450000, 500000) took 8.616s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (500000, 550000) took 8.582s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (550000, 600000) took 8.603s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (600000, 650000) took 8.594s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (650000, 700000) took 8.584s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (700000, 750000) took 8.596s.
+  -Iterating over the slice took 80.549s.
+  Loading slice (750000, 800000) took 8.573s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (800000, 850000) took 8.629s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (850000, 900000) took 8.611s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (900000, 950000) took 8.590s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (950000, 1000000) took 8.597s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (1000000, 1050000) took 8.604s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1050000, 1100000) took 8.592s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1100000, 1150000) took 8.613s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1150000, 1200000) took 8.577s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1200000, 1250000) took 8.570s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1250000, 1300000) took 8.636s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1300000, 1350000) took 8.574s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (1350000, 1396621) took 8.019s.
+  -Iterating over the slice took 75.161s.
+  The validation pass took 140.910s.
+Epoch 22 of 30 took 2632.221s
+  training loss:		0.473993
+  validation loss:		0.418761
+  validation accuracy:		88.08 %
+---
+  Loading slice (0, 50000) took 8.565s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (50000, 100000) took 8.630s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (100000, 150000) took 8.584s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (150000, 200000) took 8.617s.
+  -Iterating over the slice took 80.519s.
+  Loading slice (200000, 250000) took 8.600s.
+  -Iterating over the slice took 80.544s.
+  Loading slice (250000, 300000) took 8.583s.
+  -Iterating over the slice took 80.517s.
+  Loading slice (300000, 350000) took 8.583s.
+  -Iterating over the slice took 80.542s.
+  Loading slice (350000, 400000) took 8.589s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (400000, 450000) took 8.579s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (450000, 500000) took 8.583s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (500000, 550000) took 8.597s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (550000, 600000) took 8.611s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (600000, 650000) took 8.596s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (650000, 700000) took 8.590s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (700000, 750000) took 8.625s.
+  -Iterating over the slice took 80.545s.
+  Loading slice (750000, 800000) took 8.580s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (800000, 850000) took 8.578s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (850000, 900000) took 8.594s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (900000, 950000) took 8.574s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (950000, 1000000) took 8.596s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1000000, 1050000) took 8.616s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (1050000, 1100000) took 8.578s.
+  -Iterating over the slice took 80.991s.
+  Loading slice (1100000, 1150000) took 8.591s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1150000, 1200000) took 8.585s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1200000, 1250000) took 8.590s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (1250000, 1300000) took 8.619s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (1300000, 1350000) took 8.575s.
+  -Iterating over the slice took 80.550s.
+  Loading slice (1350000, 1396621) took 8.037s.
+  -Iterating over the slice took 75.148s.
+  The validation pass took 140.891s.
+Epoch 23 of 30 took 2632.664s
+  training loss:		0.468408
+  validation loss:		0.418667
+  validation accuracy:		88.15 %
+---
+  Loading slice (0, 50000) took 8.574s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (50000, 100000) took 8.583s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (100000, 150000) took 8.574s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (150000, 200000) took 8.603s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (200000, 250000) took 8.603s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (250000, 300000) took 8.600s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (300000, 350000) took 8.618s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (350000, 400000) took 8.581s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (400000, 450000) took 8.584s.
+  -Iterating over the slice took 80.519s.
+  Loading slice (450000, 500000) took 8.603s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (500000, 550000) took 8.604s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (550000, 600000) took 8.596s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (600000, 650000) took 8.623s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (650000, 700000) took 8.571s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (700000, 750000) took 8.612s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (750000, 800000) took 8.579s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (800000, 850000) took 8.637s.
+  -Iterating over the slice took 81.203s.
+  Loading slice (850000, 900000) took 8.589s.
+  -Iterating over the slice took 80.805s.
+  Loading slice (900000, 950000) took 8.566s.
+  -Iterating over the slice took 80.546s.
+  Loading slice (950000, 1000000) took 8.600s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1000000, 1050000) took 8.593s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (1050000, 1100000) took 8.603s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (1100000, 1150000) took 8.599s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (1150000, 1200000) took 8.598s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (1200000, 1250000) took 8.595s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (1250000, 1300000) took 8.601s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (1300000, 1350000) took 8.577s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (1350000, 1396621) took 8.019s.
+  -Iterating over the slice took 75.143s.
+  The validation pass took 140.912s.
+Epoch 24 of 30 took 2633.108s
+  training loss:		0.473465
+  validation loss:		0.416895
+  validation accuracy:		88.20 %
+---
+  Loading slice (0, 50000) took 8.573s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (50000, 100000) took 8.602s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (100000, 150000) took 8.575s.
+  -Iterating over the slice took 80.519s.
+  Loading slice (150000, 200000) took 8.598s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (200000, 250000) took 8.630s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (250000, 300000) took 8.565s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (300000, 350000) took 8.582s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (350000, 400000) took 8.586s.
+  -Iterating over the slice took 80.516s.
+  Loading slice (400000, 450000) took 8.620s.
+  -Iterating over the slice took 80.887s.
+  Loading slice (450000, 500000) took 8.589s.
+  -Iterating over the slice took 81.185s.
+  Loading slice (500000, 550000) took 8.579s.
+  -Iterating over the slice took 81.180s.
+  Loading slice (550000, 600000) took 8.654s.
+  -Iterating over the slice took 81.268s.
+  Loading slice (600000, 650000) took 8.623s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (650000, 700000) took 8.597s.
+  -Iterating over the slice took 81.091s.
+  Loading slice (700000, 750000) took 8.607s.
+  -Iterating over the slice took 81.162s.
+  Loading slice (750000, 800000) took 8.574s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (800000, 850000) took 8.591s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (850000, 900000) took 8.610s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (900000, 950000) took 8.564s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (950000, 1000000) took 8.595s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (1000000, 1050000) took 8.610s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1050000, 1100000) took 8.586s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1100000, 1150000) took 8.605s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1150000, 1200000) took 8.577s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (1200000, 1250000) took 8.589s.
+  -Iterating over the slice took 80.515s.
+  Loading slice (1250000, 1300000) took 8.593s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (1300000, 1350000) took 8.574s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (1350000, 1396621) took 8.038s.
+  -Iterating over the slice took 75.160s.
+  The validation pass took 140.873s.
+Epoch 25 of 30 took 2635.744s
+  training loss:		0.472921
+  validation loss:		0.416167
+  validation accuracy:		88.25 %
+---
+  Loading slice (0, 50000) took 8.570s.
+  -Iterating over the slice took 80.514s.
+  Loading slice (50000, 100000) took 8.598s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (100000, 150000) took 8.578s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (150000, 200000) took 8.616s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (200000, 250000) took 8.595s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (250000, 300000) took 8.582s.
+  -Iterating over the slice took 80.583s.
+  Loading slice (300000, 350000) took 8.597s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (350000, 400000) took 8.576s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (400000, 450000) took 8.597s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (450000, 500000) took 8.608s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (500000, 550000) took 8.577s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (550000, 600000) took 8.647s.
+  -Iterating over the slice took 81.220s.
+  Loading slice (600000, 650000) took 8.615s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (650000, 700000) took 8.582s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (700000, 750000) took 8.601s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (750000, 800000) took 8.625s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (800000, 850000) took 8.607s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (850000, 900000) took 8.599s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (900000, 950000) took 8.574s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (950000, 1000000) took 8.602s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (1000000, 1050000) took 8.582s.
+  -Iterating over the slice took 80.542s.
+  Loading slice (1050000, 1100000) took 8.581s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (1100000, 1150000) took 8.638s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1150000, 1200000) took 8.589s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (1200000, 1250000) took 8.573s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (1250000, 1300000) took 8.615s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (1300000, 1350000) took 8.595s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (1350000, 1396621) took 8.032s.
+  -Iterating over the slice took 75.146s.
+  The validation pass took 140.853s.
+Epoch 26 of 30 took 2632.914s
+  training loss:		0.469098
+  validation loss:		0.416650
+  validation accuracy:		88.21 %
+---
+  Loading slice (0, 50000) took 8.603s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (50000, 100000) took 8.614s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (100000, 150000) took 8.582s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (150000, 200000) took 8.617s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (200000, 250000) took 8.592s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (250000, 300000) took 8.591s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (300000, 350000) took 8.599s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (350000, 400000) took 8.611s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (400000, 450000) took 8.582s.
+  -Iterating over the slice took 81.087s.
+  Loading slice (450000, 500000) took 8.581s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (500000, 550000) took 8.602s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (550000, 600000) took 8.619s.
+  -Iterating over the slice took 80.734s.
+  Loading slice (600000, 650000) took 8.618s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (650000, 700000) took 8.576s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (700000, 750000) took 8.593s.
+  -Iterating over the slice took 80.546s.
+  Loading slice (750000, 800000) took 8.578s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (800000, 850000) took 8.599s.
+  -Iterating over the slice took 80.739s.
+  Loading slice (850000, 900000) took 8.615s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (900000, 950000) took 8.569s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (950000, 1000000) took 8.588s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1000000, 1050000) took 8.609s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (1050000, 1100000) took 8.590s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (1100000, 1150000) took 8.601s.
+  -Iterating over the slice took 80.516s.
+  Loading slice (1150000, 1200000) took 8.567s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1200000, 1250000) took 8.593s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (1250000, 1300000) took 8.595s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (1300000, 1350000) took 8.576s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (1350000, 1396621) took 8.035s.
+  -Iterating over the slice took 75.139s.
+  The validation pass took 140.902s.
+Epoch 27 of 30 took 2633.190s
+  training loss:		0.466901
+  validation loss:		0.416160
+  validation accuracy:		88.22 %
+---
+  Loading slice (0, 50000) took 8.586s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (50000, 100000) took 8.596s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (100000, 150000) took 8.592s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (150000, 200000) took 8.607s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (200000, 250000) took 8.606s.
+  -Iterating over the slice took 80.541s.
+  Loading slice (250000, 300000) took 8.597s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (300000, 350000) took 8.618s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (350000, 400000) took 8.582s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (400000, 450000) took 8.581s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (450000, 500000) took 8.618s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (500000, 550000) took 8.591s.
+  -Iterating over the slice took 80.516s.
+  Loading slice (550000, 600000) took 8.605s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (600000, 650000) took 8.617s.
+  -Iterating over the slice took 80.515s.
+  Loading slice (650000, 700000) took 8.567s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (700000, 750000) took 8.598s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (750000, 800000) took 8.589s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (800000, 850000) took 8.588s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (850000, 900000) took 8.614s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (900000, 950000) took 8.575s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (950000, 1000000) took 8.600s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (1000000, 1050000) took 8.608s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (1050000, 1100000) took 8.580s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (1100000, 1150000) took 8.585s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (1150000, 1200000) took 8.580s.
+  -Iterating over the slice took 80.518s.
+  Loading slice (1200000, 1250000) took 8.576s.
+  -Iterating over the slice took 80.540s.
+  Loading slice (1250000, 1300000) took 8.611s.
+  -Iterating over the slice took 80.535s.
+  Loading slice (1300000, 1350000) took 8.566s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (1350000, 1396621) took 8.012s.
+  -Iterating over the slice took 75.149s.
+  The validation pass took 140.902s.
+Epoch 28 of 30 took 2632.085s
+  training loss:		0.470534
+  validation loss:		0.413883
+  validation accuracy:		88.16 %
+---
+  Loading slice (0, 50000) took 8.584s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (50000, 100000) took 8.595s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (100000, 150000) took 8.574s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (150000, 200000) took 8.607s.
+  -Iterating over the slice took 80.530s.
+  Loading slice (200000, 250000) took 8.602s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (250000, 300000) took 8.572s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (300000, 350000) took 8.610s.
+  -Iterating over the slice took 80.519s.
+  Loading slice (350000, 400000) took 8.575s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (400000, 450000) took 8.578s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (450000, 500000) took 8.596s.
+  -Iterating over the slice took 80.511s.
+  Loading slice (500000, 550000) took 8.581s.
+  -Iterating over the slice took 80.519s.
+  Loading slice (550000, 600000) took 8.681s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (600000, 650000) took 8.618s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (650000, 700000) took 8.577s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (700000, 750000) took 8.615s.
+  -Iterating over the slice took 80.543s.
+  Loading slice (750000, 800000) took 8.597s.
+  -Iterating over the slice took 80.531s.
+  Loading slice (800000, 850000) took 8.598s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (850000, 900000) took 8.619s.
+  -Iterating over the slice took 80.536s.
+  Loading slice (900000, 950000) took 8.586s.
+  -Iterating over the slice took 81.113s.
+  Loading slice (950000, 1000000) took 8.584s.
+  -Iterating over the slice took 80.538s.
+  Loading slice (1000000, 1050000) took 8.587s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1050000, 1100000) took 8.585s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1100000, 1150000) took 8.596s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (1150000, 1200000) took 8.593s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (1200000, 1250000) took 8.598s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (1250000, 1300000) took 8.607s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (1300000, 1350000) took 8.582s.
+  -Iterating over the slice took 80.521s.
+  Loading slice (1350000, 1396621) took 8.022s.
+  -Iterating over the slice took 75.150s.
+  The validation pass took 140.864s.
+Epoch 29 of 30 took 2632.673s
+  training loss:		0.470612
+  validation loss:		0.414099
+  validation accuracy:		88.21 %
+---
+  Loading slice (0, 50000) took 8.576s.
+  -Iterating over the slice took 80.517s.
+  Loading slice (50000, 100000) took 8.583s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (100000, 150000) took 8.582s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (150000, 200000) took 8.600s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (200000, 250000) took 8.597s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (250000, 300000) took 8.590s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (300000, 350000) took 8.598s.
+  -Iterating over the slice took 80.518s.
+  Loading slice (350000, 400000) took 8.586s.
+  -Iterating over the slice took 80.523s.
+  Loading slice (400000, 450000) took 8.596s.
+  -Iterating over the slice took 80.537s.
+  Loading slice (450000, 500000) took 8.613s.
+  -Iterating over the slice took 80.527s.
+  Loading slice (500000, 550000) took 8.595s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (550000, 600000) took 8.594s.
+  -Iterating over the slice took 80.532s.
+  Loading slice (600000, 650000) took 8.600s.
+  -Iterating over the slice took 80.534s.
+  Loading slice (650000, 700000) took 8.579s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (700000, 750000) took 8.617s.
+  -Iterating over the slice took 80.520s.
+  Loading slice (750000, 800000) took 8.598s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (800000, 850000) took 8.595s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (850000, 900000) took 8.617s.
+  -Iterating over the slice took 80.525s.
+  Loading slice (900000, 950000) took 8.564s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (950000, 1000000) took 8.590s.
+  -Iterating over the slice took 80.542s.
+  Loading slice (1000000, 1050000) took 8.594s.
+  -Iterating over the slice took 80.539s.
+  Loading slice (1050000, 1100000) took 8.574s.
+  -Iterating over the slice took 80.526s.
+  Loading slice (1100000, 1150000) took 8.592s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (1150000, 1200000) took 8.576s.
+  -Iterating over the slice took 80.528s.
+  Loading slice (1200000, 1250000) took 8.582s.
+  -Iterating over the slice took 80.529s.
+  Loading slice (1250000, 1300000) took 8.617s.
+  -Iterating over the slice took 80.533s.
+  Loading slice (1300000, 1350000) took 8.597s.
+  -Iterating over the slice took 80.542s.
+  Loading slice (1350000, 1396621) took 8.033s.
+  -Iterating over the slice took 75.151s.
+  The validation pass took 140.858s.
+Epoch 30 of 30 took 2632.044s
+  training loss:		0.466127
+  validation loss:		0.413950
+  validation accuracy:		88.26 %
+---
+Finished 30 epochs.
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+PBS epilogue
