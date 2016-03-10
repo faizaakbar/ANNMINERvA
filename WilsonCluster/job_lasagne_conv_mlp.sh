@@ -8,22 +8,23 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=30
-LRATE=0.0025
+NEPOCHS=1
+NEPOCHS=12
+LRATE=0.0005
 L2REG=0.0001
 
 # minerva_triamese_lasagnefuel.py style...
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5"
 
-SAVEMODELNAME="./lminervatriamese_beta`date +%s`.npz"
+# SAVEMODELNAME="./lminervatriamese_beta`date +%s`.npz"
 PYTHONPROG="minerva_triamese_beta.py"
 
 # SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
 # PYTHONPROG="minerva_triamese_lasagnefuel.py"
 
 # TODO: try passing this in 
-# SAVEMODELNAME="./lminervatriamese_betaBBBBB.npz"
-# START_FROM="-p -s $SAVEMODELNAME"
+SAVEMODELNAME="./lminervatriamese_beta1457480019_beta_v1r0.npz"
+START_FROM="-p -s $SAVEMODELNAME"
 # START_FROM=""
 
 # print identifying info for this job
@@ -68,22 +69,38 @@ cp /home/perdue/ANNMINERvA/Lasagne/minerva_ann_*.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/predictiondb.py ${PBS_O_WORKDIR}
 
+cat << EOF
+python ${PYTHONPROG} -l \
+  -n $NEPOCHS \
+  -r $LRATE \
+  -g $L2REG \
+  -d $DATAFILENAME $START_FROM
+#  -s $SAVEMODELNAME
+EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
-  -d $DATAFILENAME \
-  -s $SAVEMODELNAME
+  -d $DATAFILENAME $START_FROM
+#  -s $SAVEMODELNAME
+
 # nepochs and lrate don't matter for prediction, but setting them for log-file
 # homogeneity
+cat << EOF
 python ${PYTHONPROG} -t \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
   -d $DATAFILENAME \
   -s $SAVEMODELNAME
-
+EOF
+# python ${PYTHONPROG} -t \
+#   -n $NEPOCHS \
+#   -r $LRATE \
+#   -g $L2REG \
+#   -d $DATAFILENAME \
+#   -s $SAVEMODELNAME
 # Always use fcp to copy any large result files you want to keep back
 # to the file server before exiting your script. The /scratch area on the
 # workers is wiped clean between jobs.
