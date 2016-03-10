@@ -16,8 +16,6 @@ from __future__ import print_function
 import os
 
 from minerva_ann_networks import build_triamese_alpha
-# from minerva_ann_operate_networks import categorical_learn_and_validate
-# from minerva_ann_operate_networks import categorical_test
 from minerva_ann_operate_networks import categorical_learn_and_val_memdt
 from minerva_ann_operate_networks import categorical_test_memdt
 
