@@ -40,16 +40,16 @@ def split_inputs_xuv(inputs):
     return inputx, inputu, inputv
 
 
-def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
-                                    learning_rate=0.01, momentum=0.9,
-                                    l2_penalty_scale=1e-04, batchsize=500,
-                                    data_file=None,
-                                    save_model_file='./params_file.npz',
-                                    start_with_saved_params=False,
-                                    do_validation_pass=True,
-                                    convpooldictlist=None,
-                                    nhidden=None, dropoutp=None,
-                                    debug_print=False):
+def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
+                                   learning_rate=0.01, momentum=0.9,
+                                   l2_penalty_scale=1e-04, batchsize=500,
+                                   data_file=None,
+                                   save_model_file='./params_file.npz',
+                                   start_with_saved_params=False,
+                                   do_validation_pass=True,
+                                   convpooldictlist=None,
+                                   nhidden=None, dropoutp=None,
+                                   debug_print=False):
     """
     Run learning and validation for triamese networks using AdaGrad for
     learning rate evolution, nesterov momentum; read the data files in
@@ -211,12 +211,12 @@ def categorical_learn_and_val_memdt(build_cnn=None, num_epochs=500,
     print("Finished {} epochs.".format(epoch + 1))
 
 
-def categorical_test_memdt(build_cnn=None, data_file=None,
-                           l2_penalty_scale=1e-04,
-                           save_model_file='./params_file.npz', batchsize=500,
-                           be_verbose=False, convpooldictlist=None,
-                           nhidden=None, dropoutp=None, write_db=True,
-                           test_all_data=False, debug_print=False):
+def categorical_test(build_cnn=None, data_file=None,
+                     l2_penalty_scale=1e-04,
+                     save_model_file='./params_file.npz', batchsize=500,
+                     be_verbose=False, convpooldictlist=None,
+                     nhidden=None, dropoutp=None, write_db=True,
+                     test_all_data=False, debug_print=False):
     """
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the

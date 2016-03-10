@@ -16,8 +16,8 @@ from __future__ import print_function
 import os
 
 from minerva_ann_networks import build_triamese_beta
-from minerva_ann_operate_networks import categorical_learn_and_val_memdt
-from minerva_ann_operate_networks import categorical_test_memdt
+from minerva_ann_operate_networks import categorical_learn_and_validate
+from minerva_ann_operate_networks import categorical_test
 
 
 if __name__ == '__main__':
@@ -83,8 +83,8 @@ if __name__ == '__main__':
     print(" Batch size:", options.batchsize)
 
     build_network_function = build_triamese_beta
-    learn = categorical_learn_and_val_memdt
-    test = categorical_test_memdt
+    learn = categorical_learn_and_validate
+    test = categorical_test
 
     # assume 50x50 images
     convpooldictlist = []
