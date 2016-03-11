@@ -40,3 +40,21 @@ def test2():
     rp = con.execute(s)
     results = rp.fetchall()
     print(results)
+
+
+def test_make_file_of_unique_runs_and_subs(dbname):
+    metadata = MetaData()
+    eng = predictiondb.get_engine(dbname)
+    con = predictiondb.get_connection(eng)
+    tbl = predictiondb.get_active_table(metadata, eng)
+    s = select([tbl.c.run, tbl.c.subrun])
+    rp = con.execute(s)
+    results = rp.fetchall()
+    runs_subs = set()
+    _ = [runs_subs.add(tuple(i)) for i in results]
+    runs_subs = list(runs_subs)
+    sorted_runs_subs = sorted(runs_subs, key=lambda x: x[1])
+    f = open('runs_subs.txt', 'w')
+    for i in sorted_runs_subs:
+        f.write(str(i) + '\n')
+    f.close()
