@@ -74,16 +74,18 @@ python ${PYTHONPROG} -l \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
-  -s $SAVEMODELNAME
-#  -d $DATAFILENAME $START_FROM
+  -s $SAVEMODELNAME \
+  -d $DATAFILENAME 
+# $START_FROM
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
-  -s $SAVEMODELNAME
-#  -d $DATAFILENAME $START_FROM
+  -s $SAVEMODELNAME \
+  -d $DATAFILENAME
+ # $START_FROM
 
 # nepochs and lrate don't matter for prediction, but setting them for log-file
 # homogeneity
