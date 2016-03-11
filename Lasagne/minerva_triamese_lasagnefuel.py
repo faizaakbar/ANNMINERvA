@@ -109,6 +109,5 @@ if __name__ == '__main__':
              data_file_list=options.dataset,
              l2_penalty_scale=options.l2_penalty_scale,
              save_model_file=options.save_model_file,
-             batchsize=options.batchsize,
              be_verbose=options.be_verbose,
              test_all_data=options.test_all_data)

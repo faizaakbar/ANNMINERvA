@@ -62,6 +62,18 @@ def get_and_print_dataset_subsizes(data_file_list):
     return train_sizes, valid_sizes, test_sizes
 
 
+def get_used_data_sizes_for_testing(train_sizes, valid_sizes, test_sizes,
+                                    test_all_data):
+    used_data_size = np.sum(test_sizes)
+    used_sizes = test_sizes
+    if test_all_data:
+        used_data_size += np.sum(train_sizes) + np.sum(valid_sizes)
+        used_sizes = \
+            list(np.sum([train_sizes, valid_sizes, test_sizes], axis=0))
+    print(" Used testing sample size = {} examples".format(used_data_size))
+    return used_sizes
+
+
 def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                                    learning_rate=0.01, momentum=0.9,
                                    l2_penalty_scale=1e-04, batchsize=500,
@@ -244,7 +256,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
 
 def categorical_test(build_cnn=None, data_file_list=None,
                      l2_penalty_scale=1e-04,
-                     save_model_file='./params_file.npz', batchsize=500,
+                     save_model_file='./params_file.npz',
                      be_verbose=False, convpooldictlist=None,
                      nhidden=None, dropoutp=None, write_db=True,
                      test_all_data=False, debug_print=False):
@@ -263,13 +275,10 @@ def categorical_test(build_cnn=None, data_file_list=None,
     print("Loading data for testing...")
     train_sizes, valid_sizes, test_sizes = \
         get_and_print_dataset_subsizes(data_file_list)
-    used_data_size = np.sum(test_sizes)
-    used_sizes = test_sizes
-    if test_all_data:
-        used_data_size += np.sum(train_sizes) + np.sum(valid_sizes)
-        used_sizes = \
-            list(np.sum([train_sizes, valid_sizes, test_sizes], axis=0))
-    print(" Used testing sample size = {} examples".format(used_data_size))
+    used_sizes = get_used_data_sizes_for_testing(train_sizes,
+                                                 valid_sizes,
+                                                 test_sizes,
+                                                 test_all_data)
 
     # extract timestamp from model file - assume it is the first set of numbers
     # otherwise just use "now"
@@ -400,6 +409,105 @@ def categorical_test(build_cnn=None, data_file_list=None,
     for i, v in enumerate(acc_target):
         print("   target {} accuracy:\t\t\t{:.3f} %".format(
             (i + 1), acc_target[i]))
+
+
+def view_layer_activations(build_cnn=None, data_file_list=None,
+                           save_model_file='./params_file.npz',
+                           be_verbose=False, convpooldictlist=None,
+                           nhidden=None, dropoutp=None, write_db=True,
+                           test_all_data=False, debug_print=False):
+    """
+    Run tests on the reserved test sample ("trainiing" examples with true
+    values to check that were not used for learning or validation); read the
+    data files in chunks into memory.
+    """
+    print("Loading data for testing...")
+    train_sizes, valid_sizes, test_sizes = \
+        get_and_print_dataset_subsizes(data_file_list)
+    used_sizes = get_used_data_sizes_for_testing(train_sizes,
+                                                 valid_sizes,
+                                                 test_sizes,
+                                                 test_all_data)
+
+    # extract timestamp from model file - assume it is the first set of numbers
+    # otherwise just use "now"
+    import re
+    tstamp = str(time.time()).split('.')[0]
+    m = re.search(r"[0-9]+", save_model_file)
+    if m:
+        tstamp = m.group(0)
+
+    # Prepare Theano variables for inputs and targets
+    input_var_x = T.tensor4('inputs')
+    input_var_u = T.tensor4('inputs')
+    input_var_v = T.tensor4('inputs')
+
+    # Build the model
+    network = build_cnn(input_var_x, input_var_u, input_var_v,
+                        convpooldictlist=convpooldictlist, nhidden=nhidden,
+                        dropoutp=dropoutp)
+    with np.load(save_model_file) as f:
+        param_values = [f['arr_%d' % i] for i in range(len(f.files))]
+    lasagne.layers.set_all_param_values(network, param_values)
+    print(network_repr.get_network_str(
+        lasagne.layers.get_all_layers(network),
+        get_network=False, incomings=True, outgoings=True))
+
+    layers = lasagne.layers.get_all_layers(network)
+    # layer assignment is _highly_ network specific...
+    layer_act_x1 = lasagne.layers.get_output(layers[1])
+    layer_act_u1 = lasagne.layers.get_output(layers[8])
+    layer_act_v1 = lasagne.layers.get_output(layers[15])
+    vis_x1_fn = theano.function([input_var_x, input_var_u, input_var_v],
+                                [layer_act_x1],
+                                allow_input_downcast=True,
+                                on_unused_input='warn')
+    vis_u1_fn = theano.function([input_var_x, input_var_u, input_var_v],
+                                [layer_act_u1],
+                                allow_input_downcast=True,
+                                on_unused_input='warn')
+    vis_v1_fn = theano.function([input_var_x, input_var_u, input_var_v],
+                                [layer_act_v1],
+                                allow_input_downcast=True,
+                                on_unused_input='warn')
+
+    print("Starting visualization...")
+    test_slices = []
+    for tsize in used_sizes:
+        test_slices.append(slices_maker(tsize, slice_size=50000))
+    test_set = None
+
+    for i, data_file in enumerate(data_file_list):
+
+        for tslice in test_slices[i]:
+            t0 = time.time()
+            test_set = None
+            if test_all_data:
+                test_set = load_all_datasubsets(data_file, tslice)
+            else:
+                test_set = load_datasubset(data_file, 'test', tslice)
+            _, test_dstream = make_scheme_and_stream(test_set, 1,
+                                                     shuffle=False)
+            t1 = time.time()
+            print("  Loading slice {} from {} took {:.3f}s.".format(
+                tslice, data_file, t1 - t0))
+            if debug_print:
+                print("   dset sources:", test_set.provides_sources)
+
+            t0 = time.time()
+            for data in test_dstream.get_epoch_iterator():
+                eventids, inputs = data[0], data[1]
+                inputx, inputu, inputv = split_inputs_xuv(inputs)
+                out_x1 = vis_x1_fn(inputx, inputu, inputv)
+                out_u1 = vis_u1_fn(inputx, inputu, inputv)
+                out_v1 = vis_v1_fn(inputx, inputu, inputv)
+                vis_file = 'actvis' + tstamp + '_' + str(eventids[0]) + '.npy'
+                np.save(vis_file, [out_x1, out_u1, out_v1])
+            t1 = time.time()
+            print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
+
+            del test_set
+            del test_dstream
 
 
 def decode_eventid(eventid):
