@@ -20,13 +20,18 @@ from minerva_ann_operate_networks import categorical_learn_and_validate
 from minerva_ann_operate_networks import categorical_test
 
 
+def arg_list_split(option, opt, value, parser):
+    setattr(parser.values, option.dest, value.split(','))
+
+
 if __name__ == '__main__':
 
     from optparse import OptionParser
     parser = OptionParser(usage=__doc__)
-    parser.add_option('-d', '--data', dest='dataset',
-                      default='./nukecc_fuel.hdf5',
-                      help='Data set', metavar='DATASET')
+    parser.add_option('-d', '--data_list', dest='dataset',
+                      help='Data set list (csv)', metavar='DATASETLIST',
+                      type='string', action='callback',
+                      callback=arg_list_split)
     parser.add_option('-n', '--nepochs', dest='n_epochs', default=200,
                       help='Number of epochs', metavar='N_EPOCHS',
                       type='int')
@@ -73,9 +78,11 @@ if __name__ == '__main__':
     print(" Saved parameters file:", options.save_model_file)
     print(" Saved parameters file exists?",
           os.path.isfile(options.save_model_file))
-    print(" Dataset:", options.dataset)
-    dataset_statsinfo = os.stat(options.dataset)
-    print(" Dataset size:", dataset_statsinfo.st_size)
+    print(" Datasets:", options.dataset)
+    dataset_statsinfo = 0
+    for d in options.dataset:
+        dataset_statsinfo += os.stat(d).st_size
+    print(" Dataset size:", dataset_statsinfo)
     print(" Planned number of epochs:", options.n_epochs)
     print(" Learning rate:", options.lrate)
     print(" Momentum:", options.momentum)
@@ -108,14 +115,14 @@ if __name__ == '__main__':
               momentum=options.momentum,
               l2_penalty_scale=options.l2_penalty_scale,
               batchsize=options.batchsize,
-              data_file=options.dataset,
+              data_file_list=options.dataset,
               save_model_file=options.save_model_file,
               start_with_saved_params=options.start_with_saved_params,
               convpooldictlist=convpooldictlist)
 
     if options.do_test:
         test(build_cnn=build_network_function,
-             data_file=options.dataset,
+             data_file_list=options.dataset,
              l2_penalty_scale=options.l2_penalty_scale,
              save_model_file=options.save_model_file,
              batchsize=options.batchsize,

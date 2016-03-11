@@ -40,10 +40,32 @@ def split_inputs_xuv(inputs):
     return inputx, inputu, inputv
 
 
+def get_and_print_dataset_subsizes(data_file_list):
+    """
+    get a list of the sizes of each 'subset' (train/valid/test) in
+    each data file and return a 3-tuple of lists of lists of sizes
+    """
+    train_sizes = []
+    valid_sizes = []
+    test_sizes = []
+    for data_file in data_file_list:
+        lsize, vsize, tsize = get_dataset_sizes(data_file)
+        train_sizes.append(lsize)
+        valid_sizes.append(vsize)
+        test_sizes.append(tsize)
+    print(" Learning sample size = {} examples".format(
+        np.sum(train_sizes)))
+    print(" Validation sample size = {} examples".format(
+        np.sum(valid_sizes)))
+    print(" Testing sample size = {} examples".format(
+        np.sum(test_sizes)))
+    return train_sizes, valid_sizes, test_sizes
+
+
 def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                                    learning_rate=0.01, momentum=0.9,
                                    l2_penalty_scale=1e-04, batchsize=500,
-                                   data_file=None,
+                                   data_file_list=None,
                                    save_model_file='./params_file.npz',
                                    start_with_saved_params=False,
                                    do_validation_pass=True,
@@ -56,9 +78,8 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     chunks into memory.
     """
     print("Loading data...")
-    train_size, valid_size, _ = get_dataset_sizes(data_file)
-    print(" Learning sample size = {} examples".format(train_size))
-    print(" Validation sample size = {} examples".format(valid_size))
+    train_sizes, valid_sizes, _ = \
+        get_and_print_dataset_subsizes(data_file_list)
 
     # Prepare Theano variables for inputs and targets
     input_var_x = T.tensor4('inputs')
@@ -135,66 +156,76 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     #
     # TODO: early stopping logic goes here...
     #
-    train_slices = slices_maker(train_size, slice_size=50000)
-    valid_slices = slices_maker(valid_size, slice_size=50000)
+    train_slices = []
+    for tsize in train_sizes:
+        train_slices.append(slices_maker(tsize, slice_size=50000))
+    valid_slices = []
+    for vsize in valid_sizes:
+        valid_slices.append(slices_maker(vsize, slice_size=50000))
+    train_set = None
+    valid_set = None
 
     epoch = 0
     for epoch in range(num_epochs):
 
-        start_time = time.time()
-        # In each epoch, we do a full pass over the training data:
-        for tslice in train_slices:
+        for i, data_file in enumerate(data_file_list):
+            # In each epoch, we do a full pass over the training data:
+            start_time = time.time()
+            for tslice in train_slices[i]:
 
-            t0 = time.time()
-            train_set = load_datasubset(data_file, 'train', tslice)
-            _, train_dstream = make_scheme_and_stream(train_set, batchsize)
-            t1 = time.time()
-            print("  Loading slice {} took {:.3f}s.".format(
-                tslice, t1 - t0))
-            if debug_print:
-                print("   dset sources:", train_set.provides_sources)
+                t0 = time.time()
+                train_set = load_datasubset(data_file, 'train', tslice)
+                _, train_dstream = make_scheme_and_stream(train_set, batchsize)
+                t1 = time.time()
+                print("  Loading slice {} from {} took {:.3f}s.".format(
+                    tslice, data_file, t1 - t0))
+                if debug_print:
+                    print("   dset sources:", train_set.provides_sources)
 
-            t0 = time.time()
-            train_err = 0
-            train_batches = 0
-            for data in train_dstream.get_epoch_iterator():
-                _, inputs, _, targets, _ = \
-                    data[0], data[1], data[2], data[3], data[4]
-                inputx, inputu, inputv = split_inputs_xuv(inputs)
-                train_err += train_fn(inputx, inputu, inputv, targets)
-                train_batches += 1
-            t1 = time.time()
-            print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
-
-            del train_set       # hint to garbage collector
-            del train_dstream   # hint to garbage collector
-
-        # And a full pass over the validation data
-        if do_validation_pass:
-            t0 = time.time()
-            for vslice in valid_slices:
-                valid_set = load_datasubset(data_file, 'valid', vslice)
-                _, valid_dstream = make_scheme_and_stream(valid_set, batchsize)
-
-                val_err = 0
-                val_acc = 0
-                val_batches = 0
-                for data in valid_dstream.get_epoch_iterator():
+                t0 = time.time()
+                train_err = 0
+                train_batches = 0
+                for data in train_dstream.get_epoch_iterator():
                     _, inputs, _, targets, _ = \
                         data[0], data[1], data[2], data[3], data[4]
                     inputx, inputu, inputv = split_inputs_xuv(inputs)
-                    err, acc = val_fn(inputx, inputu, inputv, targets)
-                    val_err += err
-                    val_acc += acc
-                    val_batches += 1
+                    train_err += train_fn(inputx, inputu, inputv, targets)
+                    train_batches += 1
+                t1 = time.time()
+                print("  -Iterating over the slice took {:.3f}s.".format(
+                    t1 - t0))
 
-                del valid_set
-                del valid_dstream
+                del train_set       # hint to garbage collector
+                del train_dstream   # hint to garbage collector
 
-            t1 = time.time()
-            print("  The validation pass took {:.3f}s.".format(t1 - t0))
+        for i, data_file in enumerate(data_file_list):
+            # And a full pass over the validation data
+            if do_validation_pass:
+                t0 = time.time()
+                for vslice in valid_slices[i]:
+                    valid_set = load_datasubset(data_file, 'valid', vslice)
+                    _, valid_dstream = make_scheme_and_stream(valid_set,
+                                                              batchsize)
 
-        # Dump the current network weights to file
+                    val_err = 0
+                    val_acc = 0
+                    val_batches = 0
+                    for data in valid_dstream.get_epoch_iterator():
+                        _, inputs, _, targets, _ = \
+                            data[0], data[1], data[2], data[3], data[4]
+                        inputx, inputu, inputv = split_inputs_xuv(inputs)
+                        err, acc = val_fn(inputx, inputu, inputv, targets)
+                        val_err += err
+                        val_acc += acc
+                        val_batches += 1
+
+                    del valid_set
+                    del valid_dstream
+
+                t1 = time.time()
+                print("  The validation pass took {:.3f}s.".format(t1 - t0))
+
+        # Dump the current network weights to file at the end of epoch
         np.savez(save_model_file,
                  *lasagne.layers.get_all_param_values(network))
 
@@ -211,7 +242,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     print("Finished {} epochs.".format(epoch + 1))
 
 
-def categorical_test(build_cnn=None, data_file=None,
+def categorical_test(build_cnn=None, data_file_list=None,
                      l2_penalty_scale=1e-04,
                      save_model_file='./params_file.npz', batchsize=500,
                      be_verbose=False, convpooldictlist=None,
@@ -230,11 +261,15 @@ def categorical_test(build_cnn=None, data_file=None,
         print("Cannot import sqlalchemy...")
         write_db = False
     print("Loading data for testing...")
-    train_size, valid_size, test_size = get_dataset_sizes(data_file)
-    used_data_size = test_size
+    train_sizes, valid_sizes, test_sizes = \
+        get_and_print_dataset_subsizes(data_file_list)
+    used_data_size = np.sum(test_sizes)
+    used_sizes = test_sizes
     if test_all_data:
-        used_data_size = train_size + valid_size + test_size
-    print(" Testing sample size = {} examples".format(used_data_size))
+        used_data_size += np.sum(train_sizes) + np.sum(valid_sizes)
+        used_sizes = \
+            list(np.sum([train_sizes, valid_sizes, test_sizes], axis=0))
+    print(" Used testing sample size = {} examples".format(used_data_size))
 
     # extract timestamp from model file - assume it is the first set of numbers
     # otherwise just use "now"
@@ -294,7 +329,6 @@ def categorical_test(build_cnn=None, data_file=None,
                                allow_input_downcast=True)
 
     print("Starting testing...")
-    test_slices = slices_maker(used_data_size, slice_size=50000)
     # compute and print the test error and...
     test_err = 0
     test_acc = 0
@@ -305,49 +339,56 @@ def categorical_test(build_cnn=None, data_file=None,
     true_target = np.array([0, 0, 0, 0, 0])
     targs_mat = np.zeros(11 * 11).reshape(11, 11)
 
-    for tslice in test_slices:
-        t0 = time.time()
-        test_set = None
-        if test_all_data:
-            test_set = load_all_datasubsets(data_file, tslice)
-        else:
-            test_set = load_datasubset(data_file, 'test', tslice)
-        _, test_dstream = make_scheme_and_stream(test_set, 1,
-                                                 shuffle=False)
-        t1 = time.time()
-        print("  Loading slice {} took {:.3f}s.".format(
-            tslice, t1 - t0))
-        if debug_print:
-            print("   dset sources:", test_set.provides_sources)
+    test_slices = []
+    for tsize in used_sizes:
+        test_slices.append(slices_maker(tsize, slice_size=50000))
+    test_set = None
 
-        t0 = time.time()
-        for data in test_dstream.get_epoch_iterator():
-            eventids, inputs, _, targets, _ = \
-                data[0], data[1], data[2], data[3], data[4]
-            inputx, inputu, inputv = split_inputs_xuv(inputs)
-            err, acc = val_fn(inputx, inputu, inputv, targets)
-            test_err += err
-            test_acc += acc
-            test_batches += 1
-            pred = pred_fn(inputx, inputu, inputv)
-            pred_targ = zip(pred[0], targets)
-            probs = probs_fn(inputx, inputu, inputv)
-            if write_db:
-                filldb(tbl, con, eventids, pred, probs)
-            if be_verbose:
-                print("(prediction, true target):", pred_targ, probs)
-                print("----------------")
-            for p, t in pred_targ:
-                targs_mat[t][p] += 1
-                if t in targ_numbers:
-                    true_target[t-1] += 1
-                    if p == t:
-                        pred_target[p-1] += 1
-        t1 = time.time()
-        print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
+    for i, data_file in enumerate(data_file_list):
 
-        del test_set
-        del test_dstream
+        for tslice in test_slices[i]:
+            t0 = time.time()
+            test_set = None
+            if test_all_data:
+                test_set = load_all_datasubsets(data_file, tslice)
+            else:
+                test_set = load_datasubset(data_file, 'test', tslice)
+            _, test_dstream = make_scheme_and_stream(test_set, 1,
+                                                     shuffle=False)
+            t1 = time.time()
+            print("  Loading slice {} from {} took {:.3f}s.".format(
+                tslice, data_file, t1 - t0))
+            if debug_print:
+                print("   dset sources:", test_set.provides_sources)
+
+            t0 = time.time()
+            for data in test_dstream.get_epoch_iterator():
+                eventids, inputs, _, targets, _ = \
+                    data[0], data[1], data[2], data[3], data[4]
+                inputx, inputu, inputv = split_inputs_xuv(inputs)
+                err, acc = val_fn(inputx, inputu, inputv, targets)
+                test_err += err
+                test_acc += acc
+                test_batches += 1
+                pred = pred_fn(inputx, inputu, inputv)
+                pred_targ = zip(pred[0], targets)
+                probs = probs_fn(inputx, inputu, inputv)
+                if write_db:
+                    filldb(tbl, con, eventids, pred, probs)
+                if be_verbose:
+                    print("(prediction, true target):", pred_targ, probs)
+                    print("----------------")
+                for p, t in pred_targ:
+                    targs_mat[t][p] += 1
+                    if t in targ_numbers:
+                        true_target[t-1] += 1
+                        if p == t:
+                            pred_target[p-1] += 1
+            t1 = time.time()
+            print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
+
+            del test_set
+            del test_dstream
 
     acc_target = 100.0 * pred_target / true_target.astype('float32')
     perf_file = 'perfmat' + tstamp + '.npy'
