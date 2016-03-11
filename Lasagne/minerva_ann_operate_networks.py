@@ -180,9 +180,9 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     epoch = 0
     for epoch in range(num_epochs):
 
+        start_time = time.time()
         for i, data_file in enumerate(data_file_list):
             # In each epoch, we do a full pass over the training data:
-            start_time = time.time()
             for tslice in train_slices[i]:
 
                 t0 = time.time()

@@ -10,7 +10,7 @@
 
 NEPOCHS=12
 NEPOCHS=1
-LRATE=0.0005
+LRATE=0.0025
 L2REG=0.0001
 
 # minerva_triamese_lasagnefuel.py style...
