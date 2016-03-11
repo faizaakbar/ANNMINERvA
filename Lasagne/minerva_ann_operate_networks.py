@@ -198,10 +198,10 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                 del train_set       # hint to garbage collector
                 del train_dstream   # hint to garbage collector
 
-        for i, data_file in enumerate(data_file_list):
+        if do_validation_pass:
             # And a full pass over the validation data
-            if do_validation_pass:
-                t0 = time.time()
+            t0 = time.time()
+            for i, data_file in enumerate(data_file_list):
                 for vslice in valid_slices[i]:
                     valid_set = load_datasubset(data_file, 'valid', vslice)
                     _, valid_dstream = make_scheme_and_stream(valid_set,
@@ -222,8 +222,8 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                     del valid_set
                     del valid_dstream
 
-                t1 = time.time()
-                print("  The validation pass took {:.3f}s.".format(t1 - t0))
+            t1 = time.time()
+            print("  The validation pass took {:.3f}s.".format(t1 - t0))
 
         # Dump the current network weights to file at the end of epoch
         np.savez(save_model_file,
