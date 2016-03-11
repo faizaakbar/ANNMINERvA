@@ -8,23 +8,23 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=1
 NEPOCHS=12
+NEPOCHS=1
 LRATE=0.0005
 L2REG=0.0001
 
 # minerva_triamese_lasagnefuel.py style...
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5,/phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5"
 
-# SAVEMODELNAME="./lminervatriamese_beta`date +%s`.npz"
+SAVEMODELNAME="./lminervatriamese_beta`date +%s`.npz"
 PYTHONPROG="minerva_triamese_beta.py"
 
 # SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
 # PYTHONPROG="minerva_triamese_lasagnefuel.py"
 
 # TODO: try passing this in 
-SAVEMODELNAME="./lminervatriamese_beta1457480019_beta_v1r0.npz"
-START_FROM="-p -s $SAVEMODELNAME"
+# SAVEMODELNAME="./lminervatriamese_beta1457480019_beta_v1r0.npz"
+# START_FROM="-p -s $SAVEMODELNAME"
 # START_FROM=""
 
 # print identifying info for this job
@@ -74,27 +74,27 @@ python ${PYTHONPROG} -l \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
-  -d $DATAFILENAME $START_FROM
-#  -s $SAVEMODELNAME
+  -s $SAVEMODELNAME
+#  -d $DATAFILENAME $START_FROM
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
-  -d $DATAFILENAME $START_FROM
-#  -s $SAVEMODELNAME
+  -s $SAVEMODELNAME
+#  -d $DATAFILENAME $START_FROM
 
 # nepochs and lrate don't matter for prediction, but setting them for log-file
 # homogeneity
-cat << EOF
-python ${PYTHONPROG} -t \
-  -n $NEPOCHS \
-  -r $LRATE \
-  -g $L2REG \
-  -d $DATAFILENAME \
-  -s $SAVEMODELNAME
-EOF
+# cat << EOF
+# python ${PYTHONPROG} -t \
+#   -n $NEPOCHS \
+#   -r $LRATE \
+#   -g $L2REG \
+#   -d $DATAFILENAME \
+#   -s $SAVEMODELNAME
+# EOF
 # python ${PYTHONPROG} -t \
 #   -n $NEPOCHS \
 #   -r $LRATE \
