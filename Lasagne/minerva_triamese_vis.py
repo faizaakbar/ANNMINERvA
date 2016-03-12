@@ -59,19 +59,21 @@ if __name__ == '__main__':
     convpool1dict = {}
     convpool1dict['nfilters'] = 32
     convpool1dict['filter_size'] = (3, 3)
-    convpool1dict['pool_size'] = (2, 2)
+    convpool1dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool1dict)
-    # after 3x3 filters -> 48x48 image, then maxpool -> 24x24
+    #
     convpool2dict = {}
     convpool2dict['nfilters'] = 32
     convpool2dict['filter_size'] = (3, 3)
-    convpool2dict['pool_size'] = (2, 2)
+    convpool2dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool2dict)
-    # after 3x3 filters -> 22x22 image, then maxpool -> 11x11
+    #
+    nhidden = 128
 
     vis(build_cnn=build_network_function,
         data_file_list=options.dataset,
         save_model_file=options.save_model_file,
         be_verbose=options.be_verbose,
         convpooldictlist=convpooldictlist,
-        test_all_data=options.test_all_data)
+        test_all_data=options.test_all_data,
+        nhidden=nhidden)
