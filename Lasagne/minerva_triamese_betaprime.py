@@ -108,6 +108,8 @@ if __name__ == '__main__':
     convpooldictlist.append(convpool2dict)
     # after 3x3 filters -> 22x46 image, then maxpool -> 11x23
 
+    nhidden = 128
+
     if options.do_learn:
         learn(build_cnn=build_network_function,
               num_epochs=options.n_epochs,
@@ -118,7 +120,8 @@ if __name__ == '__main__':
               data_file_list=options.dataset,
               save_model_file=options.save_model_file,
               start_with_saved_params=options.start_with_saved_params,
-              convpooldictlist=convpooldictlist)
+              convpooldictlist=convpooldictlist,
+              nhidden=nhidden)
 
     if options.do_test:
         test(build_cnn=build_network_function,
@@ -127,4 +130,5 @@ if __name__ == '__main__':
              save_model_file=options.save_model_file,
              be_verbose=options.be_verbose,
              convpooldictlist=convpooldictlist,
-             test_all_data=options.test_all_data)
+             test_all_data=options.test_all_data,
+             nhidden=nhidden)
