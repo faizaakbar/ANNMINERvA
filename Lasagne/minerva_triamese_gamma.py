@@ -99,12 +99,12 @@ if __name__ == '__main__':
     convpool1dict['nfilters'] = 32
     convpool1dict['filter_size'] = (3, 3)
     convpooldictlist.append(convpool1dict)
-    # after 3x3 filters -> 48x48 image, then maxpool -> 24x24
+    # after 3x3 filters -> 48x48 image
     convpool2dict = {}
     convpool2dict['nfilters'] = 32
     convpool2dict['filter_size'] = (3, 3)
     convpooldictlist.append(convpool2dict)
-    # after 3x3 filters -> 22x22 image, then maxpool -> 11x11
+    # after 3x3 filters -> 46x46 image
 
     if options.do_learn:
         learn(build_cnn=build_network_function,
