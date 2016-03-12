@@ -8,8 +8,8 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=24
 NEPOCHS=1
+NEPOCHS=20
 LRATE=0.0025
 L2REG=0.0001
 
@@ -17,8 +17,8 @@ L2REG=0.0001
 # DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5,/phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5"
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5"
 
-SAVEMODELNAME="./lminervatriamese_gamma`date +%s`.npz"
-PYTHONPROG="minerva_triamese_gamma.py"
+SAVEMODELNAME="./lminervatriamese_betaprime`date +%s`.npz"
+PYTHONPROG="minerva_triamese_beta.py"
 
 # SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
 # PYTHONPROG="minerva_triamese_lasagnefuel.py"
