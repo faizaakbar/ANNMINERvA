@@ -309,7 +309,7 @@ def build_triamese_gamma(input_var_x=None, input_var_u=None, input_var_v=None,
         """
         net = {}
         convname = ''
-        mpname = ''
+        prev_layername = ''
         for i, cpdict in enumerate(cpdictlist):
             convname = 'conv-{}-{}'.format(view, i)
             print("Convpool {} params: {}".format(convname, cpdict))
@@ -318,16 +318,16 @@ def build_triamese_gamma(input_var_x=None, input_var_u=None, input_var_v=None,
             if i == 0:
                 layer = input_layer
             else:
-                layer = net[mpname]
+                layer = net[prev_layername]
             net[convname] = Conv2DLayer(
                 layer, num_filters=cpdict['nfilters'],
                 filter_size=cpdict['filter_size'],
                 nonlinearity=lasagne.nonlinearities.rectify,
                 W=lasagne.init.GlorotUniform())
-            print("Convpool {}".format(mpname))
+            prev_layername = convname
         densename = 'dense-{}'.format(view)
         net[densename] = DenseLayer(
-            dropout(net[mpname], p=dropoutp),
+            dropout(net[convname], p=dropoutp),
             num_units=nhidden,
             nonlinearity=lasagne.nonlinearities.rectify)
         print("Dense {} with nhidden = {}, dropout = {}".format(
