@@ -455,21 +455,66 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
 
     layers = lasagne.layers.get_all_layers(network)
     # layer assignment is _highly_ network specific...
-    layer_act_x1 = lasagne.layers.get_output(layers[1])
-    layer_act_u1 = lasagne.layers.get_output(layers[8])
-    layer_act_v1 = lasagne.layers.get_output(layers[15])
-    vis_x1_fn = theano.function([input_var_x, input_var_u, input_var_v],
-                                [layer_act_x1],
-                                allow_input_downcast=True,
-                                on_unused_input='warn')
-    vis_u1_fn = theano.function([input_var_x, input_var_u, input_var_v],
-                                [layer_act_u1],
-                                allow_input_downcast=True,
-                                on_unused_input='warn')
-    vis_v1_fn = theano.function([input_var_x, input_var_u, input_var_v],
-                                [layer_act_v1],
-                                allow_input_downcast=True,
-                                on_unused_input='warn')
+    layer_conv_x1 = lasagne.layers.get_output(layers[1])
+    layer_conv_u1 = lasagne.layers.get_output(layers[8])
+    layer_conv_v1 = lasagne.layers.get_output(layers[15])
+    layer_pool_x1 = lasagne.layers.get_output(layers[2])
+    layer_pool_u1 = lasagne.layers.get_output(layers[9])
+    layer_pool_v1 = lasagne.layers.get_output(layers[16])
+    layer_conv_x2 = lasagne.layers.get_output(layers[3])
+    layer_conv_u2 = lasagne.layers.get_output(layers[10])
+    layer_conv_v2 = lasagne.layers.get_output(layers[17])
+    layer_pool_x2 = lasagne.layers.get_output(layers[4])
+    layer_pool_u2 = lasagne.layers.get_output(layers[11])
+    layer_pool_v2 = lasagne.layers.get_output(layers[18])
+    vis_conv_x1 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_conv_x1],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_conv_u1 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_conv_u1],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_conv_v1 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_conv_v1],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_pool_x1 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_pool_x1],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_pool_u1 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_pool_u1],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_pool_v1 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_pool_v1],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_conv_x2 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_conv_x2],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_conv_u2 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_conv_u2],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_conv_v2 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_conv_v2],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_pool_x2 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_pool_x2],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_pool_u2 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_pool_u2],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
+    vis_pool_v2 = theano.function([input_var_x, input_var_u, input_var_v],
+                                  [layer_pool_v2],
+                                  allow_input_downcast=True,
+                                  on_unused_input='warn')
 
     print("Starting visualization...")
     test_slices = []
@@ -496,13 +541,32 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
-                eventids, inputs = data[0], data[1]
+                eventids, inputs, targets = data[0], data[1], data[3]
                 inputx, inputu, inputv = split_inputs_xuv(inputs)
-                out_x1 = vis_x1_fn(inputx, inputu, inputv)
-                out_u1 = vis_u1_fn(inputx, inputu, inputv)
-                out_v1 = vis_v1_fn(inputx, inputu, inputv)
-                vis_file = 'actvis' + tstamp + '_' + str(eventids[0]) + '.npy'
-                np.save(vis_file, [out_x1, out_u1, out_v1])
+                conv_x1 = vis_conv_x1(inputx, inputu, inputv)
+                conv_u1 = vis_conv_u1(inputx, inputu, inputv)
+                conv_v1 = vis_conv_v1(inputx, inputu, inputv)
+                pool_x1 = vis_pool_x1(inputx, inputu, inputv)
+                pool_u1 = vis_pool_u1(inputx, inputu, inputv)
+                pool_v1 = vis_pool_v1(inputx, inputu, inputv)
+                conv_x2 = vis_conv_x2(inputx, inputu, inputv)
+                conv_u2 = vis_conv_u2(inputx, inputu, inputv)
+                conv_v2 = vis_conv_v2(inputx, inputu, inputv)
+                pool_x2 = vis_pool_x2(inputx, inputu, inputv)
+                pool_u2 = vis_pool_u2(inputx, inputu, inputv)
+                pool_v2 = vis_pool_v2(inputx, inputu, inputv)
+                vis_file = 'vis_' + str(targets[0]) + '_conv_1_' + tstamp + \
+                    '_' + str(eventids[0]) + '.npy'
+                np.save(vis_file, [conv_x1, conv_u1, conv_v1])
+                vis_file = 'vis_' + str(targets[0]) + '_pool_1_' + tstamp + \
+                    '_' + str(eventids[0]) + '.npy'
+                np.save(vis_file, [pool_x1, pool_u1, pool_v1])
+                vis_file = 'vis_' + str(targets[0]) + '_conv_2_' + tstamp + \
+                    '_' + str(eventids[0]) + '.npy'
+                np.save(vis_file, [conv_x2, conv_u2, conv_v2])
+                vis_file = 'vis_' + str(targets[0]) + '_pool_2_' + tstamp + \
+                    '_' + str(eventids[0]) + '.npy'
+                np.save(vis_file, [pool_x2, pool_u2, pool_v2])
             t1 = time.time()
             print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
 
