@@ -1,0 +1,1961 @@
+PBS prologue
+Job mnv-conv-1457740543 submitted from mic.fnal.gov started Fri Mar 11 17:55:45 CST 2016 jobid 107043.tev.fnal.gov
+gpu1
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is 3c81fadc4d0b
+python minerva_triamese_beta.py -l   -n 24   -r 0.0025   -g 0.0001   -s ./lminervatriamese_beta1457740545.npz   -d /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5,/phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 
+# 
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+minerva_triamese_beta.py
+ Begin with saved parameters? False
+ Saved parameters file: ./lminervatriamese_beta1457740545.npz
+ Saved parameters file exists? False
+ Datasets: ['/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5', '/phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5']
+ Dataset size: 2582748139
+ Planned number of epochs: 24
+ Learning rate: 0.0025
+ Momentum: 0.9
+ L2 regularization penalty scale: 0.0001
+ Batch size: 500
+Loading data...
+ Learning sample size = 1784913 examples
+ Validation sample size = 215049 examples
+ Testing sample size = 150536 examples
+Convpool conv-x-0 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-x-0
+Convpool conv-x-1 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-x-1
+Dense dense-x with nhidden = 256, dropout = 0.5
+Convpool conv-u-0 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-u-0
+Convpool conv-u-1 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-u-1
+Dense dense-u with nhidden = 256, dropout = 0.5
+Convpool conv-v-0 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-v-0
+Convpool conv-v-1 params: {'filter_size': (3, 3), 'pool_size': (2, 2), 'nfilters': 32}
+Convpool maxpool-v-1
+Dense dense-v with nhidden = 256, dropout = 0.5
+Network: concat columns...
+Dense dense-across with nhidden = 128, dropout = 0.5
+Softmax output prob with n_units = 11, dropout = 0.5
+
+In -->         Layer    --> Out    Description                                                  
+-------        -----    -------    -----------                                                  
+[]             0        [1]        <lasagne.layers.input.InputLayer object at 0x2aad85428990>   
+[0]            1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2aad85428a90>   
+[1]            2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2aad85428ad0>
+[2]            3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2aad618b6a90>   
+[3]            4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2aad85428b10>
+[4]            5        [6]        <lasagne.layers.noise.DropoutLayer object at 0x2aad85428a50> 
+[5]            6        [21]       <lasagne.layers.dense.DenseLayer object at 0x2aad618b6d50>   
+[]             7        [8]        <lasagne.layers.input.InputLayer object at 0x2aad854289d0>   
+[7]            8        [9]        <lasagne.layers.conv.Conv2DLayer object at 0x2aad618c43d0>   
+[8]            9        [10]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2aad618c4410>
+[9]            10       [11]       <lasagne.layers.conv.Conv2DLayer object at 0x2aad618c4390>   
+[10]           11       [12]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2aad618c46d0>
+[11]           12       [13]       <lasagne.layers.noise.DropoutLayer object at 0x2aad618b6d90> 
+[12]           13       [21]       <lasagne.layers.dense.DenseLayer object at 0x2aad618c4990>   
+[]             14       [15]       <lasagne.layers.input.InputLayer object at 0x2aad85428a10>   
+[14]           15       [16]       <lasagne.layers.conv.Conv2DLayer object at 0x2aad618c4c50>   
+[15]           16       [17]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2aad618c4c90>
+[16]           17       [18]       <lasagne.layers.conv.Conv2DLayer object at 0x2aad618c4c10>   
+[17]           18       [19]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2aad618c4f50>
+[18]           19       [20]       <lasagne.layers.noise.DropoutLayer object at 0x2aad618c49d0> 
+[19]           20       [21]       <lasagne.layers.dense.DenseLayer object at 0x2aad618d1250>   
+[6, 13, 20]    21       [22]       <lasagne.layers.merge.ConcatLayer object at 0x2aad618d1290>  
+[21]           22       [23]       <lasagne.layers.noise.DropoutLayer object at 0x2aad618d1510> 
+[22]           23       [24]       <lasagne.layers.dense.DenseLayer object at 0x2aad618d14d0>   
+[23]           24       [25]       <lasagne.layers.noise.DropoutLayer object at 0x2aad618d1590> 
+[24]           25       []         <lasagne.layers.dense.DenseLayer object at 0x2aad618d1890>   
+
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        
+
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        
+Starting training...
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.634s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.611s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.422s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.414s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.819s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.435s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.428s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.619s.
+  -Iterating over the slice took 81.123s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.553s.
+  -Iterating over the slice took 80.427s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.595s.
+  -Iterating over the slice took 80.429s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.429s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.437s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.429s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.434s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.555s.
+  -Iterating over the slice took 80.449s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.590s.
+  -Iterating over the slice took 80.438s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.440s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.431s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.543s.
+  -Iterating over the slice took 80.432s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.596s.
+  -Iterating over the slice took 80.439s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.439s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.450s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.435s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.433s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.429s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.553s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.003s.
+  -Iterating over the slice took 75.066s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.556s.
+  -Iterating over the slice took 80.453s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.597s.
+  -Iterating over the slice took 80.440s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.576s.
+  -Iterating over the slice took 80.445s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.573s.
+  -Iterating over the slice took 80.442s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.591s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.557s.
+  -Iterating over the slice took 80.446s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.595s.
+  -Iterating over the slice took 80.453s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.574s.
+  -Iterating over the slice took 61.631s.
+  The validation pass took 179.581s.
+Epoch 1 of 24 took 3360.074s
+  training loss:		0.570020
+  validation loss:		0.491595
+  validation accuracy:		86.27 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.439s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.602s.
+  -Iterating over the slice took 80.429s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.432s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.597s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.437s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.434s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.431s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.566s.
+  -Iterating over the slice took 80.441s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.609s.
+  -Iterating over the slice took 80.442s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.442s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.443s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.443s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.442s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.600s.
+  -Iterating over the slice took 80.444s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.448s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.459s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.545s.
+  -Iterating over the slice took 80.440s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.437s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.596s.
+  -Iterating over the slice took 80.452s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.566s.
+  -Iterating over the slice took 80.424s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.447s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.443s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.555s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.438s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.444s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.006s.
+  -Iterating over the slice took 75.068s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.570s.
+  -Iterating over the slice took 80.448s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.568s.
+  -Iterating over the slice took 80.438s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.588s.
+  -Iterating over the slice took 80.445s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.576s.
+  -Iterating over the slice took 80.448s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.579s.
+  -Iterating over the slice took 80.452s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.593s.
+  -Iterating over the slice took 80.447s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.575s.
+  -Iterating over the slice took 61.644s.
+  The validation pass took 179.591s.
+Epoch 2 of 24 took 3359.269s
+  training loss:		0.539892
+  validation loss:		0.465336
+  validation accuracy:		86.84 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.434s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.433s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.433s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.439s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.443s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.611s.
+  -Iterating over the slice took 81.165s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.444s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.551s.
+  -Iterating over the slice took 80.433s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.554s.
+  -Iterating over the slice took 80.436s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.593s.
+  -Iterating over the slice took 80.438s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.447s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.433s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.429s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.435s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.597s.
+  -Iterating over the slice took 80.444s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.444s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.433s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.442s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.448s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.444s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.449s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.586s.
+  -Iterating over the slice took 80.565s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.443s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.451s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.548s.
+  -Iterating over the slice took 80.446s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.445s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.453s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.014s.
+  -Iterating over the slice took 75.073s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.568s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.585s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.578s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.603s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.594s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.563s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.574s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.587s.
+  -Iterating over the slice took 61.661s.
+  The validation pass took 179.600s.
+Epoch 3 of 24 took 3360.368s
+  training loss:		0.524436
+  validation loss:		0.453165
+  validation accuracy:		87.12 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 81.127s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.661s.
+  -Iterating over the slice took 81.195s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.560s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.558s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.596s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.553s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.598s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.550s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.488s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.588s.
+  -Iterating over the slice took 80.494s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.486s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.009s.
+  -Iterating over the slice took 75.106s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.635s.
+  -Iterating over the slice took 81.182s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.577s.
+  -Iterating over the slice took 81.025s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.558s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.589s.
+  -Iterating over the slice took 80.498s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.594s.
+  -Iterating over the slice took 80.502s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.559s.
+  -Iterating over the slice took 80.497s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.582s.
+  -Iterating over the slice took 80.500s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.589s.
+  -Iterating over the slice took 61.680s.
+  The validation pass took 179.555s.
+Epoch 4 of 24 took 3363.201s
+  training loss:		0.519401
+  validation loss:		0.445468
+  validation accuracy:		87.39 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.602s.
+  -Iterating over the slice took 80.508s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.593s.
+  -Iterating over the slice took 80.494s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.501s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.598s.
+  -Iterating over the slice took 80.488s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.510s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.495s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.506s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.554s.
+  -Iterating over the slice took 80.505s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.629s.
+  -Iterating over the slice took 81.241s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.996s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.553s.
+  -Iterating over the slice took 81.128s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.636s.
+  -Iterating over the slice took 81.212s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.632s.
+  -Iterating over the slice took 81.213s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.556s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.498s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.489s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.499s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.497s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.499s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.602s.
+  -Iterating over the slice took 80.500s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.524s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.555s.
+  -Iterating over the slice took 80.513s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.488s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.556s.
+  -Iterating over the slice took 80.919s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.601s.
+  -Iterating over the slice took 80.489s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.493s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.017s.
+  -Iterating over the slice took 75.119s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.578s.
+  -Iterating over the slice took 80.487s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.583s.
+  -Iterating over the slice took 80.487s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 80.486s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.571s.
+  -Iterating over the slice took 80.508s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.595s.
+  -Iterating over the slice took 80.497s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.555s.
+  -Iterating over the slice took 80.503s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.588s.
+  -Iterating over the slice took 80.489s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.579s.
+  -Iterating over the slice took 61.674s.
+  The validation pass took 179.622s.
+Epoch 5 of 24 took 3365.294s
+  training loss:		0.506342
+  validation loss:		0.439932
+  validation accuracy:		87.51 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.494s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.522s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.623s.
+  -Iterating over the slice took 81.193s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 81.012s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.594s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.554s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.489s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.496s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 81.060s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.484s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 81.094s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.607s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 81.220s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.605s.
+  -Iterating over the slice took 81.079s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.497s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.624s.
+  -Iterating over the slice took 81.211s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.492s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.599s.
+  -Iterating over the slice took 80.487s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.554s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.489s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.008s.
+  -Iterating over the slice took 75.103s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.564s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.576s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.559s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.590s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.597s.
+  -Iterating over the slice took 80.485s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.555s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.594s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.577s.
+  -Iterating over the slice took 61.657s.
+  The validation pass took 179.596s.
+Epoch 6 of 24 took 3365.374s
+  training loss:		0.507440
+  validation loss:		0.436229
+  validation accuracy:		87.60 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.594s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.487s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.595s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.557s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.609s.
+  -Iterating over the slice took 80.484s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.566s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.507s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.593s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.490s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.548s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.594s.
+  -Iterating over the slice took 80.484s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.594s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.566s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.006s.
+  -Iterating over the slice took 75.096s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.558s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.601s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.570s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.585s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.576s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.580s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.575s.
+  -Iterating over the slice took 61.657s.
+  The validation pass took 179.590s.
+Epoch 7 of 24 took 3360.663s
+  training loss:		0.502284
+  validation loss:		0.432264
+  validation accuracy:		87.75 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.586s.
+  -Iterating over the slice took 81.132s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.620s.
+  -Iterating over the slice took 81.165s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.600s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.597s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.586s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.588s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.554s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.677s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.762s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.995s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.559s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.484s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.599s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.566s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.008s.
+  -Iterating over the slice took 75.098s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.582s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.594s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.578s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.576s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.598s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.577s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.579s.
+  -Iterating over the slice took 61.672s.
+  The validation pass took 179.619s.
+Epoch 8 of 24 took 3362.900s
+  training loss:		0.498132
+  validation loss:		0.430322
+  validation accuracy:		87.90 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.604s.
+  -Iterating over the slice took 80.454s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.593s.
+  -Iterating over the slice took 80.453s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.486s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.605s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.593s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.601s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.560s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.600s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.558s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.549s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.009s.
+  -Iterating over the slice took 75.100s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.559s.
+  -Iterating over the slice took 80.487s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.570s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.577s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.582s.
+  -Iterating over the slice took 80.486s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.590s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.574s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.579s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.574s.
+  -Iterating over the slice took 61.665s.
+  The validation pass took 179.616s.
+Epoch 9 of 24 took 3360.410s
+  training loss:		0.494621
+  validation loss:		0.427352
+  validation accuracy:		87.88 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.485s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.598s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.586s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.560s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.592s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.588s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.599s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.487s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.644s.
+  -Iterating over the slice took 81.217s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.594s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.624s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.590s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.009s.
+  -Iterating over the slice took 75.085s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.585s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.582s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.596s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.575s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.566s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.579s.
+  -Iterating over the slice took 61.663s.
+  The validation pass took 179.619s.
+Epoch 10 of 24 took 3361.451s
+  training loss:		0.496482
+  validation loss:		0.426271
+  validation accuracy:		87.95 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.488s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.592s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.595s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.607s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.604s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.586s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.484s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.595s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.599s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.658s.
+  -Iterating over the slice took 81.168s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.489s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.014s.
+  -Iterating over the slice took 75.096s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.577s.
+  -Iterating over the slice took 80.459s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.578s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.554s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.584s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.587s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.576s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.577s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.576s.
+  -Iterating over the slice took 61.660s.
+  The validation pass took 179.645s.
+Epoch 11 of 24 took 3361.395s
+  training loss:		0.492428
+  validation loss:		0.424109
+  validation accuracy:		87.98 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.598s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.488s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.557s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.014s.
+  -Iterating over the slice took 75.104s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.585s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.598s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.559s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.574s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.574s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.564s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.578s.
+  -Iterating over the slice took 61.650s.
+  The validation pass took 179.595s.
+Epoch 12 of 24 took 3360.403s
+  training loss:		0.489644
+  validation loss:		0.423258
+  validation accuracy:		87.99 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.566s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.560s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.601s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.454s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.605s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.562s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.607s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.550s.
+  -Iterating over the slice took 80.842s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.593s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 81.197s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 81.176s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.456s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.724s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.647s.
+  -Iterating over the slice took 81.166s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.635s.
+  -Iterating over the slice took 81.169s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.021s.
+  -Iterating over the slice took 75.081s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.549s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.577s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.554s.
+  -Iterating over the slice took 81.152s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 81.138s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.598s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.566s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.593s.
+  -Iterating over the slice took 80.889s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.590s.
+  -Iterating over the slice took 61.660s.
+  The validation pass took 179.876s.
+Epoch 13 of 24 took 3365.860s
+  training loss:		0.491760
+  validation loss:		0.421916
+  validation accuracy:		88.05 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 81.178s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.639s.
+  -Iterating over the slice took 81.192s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.556s.
+  -Iterating over the slice took 80.885s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.654s.
+  -Iterating over the slice took 81.169s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.871s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.630s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.589s.
+  -Iterating over the slice took 80.665s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.929s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.651s.
+  -Iterating over the slice took 81.176s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.547s.
+  -Iterating over the slice took 80.486s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.593s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.596s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.594s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.588s.
+  -Iterating over the slice took 81.159s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.548s.
+  -Iterating over the slice took 80.485s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.816s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.583s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.588s.
+  -Iterating over the slice took 81.008s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.624s.
+  -Iterating over the slice took 81.140s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.560s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 81.122s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.011s.
+  -Iterating over the slice took 75.136s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.634s.
+  -Iterating over the slice took 81.144s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.583s.
+  -Iterating over the slice took 80.489s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.557s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.599s.
+  -Iterating over the slice took 80.495s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.563s.
+  -Iterating over the slice took 80.499s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.559s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.585s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.571s.
+  -Iterating over the slice took 61.662s.
+  The validation pass took 179.618s.
+Epoch 14 of 24 took 3368.911s
+  training loss:		0.488279
+  validation loss:		0.420941
+  validation accuracy:		88.05 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.491s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.589s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.604s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.596s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.454s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.559s.
+  -Iterating over the slice took 80.456s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.594s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.543s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.559s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.601s.
+  -Iterating over the slice took 80.456s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.006s.
+  -Iterating over the slice took 75.094s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.564s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.579s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.556s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.591s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.574s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.578s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.576s.
+  -Iterating over the slice took 61.647s.
+  The validation pass took 179.598s.
+Epoch 15 of 24 took 3360.246s
+  training loss:		0.491084
+  validation loss:		0.419288
+  validation accuracy:		88.11 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.606s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.600s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.552s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.596s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.548s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.590s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.566s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.595s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.590s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.601s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.595s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.559s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.443s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.540s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.554s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.592s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.556s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.001s.
+  -Iterating over the slice took 75.083s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.578s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.583s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.566s.
+  -Iterating over the slice took 80.517s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.626s.
+  -Iterating over the slice took 81.163s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.584s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.566s.
+  -Iterating over the slice took 80.685s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.582s.
+  -Iterating over the slice took 81.182s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.579s.
+  -Iterating over the slice took 61.790s.
+  The validation pass took 179.609s.
+Epoch 16 of 24 took 3362.195s
+  training loss:		0.488605
+  validation loss:		0.419117
+  validation accuracy:		88.14 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.599s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.551s.
+  -Iterating over the slice took 80.459s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.586s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.586s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.606s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.483s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.599s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.555s.
+  -Iterating over the slice took 80.453s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.589s.
+  -Iterating over the slice took 81.146s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.556s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.010s.
+  -Iterating over the slice took 75.523s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.621s.
+  -Iterating over the slice took 81.155s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.596s.
+  -Iterating over the slice took 81.115s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.576s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.590s.
+  -Iterating over the slice took 80.486s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.565s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.575s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.569s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.583s.
+  -Iterating over the slice took 61.655s.
+  The validation pass took 179.613s.
+Epoch 17 of 24 took 3362.537s
+  training loss:		0.486920
+  validation loss:		0.417136
+  validation accuracy:		88.15 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.599s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.487s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.601s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.602s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.593s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.592s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.557s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.575s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.000s.
+  -Iterating over the slice took 75.087s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.585s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.587s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.554s.
+  -Iterating over the slice took 80.482s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.588s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.591s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.556s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.583s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.584s.
+  -Iterating over the slice took 61.654s.
+  The validation pass took 179.651s.
+Epoch 18 of 24 took 3360.306s
+  training loss:		0.485042
+  validation loss:		0.416545
+  validation accuracy:		88.16 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.602s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.556s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.443s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.588s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.586s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.608s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.602s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.604s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.553s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.590s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.556s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.546s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.016s.
+  -Iterating over the slice took 75.089s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.583s.
+  -Iterating over the slice took 80.492s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.580s.
+  -Iterating over the slice took 80.487s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.580s.
+  -Iterating over the slice took 80.812s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.604s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.555s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.559s.
+  -Iterating over the slice took 80.761s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.577s.
+  -Iterating over the slice took 80.934s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.577s.
+  -Iterating over the slice took 61.769s.
+  The validation pass took 180.361s.
+Epoch 19 of 24 took 3362.171s
+  training loss:		0.484844
+  validation loss:		0.415618
+  validation accuracy:		88.27 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.671s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.576s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.601s.
+  -Iterating over the slice took 80.459s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 81.129s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.459s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.610s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.589s.
+  -Iterating over the slice took 80.479s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.576s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.586s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.559s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.604s.
+  -Iterating over the slice took 80.716s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.555s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.549s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.459s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.015s.
+  -Iterating over the slice took 75.087s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.561s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.580s.
+  -Iterating over the slice took 80.480s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.607s.
+  -Iterating over the slice took 81.177s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.598s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.603s.
+  -Iterating over the slice took 80.727s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.578s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.569s.
+  -Iterating over the slice took 80.473s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.577s.
+  -Iterating over the slice took 61.658s.
+  The validation pass took 179.607s.
+Epoch 20 of 24 took 3362.404s
+  training loss:		0.484307
+  validation loss:		0.414568
+  validation accuracy:		88.29 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.600s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.560s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.605s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.599s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.604s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.597s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.550s.
+  -Iterating over the slice took 80.876s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.849s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.602s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 81.078s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.592s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.450s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.014s.
+  -Iterating over the slice took 75.085s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.560s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.588s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.551s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.577s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.568s.
+  -Iterating over the slice took 80.456s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.570s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.574s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.576s.
+  -Iterating over the slice took 61.655s.
+  The validation pass took 179.661s.
+Epoch 21 of 24 took 3361.620s
+  training loss:		0.480650
+  validation loss:		0.414328
+  validation accuracy:		88.25 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 81.214s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.476s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 81.152s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.571s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.630s.
+  -Iterating over the slice took 81.189s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.592s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.585s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.583s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.995s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.574s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.563s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.595s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.572s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.456s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.561s.
+  -Iterating over the slice took 80.562s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.569s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.015s.
+  -Iterating over the slice took 75.311s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.566s.
+  -Iterating over the slice took 80.459s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.574s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.575s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.584s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.574s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.565s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.591s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.573s.
+  -Iterating over the slice took 61.656s.
+  The validation pass took 179.607s.
+Epoch 22 of 24 took 3363.165s
+  training loss:		0.482977
+  validation loss:		0.413777
+  validation accuracy:		88.25 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.579s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.564s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.934s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.594s.
+  -Iterating over the slice took 80.484s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.462s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.591s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.567s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.566s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.590s.
+  -Iterating over the slice took 80.484s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.552s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.596s.
+  -Iterating over the slice took 80.938s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.603s.
+  -Iterating over the slice took 81.069s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.559s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.558s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.565s.
+  -Iterating over the slice took 80.485s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.597s.
+  -Iterating over the slice took 80.487s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.582s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.554s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.481s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.554s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.000s.
+  -Iterating over the slice took 75.089s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.580s.
+  -Iterating over the slice took 80.455s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.582s.
+  -Iterating over the slice took 80.478s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.567s.
+  -Iterating over the slice took 80.753s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.572s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.572s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.559s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.594s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.589s.
+  -Iterating over the slice took 61.671s.
+  The validation pass took 179.647s.
+Epoch 23 of 24 took 3362.016s
+  training loss:		0.480222
+  validation loss:		0.413286
+  validation accuracy:		88.26 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.592s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.597s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.581s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.600s.
+  -Iterating over the slice took 80.466s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.584s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.559s.
+  -Iterating over the slice took 80.471s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.566s.
+  -Iterating over the slice took 80.457s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.602s.
+  -Iterating over the slice took 80.464s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.605s.
+  -Iterating over the slice took 80.470s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.570s.
+  -Iterating over the slice took 80.477s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.587s.
+  -Iterating over the slice took 80.453s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.568s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.593s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.580s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.549s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.573s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.578s.
+  -Iterating over the slice took 80.472s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.556s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.577s.
+  -Iterating over the slice took 80.465s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.559s.
+  -Iterating over the slice took 80.766s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.562s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.598s.
+  -Iterating over the slice took 80.468s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.558s.
+  -Iterating over the slice took 80.467s.
+  Loading slice (1350000, 1396621) from /phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5 took 8.024s.
+  -Iterating over the slice took 75.094s.
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.580s.
+  -Iterating over the slice took 80.460s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.581s.
+  -Iterating over the slice took 80.469s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.556s.
+  -Iterating over the slice took 80.461s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.591s.
+  -Iterating over the slice took 80.475s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.571s.
+  -Iterating over the slice took 80.474s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.555s.
+  -Iterating over the slice took 80.458s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 8.569s.
+  -Iterating over the slice took 80.463s.
+  Loading slice (350000, 388292) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5 took 6.592s.
+  -Iterating over the slice took 61.659s.
+  The validation pass took 179.630s.
+Epoch 24 of 24 took 3360.496s
+  training loss:		0.479603
+  validation loss:		0.412441
+  validation accuracy:		88.36 %
+---
+Finished 24 epochs.
+Job mnv-conv-1457740543 submitted from mic.fnal.gov finished Sat Mar 12 16:20:56 CST 2016 jobid 107043.tev.fnal.gov
+PBS epilogue
