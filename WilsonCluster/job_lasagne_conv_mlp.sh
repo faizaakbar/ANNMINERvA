@@ -18,7 +18,7 @@ L2REG=0.0001
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5"
 
 SAVEMODELNAME="./lminervatriamese_betaprime`date +%s`.npz"
-PYTHONPROG="minerva_triamese_beta.py"
+PYTHONPROG="minerva_triamese_betaprime.py"
 
 # SAVEMODELNAME="./lminervatriamese_model`date +%s`.npz"
 # PYTHONPROG="minerva_triamese_lasagnefuel.py"
