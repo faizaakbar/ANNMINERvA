@@ -71,7 +71,7 @@ def get_used_data_sizes_for_testing(train_sizes, valid_sizes, test_sizes,
         used_sizes = \
             list(np.sum([train_sizes, valid_sizes, test_sizes], axis=0))
     print(" Used testing sample size = {} examples".format(used_data_size))
-    return used_sizes
+    return used_sizes, used_data_size
 
 
 def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
@@ -275,10 +275,10 @@ def categorical_test(build_cnn=None, data_file_list=None,
     print("Loading data for testing...")
     train_sizes, valid_sizes, test_sizes = \
         get_and_print_dataset_subsizes(data_file_list)
-    used_sizes = get_used_data_sizes_for_testing(train_sizes,
-                                                 valid_sizes,
-                                                 test_sizes,
-                                                 test_all_data)
+    used_sizes, used_data_size = get_used_data_sizes_for_testing(train_sizes,
+                                                                 valid_sizes,
+                                                                 test_sizes,
+                                                                 test_all_data)
 
     # extract timestamp from model file - assume it is the first set of numbers
     # otherwise just use "now"
@@ -353,6 +353,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
         test_slices.append(slices_maker(tsize, slice_size=50000))
     test_set = None
 
+    evtcounter = 0
     for i, data_file in enumerate(data_file_list):
 
         for tslice in test_slices[i]:
@@ -382,11 +383,15 @@ def categorical_test(build_cnn=None, data_file_list=None,
                 pred = pred_fn(inputx, inputu, inputv)
                 pred_targ = zip(pred[0], targets)
                 probs = probs_fn(inputx, inputu, inputv)
+                evtcounter += 1
                 if write_db:
                     filldb(tbl, con, eventids, pred, probs)
                 if be_verbose:
-                    print("(prediction, true target):", pred_targ, probs)
-                    print("----------------")
+                    if evtcounter % 1000 == 0:
+                        print("{}/{}: (prediction, true target): {}, {}".
+                              format(evtcounter,
+                                     used_data_size,
+                                     pred_targ, probs))
                 for p, t in pred_targ:
                     targs_mat[t][p] += 1
                     if t in targ_numbers:
@@ -424,10 +429,10 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
     print("Loading data for testing...")
     train_sizes, valid_sizes, test_sizes = \
         get_and_print_dataset_subsizes(data_file_list)
-    used_sizes = get_used_data_sizes_for_testing(train_sizes,
-                                                 valid_sizes,
-                                                 test_sizes,
-                                                 test_all_data)
+    used_sizes, _ = get_used_data_sizes_for_testing(train_sizes,
+                                                    valid_sizes,
+                                                    test_sizes,
+                                                    test_all_data)
 
     # extract timestamp from model file - assume it is the first set of numbers
     # otherwise just use "now"
