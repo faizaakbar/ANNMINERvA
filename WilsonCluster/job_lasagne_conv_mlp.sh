@@ -4,7 +4,8 @@
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
 #PBS -l nodes=gpu2:gpu:ppn=1,walltime=24:00:00
-#not this time... #PBS -l nodes=1:gpu,walltime=24:00:00
+# not 1 #PBS -l nodes=gpu1:gpu:ppn=1,walltime=24:00:00
+# any gpu? #PBS -l nodes=1:gpu,walltime=24:00:00
 #PBS -A minervaG
 #PBS -q gpu
 #restore to turn off email #PBS -m n
@@ -16,12 +17,12 @@ L2REG=0.0001
 
 # minerva_triamese_lasagnefuel.py style...
 # DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5,/phihome/perdue/theano/data/minosmatch_fuel_me1Amc_med.hdf5"
-# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5"
 # DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5"
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Amc_zseg0000.hdf5"
+# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Amc_zseg0000.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_fuel_me1Bmc.hdf5"
 
-# SAVEMODELNAME="./lminervatriamese_betaprime`date +%s`.npz"
-SAVEMODELNAME="./saved_logs/lminervatriamese_betaprime1457876583.npz"
+# SAVEMODELNAME="./saved_logs/lminervatriamese_betaprime1457876583.npz"
+SAVEMODELNAME="./lminervatriamese_betaprime`date +%s`.npz"
 PYTHONPROG="minerva_triamese_betaprime.py"
 
 
@@ -76,40 +77,41 @@ cp /home/perdue/ANNMINERvA/Lasagne/minerva_ann_*.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/predictiondb.py ${PBS_O_WORKDIR}
 
-# cat << EOF
-# python ${PYTHONPROG} -l \
-#   -n $NEPOCHS \
-#   -r $LRATE \
-#   -g $L2REG \
-#   -s $SAVEMODELNAME \
-#   -d $DATAFILENAME 
-# # $START_FROM
-# EOF
-# export THEANO_FLAGS=device=gpu,floatX=float32
-# python ${PYTHONPROG} -l \
-#   -n $NEPOCHS \
-#   -r $LRATE \
-#   -g $L2REG \
-#   -s $SAVEMODELNAME \
-#   -d $DATAFILENAME
+cat << EOF
+python ${PYTHONPROG} -l \
+  -n $NEPOCHS \
+  -r $LRATE \
+  -g $L2REG \
+  -s $SAVEMODELNAME \
+  -d $DATAFILENAME 
+# $START_FROM
+EOF
+export THEANO_FLAGS=device=gpu,floatX=float32
+python ${PYTHONPROG} -l \
+  -n $NEPOCHS \
+  -r $LRATE \
+  -g $L2REG \
+  -s $SAVEMODELNAME \
+  -d $DATAFILENAME
  # $START_FROM
 
 # nepochs and lrate don't matter for prediction, but setting them for log-file
 # homogeneity
-cat << EOF
-python ${PYTHONPROG} -t \
-  -n $NEPOCHS \
-  -r $LRATE \
-  -g $L2REG \
-  -d $DATAFILENAME \
-  -s $SAVEMODELNAME
-EOF
-python ${PYTHONPROG} -t \
-  -n $NEPOCHS \
-  -r $LRATE \
-  -g $L2REG \
-  -d $DATAFILENAME \
-  -s $SAVEMODELNAME
+# cat << EOF
+# python ${PYTHONPROG} -t \
+#   -n $NEPOCHS \
+#   -r $LRATE \
+#   -g $L2REG \
+#   -d $DATAFILENAME \
+#   -s $SAVEMODELNAME
+# EOF
+# python ${PYTHONPROG} -t \
+#   -n $NEPOCHS \
+#   -r $LRATE \
+#   -g $L2REG \
+#   -d $DATAFILENAME \
+#   -s $SAVEMODELNAME
+
 # Always use fcp to copy any large result files you want to keep back
 # to the file server before exiting your script. The /scratch area on the
 # workers is wiped clean between jobs.
