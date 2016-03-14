@@ -95,6 +95,7 @@ def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
         num_units=11,
         nonlinearity=lasagne.nonlinearities.softmax)
     print("Network: Softmax classification layer.")
+    print("n-parameters: ", lasagne.layers.count_params(outp))
 
     return outp
 
@@ -170,6 +171,7 @@ def build_triamese_inception(input_var_x=None,
         num_units=11,
         nonlinearity=lasagne.nonlinearities.softmax)
 
+    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
 
 
@@ -269,6 +271,7 @@ def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
     print("Softmax output prob with n_units = {}, dropout = {}".format(
         11, dropoutp))
 
+    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
 
 
@@ -363,4 +366,5 @@ def build_triamese_gamma(input_var_x=None, input_var_u=None, input_var_v=None,
     print("Softmax output prob with n_units = {}, dropout = {}".format(
         11, dropoutp))
 
+    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
