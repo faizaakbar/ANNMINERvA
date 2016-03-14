@@ -75,31 +75,16 @@ def get_data_from_file(filename, imgh, imgw):
     return storedat
 
 
-if __name__ == '__main__':
+def make_hdf5_file(imgw, imgh, filebase, hdf5file):
+    """
+    imgw, imgh - ints that specify the image size for `reshape`
+    filebase - pattern used for files to match into the output
+    hdf5file - name of the output file
 
-    from optparse import OptionParser
-    parser = OptionParser(usage=__doc__)
-    parser.add_option('-b', '--basename', default='nukecc_skim_me1Bmc',
-                      help='Input files base name', metavar='BASE_NAME',
-                      dest='filebase')
-    parser.add_option('-o', '--output', default='nukecc_fuel.hdf5',
-                      help='Output filename', metavar='OUTPUT_NAME',
-                      dest='hdf5file')
-    parser.add_option('-t', '--height', default=50, type='int',
-                      help='Image height', metavar='IMG_HEIGHT',
-                      dest='imgh')
-    parser.add_option('-w', '--width', default=50, type='int',
-                      help='Image width', metavar='IMG_WIDTH',
-                      dest='imgw')
-    (options, args) = parser.parse_args()
-
-    filebase = options.filebase
-    hdf5file = options.hdf5file
-
-    # "pixel" size of data images
-    #  here - W corresponds to MINERvA Z, and H correpsonds to the view axis
-    imgh = options.imgh
-    imgw = options.imgw
+    note that filebase is a pattern - if multiple files match
+    the pattern, then multiple files will be included in the
+    single output file
+    """
 
     # look for "filebase"+(_learn/_valid/_test/ - zero or more times)+whatever
     filebase = re.compile(r"^%s(_learn|_test|_valid)*.*dat$" % filebase)
@@ -190,3 +175,31 @@ if __name__ == '__main__':
     f.attrs['split'] = H5PYDataset.create_split_array(split_dict)
 
     f.close()
+
+
+if __name__ == '__main__':
+
+    from optparse import OptionParser
+    parser = OptionParser(usage=__doc__)
+    parser.add_option('-b', '--basename', default='nukecc_skim_me1Bmc',
+                      help='Input files base name', metavar='BASE_NAME',
+                      dest='filebase')
+    parser.add_option('-o', '--output', default='nukecc_fuel.hdf5',
+                      help='Output filename', metavar='OUTPUT_NAME',
+                      dest='hdf5file')
+    parser.add_option('-t', '--height', default=50, type='int',
+                      help='Image height', metavar='IMG_HEIGHT',
+                      dest='imgh')
+    parser.add_option('-w', '--width', default=50, type='int',
+                      help='Image width', metavar='IMG_WIDTH',
+                      dest='imgw')
+    (options, args) = parser.parse_args()
+
+    filebase = options.filebase
+    hdf5file = options.hdf5file
+
+    # "pixel" size of data images
+    #  here - W corresponds to MINERvA Z, and H correpsonds to the view axis
+    imgw = options.imgw
+    imgh = options.imgh
+    make_hdf5_file(imgw, imgh, filebase, hdf5file)
