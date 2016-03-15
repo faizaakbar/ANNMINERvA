@@ -1,0 +1,201 @@
+PBS prologue
+Job mnv-conv-1458049860 submitted from mic.fnal.gov started Tue Mar 15 08:51:01 CDT 2016 jobid 107209.tev.fnal.gov
+gpu1
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is 197ac4064116-dirty
+Git repo contains uncomitted changes! Please commit your changes
+before submitting a job. If you feel your changes are experimental,
+just use a feature branch.
+
+Changed files:
+WilsonCluster/job_lasagne_conv_mlp.sh
+
+python minerva_triamese_betaprime.py -l   -n 1   -r 0.0025   -g 0.0001   -s ./lminervatriamese_betaprime1458049861.npz   -d /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 
+# 
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+minerva_triamese_betaprime.py
+ Begin with saved parameters? False
+ Saved parameters file: ./lminervatriamese_betaprime1458049861.npz
+ Saved parameters file exists? False
+ Datasets: ['/phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5']
+ Dataset size: 3052678282
+ Planned number of epochs: 1
+ Learning rate: 0.0025
+ Momentum: 0.9
+ L2 regularization penalty scale: 0.0001
+ Batch size: 500
+Loading data...
+ Learning sample size = 2105783 examples
+ Validation sample size = 253708 examples
+ Testing sample size = 177597 examples
+Convpool conv-x-0 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 12}
+Convpool maxpool-x-0
+Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 24}
+Convpool maxpool-x-1
+Convpool conv-x-2 params: {'filter_size': (3, 3), 'pool_size': (2, 1), 'nfilters': 36}
+Convpool maxpool-x-2
+Dense dense-x with nhidden = 196, dropout = 0.5
+Convpool conv-u-0 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 12}
+Convpool maxpool-u-0
+Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 24}
+Convpool maxpool-u-1
+Convpool conv-u-2 params: {'filter_size': (3, 3), 'pool_size': (2, 1), 'nfilters': 36}
+Convpool maxpool-u-2
+Dense dense-u with nhidden = 196, dropout = 0.5
+Convpool conv-v-0 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 12}
+Convpool maxpool-v-0
+Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 24}
+Convpool maxpool-v-1
+Convpool conv-v-2 params: {'filter_size': (3, 3), 'pool_size': (2, 1), 'nfilters': 36}
+Convpool maxpool-v-2
+Dense dense-v with nhidden = 196, dropout = 0.5
+Network: concat columns...
+Dense dense-across with nhidden = 98, dropout = 0.5
+Softmax output prob with n_units = 11, dropout = 0.5
+n-parameters:  2896019
+
+In -->         Layer    --> Out    Description                                                  
+-------        -----    -------    -----------                                                  
+[]             0        [1]        <lasagne.layers.input.InputLayer object at 0x2b1b87fe6590>   
+[0]            1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2b1b87fe6690>   
+[1]            2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b1b87fe66d0>
+[2]            3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2b1b88005690>   
+[3]            4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b1b87fe6710>
+[4]            5        [6]        <lasagne.layers.conv.Conv2DLayer object at 0x2b1b880056d0>   
+[5]            6        [7]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b1b88005950>
+[6]            7        [8]        <lasagne.layers.noise.DropoutLayer object at 0x2b1b87fe6650> 
+[7]            8        [27]       <lasagne.layers.dense.DenseLayer object at 0x2b1b88005c10>   
+[]             9        [10]       <lasagne.layers.input.InputLayer object at 0x2b1b87fe65d0>   
+[9]            10       [11]       <lasagne.layers.conv.Conv2DLayer object at 0x2b1b8800f290>   
+[10]           11       [12]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b1b8800f2d0>
+[11]           12       [13]       <lasagne.layers.conv.Conv2DLayer object at 0x2b1b8800f250>   
+[12]           13       [14]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b1b8800f590>
+[13]           14       [15]       <lasagne.layers.conv.Conv2DLayer object at 0x2b1b8800f5d0>   
+[14]           15       [16]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b1b8800f850>
+[15]           16       [17]       <lasagne.layers.noise.DropoutLayer object at 0x2b1b88005c50> 
+[16]           17       [27]       <lasagne.layers.dense.DenseLayer object at 0x2b1b8800fb10>   
+[]             18       [19]       <lasagne.layers.input.InputLayer object at 0x2b1b87fe6610>   
+[18]           19       [20]       <lasagne.layers.conv.Conv2DLayer object at 0x2b1b8800fdd0>   
+[19]           20       [21]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b1b8800fe10>
+[20]           21       [22]       <lasagne.layers.conv.Conv2DLayer object at 0x2b1b8801c110>   
+[21]           22       [23]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b1b8800fd90>
+[22]           23       [24]       <lasagne.layers.conv.Conv2DLayer object at 0x2b1b8801c150>   
+[23]           24       [25]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b1b8801c3d0>
+[24]           25       [26]       <lasagne.layers.noise.DropoutLayer object at 0x2b1b8800fb50> 
+[25]           26       [27]       <lasagne.layers.dense.DenseLayer object at 0x2b1b8801c690>   
+[8, 17, 26]    27       [28]       <lasagne.layers.merge.ConcatLayer object at 0x2b1b8801c6d0>  
+[27]           28       [29]       <lasagne.layers.noise.DropoutLayer object at 0x2b1b8801c950> 
+[28]           29       [30]       <lasagne.layers.dense.DenseLayer object at 0x2b1b8801c910>   
+[29]           30       [31]       <lasagne.layers.noise.DropoutLayer object at 0x2b1b8801c9d0> 
+[30]           31       []         <lasagne.layers.dense.DenseLayer object at 0x2b1b8801ccd0>   
+
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        
+
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        
+Starting training...
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 9.483s.
+  -Iterating over the slice took 102.144s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 9.120s.
+  -Iterating over the slice took 102.070s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.805s.
+  -Iterating over the slice took 102.048s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.929s.
+  -Iterating over the slice took 102.081s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.776s.
+  -Iterating over the slice took 102.053s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.772s.
+  -Iterating over the slice took 102.066s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.796s.
+  -Iterating over the slice took 102.084s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.810s.
+  -Iterating over the slice took 102.069s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.998s.
+  -Iterating over the slice took 102.079s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 9.178s.
+  -Iterating over the slice took 102.104s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.790s.
+  -Iterating over the slice took 102.076s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.844s.
+  -Iterating over the slice took 102.079s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.861s.
+  -Iterating over the slice took 102.075s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 9.017s.
+  -Iterating over the slice took 102.070s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.913s.
+  -Iterating over the slice took 102.095s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.784s.
+  -Iterating over the slice took 102.094s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.737s.
+  -Iterating over the slice took 102.067s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.939s.
+  -Iterating over the slice took 102.082s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.869s.
+  -Iterating over the slice took 102.083s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.842s.
+  -Iterating over the slice took 102.084s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.816s.
+  -Iterating over the slice took 102.102s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 9.078s.
+  -Iterating over the slice took 102.076s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.771s.
+  -Iterating over the slice took 102.086s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.785s.
+  -Iterating over the slice took 102.073s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.830s.
+  -Iterating over the slice took 102.970s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.838s.
+  -Iterating over the slice took 102.071s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.782s.
+  -Iterating over the slice took 102.069s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 9.231s.
+  -Iterating over the slice took 102.101s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.837s.
+  -Iterating over the slice took 102.106s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.848s.
+  -Iterating over the slice took 102.093s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.817s.
+  -Iterating over the slice took 102.090s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.866s.
+  -Iterating over the slice took 102.076s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.775s.
+  -Iterating over the slice took 102.078s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.882s.
+  -Iterating over the slice took 102.081s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.803s.
+  -Iterating over the slice took 102.078s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.847s.
+  -Iterating over the slice took 102.087s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.842s.
+  -Iterating over the slice took 102.109s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.916s.
+  -Iterating over the slice took 102.080s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 9.616s.
+  -Iterating over the slice took 102.102s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.911s.
+  -Iterating over the slice took 102.106s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 9.093s.
+  -Iterating over the slice took 102.084s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 8.848s.
+  -Iterating over the slice took 102.080s.
+  Loading slice (2100000, 2105783) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc.hdf5 took 1.124s.
+  -Iterating over the slice took 11.845s.
+  The validation pass took 218.888s.
+Epoch 1 of 1 took 4895.937s
+  training loss:		0.495767
+  validation loss:		0.435055
+  validation accuracy:		87.00 %
+---
+Finished 1 epochs.
+Job mnv-conv-1458049860 submitted from mic.fnal.gov finished Tue Mar 15 10:13:00 CDT 2016 jobid 107209.tev.fnal.gov
+PBS epilogue
