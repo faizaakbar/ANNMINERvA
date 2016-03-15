@@ -1,0 +1,73 @@
+PBS prologue
+Job mnv-conv-1458051821 submitted from mic.fnal.gov started Tue Mar 15 09:23:42 CDT 2016 jobid 107211.tev.fnal.gov
+gpu2
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is 197ac4064116-dirty
+Git repo contains uncomitted changes! Please commit your changes
+before submitting a job. If you feel your changes are experimental,
+just use a feature branch.
+
+Changed files:
+WilsonCluster/job_lasagne_conv_mlp.sh
+
+python minerva_triamese_betaprime.py -t   -n 1   -r 0.0025   -g 0.0001   -d /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_zseg0000.hdf5   -s ./saved_logs/lminervatriamese_betaprime1457987722.npz -a
+Using gpu device 0: Tesla K40m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+minerva_triamese_betaprime.py
+ Begin with saved parameters? False
+ Saved parameters file: ./saved_logs/lminervatriamese_betaprime1457987722.npz
+ Saved parameters file exists? True
+ Datasets: ['/phihome/perdue/theano/data/minosmatch_fuel_me1Amc_zseg0000.hdf5']
+ Dataset size: 120803597
+ Planned number of epochs: 1
+ Learning rate: 0.0025
+ Momentum: 0.9
+ L2 regularization penalty scale: 0.0001
+ Batch size: 500
+Loading data for testing...
+ Learning sample size = 82998 examples
+ Validation sample size = 10000 examples
+ Testing sample size = 7000 examples
+ Used testing sample size = 99998 examples
+Convpool conv-x-0 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 12}
+Convpool maxpool-x-0
+Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 24}
+Convpool maxpool-x-1
+Convpool conv-x-2 params: {'filter_size': (3, 3), 'pool_size': (2, 1), 'nfilters': 36}
+Convpool maxpool-x-2
+Dense dense-x with nhidden = 196, dropout = 0.5
+Convpool conv-u-0 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 12}
+Convpool maxpool-u-0
+Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 24}
+Convpool maxpool-u-1
+Convpool conv-u-2 params: {'filter_size': (3, 3), 'pool_size': (2, 1), 'nfilters': 36}
+Convpool maxpool-u-2
+Dense dense-u with nhidden = 196, dropout = 0.5
+Convpool conv-v-0 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 12}
+Convpool maxpool-v-0
+Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 24}
+Convpool maxpool-v-1
+Convpool conv-v-2 params: {'filter_size': (3, 3), 'pool_size': (2, 1), 'nfilters': 36}
+Convpool maxpool-v-2
+Dense dense-v with nhidden = 196, dropout = 0.5
+Network: concat columns...
+Dense dense-across with nhidden = 98, dropout = 0.5
+Softmax output prob with n_units = 11, dropout = 0.5
+n-parameters:  2896019
+Starting testing...
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_zseg0000.hdf5 took 5.999s.
+  -Iterating over the slice took 10216.222s.
+  Loading slice (50000, 99998) from /phihome/perdue/theano/data/minosmatch_fuel_me1Amc_zseg0000.hdf5 took 5.888s.
+ -Iterating over the slice took 11319.524s.
+Final results:
+  test loss:			0.355865
+  test accuracy:		89.63 %
+   target 1 accuracy:			94.166 %
+   target 2 accuracy:			91.993 %
+   target 3 accuracy:			93.637 %
+   target 4 accuracy:			87.773 %
+   target 5 accuracy:			85.937 %
+Job mnv-conv-1458051821 submitted from mic.fnal.gov finished Tue Mar 15 15:22:58 CDT 2016 jobid 107211.tev.fnal.gov
+PBS epilogue
