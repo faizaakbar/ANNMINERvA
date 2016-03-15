@@ -82,7 +82,9 @@ def slices_maker(n, slice_size=100000):
         slices.append((counter, end))
         counter += slice_size
 
-    slices.append((counter, counter + remainder))
+    if remainder != 0:
+        slices.append((counter, counter + remainder))
+
     return slices
 
 
