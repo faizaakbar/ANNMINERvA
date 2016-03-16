@@ -104,3 +104,18 @@ def build_reversed_indexed_codes():
     for k, v in rcodes.items():
         index_to_detector[k] = pcodes[v]
     return index_to_detector
+
+
+def get_views():
+    import re
+    views_by_plane = """
+    UXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVX
+    UXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVX
+    UXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXUXVXXUXVXUXVXUXVXUXVXUXV
+    """
+    views_by_plane = re.sub(r"\s+", "", views_by_plane)
+    views_by_plane_dict = dict()
+    for i, c in enumerate(views_by_plane):
+        views_by_plane_dict[i] = c
+
+    return views_by_plane_dict
