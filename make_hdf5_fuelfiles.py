@@ -147,6 +147,10 @@ def get_data_from_file(filename, imgw, imgh, add_target_padding=False):
             if add_target_padding:
                 hitsX, hitsU, hitsV = pad_for_targets(imgw, imgh,
                                                       hitsX, hitsU, hitsV)
+            # we're "upside down" by default, flip back...
+            hitsX = hitsX[::-1, :]
+            hitsU = hitsU[::-1, :]
+            hitsV = hitsV[::-1, :]
             energies = np.asarray([hitsX, hitsU, hitsV])
             data.append(energies)
 
