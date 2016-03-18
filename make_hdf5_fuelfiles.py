@@ -18,7 +18,89 @@ from fuel.datasets.hdf5 import H5PYDataset
 from plane_codes import build_indexed_codes
 
 
-def get_data_from_file(filename, imgh, imgw):
+def compute_target_padding():
+    """
+    When adding padding, we traverse 8 planes before reaching target1,
+    then 8 planes before reaching target 2, then 8 planes before reaching
+    target 3, which we count as 2 planes thick, then ? planes before
+    reaching the water target, which we regard as ? planes thick, then
+    16 - ? planes before reaching target 4, then 4 planes before reaching
+    target 5.
+
+    return tuple of lists - first list is the locations in minerva plane
+    occurence index (start with zero, count up as we go along) where we
+    should skip two planes, and the second is the list of locations
+    where we should skip four
+
+    note in the steps below we are always traveling in steps of groups
+    of four - uxvx - so we will only count _x_ planes we have _traversed_
+    while building these steps so when we loop and insert padding we have
+    moved the right amount of space through the detector (because u and v
+    are encoded "in step" with x, with one layer of padding already inserted
+    between each u or v to account for the sparsity in those views.
+    """
+    base_steps = 1      # insert _after_ traversing n cols, etc.
+    target1_steps = (8 // 2) + base_steps
+    target2_steps = (8 // 2) + target1_steps
+    target3_steps = (8 // 2) + target2_steps
+    water_steps = (8 // 2) + target3_steps
+    target4_steps = (8 // 2) + water_steps
+    target5_steps = (4 // 2) + target4_steps
+    two_breaks = [target1_steps, target2_steps,
+                  target4_steps, target5_steps]
+    four_breaks = [target3_steps, water_steps]
+    return two_breaks, four_breaks
+
+
+def get_total_target_padding():
+    """
+    get the sum of all the spaces following the "breaks" where targets sit
+    """
+    two_breaks, four_breaks = compute_target_padding()
+    target_padding = 2 * len(two_breaks) + 4 * len(four_breaks)
+    water_padding = 0
+    npadcol = target_padding + water_padding
+    return npadcol
+
+
+def pad_for_targets(imgw, imgh, hitsX, hitsU, hitsV):
+    two_breaks, four_breaks = compute_target_padding()
+    imgh_padding = get_total_target_padding()
+    tempX = np.zeros(imgw * (imgh_padding + imgh),
+                     dtype=np.float32).reshape(
+                         imgw, imgh_padding + imgh)
+    tempU = np.zeros(imgw * (imgh_padding + imgh),
+                     dtype=np.float32).reshape(
+                         imgw, imgh_padding + imgh)
+    tempV = np.zeros(imgw * (imgh_padding + imgh),
+                     dtype=np.float32).reshape(
+                         imgw, imgh_padding + imgh)
+    shifted_column_counter = 0
+
+    def col_copy(frm, to):
+        tempX[:, to] = hitsX[:, frm]
+        tempU[:, to] = hitsU[:, frm]
+        tempV[:, to] = hitsV[:, frm]
+
+    for i in range(imgh):
+        j = i + 1
+        if j in two_breaks:
+            shifted_column_counter += 2
+            col_copy(i, shifted_column_counter)
+            shifted_column_counter += 1
+        elif j in four_breaks:
+            shifted_column_counter += 4
+            col_copy(i, shifted_column_counter)
+            shifted_column_counter += 1
+        else:
+            col_copy(i, shifted_column_counter)
+            shifted_column_counter += 1
+    return tempX, tempU, tempV
+
+
+def get_data_from_file(filename, imgw, imgh, add_target_padding=False):
+    """
+    """
     print("...loading data")
     targs = []
     zs = []
@@ -59,9 +141,12 @@ def get_data_from_file(filename, imgh, imgw):
                 elif view == 'V':
                     hitsV.append(energy)
                     hitsV.append(0.0)
-            hitsX = np.asarray(hitsX, dtype=np.float32).reshape(imgh, imgw)
-            hitsU = np.asarray(hitsU, dtype=np.float32).reshape(imgh, imgw)
-            hitsV = np.asarray(hitsV, dtype=np.float32).reshape(imgh, imgw)
+            hitsX = np.asarray(hitsX, dtype=np.float32).reshape(imgw, imgh)
+            hitsU = np.asarray(hitsU, dtype=np.float32).reshape(imgw, imgh)
+            hitsV = np.asarray(hitsV, dtype=np.float32).reshape(imgw, imgh)
+            if add_target_padding:
+                hitsX, hitsU, hitsV = pad_for_targets(imgw, imgh,
+                                                      hitsX, hitsU, hitsV)
             energies = np.asarray([hitsX, hitsU, hitsV])
             data.append(energies)
 
@@ -75,11 +160,14 @@ def get_data_from_file(filename, imgh, imgw):
     return storedat
 
 
-def make_hdf5_file(imgw, imgh, filebase, hdf5file):
+def make_hdf5_file(imgw, imgh, filebase, hdf5file, add_target_padding=False):
     """
     imgw, imgh - ints that specify the image size for `reshape`
     filebase - pattern used for files to match into the output
     hdf5file - name of the output file
+
+    note that imgw traverses the "y" direction and imgh traverses the "x"
+    direction in the classic mathematician's graph
 
     note that filebase is a pattern - if multiple files match
     the pattern, then multiple files will be included in the
@@ -96,9 +184,13 @@ def make_hdf5_file(imgw, imgh, filebase, hdf5file):
         os.remove(hdf5file)
     f = h5py.File(hdf5file, 'w')
 
-    data_set = f.create_dataset('hits', (0, 3, imgh, imgw),
+    imgh_padding = 0
+    if add_target_padding:
+        imgh_padding = get_total_target_padding()
+
+    data_set = f.create_dataset('hits', (0, 3, imgw, imgh + imgh_padding),
                                 dtype='float32', compression='gzip',
-                                maxshape=(None, 3, imgh, imgw))
+                                maxshape=(None, 3, imgw, imgh + imgh_padding))
     target_set = f.create_dataset('segments', (0,),
                                   dtype='uint8', compression='gzip',
                                   maxshape=(None,))
@@ -128,7 +220,7 @@ def make_hdf5_file(imgw, imgh, filebase, hdf5file):
     for fname in files:
         print("Iterating over file:", fname)
         data, targs, zs, planecodes, eventids = \
-            get_data_from_file(fname, imgh, imgw)
+            get_data_from_file(fname, imgw, imgh, add_target_padding)
         examples_in_file = len(targs)
         print(" examples_in_file =", examples_in_file)
         existing_examples = np.shape(f['hits'])[0]
@@ -193,13 +285,15 @@ if __name__ == '__main__':
     parser.add_option('-w', '--width', default=50, type='int',
                       help='Image width', metavar='IMG_WIDTH',
                       dest='imgw')
+    parser.add_option('-p', '--padded_targets', default=False,
+                      dest='padding', help='Include target padding',
+                      metavar='TARG_PAD', action='store_true')
     (options, args) = parser.parse_args()
 
     filebase = options.filebase
     hdf5file = options.hdf5file
 
-    # "pixel" size of data images
-    #  here - W corresponds to MINERvA Z, and H correpsonds to the view axis
-    imgw = options.imgw
-    imgh = options.imgh
-    make_hdf5_file(imgw, imgh, filebase, hdf5file)
+    # imgw, imgh - "pixel" size of data images
+    #  here - H corresponds to MINERvA Z, and W correpsonds to the view axis
+    make_hdf5_file(options.imgw, options.imgh,
+                   filebase, hdf5file, options.padding)
