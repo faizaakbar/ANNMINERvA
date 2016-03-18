@@ -14,6 +14,7 @@ echo "Grabbing runs $START to $STOP..."
 
 fileroots="minosmatch_skim_me1Bmc_zsegments"
 fileroots="minosmatch_skim_me1Amc_zsegments"
+fileroots="minosmatch_skim_me1Bmc_micro"
 
 MINERVA_RELEASE="v10r8p8"
 REMOTE_DIR="/minerva/app/users/perdue/cmtuser/Minerva_${MINERVA_RELEASE}/Ana/NuclearTargetVertexing/ana/make_hist"
