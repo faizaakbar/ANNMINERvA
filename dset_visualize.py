@@ -45,27 +45,31 @@ def decode_eventid(eventid):
     return (run, subrun, gate, phys_evt)
 
 f = h5py.File(filename, 'r')
-valid_data = pylab.zeros(pylab.shape(f['hits']), dtype='f')
-valid_labels = pylab.zeros(pylab.shape(f['segments']), dtype='f')
-valid_evtids = pylab.zeros(pylab.shape(f['eventids']), dtype='uint64')
-f['hits'].read_direct(valid_data)
-f['segments'].read_direct(valid_labels)
-f['eventids'].read_direct(valid_evtids)
+data_x = pylab.zeros(pylab.shape(f['hits-x']), dtype='f')
+data_u = pylab.zeros(pylab.shape(f['hits-u']), dtype='f')
+data_v = pylab.zeros(pylab.shape(f['hits-v']), dtype='f')
+labels = pylab.zeros(pylab.shape(f['segments']), dtype='f')
+evtids = pylab.zeros(pylab.shape(f['eventids']), dtype='uint64')
+f['hits-x'].read_direct(data_x)
+f['hits-u'].read_direct(data_u)
+f['hits-v'].read_direct(data_v)
+f['segments'].read_direct(labels)
+f['eventids'].read_direct(evtids)
 f.close()
 
-for counter, evt in enumerate(valid_data):
+for counter, evtid in enumerate(evtids):
     if evt_plotted > max_evts:
         break
-    targ = valid_labels[counter]
-    evtid = valid_evtids[counter]
     run, subrun, gate, phys_evt = decode_eventid(evtid)
     print('{} - {} - {} - {}'.format(run, subrun, gate, phys_evt))
+    targ = labels[counter]
+    evt = [data_x[counter], data_u[counter], data_v[counter]]
     fig = pylab.figure(figsize=(9, 3))
     gs = pylab.GridSpec(1, 3)
     for i in range(3):
         ax = pylab.subplot(gs[i])
         ax.axis('off')
-        ax.imshow(evt[i])
+        ax.imshow(evt[i][0])
     figname = 'evt_%s_%s_%s_%s_targ_%d.pdf' % \
         (run, subrun, gate, phys_evt, targ)
     pylab.savefig(figname)

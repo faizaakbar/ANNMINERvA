@@ -5,7 +5,8 @@ Usage:
 
 The default output name is 'nukecc_fuel.hdf5'. This script expects data layout
 like:
-    <zsegment> <run> <subrun> <gate> <slice[0]> X:[E] U:[E] ... etc.
+    # 0   1   2   3   4   5     6     7
+    # seg z   pln run sub gate  slice data (X:[E] U:[E] ... etc.)...
 """
 from __future__ import print_function
 import numpy as np
@@ -98,7 +99,13 @@ def pad_for_targets(imgw, imgh, hitsX, hitsU, hitsV):
     return tempX, tempU, tempV
 
 
-def get_data_from_file(filename, imgw, imgh, add_target_padding=False):
+def trim_imgh(img, imgh_out):
+    img = img[:, :imgh_out]
+    return img
+
+
+def get_data_from_file(filename, imgw, imgh, imgh_out,
+                       add_target_padding=False):
     """
     """
     print("...loading data")
@@ -106,7 +113,9 @@ def get_data_from_file(filename, imgw, imgh, add_target_padding=False):
     zs = []
     planeids = []
     eventids = []
-    data = []
+    dataX = []
+    dataU = []
+    dataV = []
     icodes = build_indexed_codes()
     # format:
     # 0   1   2   3   4   5   6   7
@@ -147,28 +156,46 @@ def get_data_from_file(filename, imgw, imgh, add_target_padding=False):
             if add_target_padding:
                 hitsX, hitsU, hitsV = pad_for_targets(imgw, imgh,
                                                       hitsX, hitsU, hitsV)
-            # we're "upside down" by default, flip back...
-            hitsX = hitsX[::-1, :]
-            hitsU = hitsU[::-1, :]
-            hitsV = hitsV[::-1, :]
-            energies = np.asarray([hitsX, hitsU, hitsV])
-            data.append(energies)
+            new_data = []
+            for h in [hitsX, hitsU, hitsV]:
+                # we're "upside down" by default, flip back...
+                h = h[::-1, :]
+                if imgh != imgh_out:
+                    h = trim_imgh(h, imgh_out)
+                new_data.append(h)
+            dataX.append(new_data[0])
+            dataU.append(new_data[1])
+            dataV.append(new_data[2])
 
     targs = np.asarray(targs, dtype=np.uint8)
     zs = np.asarray(zs, dtype=np.float32)
     planeids = np.asarray(planeids, dtype=np.uint16)
     eventids = np.asarray(eventids, dtype=np.uint64)
-    data = np.asarray(data, dtype=np.float32)
-    storedat = (data, targs, zs, planeids, eventids)
+    dataX = np.asarray(dataX, dtype=np.float32)
+    dataU = np.asarray(dataU, dtype=np.float32)
+    dataV = np.asarray(dataV, dtype=np.float32)
+    storedat = (dataX, dataU, dataV, targs, zs, planeids, eventids)
     print("...finished loading")
     return storedat
 
 
-def make_hdf5_file(imgw, imgh, filebase, hdf5file, add_target_padding=False):
+def transform_to_4d_tensor(tensr):
+    shpvar = np.shape(tensr)
+    shpvar = (shpvar[0], 1, shpvar[1], shpvar[2])
+    tensr = np.reshape(tensr, shpvar)
+    return tensr
+
+
+def make_hdf5_file(imgw, imgh, imgh_out,
+                   filebase, hdf5file, add_target_padding=False):
     """
     imgw, imgh - ints that specify the image size for `reshape`
     filebase - pattern used for files to match into the output
     hdf5file - name of the output file
+
+    note that imgh_out does _not_ take into account target padding! if
+    the user requests imgh_out == 50, target padding will make the total
+    img size larger.
 
     note that imgw traverses the "y" direction and imgh traverses the "x"
     direction in the classic mathematician's graph
@@ -177,6 +204,8 @@ def make_hdf5_file(imgw, imgh, filebase, hdf5file, add_target_padding=False):
     the pattern, then multiple files will be included in the
     single output file
     """
+    print('Making hdf5 file for img-in: {} x {} and img-out {} x {}'.format(
+        imgw, imgh, imgw, imgh_out))
 
     # look for "filebase"+(_learn/_valid/_test/ - zero or more times)+whatever
     filebase = re.compile(r"^%s(_learn|_test|_valid)*.*dat$" % filebase)
@@ -191,10 +220,17 @@ def make_hdf5_file(imgw, imgh, filebase, hdf5file, add_target_padding=False):
     imgh_padding = 0
     if add_target_padding:
         imgh_padding = get_total_target_padding()
+    imgh_out = imgh_out + imgh_padding
 
-    data_set = f.create_dataset('hits', (0, 3, imgw, imgh + imgh_padding),
-                                dtype='float32', compression='gzip',
-                                maxshape=(None, 3, imgw, imgh + imgh_padding))
+    data_set_x = f.create_dataset('hits-x', (0, 1, imgw, imgh_out),
+                                  dtype='float32', compression='gzip',
+                                  maxshape=(None, 1, imgw, imgh_out))
+    data_set_u = f.create_dataset('hits-u', (0, 1, imgw, imgh_out),
+                                  dtype='float32', compression='gzip',
+                                  maxshape=(None, 1, imgw, imgh_out))
+    data_set_v = f.create_dataset('hits-v', (0, 1, imgw, imgh_out),
+                                  dtype='float32', compression='gzip',
+                                  maxshape=(None, 1, imgw, imgh_out))
     target_set = f.create_dataset('segments', (0,),
                                   dtype='uint8', compression='gzip',
                                   maxshape=(None,))
@@ -210,10 +246,18 @@ def make_hdf5_file(imgw, imgh, filebase, hdf5file, add_target_padding=False):
 
     # `Fuel.H5PYDataset` allows us to label axes with semantic information;
     # we record that in the file using "dimensional scales" (see h5py docs)
-    data_set.dims[0].label = 'batch'
-    data_set.dims[1].label = 'view(xuv)'
-    data_set.dims[2].label = 'height(view-coord)'
-    data_set.dims[3].label = 'width(z)'
+    data_set_x.dims[0].label = 'batch'
+    data_set_x.dims[1].label = 'view(xuv)'
+    data_set_x.dims[2].label = 'height(view-coord)'
+    data_set_x.dims[3].label = 'width(z)'
+    data_set_u.dims[0].label = 'batch'
+    data_set_u.dims[1].label = 'view(xuv)'
+    data_set_u.dims[2].label = 'height(view-coord)'
+    data_set_u.dims[3].label = 'width(z)'
+    data_set_v.dims[0].label = 'batch'
+    data_set_v.dims[1].label = 'view(xuv)'
+    data_set_v.dims[2].label = 'height(view-coord)'
+    data_set_v.dims[3].label = 'width(z)'
     target_set.dims[0].label = 'z-segment'
     zs_set.dims[0].label = 'z'
     plane_set.dims[0].label = 'plane-id-code'
@@ -223,21 +267,30 @@ def make_hdf5_file(imgw, imgh, filebase, hdf5file, add_target_padding=False):
 
     for fname in files:
         print("Iterating over file:", fname)
-        data, targs, zs, planecodes, eventids = \
-            get_data_from_file(fname, imgw, imgh, add_target_padding)
+        dataX, dataU, dataV, targs, zs, planecodes, eventids = \
+            get_data_from_file(fname, imgw, imgh, imgh_out, add_target_padding)
+        dataX = transform_to_4d_tensor(dataX)
+        dataU = transform_to_4d_tensor(dataU)
+        dataV = transform_to_4d_tensor(dataV)
+        print('data shapes:',
+              np.shape(dataX), np.shape(dataU), np.shape(dataV))
         examples_in_file = len(targs)
         print(" examples_in_file =", examples_in_file)
-        existing_examples = np.shape(f['hits'])[0]
+        existing_examples = np.shape(f['eventids'])[0]
         print(" existing_examples =", existing_examples)
         total_examples = examples_in_file + existing_examples
         print(" resize =", total_examples)
         print(" idx slice = %d:%d" % (existing_examples, total_examples))
-        f['hits'].resize(total_examples, axis=0)
+        f['hits-x'].resize(total_examples, axis=0)
+        f['hits-u'].resize(total_examples, axis=0)
+        f['hits-v'].resize(total_examples, axis=0)
         f['segments'].resize(total_examples, axis=0)
         f['zs'].resize(total_examples, axis=0)
         f['planecodes'].resize(total_examples, axis=0)
         f['eventids'].resize(total_examples, axis=0)
-        f['hits'][existing_examples: total_examples] = data
+        f['hits-x'][existing_examples: total_examples] = dataX
+        f['hits-u'][existing_examples: total_examples] = dataU
+        f['hits-v'][existing_examples: total_examples] = dataV
         f['segments'][existing_examples: total_examples] = targs
         f['zs'][existing_examples: total_examples] = zs
         f['planecodes'][existing_examples: total_examples] = planecodes
@@ -249,19 +302,25 @@ def make_hdf5_file(imgw, imgh, filebase, hdf5file, add_target_padding=False):
     final_valid_index = int(total_examples * 0.93)
 
     split_dict = {
-        'train': {'hits': (0, final_train_index),
+        'train': {'hits-x': (0, final_train_index),
+                  'hits-u': (0, final_train_index),
+                  'hits-v': (0, final_train_index),
                   'segments': (0, final_train_index),
                   'zs': (0, final_train_index),
                   'planecodes': (0, final_train_index),
                   'eventids': (0, final_train_index)
                   },
-        'valid': {'hits': (final_train_index, final_valid_index),
+        'valid': {'hits-x': (final_train_index, final_valid_index),
+                  'hits-u': (final_train_index, final_valid_index),
+                  'hits-v': (final_train_index, final_valid_index),
                   'segments': (final_train_index, final_valid_index),
                   'zs': (final_train_index, final_valid_index),
                   'planecodes': (final_train_index, final_valid_index),
                   'eventids': (final_train_index, final_valid_index)
                   },
-        'test': {'hits': (final_valid_index, total_examples),
+        'test': {'hits-x': (final_valid_index, total_examples),
+                 'hits-u': (final_valid_index, total_examples),
+                 'hits-v': (final_valid_index, total_examples),
                  'segments': (final_valid_index, total_examples),
                  'zs': (final_valid_index, total_examples),
                  'planecodes': (final_valid_index, total_examples),
@@ -283,21 +342,28 @@ if __name__ == '__main__':
     parser.add_option('-o', '--output', default='nukecc_fuel.hdf5',
                       help='Output filename', metavar='OUTPUT_NAME',
                       dest='hdf5file')
-    parser.add_option('-t', '--height', default=50, type='int',
-                      help='Image height', metavar='IMG_HEIGHT',
+    parser.add_option('-t', '--inp_height', default=94, type='int',
+                      help='Image input height', metavar='IMG_HEIGHT',
                       dest='imgh')
-    parser.add_option('-w', '--width', default=50, type='int',
-                      help='Image width', metavar='IMG_WIDTH',
+    parser.add_option('-w', '--inp_width', default=127, type='int',
+                      help='Image input width', metavar='IMG_WIDTH',
                       dest='imgw')
     parser.add_option('-p', '--padded_targets', default=False,
                       dest='padding', help='Include target padding',
                       metavar='TARG_PAD', action='store_true')
+    parser.add_option('-u', '--out_height', default=1000, type='int',
+                      help='Image output height', metavar='IMG_OUT_HEIGHT',
+                      dest='imgh_out')
     (options, args) = parser.parse_args()
 
     filebase = options.filebase
     hdf5file = options.hdf5file
 
+    imgh_out = options.imgh_out
+    if imgh_out > options.imgh:
+        imgh_out = options.imgh
+
     # imgw, imgh - "pixel" size of data images
     #  here - H corresponds to MINERvA Z, and W correpsonds to the view axis
-    make_hdf5_file(options.imgw, options.imgh,
+    make_hdf5_file(options.imgw, options.imgh, imgh_out,
                    filebase, hdf5file, options.padding)
