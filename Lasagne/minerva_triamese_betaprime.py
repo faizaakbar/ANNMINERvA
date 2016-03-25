@@ -93,31 +93,35 @@ if __name__ == '__main__':
     learn = categorical_learn_and_validate
     test = categorical_test
 
-    # assume 50x50 images
+    # assume 127x50 images
     convpooldictlist = []
     convpool1dict = {}
     convpool1dict['nfilters'] = 12
-    convpool1dict['filter_size'] = (7, 3)
+    convpool1dict['filter_size'] = (8, 3)
     convpool1dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool1dict)
-    # after 7x3 filters -> 44x48 image, then maxpool -> 22x48
+    # after 8x3 filters -> 120x48 image, then maxpool -> 60x48
     convpool2dict = {}
     convpool2dict['nfilters'] = 24
     convpool2dict['filter_size'] = (7, 3)
     convpool2dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool2dict)
-    # after 7x3 filters -> 16x46 image, then maxpool -> 8x46
+    # after 7x3 filters -> 54x46 image, then maxpool -> 27x46
     convpool2dict = {}
     convpool2dict['nfilters'] = 36
-    convpool2dict['filter_size'] = (3, 3)
+    convpool2dict['filter_size'] = (6, 3)
     convpool2dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool2dict)
-    # after 3x3 filters -> 6x44 image, then maxpool -> 3x44
+    # after 6x3 filters -> 22x44 image, then maxpool -> 11x44
 
-    nhidden = 196
+    nhidden = 36
+    imgw = 127
+    imgh = 50
 
     if options.do_learn:
         learn(build_cnn=build_network_function,
+              imgw=imgw,
+              imgh=imgh,
               num_epochs=options.n_epochs,
               learning_rate=options.lrate,
               momentum=options.momentum,
@@ -131,6 +135,8 @@ if __name__ == '__main__':
 
     if options.do_test:
         test(build_cnn=build_network_function,
+             imgw=imgw,
+             imgh=imgh,
              data_file_list=options.dataset,
              l2_penalty_scale=options.l2_penalty_scale,
              save_model_file=options.save_model_file,
