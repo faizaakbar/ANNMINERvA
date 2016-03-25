@@ -6,6 +6,7 @@ Usage:
 The default file name is: "./nukecc_fuel.hdf5".
 """
 import pylab
+# import numpy as np
 import sys
 import h5py
 # Note, one can, if one wants, when working with `Fuel`d data sets, do:
@@ -66,10 +67,16 @@ for counter, evtid in enumerate(evtids):
     evt = [data_x[counter], data_u[counter], data_v[counter]]
     fig = pylab.figure(figsize=(9, 3))
     gs = pylab.GridSpec(1, 3)
+    # print np.where(evt == np.max(evt))
+    # print np.max(evt)
     for i in range(3):
         ax = pylab.subplot(gs[i])
         ax.axis('off')
-        ax.imshow(evt[i][0])
+        # images are normalized such the max e-dep has val 1, independent
+        # of view, so set vmin, vmax here to keep matplotlib from
+        # normalizing each view on its own
+        ax.imshow(evt[i][0], cmap=pylab.get_cmap('jet'),
+                  interpolation='nearest', vmin=0, vmax=1)
     figname = 'evt_%s_%s_%s_%s_targ_%d.pdf' % \
         (run, subrun, gate, phys_evt, targ)
     pylab.savefig(figname)
