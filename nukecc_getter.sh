@@ -12,14 +12,12 @@ fi
 
 echo "Grabbing runs $START to $STOP..."
 
-fileroots="minosmatch_skim_me1Bmc_zsegments"
-fileroots="minosmatch_skim_me1Amc_zsegments"
-fileroots="minosmatch_skim_me1Bmc_micro"
 fileroots="minosmatch_127x94_me1Bmc_"
+fileroots="minosmatch_127x94_me1Bmc_micro_"
 
 MINERVA_RELEASE="v10r8p8"
 REMOTE_DIR="/minerva/app/users/perdue/cmtuser/Minerva_${MINERVA_RELEASE}/Ana/NuclearTargetVertexing/ana/make_hist"
-REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat"
+REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/nukeccskimmer_minosmatch_127x94"
 
 for file in $fileroots
 do
