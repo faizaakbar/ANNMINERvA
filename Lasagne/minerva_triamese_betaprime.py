@@ -93,26 +93,26 @@ if __name__ == '__main__':
     learn = categorical_learn_and_validate
     test = categorical_test
 
-    # assume 127x50 images
+    # assume 127x(N) images
     convpooldictlist = []
     convpool1dict = {}
     convpool1dict['nfilters'] = 12
     convpool1dict['filter_size'] = (8, 3)
     convpool1dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool1dict)
-    # after 8x3 filters -> 120x48 image, then maxpool -> 60x48
+    # after 8x3 filters -> 120x(N-2) image, then maxpool -> 60x(N-2)
     convpool2dict = {}
     convpool2dict['nfilters'] = 24
     convpool2dict['filter_size'] = (7, 3)
     convpool2dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool2dict)
-    # after 7x3 filters -> 54x46 image, then maxpool -> 27x46
+    # after 7x3 filters -> 54x(N-4) image, then maxpool -> 27x(N-4)
     convpool2dict = {}
     convpool2dict['nfilters'] = 36
     convpool2dict['filter_size'] = (6, 3)
     convpool2dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool2dict)
-    # after 6x3 filters -> 22x44 image, then maxpool -> 11x44
+    # after 6x3 filters -> 22x(N-6) image, then maxpool -> 11x(N-6)
 
     nhidden = 36
     imgw = 127
