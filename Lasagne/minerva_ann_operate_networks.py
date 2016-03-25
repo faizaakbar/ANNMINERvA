@@ -20,26 +20,6 @@ from minerva_ann_datasets import slices_maker
 from minerva_ann_datasets import make_scheme_and_stream
 
 
-def split_inputs_xuv(inputs):
-    """
-    inputs has shape (# items, 3 views, w, h)
-    we want to split into three 4-tensors, 1 for each view
-    -> each should have shape: (# items, 1, w, h)
-
-    TODO: pre-split while preparing HDF5 files so we don't waste time doing
-    this every time we run...
-    """
-    shpvar = np.shape(inputs)
-    shpvar = (shpvar[0], 1, shpvar[2], shpvar[3])
-    inputx = inputs[:, 0, :, :]
-    inputu = inputs[:, 1, :, :]
-    inputv = inputs[:, 2, :, :]
-    inputx = np.reshape(inputx, shpvar)
-    inputu = np.reshape(inputu, shpvar)
-    inputv = np.reshape(inputv, shpvar)
-    return inputx, inputu, inputv
-
-
 def get_and_print_dataset_subsizes(data_file_list):
     """
     get a list of the sizes of each 'subset' (train/valid/test) in
@@ -198,9 +178,11 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                 train_err = 0
                 train_batches = 0
                 for data in train_dstream.get_epoch_iterator():
-                    _, inputs, _, targets, _ = \
-                        data[0], data[1], data[2], data[3], data[4]
-                    inputx, inputu, inputv = split_inputs_xuv(inputs)
+                    # data order in the hdf5 looks like:
+                    #  ids, hits-u, hits-v, hits-x, planes, segments, zs
+                    # (Check the file carefully for data names, etc.)
+                    inputu, inputv, inputx, targets = \
+                        data[1], data[2], data[3], data[5]
                     train_err += train_fn(inputx, inputu, inputv, targets)
                     train_batches += 1
                 t1 = time.time()
@@ -223,9 +205,11 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                     val_acc = 0
                     val_batches = 0
                     for data in valid_dstream.get_epoch_iterator():
-                        _, inputs, _, targets, _ = \
-                            data[0], data[1], data[2], data[3], data[4]
-                        inputx, inputu, inputv = split_inputs_xuv(inputs)
+                        # data order in the hdf5 looks like:
+                        #  ids, hits-u, hits-v, hits-x, planes, segments, zs
+                        # (Check the file carefully for data names, etc.)
+                        inputu, inputv, inputx, targets = \
+                            data[1], data[2], data[3], data[5]
                         err, acc = val_fn(inputx, inputu, inputv, targets)
                         val_err += err
                         val_acc += acc
@@ -373,9 +357,11 @@ def categorical_test(build_cnn=None, data_file_list=None,
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
-                eventids, inputs, _, targets, _ = \
-                    data[0], data[1], data[2], data[3], data[4]
-                inputx, inputu, inputv = split_inputs_xuv(inputs)
+                # data order in the hdf5 looks like:
+                #  ids, hits-u, hits-v, hits-x, planes, segments, zs
+                # (Check the file carefully for data names, etc.)
+                eventids, inputu, inputv, inputx, targets = \
+                    data[0], data[1], data[2], data[3], data[5]
                 err, acc = val_fn(inputx, inputu, inputv, targets)
                 test_err += err
                 test_acc += acc
@@ -546,8 +532,11 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
-                eventids, inputs, targets = data[0], data[1], data[3]
-                inputx, inputu, inputv = split_inputs_xuv(inputs)
+                # data order in the hdf5 looks like:
+                #  ids, hits-u, hits-v, hits-x, planes, segments, zs
+                # (Check the file carefully for data names, etc.)
+                eventids, inputu, inputv, inputx, targets = \
+                    data[0], data[1], data[2], data[3], data[5]
                 conv_x1 = vis_conv_x1(inputx, inputu, inputv)
                 conv_u1 = vis_conv_u1(inputx, inputu, inputv)
                 conv_v1 = vis_conv_v1(inputx, inputu, inputv)
