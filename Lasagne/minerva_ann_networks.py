@@ -21,7 +21,7 @@ def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
     model using two layers of convolutions and pooling.
     """
     # Input layer
-    tshape = (None, 1, imgh, imgw)
+    tshape = (None, 1, imgw, imgh)
     l_in1_x = InputLayer(shape=tshape, input_var=input_var_x)
     l_in1_u = InputLayer(shape=tshape, input_var=input_var_u)
     l_in1_v = InputLayer(shape=tshape, input_var=input_var_v)
@@ -139,7 +139,7 @@ def build_triamese_inception(input_var_x=None,
     """
     net = {}
     # Input layer
-    tshape = (None, 1, imgh, imgw)
+    tshape = (None, 1, imgw, imgh)
     net['input_x'] = InputLayer(shape=tshape, input_var=input_var_x)
     net['input_u'] = InputLayer(shape=tshape, input_var=input_var_u)
     net['input_v'] = InputLayer(shape=tshape, input_var=input_var_v)
@@ -184,7 +184,7 @@ def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
     """
     net = {}
     # Input layer
-    tshape = (None, 1, imgh, imgw)
+    tshape = (None, 1, imgw, imgh)
     net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
     net['input-u'] = InputLayer(shape=tshape, input_var=input_var_u)
     net['input-v'] = InputLayer(shape=tshape, input_var=input_var_v)
@@ -284,7 +284,7 @@ def build_triamese_gamma(input_var_x=None, input_var_u=None, input_var_v=None,
     """
     net = {}
     # Input layer
-    tshape = (None, 1, imgh, imgw)
+    tshape = (None, 1, imgw, imgh)
     net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
     net['input-u'] = InputLayer(shape=tshape, input_var=input_var_u)
     net['input-v'] = InputLayer(shape=tshape, input_var=input_var_v)
