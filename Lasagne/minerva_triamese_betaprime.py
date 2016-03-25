@@ -66,6 +66,10 @@ if __name__ == '__main__':
     parser.add_option('-a', '--test_all', dest='test_all_data',
                       default=False, help='Treat all data as test data',
                       metavar='ALL_TEST', action='store_true')
+    parser.add_option('--imgw', dest='imgw', default=127,
+                      help='Image width (x/u/v)', metavar='IMGW', type='int')
+    parser.add_option('--imgh', dest='imgh', default=50,
+                      help='Image height (z)', metavar='IMGH', type='int')
     (options, args) = parser.parse_args()
 
     if not options.do_learn and not options.do_test:
@@ -93,8 +97,8 @@ if __name__ == '__main__':
     learn = categorical_learn_and_validate
     test = categorical_test
 
-    # assume 127x(N) images
     convpooldictlist = []
+    # assume 127x(N) images
     convpool1dict = {}
     convpool1dict['nfilters'] = 12
     convpool1dict['filter_size'] = (8, 3)
@@ -102,21 +106,27 @@ if __name__ == '__main__':
     convpooldictlist.append(convpool1dict)
     # after 8x3 filters -> 120x(N-2) image, then maxpool -> 60x(N-2)
     convpool2dict = {}
-    convpool2dict['nfilters'] = 24
+    convpool2dict['nfilters'] = 20
     convpool2dict['filter_size'] = (7, 3)
     convpool2dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool2dict)
     # after 7x3 filters -> 54x(N-4) image, then maxpool -> 27x(N-4)
-    convpool2dict = {}
-    convpool2dict['nfilters'] = 36
-    convpool2dict['filter_size'] = (6, 3)
-    convpool2dict['pool_size'] = (2, 1)
-    convpooldictlist.append(convpool2dict)
+    convpool3dict = {}
+    convpool3dict['nfilters'] = 28
+    convpool3dict['filter_size'] = (6, 3)
+    convpool3dict['pool_size'] = (2, 1)
+    convpooldictlist.append(convpool3dict)
     # after 6x3 filters -> 22x(N-6) image, then maxpool -> 11x(N-6)
+    convpool4dict = {}
+    convpool4dict['nfilters'] = 36
+    convpool4dict['filter_size'] = (6, 3)
+    convpool4dict['pool_size'] = (2, 1)
+    convpooldictlist.append(convpool4dict)
+    # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
 
-    nhidden = 36
-    imgw = 127
-    imgh = 50
+    nhidden = 196
+    imgw = options.imgw
+    imgh = options.imgh
 
     if options.do_learn:
         learn(build_cnn=build_network_function,
