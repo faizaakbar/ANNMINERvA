@@ -57,6 +57,7 @@ def get_used_data_sizes_for_testing(train_sizes, valid_sizes, test_sizes,
 def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                                    learning_rate=0.01, momentum=0.9,
                                    l2_penalty_scale=1e-04, batchsize=500,
+                                   imgw=50, imgh=50,
                                    data_file_list=None,
                                    save_model_file='./params_file.npz',
                                    start_with_saved_params=False,
@@ -81,6 +82,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
 
     # Build the model
     network = build_cnn(input_var_x, input_var_u, input_var_v,
+                        imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
                         dropoutp=dropoutp)
     print(network_repr.get_network_str(
@@ -240,6 +242,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
 
 def categorical_test(build_cnn=None, data_file_list=None,
                      l2_penalty_scale=1e-04,
+                     imgw=50, imgh=50,
                      save_model_file='./params_file.npz',
                      be_verbose=False, convpooldictlist=None,
                      nhidden=None, dropoutp=None, write_db=True,
@@ -286,6 +289,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
 
     # Build the model
     network = build_cnn(input_var_x, input_var_u, input_var_v,
+                        imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
                         dropoutp=dropoutp)
     with np.load(save_model_file) as f:
@@ -403,6 +407,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
 
 
 def view_layer_activations(build_cnn=None, data_file_list=None,
+                           imgw=50, imgh=50,
                            save_model_file='./params_file.npz',
                            be_verbose=False, convpooldictlist=None,
                            nhidden=None, dropoutp=None, write_db=True,
@@ -435,6 +440,7 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
 
     # Build the model
     network = build_cnn(input_var_x, input_var_u, input_var_v,
+                        imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
                         dropoutp=dropoutp)
     with np.load(save_model_file) as f:
