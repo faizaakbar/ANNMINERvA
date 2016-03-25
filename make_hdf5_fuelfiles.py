@@ -23,9 +23,9 @@ def compute_target_padding():
     """
     When adding padding, we traverse 8 planes before reaching target1,
     then 8 planes before reaching target 2, then 8 planes before reaching
-    target 3, which we count as 2 planes thick, then ? planes before
-    reaching the water target, which we regard as ? planes thick, then
-    16 - ? planes before reaching target 4, then 4 planes before reaching
+    target 3, which we count as 2 planes thick, then 8 planes before
+    reaching the water target, which we regard as 6 modules thick, then
+    8 planes before reaching target 4, then 4 planes before reaching
     target 5.
 
     return tuple of lists - first list is the locations in minerva plane
@@ -49,23 +49,23 @@ def compute_target_padding():
     target5_steps = (4 // 2) + target4_steps
     two_breaks = [target1_steps, target2_steps,
                   target4_steps, target5_steps]
-    four_breaks = [target3_steps, water_steps]
-    return two_breaks, four_breaks
+    four_breaks = [target3_steps]
+    six_breaks = [water_steps]
+    return two_breaks, four_breaks, six_breaks
 
 
 def get_total_target_padding():
     """
     get the sum of all the spaces following the "breaks" where targets sit
     """
-    two_breaks, four_breaks = compute_target_padding()
-    target_padding = 2 * len(two_breaks) + 4 * len(four_breaks)
-    water_padding = 0
-    npadcol = target_padding + water_padding
-    return npadcol
+    two_breaks, four_breaks, six_breaks = compute_target_padding()
+    target_padding = 2 * len(two_breaks) + 4 * len(four_breaks) + \
+        6 * len(six_breaks)
+    return target_padding
 
 
 def pad_for_targets(imgw, imgh, hitsX, hitsU, hitsV):
-    two_breaks, four_breaks = compute_target_padding()
+    two_breaks, four_breaks, six_breaks = compute_target_padding()
     imgh_padding = get_total_target_padding()
     tempX = np.zeros(imgw * (imgh_padding + imgh),
                      dtype=np.float32).reshape(
@@ -76,13 +76,13 @@ def pad_for_targets(imgw, imgh, hitsX, hitsU, hitsV):
     tempV = np.zeros(imgw * (imgh_padding + imgh),
                      dtype=np.float32).reshape(
                          imgw, imgh_padding + imgh)
-    shifted_column_counter = 0
 
     def col_copy(frm, to):
         tempX[:, to] = hitsX[:, frm]
         tempU[:, to] = hitsU[:, frm]
         tempV[:, to] = hitsV[:, frm]
 
+    shifted_column_counter = 0
     for i in range(imgh):
         j = i + 1
         if j in two_breaks:
@@ -91,6 +91,10 @@ def pad_for_targets(imgw, imgh, hitsX, hitsU, hitsV):
             shifted_column_counter += 1
         elif j in four_breaks:
             shifted_column_counter += 4
+            col_copy(i, shifted_column_counter)
+            shifted_column_counter += 1
+        elif j in six_breaks:
+            shifted_column_counter += 6
             col_copy(i, shifted_column_counter)
             shifted_column_counter += 1
         else:
@@ -158,7 +162,8 @@ def get_data_from_file(filename, imgw, imgh, imgh_out,
                                                       hitsX, hitsU, hitsV)
             new_data = []
             for h in [hitsX, hitsU, hitsV]:
-                # we're "upside down" by default, flip back...
+                # we're "upside down" by default in images, flip back just
+                # so things look normal - shouldn't affect anything
                 h = h[::-1, :]
                 if imgh != imgh_out:
                     h = trim_imgh(h, imgh_out)
