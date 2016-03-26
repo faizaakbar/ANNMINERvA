@@ -368,3 +368,106 @@ def build_triamese_gamma(input_var_x=None, input_var_u=None, input_var_v=None,
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
+
+
+def build_triamese_delta(input_var_x=None, input_var_u=None, input_var_v=None,
+                         imgh=68, imgw=127, convpooldictlist=None, nhidden=None,
+                         dropoutp=None):
+    """
+    'triamese' (one branch for each view, feeding a fully-connected network),
+    model using two layers of convolutions and pooling.
+
+    This model is basically identical to the `beta` model, except we have
+    a softmax output of 214 for the full set of planecodes.
+    """
+    net = {}
+    # Input layer
+    tshape = (None, 1, imgw, imgh)
+    net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
+    net['input-u'] = InputLayer(shape=tshape, input_var=input_var_u)
+    net['input-v'] = InputLayer(shape=tshape, input_var=input_var_v)
+
+    if convpooldictlist is None:
+        convpooldictlist = []
+        convpool1dict = {}
+        convpool1dict['nfilters'] = 32
+        convpool1dict['filter_size'] = (3, 3)
+        convpool1dict['pool_size'] = (2, 2)
+        convpooldictlist.append(convpool1dict)
+        convpool2dict = {}
+        convpool2dict['nfilters'] = 32
+        convpool2dict['filter_size'] = (3, 3)
+        convpool2dict['pool_size'] = (2, 2)
+        convpooldictlist.append(convpool2dict)
+
+    if nhidden is None:
+        nhidden = 256
+
+    if dropoutp is None:
+        dropoutp = 0.5
+
+    def make_branch(view, input_layer, cpdictlist, nhidden=256, dropoutp=0.5):
+        """
+        see: http://lasagne.readthedocs.org/en/latest/modules/layers.html
+        """
+        net = {}
+        convname = ''
+        mpname = ''
+        for i, cpdict in enumerate(cpdictlist):
+            convname = 'conv-{}-{}'.format(view, i)
+            print("Convpool {} params: {}".format(convname, cpdict))
+            # the first time through, use `input`, after use the last layer
+            # from the previous iteration - ah loose scoping rules...
+            if i == 0:
+                layer = input_layer
+            else:
+                layer = net[mpname]
+            net[convname] = Conv2DLayer(
+                layer, num_filters=cpdict['nfilters'],
+                filter_size=cpdict['filter_size'],
+                nonlinearity=lasagne.nonlinearities.rectify,
+                W=lasagne.init.GlorotUniform())
+            mpname = 'maxpool-{}-{}'.format(view, i)
+            net[mpname] = MaxPool2DLayer(
+                net[convname], pool_size=cpdict['pool_size'])
+            print("Convpool {}".format(mpname))
+        densename = 'dense-{}'.format(view)
+        net[densename] = DenseLayer(
+            dropout(net[mpname], p=dropoutp),
+            num_units=nhidden,
+            nonlinearity=lasagne.nonlinearities.rectify)
+        print("Dense {} with nhidden = {}, dropout = {}".format(
+            densename, nhidden, dropoutp))
+        return net
+
+    net.update(make_branch('x', net['input-x'], convpooldictlist,
+                           nhidden, dropoutp))
+    net.update(make_branch('u', net['input-u'], convpooldictlist,
+                           nhidden, dropoutp))
+    net.update(make_branch('v', net['input-v'], convpooldictlist,
+                           nhidden, dropoutp))
+
+    # Concatenate the two parallel inputs
+    net['concat'] = ConcatLayer((net['dense-x'],
+                                 net['dense-u'],
+                                 net['dense-v']))
+    print("Network: concat columns...")
+
+    # One more dense layer
+    net['dense-across'] = DenseLayer(
+        dropout(net['concat'], p=dropoutp),
+        num_units=(nhidden // 2),
+        nonlinearity=lasagne.nonlinearities.rectify)
+    print("Dense {} with nhidden = {}, dropout = {}".format(
+        'dense-across', nhidden // 2, dropoutp))
+
+    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    net['output_prob'] = DenseLayer(
+        dropout(net['dense-across'], p=dropoutp),
+        num_units=214,
+        nonlinearity=lasagne.nonlinearities.softmax)
+    print("Softmax output prob with n_units = {}, dropout = {}".format(
+        214, dropoutp))
+
+    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
+    return net['output_prob']
