@@ -58,6 +58,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                                    learning_rate=0.01, momentum=0.9,
                                    l2_penalty_scale=1e-04, batchsize=500,
                                    imgw=50, imgh=50,
+                                   target_idx=5,
                                    data_file_list=None,
                                    save_model_file='./params_file.npz',
                                    start_with_saved_params=False,
@@ -184,7 +185,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                     #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                     # (Check the file carefully for data names, etc.)
                     inputu, inputv, inputx, targets = \
-                        data[1], data[2], data[3], data[5]
+                        data[1], data[2], data[3], data[target_idx]
                     train_err += train_fn(inputx, inputu, inputv, targets)
                     train_batches += 1
                 t1 = time.time()
@@ -242,7 +243,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
 
 def categorical_test(build_cnn=None, data_file_list=None,
                      l2_penalty_scale=1e-04,
-                     imgw=50, imgh=50,
+                     imgw=50, imgh=50, target_idx=5,
                      save_model_file='./params_file.npz',
                      be_verbose=False, convpooldictlist=None,
                      nhidden=None, dropoutp=None, write_db=True,
@@ -331,10 +332,13 @@ def categorical_test(build_cnn=None, data_file_list=None,
     test_acc = 0
     test_batches = 0
     # look at some concrete predictions
-    targ_numbers = [1, 2, 3, 4, 5]
-    pred_target = np.array([0, 0, 0, 0, 0])
-    true_target = np.array([0, 0, 0, 0, 0])
-    targs_mat = np.zeros(11 * 11).reshape(11, 11)
+    num_poss_segs = 11
+    if target_idx == 4:
+        num_poss_segs = 214
+    pred_target = np.zeros(num_poss_segs, dtype='float32')
+    true_target = np.zeros(num_poss_segs, dtype='float32')
+    targs_mat = np.zeros(num_poss_segs * num_poss_segs,
+                         dtype='float32').reshape(num_poss_segs, num_poss_segs)
 
     test_slices = []
     for tsize in used_sizes:
@@ -365,7 +369,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
                 #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                 # (Check the file carefully for data names, etc.)
                 eventids, inputu, inputv, inputx, targets = \
-                    data[0], data[1], data[2], data[3], data[5]
+                    data[0], data[1], data[2], data[3], data[target_idx]
                 err, acc = val_fn(inputx, inputu, inputv, targets)
                 test_err += err
                 test_acc += acc
@@ -384,10 +388,9 @@ def categorical_test(build_cnn=None, data_file_list=None,
                                      pred_targ, probs))
                 for p, t in pred_targ:
                     targs_mat[t][p] += 1
-                    if t in targ_numbers:
-                        true_target[t-1] += 1
-                        if p == t:
-                            pred_target[p-1] += 1
+                    true_target[t-1] += 1
+                    if p == t:
+                        pred_target[p-1] += 1
             t1 = time.time()
             print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
 
@@ -407,7 +410,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
 
 
 def view_layer_activations(build_cnn=None, data_file_list=None,
-                           imgw=50, imgh=50,
+                           imgw=50, imgh=50, target_idx=5,
                            save_model_file='./params_file.npz',
                            be_verbose=False, convpooldictlist=None,
                            nhidden=None, dropoutp=None, write_db=True,
@@ -542,7 +545,7 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
                 #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                 # (Check the file carefully for data names, etc.)
                 eventids, inputu, inputv, inputx, targets = \
-                    data[0], data[1], data[2], data[3], data[5]
+                    data[0], data[1], data[2], data[3], data[target_idx]
                 conv_x1 = vis_conv_x1(inputx, inputu, inputv)
                 conv_u1 = vis_conv_u1(inputx, inputu, inputv)
                 conv_v1 = vis_conv_v1(inputx, inputu, inputv)
