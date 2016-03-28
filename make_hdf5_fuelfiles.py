@@ -191,6 +191,89 @@ def transform_to_4d_tensor(tensr):
     return tensr
 
 
+def make_file_list(filebase):
+    # look for "filebase"+(_learn/_valid/_test/ - zero or more times)+whatever
+    filebase = re.compile(r"^%s(_learn|_test|_valid)*.*dat$" % filebase)
+    files = os.listdir('.')
+    files = [f for f in files if re.match(filebase, f)]
+    print(files)
+    return files
+
+
+def prepare_hdf5_file(hdf5file):
+    if os.path.exists(hdf5file):
+        os.remove(hdf5file)
+    f = h5py.File(hdf5file, 'w')
+    return f
+
+
+def create_view_dset(hdf5file, name, imgw, imgh):
+    data_set = hdf5file.create_dataset(name, (0, 1, imgw, imgh),
+                                       dtype='float32', compression='gzip',
+                                       maxshape=(None, 1, imgw, imgh))
+    # `Fuel.H5PYDataset` allows us to label axes with semantic information;
+    # we record that in the file using "dimensional scales" (see h5py docs)
+    data_set.dims[0].label = 'batch'
+    data_set.dims[1].label = 'view(xuv)'
+    data_set.dims[2].label = 'height(view-coord)'
+    data_set.dims[3].label = 'width(z)'
+
+
+def create_1d_dset(hdf5file, name, dtype, label):
+    data_set = hdf5file.create_dataset(name, (0,),
+                                       dtype=dtype, compression='gzip',
+                                       maxshape=(None,))
+    data_set.dims[0].label = label
+
+
+def add_split_dict(hdf5file, names, total_examples,
+                   train_frac=0.83, valid_frac=0.10):
+    # TODO: investiage the "reference" stuff so we can pluck validation
+    # and testing events evenly from the sample
+    final_train_index = int(total_examples * train_frac)
+    final_valid_index = int(total_examples * (train_frac + valid_frac))
+
+    train_dict = {name: (0, final_train_index)
+                  for name in names}
+    valid_dict = {name: (final_train_index, final_valid_index)
+                  for name in names}
+    test_dict = {name: (final_valid_index, total_examples)
+                 for name in names}
+    split_dict = {
+        'train': train_dict,
+        'valid': valid_dict,
+        'test': test_dict
+    }
+    hdf5file.attrs['split'] = H5PYDataset.create_split_array(split_dict)
+
+
+def add_data_to_hdf5file(f, dset_names,
+                         dataX, dataU, dataV,
+                         targs, zs, planecodes, eventids):
+        dataX = transform_to_4d_tensor(dataX)
+        dataU = transform_to_4d_tensor(dataU)
+        dataV = transform_to_4d_tensor(dataV)
+        print('data shapes:',
+              np.shape(dataX), np.shape(dataU), np.shape(dataV))
+        examples_in_file = len(targs)
+        print(" examples_in_file =", examples_in_file)
+        existing_examples = np.shape(f['eventids'])[0]
+        print(" existing_examples =", existing_examples)
+        total_examples = examples_in_file + existing_examples
+        print(" resize =", total_examples)
+        print(" idx slice = %d:%d" % (existing_examples, total_examples))
+        for name in dset_names:
+            f[name].resize(total_examples, axis=0)
+        f[dset_names[0]][existing_examples: total_examples] = dataX
+        f[dset_names[1]][existing_examples: total_examples] = dataU
+        f[dset_names[2]][existing_examples: total_examples] = dataV
+        f[dset_names[3]][existing_examples: total_examples] = targs
+        f[dset_names[4]][existing_examples: total_examples] = zs
+        f[dset_names[5]][existing_examples: total_examples] = planecodes
+        f[dset_names[6]][existing_examples: total_examples] = eventids
+        return total_examples
+
+
 def make_hdf5_file(imgw, imgh, imgh_out,
                    filebase, hdf5file, add_target_padding=False):
     """
@@ -212,61 +295,24 @@ def make_hdf5_file(imgw, imgh, imgh_out,
     print('Making hdf5 file for img-in: {} x {} and img-out {} x {}'.format(
         imgw, imgh, imgw, imgh_out))
 
-    # look for "filebase"+(_learn/_valid/_test/ - zero or more times)+whatever
-    filebase = re.compile(r"^%s(_learn|_test|_valid)*.*dat$" % filebase)
-    files = os.listdir('.')
-    files = [f for f in files if re.match(filebase, f)]
-    print(files)
-
-    if os.path.exists(hdf5file):
-        os.remove(hdf5file)
-    f = h5py.File(hdf5file, 'w')
+    files = make_file_list(filebase)
+    f = prepare_hdf5_file(hdf5file)
 
     imgh_padding = 0
     if add_target_padding:
         imgh_padding = get_total_target_padding()
     imgh_out = imgh_out + imgh_padding
 
-    data_set_x = f.create_dataset('hits-x', (0, 1, imgw, imgh_out),
-                                  dtype='float32', compression='gzip',
-                                  maxshape=(None, 1, imgw, imgh_out))
-    data_set_u = f.create_dataset('hits-u', (0, 1, imgw, imgh_out),
-                                  dtype='float32', compression='gzip',
-                                  maxshape=(None, 1, imgw, imgh_out))
-    data_set_v = f.create_dataset('hits-v', (0, 1, imgw, imgh_out),
-                                  dtype='float32', compression='gzip',
-                                  maxshape=(None, 1, imgw, imgh_out))
-    target_set = f.create_dataset('segments', (0,),
-                                  dtype='uint8', compression='gzip',
-                                  maxshape=(None,))
-    zs_set = f.create_dataset('zs', (0,),
-                              dtype='float32', compression='gzip',
-                              maxshape=(None,))
-    plane_set = f.create_dataset('planecodes', (0,),
-                                 dtype='uint16', compression='gzip',
-                                 maxshape=(None,))
-    events_set = f.create_dataset('eventids', (0,),
-                                  dtype='uint64', compression='gzip',
-                                  maxshape=(None,))
+    dset_names = ['hits-x', 'hits-u', 'hits-v', 'segments', 'zs',
+                  'planecodes', 'eventids']
 
-    # `Fuel.H5PYDataset` allows us to label axes with semantic information;
-    # we record that in the file using "dimensional scales" (see h5py docs)
-    data_set_x.dims[0].label = 'batch'
-    data_set_x.dims[1].label = 'view(xuv)'
-    data_set_x.dims[2].label = 'height(view-coord)'
-    data_set_x.dims[3].label = 'width(z)'
-    data_set_u.dims[0].label = 'batch'
-    data_set_u.dims[1].label = 'view(xuv)'
-    data_set_u.dims[2].label = 'height(view-coord)'
-    data_set_u.dims[3].label = 'width(z)'
-    data_set_v.dims[0].label = 'batch'
-    data_set_v.dims[1].label = 'view(xuv)'
-    data_set_v.dims[2].label = 'height(view-coord)'
-    data_set_v.dims[3].label = 'width(z)'
-    target_set.dims[0].label = 'z-segment'
-    zs_set.dims[0].label = 'z'
-    plane_set.dims[0].label = 'plane-id-code'
-    events_set.dims[0].label = 'run+subrun+gate+slices[0]'
+    create_view_dset(f, dset_names[0], imgw, imgh_out)
+    create_view_dset(f, dset_names[1], imgw, imgh_out)
+    create_view_dset(f, dset_names[2], imgw, imgh_out)
+    create_1d_dset(f, dset_names[3], 'uint8', 'z-segment')
+    create_1d_dset(f, dset_names[4], 'float32', 'z')
+    create_1d_dset(f, dset_names[5], 'uint16', 'plane-id-code')
+    create_1d_dset(f, dset_names[6], 'uint64', 'run+subrun+gate+slices[0]')
 
     total_examples = 0
 
@@ -274,65 +320,11 @@ def make_hdf5_file(imgw, imgh, imgh_out,
         print("Iterating over file:", fname)
         dataX, dataU, dataV, targs, zs, planecodes, eventids = \
             get_data_from_file(fname, imgw, imgh, imgh_out, add_target_padding)
-        dataX = transform_to_4d_tensor(dataX)
-        dataU = transform_to_4d_tensor(dataU)
-        dataV = transform_to_4d_tensor(dataV)
-        print('data shapes:',
-              np.shape(dataX), np.shape(dataU), np.shape(dataV))
-        examples_in_file = len(targs)
-        print(" examples_in_file =", examples_in_file)
-        existing_examples = np.shape(f['eventids'])[0]
-        print(" existing_examples =", existing_examples)
-        total_examples = examples_in_file + existing_examples
-        print(" resize =", total_examples)
-        print(" idx slice = %d:%d" % (existing_examples, total_examples))
-        f['hits-x'].resize(total_examples, axis=0)
-        f['hits-u'].resize(total_examples, axis=0)
-        f['hits-v'].resize(total_examples, axis=0)
-        f['segments'].resize(total_examples, axis=0)
-        f['zs'].resize(total_examples, axis=0)
-        f['planecodes'].resize(total_examples, axis=0)
-        f['eventids'].resize(total_examples, axis=0)
-        f['hits-x'][existing_examples: total_examples] = dataX
-        f['hits-u'][existing_examples: total_examples] = dataU
-        f['hits-v'][existing_examples: total_examples] = dataV
-        f['segments'][existing_examples: total_examples] = targs
-        f['zs'][existing_examples: total_examples] = zs
-        f['planecodes'][existing_examples: total_examples] = planecodes
-        f['eventids'][existing_examples: total_examples] = eventids
+        total_examples = add_data_to_hdf5file(f, dset_names,
+                                              dataX, dataU, dataV,
+                                              targs, zs, planecodes, eventids)
 
-    # TODO: investiage the "reference" stuff so we can pluck validation
-    # and testing events evenly from the sample
-    final_train_index = int(total_examples * 0.83)
-    final_valid_index = int(total_examples * 0.93)
-
-    split_dict = {
-        'train': {'hits-x': (0, final_train_index),
-                  'hits-u': (0, final_train_index),
-                  'hits-v': (0, final_train_index),
-                  'segments': (0, final_train_index),
-                  'zs': (0, final_train_index),
-                  'planecodes': (0, final_train_index),
-                  'eventids': (0, final_train_index)
-                  },
-        'valid': {'hits-x': (final_train_index, final_valid_index),
-                  'hits-u': (final_train_index, final_valid_index),
-                  'hits-v': (final_train_index, final_valid_index),
-                  'segments': (final_train_index, final_valid_index),
-                  'zs': (final_train_index, final_valid_index),
-                  'planecodes': (final_train_index, final_valid_index),
-                  'eventids': (final_train_index, final_valid_index)
-                  },
-        'test': {'hits-x': (final_valid_index, total_examples),
-                 'hits-u': (final_valid_index, total_examples),
-                 'hits-v': (final_valid_index, total_examples),
-                 'segments': (final_valid_index, total_examples),
-                 'zs': (final_valid_index, total_examples),
-                 'planecodes': (final_valid_index, total_examples),
-                 'eventids': (final_valid_index, total_examples)
-                 }
-    }
-    f.attrs['split'] = H5PYDataset.create_split_array(split_dict)
+    add_split_dict(f, dset_names, total_examples)
 
     f.close()
 
