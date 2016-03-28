@@ -12,6 +12,7 @@ from __future__ import print_function
 import numpy as np
 import os
 import re
+from collections import OrderedDict
 
 import h5py
 
@@ -247,30 +248,18 @@ def add_split_dict(hdf5file, names, total_examples,
     hdf5file.attrs['split'] = H5PYDataset.create_split_array(split_dict)
 
 
-def add_data_to_hdf5file(f, dset_names,
-                         dataX, dataU, dataV,
-                         targs, zs, planecodes, eventids):
-        dataX = transform_to_4d_tensor(dataX)
-        dataU = transform_to_4d_tensor(dataU)
-        dataV = transform_to_4d_tensor(dataV)
-        print('data shapes:',
-              np.shape(dataX), np.shape(dataU), np.shape(dataV))
-        examples_in_file = len(targs)
+def add_data_to_hdf5file(f, dset_names, dset_vals):
+        examples_in_file = len(dset_vals[-1])
         print(" examples_in_file =", examples_in_file)
-        existing_examples = np.shape(f['eventids'])[0]
+        existing_examples = np.shape(f[dset_names[-1]])[0]
         print(" existing_examples =", existing_examples)
         total_examples = examples_in_file + existing_examples
         print(" resize =", total_examples)
         print(" idx slice = %d:%d" % (existing_examples, total_examples))
         for name in dset_names:
             f[name].resize(total_examples, axis=0)
-        f[dset_names[0]][existing_examples: total_examples] = dataX
-        f[dset_names[1]][existing_examples: total_examples] = dataU
-        f[dset_names[2]][existing_examples: total_examples] = dataV
-        f[dset_names[3]][existing_examples: total_examples] = targs
-        f[dset_names[4]][existing_examples: total_examples] = zs
-        f[dset_names[5]][existing_examples: total_examples] = planecodes
-        f[dset_names[6]][existing_examples: total_examples] = eventids
+        for i, data in enumerate(dset_vals):
+            f[dset_names[i]][existing_examples: total_examples] = data
         return total_examples
 
 
@@ -303,12 +292,21 @@ def make_hdf5_file(imgw, imgh, imgh_out,
         imgh_padding = get_total_target_padding()
     imgh_out = imgh_out + imgh_padding
 
-    dset_names = ['hits-x', 'hits-u', 'hits-v', 'segments', 'zs',
-                  'planecodes', 'eventids']
+    img_dim = (imgw, imgh_out)
+    dset_description = OrderedDict(
+        (('hits-x', img_dim),
+         ('hits-u', img_dim),
+         ('hits-v', img_dim),
+         ('segments', ('uint8', 'z-segment')),
+         ('zs', ('float32', 'z')),
+         ('planecodes', ('uint16', 'plane-id-code')),
+         ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
+    )
+    dset_names = dset_description.keys()
 
-    create_view_dset(f, dset_names[0], imgw, imgh_out)
-    create_view_dset(f, dset_names[1], imgw, imgh_out)
-    create_view_dset(f, dset_names[2], imgw, imgh_out)
+    create_view_dset(f, dset_names[0], img_dim[0], img_dim[1])
+    create_view_dset(f, dset_names[1], img_dim[0], img_dim[1])
+    create_view_dset(f, dset_names[2], img_dim[0], img_dim[1])
     create_1d_dset(f, dset_names[3], 'uint8', 'z-segment')
     create_1d_dset(f, dset_names[4], 'float32', 'z')
     create_1d_dset(f, dset_names[5], 'uint16', 'plane-id-code')
@@ -320,9 +318,13 @@ def make_hdf5_file(imgw, imgh, imgh_out,
         print("Iterating over file:", fname)
         dataX, dataU, dataV, targs, zs, planecodes, eventids = \
             get_data_from_file(fname, imgw, imgh, imgh_out, add_target_padding)
-        total_examples = add_data_to_hdf5file(f, dset_names,
-                                              dataX, dataU, dataV,
-                                              targs, zs, planecodes, eventids)
+        dataX = transform_to_4d_tensor(dataX)
+        dataU = transform_to_4d_tensor(dataU)
+        dataV = transform_to_4d_tensor(dataV)
+        print('data shapes:',
+              np.shape(dataX), np.shape(dataU), np.shape(dataV))
+        dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
+        total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
 
     add_split_dict(f, dset_names, total_examples)
 
