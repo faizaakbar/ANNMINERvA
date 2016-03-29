@@ -10,6 +10,7 @@ like:
 """
 from __future__ import print_function
 import numpy as np
+import sys
 import os
 import re
 from collections import OrderedDict
@@ -65,6 +66,12 @@ def get_total_target_padding():
     return target_padding
 
 
+def get_output_imgh(imgh, add_target_padding=False):
+    if add_target_padding:
+        imgh += get_total_target_padding()
+    return imgh
+
+
 def pad_for_targets(imgw, imgh, hitsX, hitsU, hitsV):
     two_breaks, four_breaks, six_breaks = compute_target_padding()
     imgh_padding = get_total_target_padding()
@@ -104,14 +111,36 @@ def pad_for_targets(imgw, imgh, hitsX, hitsU, hitsV):
     return tempX, tempU, tempV
 
 
-def trim_imgh(img, imgh_out):
-    img = img[:, :imgh_out]
+def trim_columns(img, col_up, col_dn):
+    """
+    keep columns between `col_up` and `col_dn`
+    """
+    img = img[:, col_up:col_dn]
     return img
 
 
-def get_data_from_file(filename, imgw, imgh, imgh_out,
+def shape_and_flip_image(hits, imgw, imgh):
+    hits = np.asarray(hits, dtype=np.float32).reshape(imgw, imgh)
+    # we're "upside down" by default in images, flip back just
+    # so things look normal - shouldn't affect anything
+    hits = hits[::-1, :]
+    return hits
+
+
+def get_data_from_file(filename, imgw, imgh,
+                       trim_column_up, trim_column_dn,
                        add_target_padding=False):
     """
+    imgw, imgh - specify the size of the raw data image in the file
+
+    trim_column_up - specify if we want to trim the target region of
+    the detector off for tracker analysis
+    trim_column_dn - specify if we want to cut the downstream part of
+    the detector off to speed up target analysis
+
+    NOTE: trim_column_up and trim_column_dn use AFTER PADDING NUMBERS!
+
+    add_target_padding - add in blanks for the targets in the target region?
     """
     print("...loading data")
     targs = []
@@ -155,23 +184,18 @@ def get_data_from_file(filename, imgw, imgh, imgh_out,
                 elif view == 'V':
                     hitsV.append(energy)
                     hitsV.append(0.0)
-            hitsX = np.asarray(hitsX, dtype=np.float32).reshape(imgw, imgh)
-            hitsU = np.asarray(hitsU, dtype=np.float32).reshape(imgw, imgh)
-            hitsV = np.asarray(hitsV, dtype=np.float32).reshape(imgw, imgh)
+            hitsX = shape_and_flip_image(hitsX, imgw, imgh)
+            hitsU = shape_and_flip_image(hitsU, imgw, imgh)
+            hitsV = shape_and_flip_image(hitsV, imgw, imgh)
             if add_target_padding:
                 hitsX, hitsU, hitsV = pad_for_targets(imgw, imgh,
                                                       hitsX, hitsU, hitsV)
-            new_data = []
-            for h in [hitsX, hitsU, hitsV]:
-                # we're "upside down" by default in images, flip back just
-                # so things look normal - shouldn't affect anything
-                h = h[::-1, :]
-                if imgh != imgh_out:
-                    h = trim_imgh(h, imgh_out)
-                new_data.append(h)
-            dataX.append(new_data[0])
-            dataU.append(new_data[1])
-            dataV.append(new_data[2])
+            hitsX = trim_columns(hitsX, trim_column_up, trim_column_dn)
+            hitsU = trim_columns(hitsU, trim_column_up, trim_column_dn)
+            hitsV = trim_columns(hitsV, trim_column_up, trim_column_dn)
+            dataX.append(hitsX)
+            dataU.append(hitsU)
+            dataV.append(hitsV)
 
     targs = np.asarray(targs, dtype=np.uint8)
     zs = np.asarray(zs, dtype=np.float32)
@@ -263,16 +287,14 @@ def add_data_to_hdf5file(f, dset_names, dset_vals):
         return total_examples
 
 
-def make_hdf5_file(imgw, imgh, imgh_out,
+def make_hdf5_file(imgw, imgh, trim_col_up, trim_col_dn,
                    filebase, hdf5file, add_target_padding=False):
     """
     imgw, imgh - ints that specify the image size for `reshape`
     filebase - pattern used for files to match into the output
     hdf5file - name of the output file
 
-    note that imgh_out does _not_ take into account target padding! if
-    the user requests imgh_out == 50, target padding will make the total
-    img size larger.
+    NOTE: trim_col_up and trim_col_dn are for AFTER padding numbers!
 
     note that imgw traverses the "y" direction and imgh traverses the "x"
     direction in the classic mathematician's graph
@@ -281,16 +303,12 @@ def make_hdf5_file(imgw, imgh, imgh_out,
     the pattern, then multiple files will be included in the
     single output file
     """
-    print('Making hdf5 file for img-in: {} x {} and img-out {} x {}'.format(
-        imgw, imgh, imgw, imgh_out))
+    print('Making hdf5 file for img-in: {} x {} and out {} x {}-{}'.format(
+        imgw, imgh, imgw, trim_col_up, trim_col_dn))
 
     files = make_file_list(filebase)
     f = prepare_hdf5_file(hdf5file)
-
-    imgh_padding = 0
-    if add_target_padding:
-        imgh_padding = get_total_target_padding()
-    imgh_out = imgh_out + imgh_padding
+    imgh_out = trim_col_dn - trim_col_up
 
     img_dim = (imgw, imgh_out)
     dset_description = OrderedDict(
@@ -317,7 +335,8 @@ def make_hdf5_file(imgw, imgh, imgh_out,
     for fname in files:
         print("Iterating over file:", fname)
         dataX, dataU, dataV, targs, zs, planecodes, eventids = \
-            get_data_from_file(fname, imgw, imgh, imgh_out, add_target_padding)
+            get_data_from_file(fname, imgw, imgh, trim_col_up, trim_col_dn,
+                               add_target_padding)
         dataX = transform_to_4d_tensor(dataX)
         dataU = transform_to_4d_tensor(dataU)
         dataV = transform_to_4d_tensor(dataV)
@@ -350,19 +369,27 @@ if __name__ == '__main__':
     parser.add_option('-p', '--padded_targets', default=False,
                       dest='padding', help='Include target padding',
                       metavar='TARG_PAD', action='store_true')
-    parser.add_option('-u', '--out_height', default=1000, type='int',
-                      help='Image output height', metavar='IMG_OUT_HEIGHT',
-                      dest='imgh_out')
+    parser.add_option('-u', '--trim_column_up', default=0, type='int',
+                      help='Trim column upstream', metavar='TRIM_COL_UP',
+                      dest='trim_column_up')
+    parser.add_option('-d', '--trim_column_down', default=94, type='int',
+                      help='Trim column downstream', metavar='TRIM_COL_DN',
+                      dest='trim_column_down')
+    parser.add_option('-c', '--check_target_padding', default=False,
+                      dest='check_target_padding', help='Check target padding',
+                      metavar='CHECK_TARG_PAD', action='store_true')
     (options, args) = parser.parse_args()
+
+    if options.check_target_padding:
+        padding = get_total_target_padding()
+        print("Total target padding is {} columns.".format(padding))
+        sys.exit(0)
 
     filebase = options.filebase
     hdf5file = options.hdf5file
 
-    imgh_out = options.imgh_out
-    if imgh_out > options.imgh:
-        imgh_out = options.imgh
-
     # imgw, imgh - "pixel" size of data images
     #  here - H corresponds to MINERvA Z, and W correpsonds to the view axis
-    make_hdf5_file(options.imgw, options.imgh, imgh_out,
+    make_hdf5_file(options.imgw, options.imgh,
+                   options.trim_column_up, options.trim_column_down,
                    filebase, hdf5file, options.padding)
