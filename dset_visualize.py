@@ -46,14 +46,29 @@ def decode_eventid(eventid):
     return (run, subrun, gate, phys_evt)
 
 f = h5py.File(filename, 'r')
-data_x = pylab.zeros(pylab.shape(f['hits-x']), dtype='f')
-data_u = pylab.zeros(pylab.shape(f['hits-u']), dtype='f')
-data_v = pylab.zeros(pylab.shape(f['hits-v']), dtype='f')
+try:
+    data_x = pylab.zeros(pylab.shape(f['hits-x']), dtype='f')
+except KeyError:
+    print("'hits-x' does not exist.")
+    data_x = None
+try:
+    data_u = pylab.zeros(pylab.shape(f['hits-u']), dtype='f')
+except KeyError:
+    print("'hits-u' does not exist.")
+    data_u = None
+try:
+    data_v = pylab.zeros(pylab.shape(f['hits-v']), dtype='f')
+except KeyError:
+    print("'hits-v' does not exist.")
+    data_v = None
 labels = pylab.zeros(pylab.shape(f['segments']), dtype='f')
 evtids = pylab.zeros(pylab.shape(f['eventids']), dtype='uint64')
-f['hits-x'].read_direct(data_x)
-f['hits-u'].read_direct(data_u)
-f['hits-v'].read_direct(data_v)
+if data_x is not None:
+    f['hits-x'].read_direct(data_x)
+if data_u is not None:
+    f['hits-u'].read_direct(data_u)
+if data_v is not None:
+    f['hits-v'].read_direct(data_v)
 f['segments'].read_direct(labels)
 f['eventids'].read_direct(evtids)
 f.close()
@@ -64,12 +79,18 @@ for counter, evtid in enumerate(evtids):
     run, subrun, gate, phys_evt = decode_eventid(evtid)
     print('{} - {} - {} - {}'.format(run, subrun, gate, phys_evt))
     targ = labels[counter]
-    evt = [data_x[counter], data_u[counter], data_v[counter]]
+    evt = []
+    if data_x is not None:
+        evt.append(data_x[counter])
+    if data_u is not None:
+        evt.append(data_u[counter])
+    if data_v is not None:
+        evt.append(data_v[counter])
     fig = pylab.figure(figsize=(9, 3))
-    gs = pylab.GridSpec(1, 3)
+    gs = pylab.GridSpec(1, len(evt))
     # print np.where(evt == np.max(evt))
     # print np.max(evt)
-    for i in range(3):
+    for i in range(len(evt)):
         ax = pylab.subplot(gs[i])
         ax.axis('off')
         # images are normalized such the max e-dep has val 1, independent
