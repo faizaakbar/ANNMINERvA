@@ -345,7 +345,6 @@ def build_nukecc_vtx_study_dset_description(views, img_dimensions):
         del dset_description['hits-u']
     if 'v' not in views:
         del dset_description['hits-v']
-    print(dset_description)
     return dset_description
 
 
@@ -387,6 +386,7 @@ def make_hdf5_file(imgw, imgh, trim_col_up, trim_col_dn, views,
 
     img_dim = (imgw, trim_col_dn - trim_col_up)
     dset_description = build_nukecc_vtx_study_dset_description(views, img_dim)
+    print(dset_description)
     prep_datasets_for_targetz(f, dset_description, img_dim)
     dset_names = dset_description.keys()
 
