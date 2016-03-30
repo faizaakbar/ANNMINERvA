@@ -9,15 +9,18 @@ like:
     # seg z   pln run sub gate  slice data (X:[E] U:[E] ... etc.)...
 """
 from __future__ import print_function
-import numpy as np
 import sys
 import os
 import re
 from collections import OrderedDict
 
+import numpy as np
 import h5py
 
 from fuel.datasets.hdf5 import H5PYDataset
+
+from six.moves import range
+
 from plane_codes import build_indexed_codes
 
 
@@ -362,8 +365,31 @@ def filter_nukecc_vtx_det_vals_for_names(vals, names):
     return new_vals
 
 
-def make_hdf5_file(imgw, imgh, trim_col_up, trim_col_dn, views,
-                   filebase, hdf5file, add_target_padding=False):
+def transform_view(dset_vals, view):
+        """
+        we must duplicate every entry of every object in dset_vals and append
+        them in sync with the new images created from the view data. this
+        function assumes the view data is always in the first entry of the
+        dset_vals list and that there is only one entry in the list with
+        view data (specified by `view`)
+        """
+        if view == 'x':
+            allowed_trans = ['flip', 'shift-1', 'shift+1']
+        elif view == 'u' or view == 'v':
+            allowed_trans = ['shift-1', 'shift+1']
+        else:
+            print("Only transform either x, u, or v views, not {}!".format(
+                view))
+            sys.exit(1)
+
+        print('Allowed transformations: {}'.format(allowed_trans))
+
+        return dset_vals
+
+
+def make_nukecc_vtx_hdf5_file(imgw, imgh, trim_col_up, trim_col_dn, views,
+                              filebase, hdf5file, add_target_padding=False,
+                              apply_transforms=False):
     """
     imgw, imgh - ints that specify the image size for `reshape`
     filebase - pattern used for files to match into the output
@@ -402,6 +428,8 @@ def make_hdf5_file(imgw, imgh, trim_col_up, trim_col_dn, views,
               np.shape(dataX), np.shape(dataU), np.shape(dataV))
         dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
         dset_vals = filter_nukecc_vtx_det_vals_for_names(dset_vals, dset_names)
+        if len(views) == 1 and apply_transforms:
+            dset_vals = transform_view(dset_vals, views[0])
         total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
 
     add_split_dict(f, dset_names, total_examples)
@@ -413,32 +441,35 @@ if __name__ == '__main__':
 
     from optparse import OptionParser
     parser = OptionParser(usage=__doc__)
+    parser.add_option('-a', '--apply_transforms', default=False,
+                      dest='apply_transforms', help='Apply image transforms',
+                      metavar='APPLY_IMG_TRANS', action='store_true')
     parser.add_option('-b', '--basename', default='nukecc_skim_me1Bmc',
                       help='Input files base name', metavar='BASE_NAME',
                       dest='filebase')
-    parser.add_option('-o', '--output', default='nukecc_fuel.hdf5',
-                      help='Output filename', metavar='OUTPUT_NAME',
-                      dest='hdf5file')
-    parser.add_option('-t', '--inp_height', default=94, type='int',
-                      help='Image input height', metavar='IMG_HEIGHT',
-                      dest='imgh')
-    parser.add_option('-w', '--inp_width', default=127, type='int',
-                      help='Image input width', metavar='IMG_WIDTH',
-                      dest='imgw')
-    parser.add_option('-p', '--padded_targets', default=False,
-                      dest='padding', help='Include target padding',
-                      metavar='TARG_PAD', action='store_true')
-    parser.add_option('-u', '--trim_column_up', default=0, type='int',
-                      help='Trim column upstream', metavar='TRIM_COL_UP',
-                      dest='trim_column_up')
-    parser.add_option('-d', '--trim_column_down', default=94, type='int',
-                      help='Trim column downstream', metavar='TRIM_COL_DN',
-                      dest='trim_column_down')
     parser.add_option('-c', '--check_target_padding', default=False,
                       dest='check_target_padding', help='Check target padding',
                       metavar='CHECK_TARG_PAD', action='store_true')
+    parser.add_option('-d', '--trim_column_down', default=94, type='int',
+                      help='Trim column downstream', metavar='TRIM_COL_DN',
+                      dest='trim_column_down')
+    parser.add_option('-o', '--output', default='nukecc_fuel.hdf5',
+                      help='Output filename', metavar='OUTPUT_NAME',
+                      dest='hdf5file')
+    parser.add_option('-p', '--padded_targets', default=False,
+                      dest='padding', help='Include target padding',
+                      metavar='TARG_PAD', action='store_true')
+    parser.add_option('-t', '--inp_height', default=94, type='int',
+                      help='Image input height', metavar='IMG_HEIGHT',
+                      dest='imgh')
+    parser.add_option('-u', '--trim_column_up', default=0, type='int',
+                      help='Trim column upstream', metavar='TRIM_COL_UP',
+                      dest='trim_column_up')
     parser.add_option('-v', '--views', default='xuv', dest='views',
                       help='Views (xuv)', metavar='VIEWS')
+    parser.add_option('-w', '--inp_width', default=127, type='int',
+                      help='Image input width', metavar='IMG_WIDTH',
+                      dest='imgw')
     (options, args) = parser.parse_args()
 
     if options.check_target_padding:
@@ -456,6 +487,12 @@ if __name__ == '__main__':
     filebase = options.filebase
     hdf5file = options.hdf5file
 
+    apply_trans = options.apply_transforms
+    if apply_trans and len(views) > 1:
+        print('Only apply image transforms to one-view files.')
+        print('Please re-run with views == x, u, OR v.')
+        sys.exit(1)
+
     if options.padding:
         padding = get_total_target_padding()
         print("Adding {} padding columns for the passive targets...".format(
@@ -464,6 +501,7 @@ if __name__ == '__main__':
 
     # imgw, imgh - "pixel" size of data images
     #  here - H corresponds to MINERvA Z, and W correpsonds to the view axis
-    make_hdf5_file(options.imgw, options.imgh,
-                   options.trim_column_up, options.trim_column_down, views,
-                   filebase, hdf5file, options.padding)
+    make_nukecc_vtx_hdf5_file(options.imgw, options.imgh,
+                              options.trim_column_up, options.trim_column_down,
+                              views, filebase, hdf5file, options.padding,
+                              apply_trans)
