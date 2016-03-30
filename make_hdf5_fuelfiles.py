@@ -127,9 +127,39 @@ def shape_and_flip_image(hits, imgw, imgh):
     return hits
 
 
-def get_data_from_file(filename, imgw, imgh,
-                       trim_column_up, trim_column_dn,
-                       add_target_padding=False):
+def unpack_xuv_skim_data(rowdat, imgw, imgh, add_target_padding,
+                         trim_column_up, trim_column_dn):
+    hitsX = []
+    hitsU = []
+    hitsV = []
+    for point in rowdat:
+        hit_data = point.split(':')
+        view = hit_data[0]
+        energy = float(hit_data[1])
+        if view == 'X':
+            hitsX.append(energy)
+        elif view == 'U':
+            hitsU.append(energy)
+            hitsU.append(0.0)
+        elif view == 'V':
+            hitsV.append(energy)
+            hitsV.append(0.0)
+
+    hitsX = shape_and_flip_image(hitsX, imgw, imgh)
+    hitsU = shape_and_flip_image(hitsU, imgw, imgh)
+    hitsV = shape_and_flip_image(hitsV, imgw, imgh)
+    if add_target_padding:
+        hitsX, hitsU, hitsV = pad_for_targets(imgw, imgh,
+                                              hitsX, hitsU, hitsV)
+    hitsX = trim_columns(hitsX, trim_column_up, trim_column_dn)
+    hitsU = trim_columns(hitsU, trim_column_up, trim_column_dn)
+    hitsV = trim_columns(hitsV, trim_column_up, trim_column_dn)
+    return hitsX, hitsU, hitsV
+
+
+def get_nukecc_vtx_study_data_from_file(filename, imgw, imgh,
+                                        trim_column_up, trim_column_dn,
+                                        add_target_padding=False):
     """
     imgw, imgh - specify the size of the raw data image in the file
 
@@ -141,6 +171,8 @@ def get_data_from_file(filename, imgw, imgh,
     NOTE: trim_column_up and trim_column_dn use AFTER PADDING NUMBERS!
 
     add_target_padding - add in blanks for the targets in the target region?
+
+    Return (dataX, dataU, dataV, targs, zs, planeids, eventids) in that order.
     """
     print("...loading data")
     targs = []
@@ -169,30 +201,9 @@ def get_data_from_file(filename, imgw, imgh,
                 + elems[6].zfill(2)
             eventids.append(eventid)
             rowdat = elems[7:]
-            hitsX = []
-            hitsU = []
-            hitsV = []
-            for point in rowdat:
-                hit_data = point.split(':')
-                view = hit_data[0]
-                energy = float(hit_data[1])
-                if view == 'X':
-                    hitsX.append(energy)
-                elif view == 'U':
-                    hitsU.append(energy)
-                    hitsU.append(0.0)
-                elif view == 'V':
-                    hitsV.append(energy)
-                    hitsV.append(0.0)
-            hitsX = shape_and_flip_image(hitsX, imgw, imgh)
-            hitsU = shape_and_flip_image(hitsU, imgw, imgh)
-            hitsV = shape_and_flip_image(hitsV, imgw, imgh)
-            if add_target_padding:
-                hitsX, hitsU, hitsV = pad_for_targets(imgw, imgh,
-                                                      hitsX, hitsU, hitsV)
-            hitsX = trim_columns(hitsX, trim_column_up, trim_column_dn)
-            hitsU = trim_columns(hitsU, trim_column_up, trim_column_dn)
-            hitsV = trim_columns(hitsV, trim_column_up, trim_column_dn)
+            hitsX, hitsU, hitsV = unpack_xuv_skim_data(
+                rowdat, imgw, imgh, add_target_padding,
+                trim_column_up, trim_column_dn)
             dataX.append(hitsX)
             dataU.append(hitsU)
             dataV.append(hitsV)
@@ -201,9 +212,9 @@ def get_data_from_file(filename, imgw, imgh,
     zs = np.asarray(zs, dtype=np.float32)
     planeids = np.asarray(planeids, dtype=np.uint16)
     eventids = np.asarray(eventids, dtype=np.uint64)
-    dataX = np.asarray(dataX, dtype=np.float32)
-    dataU = np.asarray(dataU, dtype=np.float32)
-    dataV = np.asarray(dataV, dtype=np.float32)
+    dataX = transform_to_4d_tensor(np.asarray(dataX, dtype=np.float32))
+    dataU = transform_to_4d_tensor(np.asarray(dataU, dtype=np.float32))
+    dataV = transform_to_4d_tensor(np.asarray(dataV, dtype=np.float32))
     storedat = (dataX, dataU, dataV, targs, zs, planeids, eventids)
     print("...finished loading")
     return storedat
@@ -287,7 +298,72 @@ def add_data_to_hdf5file(f, dset_names, dset_vals):
         return total_examples
 
 
-def make_hdf5_file(imgw, imgh, trim_col_up, trim_col_dn,
+def prep_datasets_for_targetz(hdf5file, dset_description, img_dimensions):
+    """
+    hdf5file - where we will add dsets,
+    dset_desciption - ordered dict containing all the pieces of the dset
+    img_dimensions - tuple of (w, h)
+    """
+    dset_names = dset_description.keys()
+    if 'hits-x' in dset_names:
+        create_view_dset(hdf5file, 'hits-x',
+                         img_dimensions[0], img_dimensions[1])
+    if 'hits-u' in dset_names:
+        create_view_dset(hdf5file, 'hits-u',
+                         img_dimensions[0], img_dimensions[1])
+    if 'hits-v' in dset_names:
+        create_view_dset(hdf5file, 'hits-v',
+                         img_dimensions[0], img_dimensions[1])
+    if 'segments' in dset_names:
+        create_1d_dset(hdf5file, 'segments', 'uint8', 'z-segment')
+    if 'zs' in dset_names:
+        create_1d_dset(hdf5file, 'zs', 'float32', 'z')
+    if 'planecodes' in dset_names:
+        create_1d_dset(hdf5file, 'planecodes', 'uint16', 'plane-id-code')
+    if 'eventids' in dset_names:
+        create_1d_dset(hdf5file, 'eventids', 'uint64',
+                       'run+subrun+gate+slices[0]')
+
+
+def build_nukecc_vtx_study_dset_description(views, img_dimensions):
+    """
+    views - list or string of 'xuv' views to include
+    img_dimensions - a tuple of (w,h) - should be final output size
+    """
+    dset_description = OrderedDict(
+        (('hits-x', img_dimensions),
+         ('hits-u', img_dimensions),
+         ('hits-v', img_dimensions),
+         ('segments', ('uint8', 'z-segment')),
+         ('zs', ('float32', 'z')),
+         ('planecodes', ('uint16', 'plane-id-code')),
+         ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
+    )
+    if 'x' not in views:
+        del dset_description['hits-x']
+    if 'u' not in views:
+        del dset_description['hits-u']
+    if 'v' not in views:
+        del dset_description['hits-v']
+    print(dset_description)
+    return dset_description
+
+
+def filter_nukecc_vtx_det_vals_for_names(vals, names):
+    """
+    raw nukecc vals structure is like:
+        dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
+    """
+    new_vals = []
+    full_name_list = build_nukecc_vtx_study_dset_description(
+        'xuv', (0, 0)).keys()
+    for i, name in enumerate(full_name_list):
+        if name in names:
+            new_vals.append(vals[i])
+    return new_vals
+
+
+def make_hdf5_file(imgw, imgh, trim_col_up, trim_col_dn, views,
                    filebase, hdf5file, add_target_padding=False):
     """
     imgw, imgh - ints that specify the image size for `reshape`
@@ -308,41 +384,24 @@ def make_hdf5_file(imgw, imgh, trim_col_up, trim_col_dn,
 
     files = make_file_list(filebase)
     f = prepare_hdf5_file(hdf5file)
-    imgh_out = trim_col_dn - trim_col_up
 
-    img_dim = (imgw, imgh_out)
-    dset_description = OrderedDict(
-        (('hits-x', img_dim),
-         ('hits-u', img_dim),
-         ('hits-v', img_dim),
-         ('segments', ('uint8', 'z-segment')),
-         ('zs', ('float32', 'z')),
-         ('planecodes', ('uint16', 'plane-id-code')),
-         ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
-    )
+    img_dim = (imgw, trim_col_dn - trim_col_up)
+    dset_description = build_nukecc_vtx_study_dset_description(views, img_dim)
+    prep_datasets_for_targetz(f, dset_description, img_dim)
     dset_names = dset_description.keys()
-
-    create_view_dset(f, dset_names[0], img_dim[0], img_dim[1])
-    create_view_dset(f, dset_names[1], img_dim[0], img_dim[1])
-    create_view_dset(f, dset_names[2], img_dim[0], img_dim[1])
-    create_1d_dset(f, dset_names[3], 'uint8', 'z-segment')
-    create_1d_dset(f, dset_names[4], 'float32', 'z')
-    create_1d_dset(f, dset_names[5], 'uint16', 'plane-id-code')
-    create_1d_dset(f, dset_names[6], 'uint64', 'run+subrun+gate+slices[0]')
 
     total_examples = 0
 
     for fname in files:
         print("Iterating over file:", fname)
         dataX, dataU, dataV, targs, zs, planecodes, eventids = \
-            get_data_from_file(fname, imgw, imgh, trim_col_up, trim_col_dn,
-                               add_target_padding)
-        dataX = transform_to_4d_tensor(dataX)
-        dataU = transform_to_4d_tensor(dataU)
-        dataV = transform_to_4d_tensor(dataV)
+            get_nukecc_vtx_study_data_from_file(
+                fname, imgw, imgh,
+                trim_col_up, trim_col_dn, add_target_padding)
         print('data shapes:',
               np.shape(dataX), np.shape(dataU), np.shape(dataV))
         dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
+        dset_vals = filter_nukecc_vtx_det_vals_for_names(dset_vals, dset_names)
         total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
 
     add_split_dict(f, dset_names, total_examples)
@@ -378,6 +437,8 @@ if __name__ == '__main__':
     parser.add_option('-c', '--check_target_padding', default=False,
                       dest='check_target_padding', help='Check target padding',
                       metavar='CHECK_TARG_PAD', action='store_true')
+    parser.add_option('-v', '--views', default='xuv', dest='views',
+                      help='Views (xuv)', metavar='VIEWS')
     (options, args) = parser.parse_args()
 
     if options.check_target_padding:
@@ -385,11 +446,24 @@ if __name__ == '__main__':
         print("Total target padding is {} columns.".format(padding))
         sys.exit(0)
 
+    allowed_views = list('xuv')
+    views = list(options.views.lower())
+    for v in views:
+        if v not in allowed_views:
+            print('{} is not an allowed view option.'.format(v))
+            print("Please use any/all of 'xuv' (case insensitive).")
+            sys.exit(1)
     filebase = options.filebase
     hdf5file = options.hdf5file
+
+    if options.padding:
+        padding = get_total_target_padding()
+        print("Adding {} padding columns for the passive targets...".format(
+            padding))
+        print("  Please note that target padding must be included by hand.")
 
     # imgw, imgh - "pixel" size of data images
     #  here - H corresponds to MINERvA Z, and W correpsonds to the view axis
     make_hdf5_file(options.imgw, options.imgh,
-                   options.trim_column_up, options.trim_column_down,
+                   options.trim_column_up, options.trim_column_down, views,
                    filebase, hdf5file, options.padding)
