@@ -381,24 +381,52 @@ def filter_nukecc_vtx_det_vals_for_names(vals, names):
 
 def transform_view(dset_vals, view):
         """
+        we will _replace_ the original, unshifted values with shifted and
+        flipped values. (don't return the unmodified data.) this is because
+        we do not want to mix shifted/flipped images with "real" images
+        in data files - the shifted/flipped images are for pre-training or
+        special types of training.
+
         we must duplicate every entry of every object in dset_vals and append
         them in sync with the new images created from the view data. this
         function assumes the view data is always in the first entry of the
         dset_vals list and that there is only one entry in the list with
         view data (specified by `view`)
         """
+        allowed_trans = ['shift-1', 'shift+1']
         if view == 'x':
-            allowed_trans = ['flip', 'shift-1', 'shift+1']
-        elif view == 'u' or view == 'v':
-            allowed_trans = ['shift-1', 'shift+1']
-        else:
-            print("Only transform either x, u, or v views, not {}!".format(
-                view))
-            sys.exit(1)
+            allowed_trans.append('flip')
 
+        viewdata = dset_vals[0]
+        restlist = dset_vals[1:]
+        new_viewdata = []
+        new_restdata = []
+        for _ in restlist:
+            new_restdata.append([])
         print('Allowed transformations: {}'.format(allowed_trans))
+        for i, img in enumerate(viewdata):
+            print(np.shape(img))
+            for trans in allowed_trans:
+                if trans == 'flip':
+                    print('flip')
+                else:
+                    shift = int(re.search(r'[-+0-9]+', trans).group(0))
+                    print('shift is {}'.format(shift))
+                new_viewdata.append(img)
+                for j in range(len(restlist)):
+                    new_restdata[j].append(restlist[j][i])
 
-        return dset_vals
+        # put the view data back in front
+        new_restdata.insert(0, new_viewdata)
+
+        # TODO: need to update the eventids so they are not all the same
+
+        # in practice, it appears we don't need to be very careful about
+        # setting the type of the lists we have built to be np.ndarrays,
+        # etc. - lists containing values from the numpy arrays seems to
+        # work when passed back into the hdf5 file - perhaps because
+        # we've already declared the dtypes for the data sets in the hdf5
+        return new_restdata
 
 
 def make_nukecc_vtx_hdf5_file(imgw, imgh, trim_col_up, trim_col_dn, views,
