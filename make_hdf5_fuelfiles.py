@@ -1,12 +1,26 @@
 #!/usr/bin/env python
 """
-Usage:
-    python fuel_up_nukecc.py -b 'base name' -o 'output'
 
-The default output name is 'nukecc_fuel.hdf5'. This script expects data layout
-like:
+Execution:
+    python make_hdf5_fuelfiles.py -b 'base name' -o 'output'
+
+The default output name is 'minerva_fuel.hdf5'. The default skim type is
+'nukecc_vtx'. Default image width and heights are 127 x 94. Target padding
+is not included by default.
+
+CAUTION: If you include target padding, you must be sure to adjust the
+`--trim_column_up` (default 0) and `--trim_column_down` (default 94)
+values appropriately.
+
+Notes:
+------
+* imgw, imgh - "pixel" size of data images: here - H corresponds to MINERvA Z,
+and W correpsonds to the view axis
+
+* The 'nukecc_vtx' `--skim` option expects data layout like:
     # 0   1   2   3   4   5     6     7
     # seg z   pln run sub gate  slice data (X:[E] U:[E] ... etc.)...
+
 """
 from __future__ import print_function
 import sys
@@ -453,12 +467,15 @@ if __name__ == '__main__':
     parser.add_option('-d', '--trim_column_down', default=94, type='int',
                       help='Trim column downstream', metavar='TRIM_COL_DN',
                       dest='trim_column_down')
-    parser.add_option('-o', '--output', default='nukecc_fuel.hdf5',
+    parser.add_option('-o', '--output', default='minerva_fuel.hdf5',
                       help='Output filename', metavar='OUTPUT_NAME',
                       dest='hdf5file')
     parser.add_option('-p', '--padded_targets', default=False,
                       dest='padding', help='Include target padding',
                       metavar='TARG_PAD', action='store_true')
+    parser.add_option('-s', '--skim', default='nukecc_vtx',
+                      help='Skimmed sample type', metavar='SKIM',
+                      dest='skim')
     parser.add_option('-t', '--inp_height', default=94, type='int',
                       help='Image input height', metavar='IMG_HEIGHT',
                       dest='imgh')
@@ -499,9 +516,9 @@ if __name__ == '__main__':
             padding))
         print("  Please note that target padding must be included by hand.")
 
-    # imgw, imgh - "pixel" size of data images
-    #  here - H corresponds to MINERvA Z, and W correpsonds to the view axis
-    make_nukecc_vtx_hdf5_file(options.imgw, options.imgh,
-                              options.trim_column_up, options.trim_column_down,
-                              views, filebase, hdf5file, options.padding,
-                              apply_trans)
+    if options.skim == 'nukecc_vtx':
+        make_nukecc_vtx_hdf5_file(options.imgw, options.imgh,
+                                  options.trim_column_up,
+                                  options.trim_column_down,
+                                  views, filebase, hdf5file, options.padding,
+                                  apply_trans)
