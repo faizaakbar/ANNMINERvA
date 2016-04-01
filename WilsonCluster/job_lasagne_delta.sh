@@ -15,9 +15,10 @@ NEPOCHS=20
 LRATE=0.0025
 L2REG=0.0001
 
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_127x50_xuv_me1Bmc.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_xuv_padded_me1Bmc.hdf5"
 SAVEMODELNAME="./lminervatriamese_delta`date +%s`.npz"
 PYTHONPROG="minerva_triamese_delta.py"
+IMGH=68
 
 # TODO: try passing this in 
 # SAVEMODELNAME="./lminervatriamese_beta1457480019_beta_v1r0.npz"
@@ -73,6 +74,7 @@ python ${PYTHONPROG} -l \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
+  --imgh $IMGH
 # $START_FROM
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
@@ -82,6 +84,7 @@ python ${PYTHONPROG} -l \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
+  --imgh $IMGH
 # $START_FROM
 
 # nepochs and lrate don't matter for prediction, but setting them for log-file
