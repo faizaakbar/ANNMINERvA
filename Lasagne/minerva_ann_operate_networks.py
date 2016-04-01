@@ -247,11 +247,14 @@ def categorical_test(build_cnn=None, data_file_list=None,
                      save_model_file='./params_file.npz',
                      be_verbose=False, convpooldictlist=None,
                      nhidden=None, dropoutp=None, write_db=True,
-                     test_all_data=False, debug_print=False):
+                     test_all_data=False, debug_print=False,
+                     noutputs=11):
     """
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the
     data files in chunks into memory.
+
+    noutputs=11 for zsegments, other vals for planecodes, etc.
     """
     metadata = None
     try:
@@ -332,9 +335,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
     test_acc = 0
     test_batches = 0
     # look at some concrete predictions
-    num_poss_segs = 11
-    if target_idx == 4:
-        num_poss_segs = 214
+    num_poss_segs = noutputs
     pred_target = np.zeros(num_poss_segs, dtype='float32')
     true_target = np.zeros(num_poss_segs, dtype='float32')
     targs_mat = np.zeros(num_poss_segs * num_poss_segs,

@@ -129,6 +129,7 @@ if __name__ == '__main__':
     nhidden = 196
     imgw = options.imgw
     imgh = options.imgh
+    noutputs = 67        # for now - with true z cut around module 31
 
     if options.do_learn:
         learn(build_cnn=build_network_function,
@@ -157,4 +158,5 @@ if __name__ == '__main__':
              convpooldictlist=convpooldictlist,
              test_all_data=options.test_all_data,
              nhidden=nhidden,
-             target_idx=options.target_idx)
+             target_idx=options.target_idx,
+             noutputs=noutputs)

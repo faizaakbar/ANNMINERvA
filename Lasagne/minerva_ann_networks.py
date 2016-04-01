@@ -372,13 +372,13 @@ def build_triamese_gamma(input_var_x=None, input_var_u=None, input_var_v=None,
 
 def build_triamese_delta(input_var_x=None, input_var_u=None, input_var_v=None,
                          imgh=68, imgw=127, convpooldictlist=None, nhidden=None,
-                         dropoutp=None):
+                         dropoutp=None, noutputs=67):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
 
     This model is basically identical to the `beta` model, except we have
-    a softmax output of 214 for the full set of planecodes.
+    a softmax output of `noutputs` (def 67) for the full set of planecodes.
     """
     net = {}
     # Input layer
@@ -464,10 +464,10 @@ def build_triamese_delta(input_var_x=None, input_var_u=None, input_var_v=None,
     # And, finally, the 11-unit output layer with 50% dropout on its inputs:
     net['output_prob'] = DenseLayer(
         dropout(net['dense-across'], p=dropoutp),
-        num_units=214,
+        num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax)
     print("Softmax output prob with n_units = {}, dropout = {}".format(
-        214, dropoutp))
+        noutputs, dropoutp))
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
