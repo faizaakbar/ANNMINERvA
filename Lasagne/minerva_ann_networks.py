@@ -11,8 +11,7 @@ from lasagne.layers import dropout
 from lasagne.layers import flatten
 
 
-def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
-                         imgh=50, imgw=50,
+def build_triamese_alpha(inputlist, imgh=50, imgw=50,
                          convpool1dict=None, convpool2dict=None,
                          convpooldictlist=None, nhidden=None,
                          dropoutp=None):
@@ -21,6 +20,8 @@ def build_triamese_alpha(input_var_x=None, input_var_u=None, input_var_v=None,
     model using two layers of convolutions and pooling.
     """
     # Input layer
+    input_var_x, input_var_u, input_var_v = \
+        inputlist[0], inputlist[1], inputlist[2]
     tshape = (None, 1, imgw, imgh)
     l_in1_x = InputLayer(shape=tshape, input_var=input_var_x)
     l_in1_u = InputLayer(shape=tshape, input_var=input_var_u)
@@ -130,13 +131,51 @@ def build_inception_module(name, input_layer, nfilters):
     return {'{}/{}'.format(name, k): v for k, v in net.items()}
 
 
-def build_triamese_inception(input_var_x=None,
-                             input_var_u=None,
-                             input_var_v=None, imgh=50, imgw=50):
+def make_Nconvpool_1dense_branch(view, input_layer, cpdictlist,
+                                 nhidden=256, dropoutp=0.5):
+    """
+    see: http://lasagne.readthedocs.org/en/latest/modules/layers.html
+    loop through the `cpdictlist` for set of convolutional filter and pooling
+    parameter specifications; when through, add a dense layer with dropout
+    """
+    net = {}
+    convname = ''
+    mpname = ''
+    for i, cpdict in enumerate(cpdictlist):
+        convname = 'conv-{}-{}'.format(view, i)
+        print("Convpool {} params: {}".format(convname, cpdict))
+        # the first time through, use `input`, after use the last layer
+        # from the previous iteration - ah loose scoping rules...
+        if i == 0:
+            layer = input_layer
+        else:
+            layer = net[mpname]
+        net[convname] = Conv2DLayer(
+            layer, num_filters=cpdict['nfilters'],
+            filter_size=cpdict['filter_size'],
+            nonlinearity=lasagne.nonlinearities.rectify,
+            W=lasagne.init.GlorotUniform())
+        mpname = 'maxpool-{}-{}'.format(view, i)
+        net[mpname] = MaxPool2DLayer(
+            net[convname], pool_size=cpdict['pool_size'])
+        print("Convpool {}".format(mpname))
+    densename = 'dense-{}'.format(view)
+    net[densename] = DenseLayer(
+        dropout(net[mpname], p=dropoutp),
+        num_units=nhidden,
+        nonlinearity=lasagne.nonlinearities.rectify)
+    print("Dense {} with nhidden = {}, dropout = {}".format(
+        densename, nhidden, dropoutp))
+    return net
+
+
+def build_triamese_inception(inputlist, imgh=50, imgw=50):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using a slightly modified set of Google inception modules
     """
+    input_var_x, input_var_u, input_var_v = \
+        inputlist[0], inputlist[1], inputlist[2]
     net = {}
     # Input layer
     tshape = (None, 1, imgw, imgh)
@@ -175,15 +214,16 @@ def build_triamese_inception(input_var_x=None,
     return net['output_prob']
 
 
-def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
-                        imgh=50, imgw=50, convpooldictlist=None, nhidden=None,
-                        dropoutp=None):
+def build_triamese_beta(inputlist, imgh=50, imgw=50, convpooldictlist=None,
+                        nhidden=None, dropoutp=None):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
     """
     net = {}
     # Input layer
+    input_var_x, input_var_u, input_var_v = \
+        inputlist[0], inputlist[1], inputlist[2]
     tshape = (None, 1, imgw, imgh)
     net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
     net['input-u'] = InputLayer(shape=tshape, input_var=input_var_u)
@@ -208,46 +248,15 @@ def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
     if dropoutp is None:
         dropoutp = 0.5
 
-    def make_branch(view, input_layer, cpdictlist, nhidden=256, dropoutp=0.5):
-        """
-        see: http://lasagne.readthedocs.org/en/latest/modules/layers.html
-        """
-        net = {}
-        convname = ''
-        mpname = ''
-        for i, cpdict in enumerate(cpdictlist):
-            convname = 'conv-{}-{}'.format(view, i)
-            print("Convpool {} params: {}".format(convname, cpdict))
-            # the first time through, use `input`, after use the last layer
-            # from the previous iteration - ah loose scoping rules...
-            if i == 0:
-                layer = input_layer
-            else:
-                layer = net[mpname]
-            net[convname] = Conv2DLayer(
-                layer, num_filters=cpdict['nfilters'],
-                filter_size=cpdict['filter_size'],
-                nonlinearity=lasagne.nonlinearities.rectify,
-                W=lasagne.init.GlorotUniform())
-            mpname = 'maxpool-{}-{}'.format(view, i)
-            net[mpname] = MaxPool2DLayer(
-                net[convname], pool_size=cpdict['pool_size'])
-            print("Convpool {}".format(mpname))
-        densename = 'dense-{}'.format(view)
-        net[densename] = DenseLayer(
-            dropout(net[mpname], p=dropoutp),
-            num_units=nhidden,
-            nonlinearity=lasagne.nonlinearities.rectify)
-        print("Dense {} with nhidden = {}, dropout = {}".format(
-            densename, nhidden, dropoutp))
-        return net
-
-    net.update(make_branch('x', net['input-x'], convpooldictlist,
-                           nhidden, dropoutp))
-    net.update(make_branch('u', net['input-u'], convpooldictlist,
-                           nhidden, dropoutp))
-    net.update(make_branch('v', net['input-v'], convpooldictlist,
-                           nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('x', net['input-x'], convpooldictlist,
+                                     nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('u', net['input-u'], convpooldictlist,
+                                     nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('v', net['input-v'], convpooldictlist,
+                                     nhidden, dropoutp))
 
     # Concatenate the two parallel inputs
     net['concat'] = ConcatLayer((net['dense-x'],
@@ -275,15 +284,16 @@ def build_triamese_beta(input_var_x=None, input_var_u=None, input_var_v=None,
     return net['output_prob']
 
 
-def build_triamese_gamma(input_var_x=None, input_var_u=None, input_var_v=None,
-                         imgh=50, imgw=50, convpooldictlist=None, nhidden=None,
-                         dropoutp=None):
+def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
+                         nhidden=None, dropoutp=None):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions - no pooling.
     """
     net = {}
     # Input layer
+    input_var_x, input_var_u, input_var_v = \
+        inputlist[0], inputlist[1], inputlist[2]
     tshape = (None, 1, imgw, imgh)
     net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
     net['input-u'] = InputLayer(shape=tshape, input_var=input_var_u)
@@ -309,6 +319,7 @@ def build_triamese_gamma(input_var_x=None, input_var_u=None, input_var_v=None,
     def make_branch(view, input_layer, cpdictlist, nhidden=256, dropoutp=0.5):
         """
         see: http://lasagne.readthedocs.org/en/latest/modules/layers.html
+        convolution only - no pooling
         """
         net = {}
         convname = ''
@@ -370,9 +381,8 @@ def build_triamese_gamma(input_var_x=None, input_var_u=None, input_var_v=None,
     return net['output_prob']
 
 
-def build_triamese_delta(input_var_x=None, input_var_u=None, input_var_v=None,
-                         imgh=68, imgw=127, convpooldictlist=None, nhidden=None,
-                         dropoutp=None, noutputs=67):
+def build_triamese_delta(inputlist, imgh=68, imgw=127, convpooldictlist=None,
+                         nhidden=None, dropoutp=None, noutputs=67):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
@@ -382,6 +392,8 @@ def build_triamese_delta(input_var_x=None, input_var_u=None, input_var_v=None,
     """
     net = {}
     # Input layer
+    input_var_x, input_var_u, input_var_v = \
+        inputlist[0], inputlist[1], inputlist[2]
     tshape = (None, 1, imgw, imgh)
     net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
     net['input-u'] = InputLayer(shape=tshape, input_var=input_var_u)
@@ -406,46 +418,15 @@ def build_triamese_delta(input_var_x=None, input_var_u=None, input_var_v=None,
     if dropoutp is None:
         dropoutp = 0.5
 
-    def make_branch(view, input_layer, cpdictlist, nhidden=256, dropoutp=0.5):
-        """
-        see: http://lasagne.readthedocs.org/en/latest/modules/layers.html
-        """
-        net = {}
-        convname = ''
-        mpname = ''
-        for i, cpdict in enumerate(cpdictlist):
-            convname = 'conv-{}-{}'.format(view, i)
-            print("Convpool {} params: {}".format(convname, cpdict))
-            # the first time through, use `input`, after use the last layer
-            # from the previous iteration - ah loose scoping rules...
-            if i == 0:
-                layer = input_layer
-            else:
-                layer = net[mpname]
-            net[convname] = Conv2DLayer(
-                layer, num_filters=cpdict['nfilters'],
-                filter_size=cpdict['filter_size'],
-                nonlinearity=lasagne.nonlinearities.rectify,
-                W=lasagne.init.GlorotUniform())
-            mpname = 'maxpool-{}-{}'.format(view, i)
-            net[mpname] = MaxPool2DLayer(
-                net[convname], pool_size=cpdict['pool_size'])
-            print("Convpool {}".format(mpname))
-        densename = 'dense-{}'.format(view)
-        net[densename] = DenseLayer(
-            dropout(net[mpname], p=dropoutp),
-            num_units=nhidden,
-            nonlinearity=lasagne.nonlinearities.rectify)
-        print("Dense {} with nhidden = {}, dropout = {}".format(
-            densename, nhidden, dropoutp))
-        return net
-
-    net.update(make_branch('x', net['input-x'], convpooldictlist,
-                           nhidden, dropoutp))
-    net.update(make_branch('u', net['input-u'], convpooldictlist,
-                           nhidden, dropoutp))
-    net.update(make_branch('v', net['input-v'], convpooldictlist,
-                           nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('x', net['input-x'], convpooldictlist,
+                                     nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('u', net['input-u'], convpooldictlist,
+                                     nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('v', net['input-v'], convpooldictlist,
+                                     nhidden, dropoutp))
 
     # Concatenate the two parallel inputs
     net['concat'] = ConcatLayer((net['dense-x'],
@@ -468,6 +449,61 @@ def build_triamese_delta(input_var_x=None, input_var_u=None, input_var_v=None,
         nonlinearity=lasagne.nonlinearities.softmax)
     print("Softmax output prob with n_units = {}, dropout = {}".format(
         noutputs, dropoutp))
+
+    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
+    return net['output_prob']
+
+
+def build_beta_x(inputlist, imgh=68, imgw=127, convpooldictlist=None,
+                 nhidden=None, dropoutp=None):
+    """
+    This network is modeled after the 'triamese' (tri-columnar) beta model,
+    but is meant to operate on the x-view only.
+    """
+    net = {}
+    # Input layer
+    input_var_x = inputlist[0]
+    tshape = (None, 1, imgw, imgh)
+    net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
+
+    if convpooldictlist is None:
+        convpooldictlist = []
+        convpool1dict = {}
+        convpool1dict['nfilters'] = 32
+        convpool1dict['filter_size'] = (3, 3)
+        convpool1dict['pool_size'] = (2, 2)
+        convpooldictlist.append(convpool1dict)
+        convpool2dict = {}
+        convpool2dict['nfilters'] = 32
+        convpool2dict['filter_size'] = (3, 3)
+        convpool2dict['pool_size'] = (2, 2)
+        convpooldictlist.append(convpool2dict)
+
+    if nhidden is None:
+        nhidden = 256
+
+    if dropoutp is None:
+        dropoutp = 0.5
+
+    net.update(
+        make_Nconvpool_1dense_branch('x', net['input-x'], convpooldictlist,
+                                     nhidden, dropoutp))
+
+    # One more dense layer
+    net['dense-across'] = DenseLayer(
+        dropout(net['dense-x'], p=dropoutp),
+        num_units=(nhidden // 2),
+        nonlinearity=lasagne.nonlinearities.rectify)
+    print("Dense {} with nhidden = {}, dropout = {}".format(
+        'dense-across', nhidden // 2, dropoutp))
+
+    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    net['output_prob'] = DenseLayer(
+        dropout(net['dense-across'], p=dropoutp),
+        num_units=11,
+        nonlinearity=lasagne.nonlinearities.softmax)
+    print("Softmax output prob with n_units = {}, dropout = {}".format(
+        11, dropoutp))
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
