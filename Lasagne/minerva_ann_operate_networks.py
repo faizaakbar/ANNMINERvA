@@ -54,10 +54,67 @@ def get_used_data_sizes_for_testing(train_sizes, valid_sizes, test_sizes,
     return used_sizes, used_data_size
 
 
+def build_inputlist(input_var_x, input_var_u, input_var_v, views):
+    inputlist = []
+    if 'x' in views:
+        inputlist.append(input_var_x)
+    if 'u' in views:
+        inputlist.append(input_var_u)
+    if 'v' in views:
+        inputlist.append(input_var_v)
+    return inputlist
+
+
+def get_inputlist_from_data(data, views, target_idx):
+    """
+    data[0] should be eventids
+    """
+    inputs = []
+    if views == 'xuv':
+        inputu, inputv, inputx, targets = \
+            data[1], data[2], data[3], data[target_idx]
+        inputs = [inputx, inputu, inputv, targets]
+    else:
+        input_view, targets = \
+            data[1], data[target_idx]
+        inputs = [input_view, targets]
+    return inputs
+
+
+def get_id_tagged_inputlist_from_data(data, views, target_idx):
+    """
+    data[0] should be eventids
+    """
+    inputs = []
+    if views == 'xuv':
+        eventids, inputu, inputv, inputx, targets = \
+            data[0], data[1], data[2], data[3], data[target_idx]
+        inputs = [inputx, inputu, inputv]
+    else:
+        eventids, input_view, targets = \
+            data[1], data[target_idx]
+        inputs = [input_view]
+    return eventids, inputs, targets
+
+
+def get_viewlist_from_data(data, views):
+    """
+    data[0] should be eventids
+    """
+    inputs = []
+    if views == 'xuv':
+        inputu, inputv, inputx = data[1], data[2], data[3]
+        inputs = [inputx, inputu, inputv]
+    else:
+        input_view = data[1]
+        inputs = [input_view]
+    return inputs
+
+
 def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                                    learning_rate=0.01, momentum=0.9,
                                    l2_penalty_scale=1e-04, batchsize=500,
-                                   imgw=50, imgh=50,
+                                   imgw=50, imgh=50, views='xuv',
                                    target_idx=5,
                                    data_file_list=None,
                                    save_model_file='./params_file.npz',
@@ -81,9 +138,10 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     input_var_v = T.tensor4('inputs')
     target_var = T.ivector('targets')
 
+    inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
+
     # Build the model
-    network = build_cnn(input_var_x, input_var_u, input_var_v,
-                        imgw=imgw, imgh=imgh,
+    network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
                         dropoutp=dropoutp)
     print(network_repr.get_network_str(
@@ -136,15 +194,11 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
 
     # Compile a function performing a training step on a mini-batch (by giving
     # the updates dictionary) and returning the corresponding training loss:
-    train_fn = theano.function([input_var_x, input_var_u, input_var_v,
-                                target_var],
-                               loss, updates=updates,
+    inputlist.append(target_var)
+    train_fn = theano.function(inputlist, loss, updates=updates,
                                allow_input_downcast=True)
-
     # Compile a second function computing the validation loss and accuracy:
-    val_fn = theano.function([input_var_x, input_var_u, input_var_v,
-                              target_var],
-                             [test_loss, test_acc],
+    val_fn = theano.function(inputlist, [test_loss, test_acc],
                              allow_input_downcast=True)
 
     print("Starting training...")
@@ -184,9 +238,8 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                     # data order in the hdf5 looks like:
                     #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                     # (Check the file carefully for data names, etc.)
-                    inputu, inputv, inputx, targets = \
-                        data[1], data[2], data[3], data[target_idx]
-                    train_err += train_fn(inputx, inputu, inputv, targets)
+                    inputs = get_inputlist_from_data(data, views, target_idx)
+                    train_err += train_fn(inputs)
                     train_batches += 1
                 t1 = time.time()
                 print("  -Iterating over the slice took {:.3f}s.".format(
@@ -211,9 +264,9 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                         # data order in the hdf5 looks like:
                         #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                         # (Check the file carefully for data names, etc.)
-                        inputu, inputv, inputx, targets = \
-                            data[1], data[2], data[3], data[5]
-                        err, acc = val_fn(inputx, inputu, inputv, targets)
+                        inputs = get_inputlist_from_data(
+                            data, views, target_idx)
+                        err, acc = val_fn(inputs)
                         val_err += err
                         val_acc += acc
                         val_batches += 1
@@ -242,7 +295,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
 
 
 def categorical_test(build_cnn=None, data_file_list=None,
-                     l2_penalty_scale=1e-04,
+                     l2_penalty_scale=1e-04, views='xuv',
                      imgw=50, imgh=50, target_idx=5,
                      save_model_file='./params_file.npz',
                      be_verbose=False, convpooldictlist=None,
@@ -291,9 +344,10 @@ def categorical_test(build_cnn=None, data_file_list=None,
     input_var_v = T.tensor4('inputs')
     target_var = T.ivector('targets')
 
+    inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
+
     # Build the model
-    network = build_cnn(input_var_x, input_var_u, input_var_v,
-                        imgw=imgw, imgh=imgh,
+    network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
                         dropoutp=dropoutp)
     with np.load(save_model_file) as f:
@@ -314,20 +368,17 @@ def categorical_test(build_cnn=None, data_file_list=None,
     # Look at the classifications
     test_prediction_values = T.argmax(test_prediction, axis=1)
 
-    # Compile a function computing the validation loss and accuracy:
-    val_fn = theano.function([input_var_x, input_var_u, input_var_v,
-                              target_var],
-                             [test_loss, test_acc],
-                             allow_input_downcast=True)
     # Compute the actual predictions - also instructive is to look at
     # `test_prediction` as an output (array of softmax probabilities)
     # (but that prints a _lot_ of stuff to screen...)
-    pred_fn = theano.function([input_var_x, input_var_u, input_var_v],
-                              [test_prediction_values],
+    pred_fn = theano.function(inputlist, [test_prediction_values],
                               allow_input_downcast=True)
-    probs_fn = theano.function([input_var_x, input_var_u, input_var_v],
-                               [test_prediction],
+    probs_fn = theano.function(inputlist, [test_prediction],
                                allow_input_downcast=True)
+    # Compile a function computing the validation loss and accuracy:
+    inputlist.append(target_var)
+    val_fn = theano.function(inputlist, [test_loss, test_acc],
+                             allow_input_downcast=True)
 
     print("Starting testing...")
     # compute and print the test error and...
@@ -369,15 +420,16 @@ def categorical_test(build_cnn=None, data_file_list=None,
                 # data order in the hdf5 looks like:
                 #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                 # (Check the file carefully for data names, etc.)
-                eventids, inputu, inputv, inputx, targets = \
-                    data[0], data[1], data[2], data[3], data[target_idx]
-                err, acc = val_fn(inputx, inputu, inputv, targets)
+                eventids, inputlist, targets = \
+                    get_id_tagged_inputlist_from_data(data, views, target_idx)
+                err, acc = val_fn(inputlist)
                 test_err += err
                 test_acc += acc
                 test_batches += 1
-                pred = pred_fn(inputx, inputu, inputv)
+                viewlist = get_viewlist_from_data(data, views)
+                pred = pred_fn(viewlist)
                 pred_targ = zip(pred[0], targets)
-                probs = probs_fn(inputx, inputu, inputv)
+                probs = probs_fn(viewlist)
                 evtcounter += 1
                 if write_db:
                     filldb(tbl, con, eventids, pred, probs)
@@ -411,7 +463,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
 
 
 def view_layer_activations(build_cnn=None, data_file_list=None,
-                           imgw=50, imgh=50, target_idx=5,
+                           imgw=50, imgh=50, views='xuv', target_idx=5,
                            save_model_file='./params_file.npz',
                            be_verbose=False, convpooldictlist=None,
                            nhidden=None, dropoutp=None, write_db=True,
@@ -442,9 +494,10 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
     input_var_u = T.tensor4('inputs')
     input_var_v = T.tensor4('inputs')
 
+    inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
+
     # Build the model
-    network = build_cnn(input_var_x, input_var_u, input_var_v,
-                        imgw=imgw, imgh=imgh,
+    network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
                         dropoutp=dropoutp)
     with np.load(save_model_file) as f:
@@ -468,51 +521,51 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
     layer_pool_x2 = lasagne.layers.get_output(layers[4])
     layer_pool_u2 = lasagne.layers.get_output(layers[11])
     layer_pool_v2 = lasagne.layers.get_output(layers[18])
-    vis_conv_x1 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_conv_x1 = theano.function(inputlist,
                                   [layer_conv_x1],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_conv_u1 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_conv_u1 = theano.function(inputlist,
                                   [layer_conv_u1],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_conv_v1 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_conv_v1 = theano.function(inputlist,
                                   [layer_conv_v1],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_pool_x1 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_pool_x1 = theano.function(inputlist,
                                   [layer_pool_x1],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_pool_u1 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_pool_u1 = theano.function(inputlist,
                                   [layer_pool_u1],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_pool_v1 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_pool_v1 = theano.function(inputlist,
                                   [layer_pool_v1],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_conv_x2 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_conv_x2 = theano.function(inputlist,
                                   [layer_conv_x2],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_conv_u2 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_conv_u2 = theano.function(inputlist,
                                   [layer_conv_u2],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_conv_v2 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_conv_v2 = theano.function(inputlist,
                                   [layer_conv_v2],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_pool_x2 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_pool_x2 = theano.function(inputlist,
                                   [layer_pool_x2],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_pool_u2 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_pool_u2 = theano.function(inputlist,
                                   [layer_pool_u2],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
-    vis_pool_v2 = theano.function([input_var_x, input_var_u, input_var_v],
+    vis_pool_v2 = theano.function(inputlist,
                                   [layer_pool_v2],
                                   allow_input_downcast=True,
                                   on_unused_input='warn')
@@ -545,20 +598,20 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
                 # data order in the hdf5 looks like:
                 #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                 # (Check the file carefully for data names, etc.)
-                eventids, inputu, inputv, inputx, targets = \
-                    data[0], data[1], data[2], data[3], data[target_idx]
-                conv_x1 = vis_conv_x1(inputx, inputu, inputv)
-                conv_u1 = vis_conv_u1(inputx, inputu, inputv)
-                conv_v1 = vis_conv_v1(inputx, inputu, inputv)
-                pool_x1 = vis_pool_x1(inputx, inputu, inputv)
-                pool_u1 = vis_pool_u1(inputx, inputu, inputv)
-                pool_v1 = vis_pool_v1(inputx, inputu, inputv)
-                conv_x2 = vis_conv_x2(inputx, inputu, inputv)
-                conv_u2 = vis_conv_u2(inputx, inputu, inputv)
-                conv_v2 = vis_conv_v2(inputx, inputu, inputv)
-                pool_x2 = vis_pool_x2(inputx, inputu, inputv)
-                pool_u2 = vis_pool_u2(inputx, inputu, inputv)
-                pool_v2 = vis_pool_v2(inputx, inputu, inputv)
+                eventids, inputlist, targets = \
+                    get_id_tagged_inputlist_from_data(data, views, target_idx)
+                conv_x1 = vis_conv_x1(inputlist)
+                conv_u1 = vis_conv_u1(inputlist)
+                conv_v1 = vis_conv_v1(inputlist)
+                pool_x1 = vis_pool_x1(inputlist)
+                pool_u1 = vis_pool_u1(inputlist)
+                pool_v1 = vis_pool_v1(inputlist)
+                conv_x2 = vis_conv_x2(inputlist)
+                conv_u2 = vis_conv_u2(inputlist)
+                conv_v2 = vis_conv_v2(inputlist)
+                pool_x2 = vis_pool_x2(inputlist)
+                pool_u2 = vis_pool_u2(inputlist)
+                pool_v2 = vis_pool_v2(inputlist)
                 vis_file = 'vis_' + str(targets[0]) + '_conv_1_' + tstamp + \
                     '_' + str(eventids[0]) + '.npy'
                 np.save(vis_file, [conv_x1, conv_u1, conv_v1])
