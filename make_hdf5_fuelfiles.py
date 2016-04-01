@@ -433,23 +433,16 @@ def transform_view(dset_vals, view):
             new_restdata.append([])
         print('Allowed transformations: {}'.format(allowed_trans))
         for i, img in enumerate(viewdata):
-            print(np.shape(img))
-            print('before max = {}'.format(np.max(img)))
             for trans in allowed_trans:
                 for j in range(len(restlist)):
                     new_restdata[j].append(restlist[j][i])
                 if trans == 'flip':
                     new_img = img[:, ::-1, :]
-                    print('flip')
                     new_restdata[-1][-1] += 50
-                    print('after flip max = {}'.format(np.max(new_img)))
                 else:
                     shift = int(re.search(r'[-+0-9]+', trans).group(0))
-                    print('shift is {}'.format(shift))
                     new_restdata[-1][-1] += (50 + shift)
                     new_img = shift_img_updown(img, shift)
-                    print('after shift max = {}'.format(np.max(new_img)))
-                print('prior to append max = {}'.format(np.max(new_img)))
                 new_viewdata.append(new_img)
 
         # put the view data back in front
