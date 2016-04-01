@@ -24,7 +24,7 @@ if '-h' in sys.argv or '--help' in sys.argv:
     print(__doc__)
     sys.exit(1)
 
-filename = './nukecc_fuel.hdf5'
+filename = './minerva_fuel.hdf5'
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 if len(sys.argv) > 2:

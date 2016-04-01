@@ -144,6 +144,27 @@ def shape_and_flip_image(hits, imgw, imgh):
     return hits
 
 
+def shift_img_updown(img, shift):
+    """
+    input images are expected to be three-tensors like `(1, imgw, imgh)`
+    """
+    base_w = np.shape(img)[1]
+    new_image = np.zeros_like(img)
+    from_row1 = 0
+    from_row2 = base_w
+    to_row1 = 0
+    to_row2 = base_w
+    if shift > 0:
+        from_row1 += shift
+        to_row2 = base_w - shift
+    else:
+        from_row2 = base_w + shift
+        to_row1 += -shift
+
+    new_image[:, to_row1:to_row2, :] = img[:, from_row1:from_row2, :]
+    return new_image
+
+
 def unpack_xuv_skim_data(rowdat, imgw, imgh, add_target_padding,
                          trim_column_up, trim_column_dn):
     hitsX = []
@@ -367,6 +388,13 @@ def build_nukecc_vtx_study_dset_description(views, img_dimensions):
 
 def filter_nukecc_vtx_det_vals_for_names(vals, names):
     """
+    look through all the dsets we wish to include by name and only keep
+    the vals that match that name (by index!) in the return vector.
+
+    note that we are relying on the vals showing up in the same order
+    as the names generated from the nukecc dset description generator.
+    there is no extra metadata in the list to identify the correct pairing.
+
     raw nukecc vals structure is like:
         dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
     """
@@ -406,15 +434,23 @@ def transform_view(dset_vals, view):
         print('Allowed transformations: {}'.format(allowed_trans))
         for i, img in enumerate(viewdata):
             print(np.shape(img))
+            print('before max = {}'.format(np.max(img)))
             for trans in allowed_trans:
+                for j in range(len(restlist)):
+                    new_restdata[j].append(restlist[j][i])
                 if trans == 'flip':
+                    new_img = img[:, ::-1, :]
                     print('flip')
+                    new_restdata[-1][-1] += 50
+                    print('after flip max = {}'.format(np.max(new_img)))
                 else:
                     shift = int(re.search(r'[-+0-9]+', trans).group(0))
                     print('shift is {}'.format(shift))
-                new_viewdata.append(img)
-                for j in range(len(restlist)):
-                    new_restdata[j].append(restlist[j][i])
+                    new_restdata[-1][-1] += (50 + shift)
+                    new_img = shift_img_updown(img, shift)
+                    print('after shift max = {}'.format(np.max(new_img)))
+                print('prior to append max = {}'.format(np.max(new_img)))
+                new_viewdata.append(new_img)
 
         # put the view data back in front
         new_restdata.insert(0, new_viewdata)
