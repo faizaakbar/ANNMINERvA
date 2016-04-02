@@ -92,7 +92,7 @@ def get_id_tagged_inputlist_from_data(data, views, target_idx):
         inputs = [inputx, inputu, inputv]
     else:
         eventids, input_view, targets = \
-            data[1], data[target_idx]
+            data[0], data[1], data[target_idx]
         inputs = [input_view]
     return eventids, inputs, targets
 
@@ -239,7 +239,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                     #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                     # (Check the file carefully for data names, etc.)
                     inputs = get_inputlist_from_data(data, views, target_idx)
-                    train_err += train_fn(inputs)
+                    train_err += train_fn(*inputs)
                     train_batches += 1
                 t1 = time.time()
                 print("  -Iterating over the slice took {:.3f}s.".format(
@@ -266,7 +266,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                         # (Check the file carefully for data names, etc.)
                         inputs = get_inputlist_from_data(
                             data, views, target_idx)
-                        err, acc = val_fn(inputs)
+                        err, acc = val_fn(*inputs)
                         val_err += err
                         val_acc += acc
                         val_batches += 1
@@ -422,14 +422,15 @@ def categorical_test(build_cnn=None, data_file_list=None,
                 # (Check the file carefully for data names, etc.)
                 eventids, inputlist, targets = \
                     get_id_tagged_inputlist_from_data(data, views, target_idx)
-                err, acc = val_fn(inputlist)
+                inputlist.append(targets)
+                err, acc = val_fn(*inputlist)
                 test_err += err
                 test_acc += acc
                 test_batches += 1
                 viewlist = get_viewlist_from_data(data, views)
-                pred = pred_fn(viewlist)
+                pred = pred_fn(*viewlist)
                 pred_targ = zip(pred[0], targets)
-                probs = probs_fn(viewlist)
+                probs = probs_fn(*viewlist)
                 evtcounter += 1
                 if write_db:
                     filldb(tbl, con, eventids, pred, probs)
@@ -600,18 +601,18 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
                 # (Check the file carefully for data names, etc.)
                 eventids, inputlist, targets = \
                     get_id_tagged_inputlist_from_data(data, views, target_idx)
-                conv_x1 = vis_conv_x1(inputlist)
-                conv_u1 = vis_conv_u1(inputlist)
-                conv_v1 = vis_conv_v1(inputlist)
-                pool_x1 = vis_pool_x1(inputlist)
-                pool_u1 = vis_pool_u1(inputlist)
-                pool_v1 = vis_pool_v1(inputlist)
-                conv_x2 = vis_conv_x2(inputlist)
-                conv_u2 = vis_conv_u2(inputlist)
-                conv_v2 = vis_conv_v2(inputlist)
-                pool_x2 = vis_pool_x2(inputlist)
-                pool_u2 = vis_pool_u2(inputlist)
-                pool_v2 = vis_pool_v2(inputlist)
+                conv_x1 = vis_conv_x1(*inputlist)
+                conv_u1 = vis_conv_u1(*inputlist)
+                conv_v1 = vis_conv_v1(*inputlist)
+                pool_x1 = vis_pool_x1(*inputlist)
+                pool_u1 = vis_pool_u1(*inputlist)
+                pool_v1 = vis_pool_v1(*inputlist)
+                conv_x2 = vis_conv_x2(*inputlist)
+                conv_u2 = vis_conv_u2(*inputlist)
+                conv_v2 = vis_conv_v2(*inputlist)
+                pool_x2 = vis_pool_x2(*inputlist)
+                pool_u2 = vis_pool_u2(*inputlist)
+                pool_v2 = vis_pool_v2(*inputlist)
                 vis_file = 'vis_' + str(targets[0]) + '_conv_1_' + tstamp + \
                     '_' + str(eventids[0]) + '.npy'
                 np.save(vis_file, [conv_x1, conv_u1, conv_v1])
