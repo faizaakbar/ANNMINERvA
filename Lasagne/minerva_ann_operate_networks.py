@@ -218,6 +218,8 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     for epoch in range(num_epochs):
 
         start_time = time.time()
+        train_err = 0
+        train_batches = 0
         for i, data_file in enumerate(data_file_list):
             # In each epoch, we do a full pass over the training data:
             for tslice in train_slices[i]:
@@ -232,8 +234,6 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                     print("   dset sources:", train_set.provides_sources)
 
                 t0 = time.time()
-                train_err = 0
-                train_batches = 0
                 for data in train_dstream.get_epoch_iterator():
                     # data order in the hdf5 looks like:
                     #  ids, hits-u, hits-v, hits-x, planes, segments, zs
@@ -251,15 +251,15 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
         if do_validation_pass:
             # And a full pass over the validation data
             t0 = time.time()
+            val_err = 0
+            val_acc = 0
+            val_batches = 0
             for i, data_file in enumerate(data_file_list):
                 for vslice in valid_slices[i]:
                     valid_set = load_datasubset(data_file, 'valid', vslice)
                     _, valid_dstream = make_scheme_and_stream(valid_set,
                                                               batchsize)
 
-                    val_err = 0
-                    val_acc = 0
-                    val_batches = 0
                     for data in valid_dstream.get_epoch_iterator():
                         # data order in the hdf5 looks like:
                         #  ids, hits-u, hits-v, hits-x, planes, segments, zs
