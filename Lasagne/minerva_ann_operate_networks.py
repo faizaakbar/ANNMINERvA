@@ -397,6 +397,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
         test_slices.append(slices_maker(tsize, slice_size=50000))
     test_set = None
 
+    evt_print_freq = 1   # TODO: pass this in?
     evtcounter = 0
     for i, data_file in enumerate(data_file_list):
 
@@ -435,16 +436,17 @@ def categorical_test(build_cnn=None, data_file_list=None,
                 if write_db:
                     filldb(tbl, con, eventids, pred, probs)
                 if be_verbose:
-                    if evtcounter % 1000 == 0:
-                        print("{}/{}: (prediction, true target): {}, {}".
+                    if evtcounter % evt_print_freq == 0:
+                        print("{}/{} - {}: (prediction, true target): {}, {}".
                               format(evtcounter,
                                      used_data_size,
+                                     eventids[0],
                                      pred_targ, probs))
                 for p, t in pred_targ:
                     targs_mat[t][p] += 1
-                    true_target[t-1] += 1
+                    true_target[t] += 1
                     if p == t:
-                        pred_target[p-1] += 1
+                        pred_target[p] += 1
             t1 = time.time()
             print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
 
@@ -460,7 +462,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
         test_acc / test_batches * 100))
     for i, v in enumerate(acc_target):
         print("   target {} accuracy:\t\t\t{:.3f} %".format(
-            (i + 1), acc_target[i]))
+            i, acc_target[i]))
 
 
 def view_layer_activations(build_cnn=None, data_file_list=None,
