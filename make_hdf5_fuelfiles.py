@@ -27,6 +27,7 @@ import sys
 import os
 import re
 from collections import OrderedDict
+import gzip
 
 import numpy as np
 import h5py
@@ -225,7 +226,7 @@ def get_nukecc_vtx_study_data_from_file(filename, imgw, imgh,
     # 0   1   2   3   4   5   6   7
     # seg z   pln run sub gt  slc data...
 
-    with open(filename, 'r') as f:
+    with gzip.open(filename, 'r') as f:
         for line in f.readlines():
             if line[0] == '#':
                 continue
@@ -265,9 +266,12 @@ def transform_to_4d_tensor(tensr):
     return tensr
 
 
-def make_file_list(filebase):
+def make_file_list(filebase, use_gzipped_files=True):
     # look for "filebase"+(_learn/_valid/_test/ - zero or more times)+whatever
-    filebase = re.compile(r"^%s(_learn|_test|_valid)*.*dat$" % filebase)
+    filestr = r"^%s(_learn|_test|_valid)*.*dat$"
+    if use_gzipped_files:
+        filestr = r"^%s(_learn|_test|_valid)*.*dat.gz$"
+    filebase = re.compile(filestr % filebase)
     files = os.listdir('.')
     files = [f for f in files if re.match(filebase, f)]
     print(files)
