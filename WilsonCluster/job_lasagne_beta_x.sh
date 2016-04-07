@@ -3,37 +3,26 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
-# not 2 #PBS -l nodes=gpu2:gpu:ppn=1,walltime=24:00:00
-#PBS -l nodes=gpu1:gpu:ppn=1,walltime=24:00:00
+#PBS -l nodes=gpu2:gpu:ppn=1,walltime=24:00:00
+# not 1 #PBS -l nodes=gpu1:gpu:ppn=1,walltime=24:00:00
 # #PBS -l nodes=1:gpu,walltime=24:00:00
 #PBS -A minervaG
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
+NEPOCHS=8
 NEPOCHS=16
-NEPOCHS=6
 LRATE=0.001
 L2REG=0.0001
 
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x50_xuv_me1Bmc.hdf5"
-SAVEMODELNAME="./lminervatriamese_betaprime`date +%s`.npz"
-PYTHONPROG="minerva_triamese_betaprime.py"
-
-# TODO: try passing this in 
-# SAVEMODELNAME="./lminervatriamese_beta1457480019_beta_v1r0.npz"
-# START_FROM="-p -s $SAVEMODELNAME"
-# START_FROM=""
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_x_padded_me1Bmc.hdf5"
+SAVEMODELNAME="./lminerva_betax`date +%s`.npz"
+PYTHONPROG="minerva_beta_x.py"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
 
-# these are broken?...
-# nCores=$['cat ${PBS_COREFILE} | wc --lines']
-# nNodes=$['cat ${PBS_NODEFILE} | wc --lines']
-# echo "NODEFILE nNodes=$nNodes (nCores=$nCores):"
-
 cat ${PBS_NODEFILE}
-
 cd $HOME
 source python_bake_lasagne.sh
 
@@ -53,14 +42,6 @@ if [[ $DIRTY != "" ]]; then
   # exit 0
 fi
 
-# Always use fcp to stage any large input files from the cluster file server
-# to your job's control worker node. All worker nodes have attached 
-# disk storage in /scratch.
-
-# There is no fcp on the gpu nodes...
-# /usr/local/bin/fcp -c /usr/bin/rcp tevnfsp:/home/perdue/Datasets/mnist.pkl.gz /scratch
-# ls /scratch
-
 cp /home/perdue/ANNMINERvA/Lasagne/${PYTHONPROG} ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/minerva_ann_*.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
@@ -73,7 +54,7 @@ python ${PYTHONPROG} -l \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-# --imgh 68
+  --imgh 68
 # $START_FROM
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
@@ -82,8 +63,8 @@ python ${PYTHONPROG} -l \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
-  -d $DATAFILENAME 
-# --imgh 68
+  -d $DATAFILENAME \
+  --imgh 68
 # $START_FROM
 
 # nepochs and lrate don't matter for prediction, but setting them for log-file
