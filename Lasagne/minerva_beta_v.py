@@ -97,28 +97,28 @@ if __name__ == '__main__':
     # assume 127x(N) images
     convpool1dict = {}
     convpool1dict['nfilters'] = 12
-    convpool1dict['filter_size'] = (8, 3)
-    convpool1dict['pool_size'] = (2, 1)
+    convpool1dict['filter_size'] = (8, 5)
+    convpool1dict['pool_size'] = (2, 2)
     convpooldictlist.append(convpool1dict)
-    # after 8x3 filters -> 120x(N-2) image, then maxpool -> 60x(N-2)
+    # after 8x5 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)/2
     convpool2dict = {}
     convpool2dict['nfilters'] = 20
     convpool2dict['filter_size'] = (7, 3)
     convpool2dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool2dict)
-    # after 7x3 filters -> 54x(N-4) image, then maxpool -> 27x(N-4)
+    # after 7x3 filters -> 54x(((N-4)/2)-2) image, then maxpool -> 27x(((N-4)/2)-2)
     convpool3dict = {}
     convpool3dict['nfilters'] = 28
     convpool3dict['filter_size'] = (6, 3)
     convpool3dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool3dict)
-    # after 6x3 filters -> 22x(N-6) image, then maxpool -> 11x(N-6)
+    # after 6x3 filters -> 22x(((N-4)/2)-4) image, then maxpool -> 11x(((N-4)/2)-4)
     convpool4dict = {}
     convpool4dict['nfilters'] = 36
     convpool4dict['filter_size'] = (6, 3)
     convpool4dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool4dict)
-    # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
+    # after 6x3 filters -> 6x(((N-4)/2)-6) image, then maxpool -> 3x(((N-4)/2)-6)
 
     nhidden = 196
     imgw = options.imgw
