@@ -1,0 +1,1512 @@
+PBS prologue
+Job mnv-conv-1460413794 submitted from mic.fnal.gov started Mon Apr 11 17:29:55 CDT 2016 jobid 110665.tev.fnal.gov
+gpu1
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is fbafb9228363
+python minerva_beta_v.py -l   -n 12   -r 0.001   -g 0.0001   -s ./lminerva_betav1460413795.npz   -d /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5   --imgh 68
+# 
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+minerva_beta_v.py
+ Begin with saved parameters? False
+ Saved parameters file: ./lminerva_betav1460413795.npz
+ Saved parameters file exists? False
+ Datasets: ['/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5']
+ Dataset size: 1581887871
+ Planned number of epochs: 12
+ Learning rate: 0.001
+ Momentum: 0.9
+ L2 regularization penalty scale: 0.0001
+ Batch size: 500
+Loading data...
+ Learning sample size = 2824388 examples
+ Validation sample size = 340288 examples
+ Testing sample size = 238202 examples
+Convpool conv-v-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-v-0
+Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+Convpool maxpool-v-1
+Convpool conv-v-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+Convpool maxpool-v-2
+Convpool conv-v-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+Convpool maxpool-v-3
+Dense dense-v with nhidden = 196, dropout = 0.5
+Dense dense-across with nhidden = 98, dropout = 0.5
+Softmax output prob with n_units = 11, dropout = 0.5
+n-parameters:  604799
+
+In -->     Layer    --> Out    Description                                                  
+-------    -----    -------    -----------                                                  
+[]         0        [1]        <lasagne.layers.input.InputLayer object at 0x2ae56f3ff310>   
+[0]        1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2ae56f3ff390>   
+[1]        2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae56f3ff3d0>
+[2]        3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2ae56f41d350>   
+[3]        4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae5932b4b90>
+[4]        5        [6]        <lasagne.layers.conv.Conv2DLayer object at 0x2ae56f41d390>   
+[5]        6        [7]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae56f41d610>
+[6]        7        [8]        <lasagne.layers.conv.Conv2DLayer object at 0x2ae56f41d650>   
+[7]        8        [9]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae56f41d8d0>
+[8]        9        [10]       <lasagne.layers.noise.DropoutLayer object at 0x2ae56f3ff350> 
+[9]        10       [11]       <lasagne.layers.dense.DenseLayer object at 0x2ae56f41db90>   
+[10]       11       [12]       <lasagne.layers.noise.DropoutLayer object at 0x2ae56f41dbd0> 
+[11]       12       [13]       <lasagne.layers.dense.DenseLayer object at 0x2ae56f429250>   
+[12]       13       [14]       <lasagne.layers.noise.DropoutLayer object at 0x2ae56f4291d0> 
+[13]       14       []         <lasagne.layers.dense.DenseLayer object at 0x2ae56f429550>   
+
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        
+
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        
+Starting training...
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 10.091s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.848s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 10.022s.
+  -Iterating over the slice took 24.430s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.993s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.831s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.975s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.956s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.788s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.920s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.907s.
+  -Iterating over the slice took 24.377s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.950s.
+  -Iterating over the slice took 24.380s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.939s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.931s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 10.143s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.973s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.965s.
+  -Iterating over the slice took 24.381s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 10.014s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.953s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.952s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.982s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.976s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.947s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.977s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.938s.
+  -Iterating over the slice took 24.385s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.916s.
+  -Iterating over the slice took 24.561s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.956s.
+  -Iterating over the slice took 24.698s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.930s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.853s.
+  -Iterating over the slice took 24.631s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.945s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.941s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.933s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.952s.
+  -Iterating over the slice took 24.903s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.923s.
+  -Iterating over the slice took 24.377s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.932s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.944s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.845s.
+  -Iterating over the slice took 24.383s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.957s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.927s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.952s.
+  -Iterating over the slice took 24.383s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 10.151s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.952s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.940s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.980s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.942s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.966s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.941s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.896s.
+  -Iterating over the slice took 24.848s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.990s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.934s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.937s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.911s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.931s.
+  -Iterating over the slice took 24.381s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.949s.
+  -Iterating over the slice took 24.805s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.947s.
+  -Iterating over the slice took 24.641s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.936s.
+  -Iterating over the slice took 24.505s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.852s.
+  -Iterating over the slice took 24.844s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.907s.
+  -Iterating over the slice took 11.902s.
+  The validation pass took 122.163s.
+Epoch 1 of 12 took 2065.597s
+  training loss:		0.714158
+  validation loss:		0.539612
+  validation accuracy:		83.45 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.690s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.385s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.739s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.689s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.698s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.694s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.732s.
+  -Iterating over the slice took 24.472s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.724s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.693s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.690s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.772s.
+  -Iterating over the slice took 24.888s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.724s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.696s.
+  -Iterating over the slice took 24.381s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.762s.
+  -Iterating over the slice took 24.900s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.694s.
+  -Iterating over the slice took 24.391s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.565s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.698s.
+  -Iterating over the slice took 24.391s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.724s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.688s.
+  -Iterating over the slice took 24.665s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.723s.
+  -Iterating over the slice took 24.379s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.767s.
+  -Iterating over the slice took 24.867s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.823s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.697s.
+  -Iterating over the slice took 24.586s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.777s.
+  -Iterating over the slice took 24.888s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.384s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.689s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.748s.
+  -Iterating over the slice took 24.856s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.730s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.720s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.785s.
+  -Iterating over the slice took 11.913s.
+  The validation pass took 120.170s.
+Epoch 2 of 12 took 2051.188s
+  training loss:		0.589362
+  validation loss:		0.510407
+  validation accuracy:		84.42 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.690s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.679s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.623s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.688s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.385s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.697s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.732s.
+  -Iterating over the slice took 24.383s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.476s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.684s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.726s.
+  -Iterating over the slice took 24.385s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.383s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.884s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.385s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.382s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.391s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.733s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.698s.
+  -Iterating over the slice took 24.381s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.692s.
+  -Iterating over the slice took 24.382s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.698s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.688s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.730s.
+  -Iterating over the slice took 24.391s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.384s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.730s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.729s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.789s.
+  -Iterating over the slice took 11.898s.
+  The validation pass took 120.152s.
+Epoch 3 of 12 took 2048.066s
+  training loss:		0.564427
+  validation loss:		0.495092
+  validation accuracy:		84.89 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.694s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.688s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.725s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.730s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.733s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.720s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.694s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.743s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.698s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.694s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.692s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.741s.
+  -Iterating over the slice took 24.411s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.698s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.756s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.698s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.695s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.720s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.391s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.385s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.786s.
+  -Iterating over the slice took 11.922s.
+  The validation pass took 120.182s.
+Epoch 4 of 12 took 2047.603s
+  training loss:		0.549820
+  validation loss:		0.486879
+  validation accuracy:		85.20 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.730s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.568s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.770s.
+  -Iterating over the slice took 24.866s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.790s.
+  -Iterating over the slice took 24.851s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.734s.
+  -Iterating over the slice took 24.784s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.411s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.726s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.726s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.745s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.689s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.748s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.690s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.723s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.731s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.720s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.697s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.745s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.730s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.681s.
+  -Iterating over the slice took 24.387s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.695s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.788s.
+  -Iterating over the slice took 11.918s.
+  The validation pass took 120.288s.
+Epoch 5 of 12 took 2049.605s
+  training loss:		0.540002
+  validation loss:		0.480288
+  validation accuracy:		85.46 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.741s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.694s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.695s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.738s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.724s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.726s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.377s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.378s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.740s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.726s.
+  -Iterating over the slice took 24.383s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.386s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.723s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.747s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.696s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.695s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.697s.
+  -Iterating over the slice took 24.382s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.379s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.374s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.427s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.720s.
+  -Iterating over the slice took 24.380s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.694s.
+  -Iterating over the slice took 24.379s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.747s.
+  -Iterating over the slice took 24.390s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.384s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.378s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.785s.
+  -Iterating over the slice took 11.906s.
+  The validation pass took 120.169s.
+Epoch 6 of 12 took 2047.782s
+  training loss:		0.532828
+  validation loss:		0.476657
+  validation accuracy:		85.57 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.734s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.697s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.424s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.698s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.720s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.733s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.411s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.695s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.430s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.697s.
+  -Iterating over the slice took 24.427s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.421s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.696s.
+  -Iterating over the slice took 24.425s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.767s.
+  -Iterating over the slice took 24.857s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.695s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.744s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.752s.
+  -Iterating over the slice took 24.879s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.726s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.578s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.851s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.522s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.423s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.784s.
+  -Iterating over the slice took 11.927s.
+  The validation pass took 121.722s.
+Epoch 7 of 12 took 2051.715s
+  training loss:		0.526880
+  validation loss:		0.471513
+  validation accuracy:		85.71 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.428s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.421s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.734s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.695s.
+  -Iterating over the slice took 24.418s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.725s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.421s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.418s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.693s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.428s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.771s.
+  -Iterating over the slice took 24.882s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.751s.
+  -Iterating over the slice took 24.423s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.808s.
+  -Iterating over the slice took 24.918s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.424s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.725s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.731s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.423s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.739s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.735s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.735s.
+  -Iterating over the slice took 24.421s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.421s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.735s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.427s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.690s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.418s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.732s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.720s.
+  -Iterating over the slice took 24.391s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.735s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.692s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.792s.
+  -Iterating over the slice took 11.917s.
+  The validation pass took 120.210s.
+Epoch 8 of 12 took 2049.866s
+  training loss:		0.522794
+  validation loss:		0.467728
+  validation accuracy:		85.84 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.729s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.394s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.732s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.723s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.730s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.726s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.746s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.421s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.927s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.427s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.696s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.411s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.693s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.389s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.698s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.777s.
+  -Iterating over the slice took 24.911s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.771s.
+  -Iterating over the slice took 24.891s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.563s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.411s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.796s.
+  -Iterating over the slice took 24.886s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.737s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.768s.
+  -Iterating over the slice took 24.891s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.816s.
+  -Iterating over the slice took 12.149s.
+  The validation pass took 120.165s.
+Epoch 9 of 12 took 2051.307s
+  training loss:		0.519333
+  validation loss:		0.465267
+  validation accuracy:		85.91 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.742s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.418s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.724s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.411s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.421s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.695s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.732s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.422s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.750s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.734s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.734s.
+  -Iterating over the slice took 24.388s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.392s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.724s.
+  -Iterating over the slice took 24.426s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.734s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.731s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.424s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.422s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.726s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.736s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.690s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.725s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.788s.
+  -Iterating over the slice took 11.904s.
+  The validation pass took 120.220s.
+Epoch 10 of 12 took 2048.471s
+  training loss:		0.516413
+  validation loss:		0.462936
+  validation accuracy:		85.97 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.418s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.729s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.720s.
+  -Iterating over the slice took 24.411s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.738s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.424s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.690s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.705s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.422s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.725s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.732s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.731s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.732s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.398s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.731s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.692s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.775s.
+  -Iterating over the slice took 24.883s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.749s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.713s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.734s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.395s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.418s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.733s.
+  -Iterating over the slice took 24.421s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.702s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.726s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.719s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.690s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.709s.
+  -Iterating over the slice took 24.406s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.790s.
+  -Iterating over the slice took 11.910s.
+  The validation pass took 120.209s.
+Epoch 11 of 12 took 2048.943s
+  training loss:		0.513404
+  validation loss:		0.460763
+  validation accuracy:		86.04 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.694s.
+  -Iterating over the slice took 24.424s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.721s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.411s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.690s.
+  -Iterating over the slice took 24.399s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.723s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.767s.
+  -Iterating over the slice took 24.413s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.731s.
+  -Iterating over the slice took 24.400s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.728s.
+  -Iterating over the slice took 24.421s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.419s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.415s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.740s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.729s.
+  -Iterating over the slice took 24.393s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.692s.
+  -Iterating over the slice took 24.420s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.701s.
+  -Iterating over the slice took 24.414s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.706s.
+  -Iterating over the slice took 24.403s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.730s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.703s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.422s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.661s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.716s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.708s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.712s.
+  -Iterating over the slice took 24.409s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.693s.
+  -Iterating over the slice took 24.405s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.696s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.704s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.722s.
+  -Iterating over the slice took 24.397s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.711s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.715s.
+  -Iterating over the slice took 24.410s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.714s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.408s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.707s.
+  -Iterating over the slice took 24.402s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.710s.
+  -Iterating over the slice took 24.396s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.700s.
+  -Iterating over the slice took 24.417s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.699s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.718s.
+  -Iterating over the slice took 24.416s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.727s.
+  -Iterating over the slice took 24.412s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.697s.
+  -Iterating over the slice took 24.404s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.717s.
+  -Iterating over the slice took 24.407s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 9.691s.
+  -Iterating over the slice took 24.401s.
+  Loading slice (2800000, 2824388) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_v_padded_me1Bmc.hdf5 took 4.787s.
+  -Iterating over the slice took 11.904s.
+  The validation pass took 121.274s.
+Epoch 12 of 12 took 2049.366s
+  training loss:		0.511266
+  validation loss:		0.459048
+  validation accuracy:		86.12 %
+---
+Finished 12 epochs.
+Job mnv-conv-1460413794 submitted from mic.fnal.gov finished Tue Apr 12 00:20:34 CDT 2016 jobid 110665.tev.fnal.gov
+PBS epilogue
