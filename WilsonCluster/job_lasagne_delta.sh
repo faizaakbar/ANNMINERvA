@@ -12,7 +12,7 @@
 
 NEPOCHS=12
 NEPOCHS=20
-LRATE=0.0025
+LRATE=0.001
 L2REG=0.0001
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_xuv_padded_me1Bmc.hdf5"

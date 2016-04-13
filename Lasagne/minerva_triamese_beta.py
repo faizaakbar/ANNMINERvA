@@ -38,7 +38,7 @@ if __name__ == '__main__':
     parser.add_option('-b', '--batch_size', dest='batchsize', default=500,
                       help='Batch size for SGD', metavar='BATCH_SIZE',
                       type='int')
-    parser.add_option('-r', '--rate', dest='lrate', default=0.0025,
+    parser.add_option('-r', '--rate', dest='lrate', default=0.001,
                       help='Learning rate', metavar='LRATE',
                       type='float')
     parser.add_option('-g', '--regularization', dest='l2_penalty_scale',
