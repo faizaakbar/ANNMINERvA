@@ -41,16 +41,24 @@ zdesc = dict(zip(zsegs, desc))
 
 fig = pylab.figure(figsize=(15, 15))
 gs = pylab.GridSpec(4, 3)
+pur = pylab.zeros_like(arr)
+for i in range(11):
+    pur[i, :] = arr[i, :] / arr.sum(axis=1)[i]
+
+if trackarr is not None:
+    trackpur = pylab.zeros_like(trackarr)
+    for i in range(11):
+        trackpur[i, :] = trackarr[i, :] / trackarr.sum(axis=1)[i]
+
 for i, v in enumerate(zsegs):
     ax = pylab.subplot(gs[i])
     ax.set_autoscaley_on(False)
     ax.set_ylim([0.0, 1.0])
     ax.set_ylabel('fraction of events')
     ax.set_title('true ' + str(v) + ':' + zdesc[v], loc='right')
-    ax.plot(pylab.arange(len(zsegs)), arr[v]/pylab.sum(arr[v]), color='blue')
+    ax.plot(pylab.arange(len(zsegs)), pur[v], color='blue')
     if trackarr is not None:
-        ax.plot(pylab.arange(len(zsegs)), trackarr[v]/pylab.sum(trackarr[v]),
-                color='red')
+        ax.plot(pylab.arange(len(zsegs)), trackpur[v], color='red')
 figname = filebase + '.pdf'
 pylab.savefig(figname)
 pylab.close()
