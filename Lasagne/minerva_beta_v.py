@@ -98,7 +98,7 @@ if __name__ == '__main__':
     convpool1dict = {}
     convpool1dict['nfilters'] = 12
     convpool1dict['filter_size'] = (8, 5)
-    convpool1dict['pool_size'] = (2, 2)
+    convpool1dict['pool_size'] = (2, 1)
     convpooldictlist.append(convpool1dict)
     # after 8x5 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)/2
     convpool2dict = {}

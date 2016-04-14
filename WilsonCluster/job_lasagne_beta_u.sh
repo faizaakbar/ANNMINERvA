@@ -11,13 +11,14 @@
 #restore to turn off email #PBS -m n
 
 NEPOCHS=8
-NEPOCHS=12
+NEPOCHS=20
 LRATE=0.001
 L2REG=0.0001
 
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x68_u_padded_me1Bmc.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x25_u_me1Bmc.hdf5"
 SAVEMODELNAME="./lminerva_betau`date +%s`.npz"
 PYTHONPROG="minerva_beta_u.py"
+IMGH=25
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
@@ -54,7 +55,7 @@ python ${PYTHONPROG} -l \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --imgh 68
+  --imgh $IMGH
 # $START_FROM
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
@@ -64,7 +65,7 @@ python ${PYTHONPROG} -l \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --imgh 68
+  --imgh $IMGH
 # $START_FROM
 
 # nepochs and lrate don't matter for prediction, but setting them for log-file
