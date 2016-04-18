@@ -38,6 +38,13 @@ from six.moves import range
 
 from plane_codes import build_indexed_codes
 
+PDG_PROTON = 2212
+PDG_PIPLUS = 211
+PDG_PIMINUS = -211
+PDG_KPLUS = 321
+PDG_KMINUS = -321
+PDG_SIGMAPLUS = 3222
+PDG_SIGMAMINIUS = 3112
 
 def compute_target_padding():
     """
@@ -213,14 +220,7 @@ def process_particles_for_hadron_multiplicty(pdgs, energies, thresh=50):
     """
     thresh is in MeV
     """
-    pdglist = [2212,  # proton
-               211,   # pi+
-               -211,  # pi-
-               321,   # K+
-               -321,  # K-
-               # 3112,  # Sigma-
-               # 3222,  # Sigma+
-               ]
+    pdglist = [PDG_PROTON, PDG_PIPLUS, PDG_PIMINUS, PDG_KPLUS, PDG_KMINUS]
     data = []
     for i, en in enumerate(energies):
         if en > thresh and pdgs[i] in pdglist:
@@ -232,7 +232,12 @@ def process_particles_for_hadron_multiplicty(pdgs, energies, thresh=50):
 def get_hadmult_study_data_from_file(filename):
     print("...loading data")
     eventids = []
-    particles = []
+    n_protons_arr = []
+    esum_protons_arr = []
+    n_pions_arr = []
+    esum_pions_arr = []
+    n_kaons_arr = []
+    esum_kaons_arr = []
     # format:
     # 0   1   2   3   4   5   6   7
     # run sub gt  slc data... (p:pdg:E)
@@ -250,16 +255,27 @@ def get_hadmult_study_data_from_file(filename):
             energies = []
             for particle in partdat:
                 dat = particle.split(':')
-                pdgs.append(dat[1])
-                energies.append(dat[2])
+                pdgs.append(int(dat[1]))
+                energies.append(float(dat[2]))
             processed_parts = \
                 process_particles_for_hadron_multiplicty(pdgs, energies)
-            particles.append(processed_parts)
+            n_protons = 0
+            n_pions = 0
+            n_kaons = 0
+            esum_protons = 0
+            esum_pion = 0
+            esum_kaons = 0
+            for particle in processed_parts:
+                if particle[0] == PDG_PROTON:
+                    n_protons += 1
+                elif particle[0] == PDG_PIPLUS or particle[0] == PDG_PIMINUS:
+                    n_pions += 1
+                elif particle[0] == PDG_KPLUS or particle[0] == PDG_KMINUS:
+                    n_kaons += 1
     eventids = np.asarray(eventids, dtype=np.uint64)
-    particles = np.asarray(particles, dtype=np.float32)
     # pdgs = np.asarray(pdgs, dtype=np.int64)
     # energies = np.asarray(energies, dtype=np.float32)
-    storedat = (particles, eventids)
+    storedat = (, eventids)
     print("...finished loading")
     return storedat
 
