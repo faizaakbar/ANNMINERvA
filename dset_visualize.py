@@ -47,30 +47,38 @@ def decode_eventid(eventid):
 
 f = h5py.File(filename, 'r')
 try:
-    data_x = pylab.zeros(pylab.shape(f['hits-x']), dtype='f')
+    data_x_shp = pylab.shape(f['hits-x'])
 except KeyError:
     print("'hits-x' does not exist.")
-    data_x = None
+    data_x_shp = None
 try:
-    data_u = pylab.zeros(pylab.shape(f['hits-u']), dtype='f')
+    data_u_shp = pylab.shape(f['hits-u'])
 except KeyError:
     print("'hits-u' does not exist.")
-    data_u = None
+    data_u_shp = None
 try:
-    data_v = pylab.zeros(pylab.shape(f['hits-v']), dtype='f')
+    data_v_shp = pylab.shape(f['hits-v'])
 except KeyError:
     print("'hits-v' does not exist.")
-    data_v = None
-labels = pylab.zeros(pylab.shape(f['segments']), dtype='f')
-evtids = pylab.zeros(pylab.shape(f['eventids']), dtype='uint64')
-if data_x is not None:
-    f['hits-x'].read_direct(data_x)
-if data_u is not None:
-    f['hits-u'].read_direct(data_u)
-if data_v is not None:
-    f['hits-v'].read_direct(data_v)
-f['segments'].read_direct(labels)
-f['eventids'].read_direct(evtids)
+    data_v_shp = None
+if data_x_shp is not None:
+    data_x_shp = (max_evts, data_x_shp[1], data_x_shp[2], data_x_shp[3])
+    data_x = pylab.zeros(data_x_shp, dtype='f')
+    data_x = f['hits-x'][:max_evts]
+if data_u_shp is not None:
+    data_u_shp = (max_evts, data_u_shp[1], data_u_shp[2], data_u_shp[3])
+    data_u = pylab.zeros(data_u_shp, dtype='f')
+    data_u = f['hits-u'][:max_evts]
+if data_v_shp is not None:
+    data_v_shp = (max_evts, data_v_shp[1], data_v_shp[2], data_v_shp[3])
+    data_v = pylab.zeros(data_v_shp, dtype='f')
+    data_v = f['hits-v'][:max_evts]
+labels_shp = (max_evts,)
+evtids_shp = (max_evts,)
+labels = pylab.zeros(labels_shp, dtype='f')
+evtids = pylab.zeros(evtids_shp, dtype='uint64')
+labels = f['segments'][:max_evts]
+evtids = f['eventids'][:max_evts]
 f.close()
 
 for counter, evtid in enumerate(evtids):
