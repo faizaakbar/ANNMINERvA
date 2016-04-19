@@ -46,6 +46,21 @@ PDG_KMINUS = -321
 PDG_SIGMAPLUS = 3222
 PDG_SIGMAMINIUS = 3112
 
+PDG_ELECTRON = 11
+PDG_NUE = 12
+PDG_MUON = 13
+PDG_NUMU = 14
+PDG_TAU = 15
+PDG_NUTAU = 16
+
+PDG_POSITRON = -11
+PDG_NUEBAR = -12
+PDG_ANTIMUON = -13
+PDG_NUMUBAR = -14
+PDG_ANTITAU = -15
+PDG_NUTAUBAR = -16
+
+
 def compute_target_padding():
     """
     When adding padding, we traverse 8 planes before reaching target1,
@@ -263,19 +278,37 @@ def get_hadmult_study_data_from_file(filename):
             n_pions = 0
             n_kaons = 0
             esum_protons = 0
-            esum_pion = 0
+            esum_pions = 0
             esum_kaons = 0
             for particle in processed_parts:
                 if particle[0] == PDG_PROTON:
                     n_protons += 1
+                    esum_protons += particle[1]
                 elif particle[0] == PDG_PIPLUS or particle[0] == PDG_PIMINUS:
                     n_pions += 1
+                    esum_pions += particle[1]
                 elif particle[0] == PDG_KPLUS or particle[0] == PDG_KMINUS:
                     n_kaons += 1
+                    esum_kaons += particle[1]
+            n_protons_arr.append(n_protons)
+            esum_protons_arr.append(esum_protons)
+            n_pions_arr.append(n_pions)
+            esum_pions_arr.append(esum_pions)
+            n_kaons_arr.append(n_kaons)
+            esum_kaons_arr.append(esum_kaons)
     eventids = np.asarray(eventids, dtype=np.uint64)
+    n_protons_arr = np.asarray(n_protons_arr, dtype=np.uint8)
+    n_pions_arr = np.asarray(n_pions_arr, dtype=np.uint8)
+    n_kaons_arr = np.asarray(n_kaons_arr, dtype=np.uint8)
+    esum_protons_arr = np.asarray(esum_protons_arr, dtype=np.float32)
+    esum_protons_arr = np.asarray(esum_protons_arr, dtype=np.float32)
+    esum_protons_arr = np.asarray(esum_protons_arr, dtype=np.float32)
     # pdgs = np.asarray(pdgs, dtype=np.int64)
     # energies = np.asarray(energies, dtype=np.float32)
-    storedat = (, eventids)
+    storedat = (n_protons_arr, esum_protons_arr,
+                n_pions_arr, esum_pions_arr,
+                n_kaons_arr, esum_kaons_arr,
+                eventids)
     print("...finished loading")
     return storedat
 
@@ -606,7 +639,7 @@ def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
 if __name__ == '__main__':
 
     f = 'minosmatch_hadmult_me1Bmc_tiny_0000.dat.gz'
-    get_hadmult_study_data_from_file(f)
+    hadron_data = get_hadmult_study_data_from_file(f)
 
     # from optparse import OptionParser
     # parser = OptionParser(usage=__doc__)
