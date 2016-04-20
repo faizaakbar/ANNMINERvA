@@ -39,7 +39,9 @@ from six.moves import range
 from plane_codes import build_indexed_codes
 
 PDG_PROTON = 2212
+PDG_NEUTRON = 2112
 PDG_PIPLUS = 211
+PDG_PIZERO = 111
 PDG_PIMINUS = -211
 PDG_KPLUS = 321
 PDG_KMINUS = -321
@@ -233,13 +235,21 @@ def unpack_xuv_skim_data(rowdat, imgw, imgh, add_target_padding,
 
 def process_particles_for_hadron_multiplicty(pdgs, energies, thresh=50):
     """
-    thresh is in MeV
+    thresh is in MeV - may need an array of threshs
     """
-    pdglist = [PDG_PROTON, PDG_PIPLUS, PDG_PIMINUS, PDG_KPLUS, PDG_KMINUS]
+    pdglist = [PDG_PROTON, PDG_NEUTRON, PDG_PIPLUS, PDG_PIZERO, PDG_PIMINUS,
+               PDG_KPLUS, PDG_KMINUS]
+    leptonlist = [PDG_ELECTRON, PDG_NUE, PDG_MUON,
+                  PDG_NUMU, PDG_TAU, PDG_NUTAU,
+                  PDG_POSITRON, PDG_NUEBAR, PDG_ANTIMUON,
+                  PDG_NUMUBAR, PDG_ANTITAU, PDG_NUTAUBAR]
     data = []
     for i, en in enumerate(energies):
         if en > thresh and pdgs[i] in pdglist:
             dat = (pdgs[i], en)
+            data.append(dat)
+        elif pdgs[i] not in leptonlist:
+            dat = (0, en)
             data.append(dat)
     return data
 
@@ -249,10 +259,16 @@ def get_hadmult_study_data_from_file(filename):
     eventids = []
     n_protons_arr = []
     esum_protons_arr = []
+    n_neutrons_arr = []
+    esum_neutrons_arr = []
     n_pions_arr = []
     esum_pions_arr = []
+    n_pi0s_arr = []
+    esum_pi0s_arr = []
     n_kaons_arr = []
     esum_kaons_arr = []
+    n_others_arr = []
+    esum_others_arr = []
     # format:
     # 0   1   2   3   4   5   6   7
     # run sub gt  slc data... (p:pdg:E)
@@ -275,39 +291,69 @@ def get_hadmult_study_data_from_file(filename):
             processed_parts = \
                 process_particles_for_hadron_multiplicty(pdgs, energies)
             n_protons = 0
+            n_neutrons = 0
             n_pions = 0
+            n_pi0s = 0
             n_kaons = 0
+            n_others = 0
             esum_protons = 0
+            esum_neutrons = 0
             esum_pions = 0
+            esum_pi0s = 0
             esum_kaons = 0
+            esum_others = 0
             for particle in processed_parts:
                 if particle[0] == PDG_PROTON:
                     n_protons += 1
                     esum_protons += particle[1]
+                elif particle[0] == PDG_NEUTRON:
+                    n_neutrons += 1
+                    esum_neutrons += particle[1]
                 elif particle[0] == PDG_PIPLUS or particle[0] == PDG_PIMINUS:
                     n_pions += 1
                     esum_pions += particle[1]
+                elif particle[0] == PDG_PIZERO:
+                    n_pi0s += 1
+                    esum_pi0s += particle[1]
                 elif particle[0] == PDG_KPLUS or particle[0] == PDG_KMINUS:
                     n_kaons += 1
                     esum_kaons += particle[1]
+                elif particle[0] == 0:
+                    n_others += 1
+                    esum_others += particle[1]
             n_protons_arr.append(n_protons)
             esum_protons_arr.append(esum_protons)
+            n_neutrons_arr.append(n_neutrons)
+            esum_neutrons_arr.append(esum_neutrons)
             n_pions_arr.append(n_pions)
             esum_pions_arr.append(esum_pions)
+            n_pi0s_arr.append(n_pi0s)
+            esum_pi0s_arr.append(esum_pi0s)
             n_kaons_arr.append(n_kaons)
             esum_kaons_arr.append(esum_kaons)
+            n_others_arr.append(n_others)
+            esum_others_arr.append(esum_others)
     eventids = np.asarray(eventids, dtype=np.uint64)
     n_protons_arr = np.asarray(n_protons_arr, dtype=np.uint8)
+    n_neutrons_arr = np.asarray(n_neutrons_arr, dtype=np.uint8)
     n_pions_arr = np.asarray(n_pions_arr, dtype=np.uint8)
+    n_pi0s_arr = np.asarray(n_pi0s_arr, dtype=np.uint8)
     n_kaons_arr = np.asarray(n_kaons_arr, dtype=np.uint8)
+    n_others_arr = np.asarray(n_others_arr, dtype=np.uint8)
     esum_protons_arr = np.asarray(esum_protons_arr, dtype=np.float32)
-    esum_protons_arr = np.asarray(esum_protons_arr, dtype=np.float32)
-    esum_protons_arr = np.asarray(esum_protons_arr, dtype=np.float32)
+    esum_neutrons_arr = np.asarray(esum_neutrons_arr, dtype=np.float32)
+    esum_pions_arr = np.asarray(esum_pions_arr, dtype=np.float32)
+    esum_pi0s_arr = np.asarray(esum_pi0s_arr, dtype=np.float32)
+    esum_kaons_arr = np.asarray(esum_kaons_arr, dtype=np.float32)
+    esum_others_arr = np.asarray(esum_others_arr, dtype=np.float32)
     # pdgs = np.asarray(pdgs, dtype=np.int64)
     # energies = np.asarray(energies, dtype=np.float32)
     storedat = (n_protons_arr, esum_protons_arr,
+                n_neutrons_arr, esum_neutrons_arr,
                 n_pions_arr, esum_pions_arr,
+                n_pi0s_arr, esum_pi0s_arr,
                 n_kaons_arr, esum_kaons_arr,
+                n_others_arr, esum_others_arr,
                 eventids)
     print("...finished loading")
     return storedat
@@ -457,6 +503,15 @@ def add_data_to_hdf5file(f, dset_names, dset_vals):
         return total_examples
 
 
+def prep_datasets_for_hadronmult(hdf5file, dset_description):
+    """
+    hdf5file - where we will add dsets,
+    dset_desciption - ordered dict containing all the pieces of the dset
+    """
+    dset_names = dset_description.keys()
+    # working here...
+
+
 def prep_datasets_for_targetz(hdf5file, dset_description, img_dimensions):
     """
     hdf5file - where we will add dsets,
@@ -482,6 +537,34 @@ def prep_datasets_for_targetz(hdf5file, dset_description, img_dimensions):
     if 'eventids' in dset_names:
         create_1d_dset(hdf5file, 'eventids', 'uint64',
                        'run+subrun+gate+slices[0]')
+
+
+def build_hadronmult_dset_description():
+    """
+    storedat = (n_protons_arr, esum_protons_arr,
+                n_neutrons_arr, esum_neutrons_arr,
+                n_pions_arr, esum_pions_arr,
+                n_pi0s_arr, esum_pi0s_arr,
+                n_kaons_arr, esum_kaons_arr,
+                n_others_arr, esum_others_arr,
+                eventids)
+    """
+    dset_description = OrderedDict(
+        (('n-protons', ('uint8', 'n-protons')),
+         ('esum-protons', ('float32', 'esum-protons')),
+         ('n-neutrons', ('uint8', 'n-neutrons')),
+         ('esum-neutrons', ('float32', 'esum-neutrons')),
+         ('n-pions', ('uint8', 'n-pions')),
+         ('esum-pions', ('float32', 'esum-pions')),
+         ('n-pi0s', ('uint8', 'n-pi0s')),
+         ('esum-pi0s', ('float32', 'esum-pi0s')),
+         ('n-kaons', ('uint8', 'n-kaons')),
+         ('esum-kaons', ('float32', 'esum-kaons')),
+         ('n-others', ('uint8', 'n-others')),
+         ('esum-others', ('float32', 'esum-others')),
+         ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
+    )
+    return dset_description
 
 
 def build_nukecc_vtx_study_dset_description(views, img_dimensions):
@@ -577,6 +660,44 @@ def transform_view(dset_vals, view):
         # work when passed back into the hdf5 file - perhaps because
         # we've already declared the dtypes for the data sets in the hdf5
         return new_restdata
+
+
+def make_hadronmult_hdf5_file(filebase, hdf5file):
+    """
+    note that filebase is a pattern - if multiple files match
+    the pattern, then multiple files will be included in the
+    single output file
+    """
+    print('Making hdf5 file for hadron multiplicity')
+
+    files = make_file_list(filebase)
+    f = prepare_hdf5_file(hdf5file)
+
+    dset_description = build_hadronmult_dset_description()
+    print(dset_description)
+    # 11111111111111111111111
+    prep_datasets_for_hadronmult(f, dset_description)
+    dset_names = dset_description.keys()
+
+    # total_examples = 0
+
+    # for fname in files:
+    #     print("Iterating over file:", fname)
+    #     dataX, dataU, dataV, targs, zs, planecodes, eventids = \
+    #         get_nukecc_vtx_study_data_from_file(
+    #             fname, imgw, imgh, trims, add_target_padding,
+    #             insert_x_padding_into_uv)
+    #     print('data shapes:',
+    #           np.shape(dataX), np.shape(dataU), np.shape(dataV))
+    #     dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
+    #     dset_vals = filter_nukecc_vtx_det_vals_for_names(dset_vals, dset_names)
+    #     if len(views) == 1 and apply_transforms:
+    #         dset_vals = transform_view(dset_vals, views[0])
+    #     total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
+
+    # add_split_dict(f, dset_names, total_examples)
+
+    f.close()
 
 
 def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
