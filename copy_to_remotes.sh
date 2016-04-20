@@ -1,12 +1,8 @@
 #!/bin/bash
 
 filelist="
-minosmatch_nukecczdefs_127x25_u_me1Bmc.hdf5
-minosmatch_nukecczdefs_127x25_v_me1Bmc.hdf5
-minosmatch_nukecczdefs_127x50x25_xuv_me1Bmc.hdf5
-minosmatch_nukecczdefs_127x25_u_me1Bmc_README.txt
-minosmatch_nukecczdefs_127x25_v_me1Bmc_README.txt
-minosmatch_nukecczdefs_127x50x25_xuv_me1Bmc_README.txt"
+minosmatch_nukecczdefs_127x112_xuv_padded_me1Amc.hdf5
+minosmatch_nukecczdefs_127x112_xuv_padded_me1Amc_README.txt"
 
 REMOTE1="tev.fnal.gov:/phihome/perdue/theano/data/"
 REMOTE2="minervagpvm02.fnal.gov:/minerva/data/users/perdue/mlmpr/nukecc"
