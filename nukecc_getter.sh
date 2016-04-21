@@ -21,6 +21,7 @@ fileroots="minosmatch_hadmult_me1Bmc_"
 MINERVA_RELEASE="v10r8p8"
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/nukeccskimmer_minosmatch_127x94_nukecczdefs"
 REMOTE_DIR="/minerva/app/users/perdue/cmtuser/Minerva_${MINERVA_RELEASE}/Ana/NuclearTargetVertexing/ana/make_hist"
+REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/hadmult_skims/cvs_rev1_1"
 
 for file in $fileroots
 do
