@@ -2,15 +2,23 @@
 """
 
 Execution:
-    python make_hdf5_fuelfiles.py -b 'base name' -o 'output'
+    python make_hdf5_fuelfiles.py -b 'base name' -o 'output' -s 'skim'
+
+Note that the 'base name' should not include `.dat.gz` - although that
+extension is expected.
+
+Currently allowed 'skim' values:
+    * nukecc_vtx
+    * had_mult
 
 The default output name is 'minerva_fuel.hdf5'. The default skim type is
 'nukecc_vtx'. Default image width and heights are 127 x 94. Target padding
 is not included by default.
 
 CAUTION: If you include target padding, you must be sure to adjust the
-`--trim_column_up_x` (default 0) and `--trim_column_down_x` (default 94)
-values appropriately.
+`--trim_column_up_x` (default 0), `--trim_column_down_x` (default 94)
+`--trim_column_up_uv` (default 0), and `--trim_column_down_uv` (default 94)
+values appropriately!
 
 Notes:
 ------
@@ -21,6 +29,9 @@ and W correpsonds to the view axis
     # 0   1   2   3   4   5     6     7
     # seg z   pln run sub gate  slice data (X:[E] U:[E] ... etc.)...
 
+* The 'had_mult' `--skim` option expects data layout like:
+    # 0   1   2   3   4   5   6   7
+    # run sub gt  slc data... (p:pdg:E)
 """
 from __future__ import print_function
 import sys
@@ -509,7 +520,11 @@ def prep_datasets_for_hadronmult(hdf5file, dset_description):
     dset_desciption - ordered dict containing all the pieces of the dset
     """
     dset_names = dset_description.keys()
-    # working here...
+    for dset_name in dset_names:
+        create_1d_dset(hdf5file,
+                       dset_name,
+                       dset_description[dset_name][0],
+                       dset_description[dset_name][1])
 
 
 def prep_datasets_for_targetz(hdf5file, dset_description, img_dimensions):
@@ -675,27 +690,19 @@ def make_hadronmult_hdf5_file(filebase, hdf5file):
 
     dset_description = build_hadronmult_dset_description()
     print(dset_description)
-    # 11111111111111111111111
     prep_datasets_for_hadronmult(f, dset_description)
     dset_names = dset_description.keys()
 
-    # total_examples = 0
+    total_examples = 0
 
-    # for fname in files:
-    #     print("Iterating over file:", fname)
-    #     dataX, dataU, dataV, targs, zs, planecodes, eventids = \
-    #         get_nukecc_vtx_study_data_from_file(
-    #             fname, imgw, imgh, trims, add_target_padding,
-    #             insert_x_padding_into_uv)
-    #     print('data shapes:',
-    #           np.shape(dataX), np.shape(dataU), np.shape(dataV))
-    #     dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
-    #     dset_vals = filter_nukecc_vtx_det_vals_for_names(dset_vals, dset_names)
-    #     if len(views) == 1 and apply_transforms:
-    #         dset_vals = transform_view(dset_vals, views[0])
-    #     total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
+    for fname in files:
+        print("Iterating over file:", fname)
+        dset_vals = get_hadmult_study_data_from_file(fname)
+        # write filter functions here if we want to reduce the dset
+        # see the vtx study for an example
+        total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
 
-    # add_split_dict(f, dset_names, total_examples)
+    add_split_dict(f, dset_names, total_examples)
 
     f.close()
 
@@ -759,94 +766,93 @@ def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
 
 if __name__ == '__main__':
 
-    f = 'minosmatch_hadmult_me1Bmc_tiny_0000.dat.gz'
-    hadron_data = get_hadmult_study_data_from_file(f)
+    from optparse import OptionParser
+    parser = OptionParser(usage=__doc__)
+    parser.add_option('-a', '--apply_transforms', default=False,
+                      dest='apply_transforms', help='Apply image transforms',
+                      metavar='APPLY_IMG_TRANS', action='store_true')
+    parser.add_option('-b', '--basename', default='nukecc_skim_me1Bmc',
+                      help='Input files base name', metavar='BASE_NAME',
+                      dest='filebase')
+    parser.add_option('-c', '--check_target_padding', default=False,
+                      dest='check_target_padding', help='Check target padding',
+                      metavar='CHECK_TARG_PAD', action='store_true')
+    parser.add_option('-o', '--output', default='minerva_fuel.hdf5',
+                      help='Output filename', metavar='OUTPUT_NAME',
+                      dest='hdf5file')
+    parser.add_option('-p', '--padded_targets', default=False,
+                      dest='padding', help='Include target padding',
+                      metavar='TARG_PAD', action='store_true')
+    parser.add_option('-s', '--skim', default='nukecc_vtx',
+                      help='Skimmed sample type', metavar='SKIM',
+                      dest='skim')
+    parser.add_option('-t', '--inp_height', default=94, type='int',
+                      help='Image input height', metavar='IMG_HEIGHT',
+                      dest='imgh')
+    parser.add_option('-v', '--views', default='xuv', dest='views',
+                      help='Views (xuv)', metavar='VIEWS')
+    parser.add_option('-w', '--inp_width', default=127, type='int',
+                      help='Image input width', metavar='IMG_WIDTH',
+                      dest='imgw')
+    parser.add_option('-x', '--remove-xpaduv', default=True,
+                      help='Insert x padding in u/v', metavar='XPAD_UV',
+                      dest='insert_x_padding_into_uv', action='store_false')
+    parser.add_option('--trim_column_down_x', default=94, type='int',
+                      help='Trim column downstream x', metavar='XTRIM_COL_DN',
+                      dest='trim_column_down_x')
+    parser.add_option('--trim_column_up_x', default=0, type='int',
+                      help='Trim column upstream x', metavar='XTRIM_COL_UP',
+                      dest='trim_column_up_x')
+    parser.add_option('--trim_column_down_uv', default=94, type='int',
+                      help='Trim column downstream uv',
+                      metavar='UVTRIM_COL_DN',
+                      dest='trim_column_down_uv')
+    parser.add_option('--trim_column_up_uv', default=0, type='int',
+                      help='Trim column upstream uv',
+                      metavar='UVTRIM_COL_UP',
+                      dest='trim_column_up_uv')
+    (options, args) = parser.parse_args()
 
-    # from optparse import OptionParser
-    # parser = OptionParser(usage=__doc__)
-    # parser.add_option('-a', '--apply_transforms', default=False,
-    #                   dest='apply_transforms', help='Apply image transforms',
-    #                   metavar='APPLY_IMG_TRANS', action='store_true')
-    # parser.add_option('-b', '--basename', default='nukecc_skim_me1Bmc',
-    #                   help='Input files base name', metavar='BASE_NAME',
-    #                   dest='filebase')
-    # parser.add_option('-c', '--check_target_padding', default=False,
-    #                   dest='check_target_padding', help='Check target padding',
-    #                   metavar='CHECK_TARG_PAD', action='store_true')
-    # parser.add_option('-o', '--output', default='minerva_fuel.hdf5',
-    #                   help='Output filename', metavar='OUTPUT_NAME',
-    #                   dest='hdf5file')
-    # parser.add_option('-p', '--padded_targets', default=False,
-    #                   dest='padding', help='Include target padding',
-    #                   metavar='TARG_PAD', action='store_true')
-    # parser.add_option('-s', '--skim', default='nukecc_vtx',
-    #                   help='Skimmed sample type', metavar='SKIM',
-    #                   dest='skim')
-    # parser.add_option('-t', '--inp_height', default=94, type='int',
-    #                   help='Image input height', metavar='IMG_HEIGHT',
-    #                   dest='imgh')
-    # parser.add_option('-v', '--views', default='xuv', dest='views',
-    #                   help='Views (xuv)', metavar='VIEWS')
-    # parser.add_option('-w', '--inp_width', default=127, type='int',
-    #                   help='Image input width', metavar='IMG_WIDTH',
-    #                   dest='imgw')
-    # parser.add_option('-x', '--remove-xpaduv', default=True,
-    #                   help='Insert x padding in u/v', metavar='XPAD_UV',
-    #                   dest='insert_x_padding_into_uv', action='store_false')
-    # parser.add_option('--trim_column_down_x', default=94, type='int',
-    #                   help='Trim column downstream x', metavar='XTRIM_COL_DN',
-    #                   dest='trim_column_down_x')
-    # parser.add_option('--trim_column_up_x', default=0, type='int',
-    #                   help='Trim column upstream x', metavar='XTRIM_COL_UP',
-    #                   dest='trim_column_up_x')
-    # parser.add_option('--trim_column_down_uv', default=94, type='int',
-    #                   help='Trim column downstream uv',
-    #                   metavar='UVTRIM_COL_DN',
-    #                   dest='trim_column_down_uv')
-    # parser.add_option('--trim_column_up_uv', default=0, type='int',
-    #                   help='Trim column upstream uv',
-    #                   metavar='UVTRIM_COL_UP',
-    #                   dest='trim_column_up_uv')
-    # (options, args) = parser.parse_args()
+    if options.check_target_padding:
+        padding = get_total_target_padding()
+        print("Total target padding is {} columns.".format(padding))
+        sys.exit(0)
 
-    # if options.check_target_padding:
-    #     padding = get_total_target_padding()
-    #     print("Total target padding is {} columns.".format(padding))
-    #     sys.exit(0)
+    allowed_views = list('xuv')
+    views = list(options.views.lower())
+    for v in views:
+        if v not in allowed_views:
+            print('{} is not an allowed view option.'.format(v))
+            print("Please use any/all of 'xuv' (case insensitive).")
+            sys.exit(1)
+    filebase = options.filebase
+    hdf5file = options.hdf5file
 
-    # allowed_views = list('xuv')
-    # views = list(options.views.lower())
-    # for v in views:
-    #     if v not in allowed_views:
-    #         print('{} is not an allowed view option.'.format(v))
-    #         print("Please use any/all of 'xuv' (case insensitive).")
-    #         sys.exit(1)
-    # filebase = options.filebase
-    # hdf5file = options.hdf5file
+    apply_trans = options.apply_transforms
+    if apply_trans and len(views) > 1:
+        print('Only apply image transforms to one-view files.')
+        print('Please re-run with views == x, u, OR v.')
+        sys.exit(1)
 
-    # apply_trans = options.apply_transforms
-    # if apply_trans and len(views) > 1:
-    #     print('Only apply image transforms to one-view files.')
-    #     print('Please re-run with views == x, u, OR v.')
-    #     sys.exit(1)
+    if options.padding:
+        padding = get_total_target_padding()
+        print("Adding {} padding columns for the passive targets...".format(
+            padding))
+        print("  Please note that target padding must be included by hand.")
+        if not options.insert_x_padding_into_uv:
+            print("Cannot have target padding and no x padding for u/v.")
+            print("Target padding insertion math is off at that point.")
+            sys.exit(1)
 
-    # if options.padding:
-    #     padding = get_total_target_padding()
-    #     print("Adding {} padding columns for the passive targets...".format(
-    #         padding))
-    #     print("  Please note that target padding must be included by hand.")
-    #     if not options.insert_x_padding_into_uv:
-    #         print("Cannot have target padding and no x padding for u/v.")
-    #         print("Target padding insertion math is off at that point.")
-    #         sys.exit(1)
+    xtrims = (options.trim_column_up_x, options.trim_column_down_x)
+    utrims = (options.trim_column_up_uv, options.trim_column_down_uv)
+    vtrims = (options.trim_column_up_uv, options.trim_column_down_uv)
+    trims = [xtrims, utrims, vtrims]
 
-    # xtrims = (options.trim_column_up_x, options.trim_column_down_x)
-    # utrims = (options.trim_column_up_uv, options.trim_column_down_uv)
-    # vtrims = (options.trim_column_up_uv, options.trim_column_down_uv)
-    # trims = [xtrims, utrims, vtrims]
-
-    # if options.skim == 'nukecc_vtx':
-    #     make_nukecc_vtx_hdf5_file(options.imgw, options.imgh, trims,
-    #                               views, filebase, hdf5file, options.padding,
-    #                               apply_trans,
-    #                               options.insert_x_padding_into_uv)
+    if options.skim == 'nukecc_vtx':
+        make_nukecc_vtx_hdf5_file(options.imgw, options.imgh, trims,
+                                  views, filebase, hdf5file, options.padding,
+                                  apply_trans,
+                                  options.insert_x_padding_into_uv)
+    elif options.skim == 'had_mult':
+        make_hadronmult_hdf5_file(filebase, hdf5file)
