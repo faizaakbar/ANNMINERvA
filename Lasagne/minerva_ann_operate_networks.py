@@ -65,7 +65,7 @@ def build_inputlist(input_var_x, input_var_u, input_var_v, views):
     return inputlist
 
 
-def get_inputlist_from_data(data, views, target_idx):
+def get_list_of_hits_and_targets_from_data(data, views, target_idx):
     """
     data[0] should be eventids
     """
@@ -81,7 +81,7 @@ def get_inputlist_from_data(data, views, target_idx):
     return inputs
 
 
-def get_id_tagged_inputlist_from_data(data, views, target_idx):
+def get_eventids_hits_and_targets_from_data(data, views, target_idx):
     """
     data[0] should be eventids
     """
@@ -97,7 +97,23 @@ def get_id_tagged_inputlist_from_data(data, views, target_idx):
     return eventids, inputs, targets
 
 
-def get_viewlist_from_data(data, views):
+def get_id_tagged_inputlist_from_data(data, views):
+    """
+    data[0] should be eventids
+    """
+    inputs = []
+    if views == 'xuv':
+        eventids, inputu, inputv, inputx = \
+            data[0], data[1], data[2], data[3]
+        inputs = [inputx, inputu, inputv]
+    else:
+        eventids, input_view = \
+            data[0], data[1]
+        inputs = [input_view]
+    return eventids, inputs
+
+
+def get_list_of_hits_from_data(data, views):
     """
     data[0] should be eventids
     """
@@ -109,6 +125,19 @@ def get_viewlist_from_data(data, views):
         input_view = data[1]
         inputs = [input_view]
     return inputs
+
+
+def get_tstamp_from_model_name(save_model_file):
+    """
+    extract timestamp from model file - assume it is the first set of numbers;
+    otherwise just use "now"
+    """
+    import re
+    tstamp = str(time.time()).split('.')[0]
+    m = re.search(r"[0-9]+", save_model_file)
+    if m:
+        tstamp = m.group(0)
+    return tstamp
 
 
 def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
@@ -238,7 +267,8 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                     # data order in the hdf5 looks like:
                     #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                     # (Check the file carefully for data names, etc.)
-                    inputs = get_inputlist_from_data(data, views, target_idx)
+                    inputs = get_list_of_hits_and_targets_from_data(
+                        data, views, target_idx)
                     train_err += train_fn(*inputs)
                     train_batches += 1
                 t1 = time.time()
@@ -264,7 +294,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                         # data order in the hdf5 looks like:
                         #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                         # (Check the file carefully for data names, etc.)
-                        inputs = get_inputlist_from_data(
+                        inputs = get_list_of_hits_and_targets_from_data(
                             data, views, target_idx)
                         err, acc = val_fn(*inputs)
                         val_err += err
@@ -299,7 +329,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
                      imgw=50, imgh=50, target_idx=5,
                      save_model_file='./params_file.npz',
                      be_verbose=False, convpooldictlist=None,
-                     nhidden=None, dropoutp=None, write_db=True,
+                     nhidden=None, dropoutp=None,
                      test_all_data=False, debug_print=False,
                      noutputs=11):
     """
@@ -309,34 +339,14 @@ def categorical_test(build_cnn=None, data_file_list=None,
 
     noutputs=11 for zsegments, other vals for planecodes, etc.
     """
-    metadata = None
-    try:
-        import predictiondb
-        from sqlalchemy import MetaData
-    except ImportError:
-        print("Cannot import sqlalchemy...")
-        write_db = False
     print("Loading data for testing...")
+    tstamp = get_tstamp_from_model_name(save_model_file)
     train_sizes, valid_sizes, test_sizes = \
         get_and_print_dataset_subsizes(data_file_list)
     used_sizes, used_data_size = get_used_data_sizes_for_testing(train_sizes,
                                                                  valid_sizes,
                                                                  test_sizes,
                                                                  test_all_data)
-
-    # extract timestamp from model file - assume it is the first set of numbers
-    # otherwise just use "now"
-    import re
-    tstamp = str(time.time()).split('.')[0]
-    m = re.search(r"[0-9]+", save_model_file)
-    if m:
-        tstamp = m.group(0)
-    if write_db:
-        metadata = MetaData()
-        dbname = 'prediction' + tstamp
-        eng = predictiondb.get_engine(dbname)
-        con = predictiondb.get_connection(eng)
-        tbl = predictiondb.get_active_table(metadata, eng)
 
     # Prepare Theano variables for inputs and targets
     input_var_x = T.tensor4('inputs')
@@ -370,11 +380,9 @@ def categorical_test(build_cnn=None, data_file_list=None,
 
     # Compute the actual predictions - also instructive is to look at
     # `test_prediction` as an output (array of softmax probabilities)
-    # (but that prints a _lot_ of stuff to screen...)
-    pred_fn = theano.function(inputlist, [test_prediction_values],
+    pred_fn = theano.function(inputlist,
+                              [test_prediction, test_prediction_values],
                               allow_input_downcast=True)
-    probs_fn = theano.function(inputlist, [test_prediction],
-                               allow_input_downcast=True)
     # Compile a function computing the validation loss and accuracy:
     inputlist.append(target_var)
     val_fn = theano.function(inputlist, [test_loss, test_acc],
@@ -418,23 +426,18 @@ def categorical_test(build_cnn=None, data_file_list=None,
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
-                # data order in the hdf5 looks like:
-                #  ids, hits-u, hits-v, hits-x, planes, segments, zs
-                # (Check the file carefully for data names, etc.)
                 eventids, inputlist, targets = \
-                    get_id_tagged_inputlist_from_data(data, views, target_idx)
+                    get_eventids_hits_and_targets_from_data(
+                        data, views, target_idx)
                 inputlist.append(targets)
                 err, acc = val_fn(*inputlist)
                 test_err += err
                 test_acc += acc
                 test_batches += 1
-                viewlist = get_viewlist_from_data(data, views)
-                pred = pred_fn(*viewlist)
-                pred_targ = zip(pred[0], targets)
-                probs = probs_fn(*viewlist)
+                hits_list = get_list_of_hits_from_data(data, views)
+                probs, pred = pred_fn(*hits_list)
+                pred_targ = zip(pred, targets)
                 evtcounter += 1
-                if write_db:
-                    filldb(tbl, con, eventids, pred, probs)
                 if be_verbose:
                     if evtcounter % evt_print_freq == 0:
                         print("{}/{} - {}: (prediction, true target): {}, {}".
@@ -463,6 +466,113 @@ def categorical_test(build_cnn=None, data_file_list=None,
     for i, v in enumerate(acc_target):
         print("   target {} accuracy:\t\t\t{:.3f} %".format(
             i, acc_target[i]))
+
+
+def categorical_predict(build_cnn=None, data_file_list=None,
+                        views='xuv', imgw=50, imgh=50, target_idx=5,
+                        save_model_file='./params_file.npz',
+                        be_verbose=False, convpooldictlist=None,
+                        nhidden=None, dropoutp=None, write_db=True,
+                        test_all_data=False, debug_print=False,
+                        noutputs=11):
+    """
+    Make predictions based on the model _only_ (e.g., this routine should
+    be used to produce prediction db's quickly or for data)
+
+    noutputs=11 for zsegments, other vals for planecodes, etc.
+    """
+    print("Loading data for testing...")
+    train_sizes, valid_sizes, test_sizes = \
+        get_and_print_dataset_subsizes(data_file_list)
+    used_sizes, used_data_size = get_used_data_sizes_for_testing(train_sizes,
+                                                                 valid_sizes,
+                                                                 test_sizes,
+                                                                 test_all_data)
+
+    metadata = None
+    try:
+        import predictiondb
+        from sqlalchemy import MetaData
+    except ImportError:
+        print("Cannot import sqlalchemy...")
+        write_db = False
+    if write_db:
+        tstamp = get_tstamp_from_model_name(save_model_file)
+        metadata = MetaData()
+        dbname = 'prediction' + tstamp
+        eng = predictiondb.get_engine(dbname)
+        con = predictiondb.get_connection(eng)
+        tbl = predictiondb.get_active_table(metadata, eng)
+
+    # Prepare Theano variables for inputs
+    input_var_x = T.tensor4('inputs')
+    input_var_u = T.tensor4('inputs')
+    input_var_v = T.tensor4('inputs')
+    inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
+
+    # Build the model
+    network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
+                        convpooldictlist=convpooldictlist, nhidden=nhidden,
+                        dropoutp=dropoutp)
+    with np.load(save_model_file) as f:
+        param_values = [f['arr_%d' % i] for i in range(len(f.files))]
+    lasagne.layers.set_all_param_values(network, param_values)
+
+    # Compute the prediction
+    test_prediction = lasagne.layers.get_output(network, deterministic=True)
+    test_prediction_values = T.argmax(test_prediction, axis=1)
+    pred_fn = theano.function(inputlist,
+                              [test_prediction, test_prediction_values],
+                              allow_input_downcast=True)
+
+    print("Starting prediction...")
+
+    test_slices = []
+    for tsize in used_sizes:
+        test_slices.append(slices_maker(tsize, slice_size=50000))
+    test_set = None
+
+    evtcounter = 0
+    batch_size = 500
+    evt_print_freq = batch_size * 4
+    for i, data_file in enumerate(data_file_list):
+
+        for tslice in test_slices[i]:
+            t0 = time.time()
+            test_set = None
+            if test_all_data:
+                test_set = load_all_datasubsets(data_file, tslice)
+            else:
+                test_set = load_datasubset(data_file, 'test', tslice)
+            _, test_dstream = make_scheme_and_stream(test_set,
+                                                     batch_size,
+                                                     shuffle=False)
+            t1 = time.time()
+            print("  Loading slice {} from {} took {:.3f}s.".format(
+                tslice, data_file, t1 - t0))
+            if debug_print:
+                print("   dset sources:", test_set.provides_sources)
+
+            t0 = time.time()
+            for data in test_dstream.get_epoch_iterator():
+                eventids, hits_list = \
+                    get_id_tagged_inputlist_from_data(data, views)
+                probs, pred = pred_fn(*hits_list)
+                evtcounter += batch_size
+                if write_db:
+                    for i, evtid in enumerate(eventids):
+                        filldb(tbl, con, evtid, pred[i], probs[i])
+                if be_verbose:
+                    if evtcounter % evt_print_freq == 0:
+                        print("processed {}/{}". format(evtcounter,
+                                                        used_data_size))
+            t1 = time.time()
+            print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
+
+            del test_set
+            del test_dstream
+
+    print("Finished producing predictions!")
 
 
 def view_layer_activations(build_cnn=None, data_file_list=None,
@@ -602,7 +712,8 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
                 #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                 # (Check the file carefully for data names, etc.)
                 eventids, inputlist, targets = \
-                    get_id_tagged_inputlist_from_data(data, views, target_idx)
+                    get_eventids_hits_and_targets_from_data(
+                        data, views, target_idx)
                 conv_x1 = vis_conv_x1(*inputlist)
                 conv_u1 = vis_conv_u1(*inputlist)
                 conv_v1 = vis_conv_v1(*inputlist)
@@ -657,24 +768,24 @@ def filldb(dbtable, dbconnection,
     """
     result = None
     if db == 'sqlite-zsegment_prediction':
-        run, sub, gate, pevt = decode_eventid(eventid[0])
+        run, sub, gate, pevt = decode_eventid(eventid)
         ins = dbtable.insert().values(
             run=run,
             subrun=sub,
             gate=gate,
             phys_evt=pevt,
-            segment=pred[0][0],
-            prob00=probs[0][0][0],
-            prob01=probs[0][0][1],
-            prob02=probs[0][0][2],
-            prob03=probs[0][0][3],
-            prob04=probs[0][0][4],
-            prob05=probs[0][0][5],
-            prob06=probs[0][0][6],
-            prob07=probs[0][0][7],
-            prob08=probs[0][0][8],
-            prob09=probs[0][0][9],
-            prob10=probs[0][0][10])
+            segment=pred,
+            prob00=probs[0],
+            prob01=probs[1],
+            prob02=probs[2],
+            prob03=probs[3],
+            prob04=probs[4],
+            prob05=probs[5],
+            prob06=probs[6],
+            prob07=probs[7],
+            prob08=probs[8],
+            prob09=probs[9],
+            prob10=probs[10])
         try:
             result = dbconnection.execute(ins)
         except:
