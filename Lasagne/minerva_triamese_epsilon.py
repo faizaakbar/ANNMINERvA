@@ -18,6 +18,7 @@ import os
 from minerva_ann_networks import build_triamese_epsilon
 from minerva_ann_operate_networks import categorical_learn_and_validate
 from minerva_ann_operate_networks import categorical_test
+from minerva_ann_operate_networks import categorical_predict
 
 
 def arg_list_split(option, opt, value, parser):
@@ -51,7 +52,10 @@ if __name__ == '__main__':
                       help='Run the training', metavar='DO_LEARN',
                       action='store_true')
     parser.add_option('-t', '--test', dest='do_test', default=False,
-                      help='Run a prediction', metavar='DO_TEST',
+                      help='Run a test', metavar='DO_TEST',
+                      action='store_true')
+    parser.add_option('-p', '--predict', dest='do_predict', default=False,
+                      help='Run a prediction', metavar='DO_PREDICT',
                       action='store_true')
     parser.add_option('-v', '--verbose', dest='be_verbose', default=False,
                       help='Verbose predictions', metavar='BE_VERBOSE',
@@ -60,7 +64,7 @@ if __name__ == '__main__':
                       default='./lminervatriamese_epsilon.npz',
                       help='File name for parameters',
                       metavar='SAVE_FILE_NAME')
-    parser.add_option('-p', '--load_params', dest='start_with_saved_params',
+    parser.add_option('-o', '--load_params', dest='start_with_saved_params',
                       default=False, help='Begin training with saved pars',
                       metavar='LOAD_PARAMS', action='store_true')
     parser.add_option('-a', '--test_all', dest='test_all_data',
@@ -76,8 +80,10 @@ if __name__ == '__main__':
                       help='Image height (z) v', metavar='IMGH_V', type='int')
     (options, args) = parser.parse_args()
 
-    if not options.do_learn and not options.do_test:
-        print("\nMust specify at least either learn (-l) or test (-t):\n\n")
+    if not options.do_learn and \
+            not options.do_test and \
+            not options.do_predict:
+        print("\nSpecify learn (-l), test (-t), and/or predict (-p):\n\n")
         print(__doc__)
 
     print("Starting...")
@@ -100,6 +106,7 @@ if __name__ == '__main__':
     build_network_function = build_triamese_epsilon
     learn = categorical_learn_and_validate
     test = categorical_test
+    predict = categorical_predict
 
     convpooldictlist = {}
 
@@ -223,3 +230,14 @@ if __name__ == '__main__':
              convpooldictlist=convpooldictlist,
              test_all_data=options.test_all_data,
              nhidden=nhidden)
+
+    if options.do_predict:
+        predict(build_cnn=build_network_function,
+                imgw=imgw,
+                imgh=imgh,
+                data_file_list=options.dataset,
+                save_model_file=options.save_model_file,
+                be_verbose=options.be_verbose,
+                convpooldictlist=convpooldictlist,
+                test_all_data=options.test_all_data,
+                nhidden=nhidden)
