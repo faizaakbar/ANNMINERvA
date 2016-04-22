@@ -11,9 +11,12 @@
 #restore to turn off email #PBS -m n
 
 NEPOCHS=6
-NEPOCHS=16
+NEPOCHS=30
 LRATE=0.001
 L2REG=0.0001
+
+DOTEST=""
+DOTEST="-t"
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x50x25_xuv_me1Bmc.hdf5"
 SAVEMODELNAME="./lminervatriamese_epsilon`date +%s`.npz"
@@ -49,7 +52,7 @@ cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/predictiondb.py ${PBS_O_WORKDIR}
 
 cat << EOF
-python ${PYTHONPROG} -l \
+python ${PYTHONPROG} -l $DOTEST \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
@@ -57,29 +60,12 @@ python ${PYTHONPROG} -l \
   -d $DATAFILENAME 
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
-python ${PYTHONPROG} -l \
+python ${PYTHONPROG} -l $DOTEST \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME 
-
-# nepochs and lrate don't matter for prediction, but setting them for log-file
-# homogeneity
-# cat << EOF
-# python ${PYTHONPROG} -t \
-#   -n $NEPOCHS \
-#   -r $LRATE \
-#   -g $L2REG \
-#   -d $DATAFILENAME \
-#   -s $SAVEMODELNAME -a
-# EOF
-# python ${PYTHONPROG} -t \
-#   -n $NEPOCHS \
-#   -r $LRATE \
-#   -g $L2REG \
-#   -d $DATAFILENAME \
-#   -s $SAVEMODELNAME -a
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
