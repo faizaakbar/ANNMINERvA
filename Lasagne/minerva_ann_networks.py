@@ -595,3 +595,76 @@ def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
+
+
+def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,
+                           convpooldictlist=None,
+                           nhidden=None, dropoutp=None):
+    """
+    'triamese' (one branch for each view, feeding a fully-connected network)
+
+    here, `imgh` is a tuple of sizes for `(x, u, v)`. `imgw` is the same
+    for all three views.
+
+    also, the `convpooldictlist` here must be a dictionary of dictionaries,
+    with the set of convolution and pooling defined independently for 'x', 'u',
+    and 'v' - e.g., `convpooldictlist['x']` will be a dictionary similar to
+    the dictionaries used by network models like `beta`, etc.
+    """
+    net = {}
+    # Input layer
+    input_var_x, input_var_u, input_var_v = \
+        inputlist[0], inputlist[1], inputlist[2]
+    net['input-x'] = InputLayer(shape=(None, 1, imgw, imgh[0]),
+                                input_var=input_var_x)
+    net['input-u'] = InputLayer(shape=(None, 1, imgw, imgh[1]),
+                                input_var=input_var_u)
+    net['input-v'] = InputLayer(shape=(None, 1, imgw, imgh[2]),
+                                input_var=input_var_v)
+
+    if convpooldictlist is None:
+        raise Exception('Conv-pool dictionaries must be defined!')
+
+    if nhidden is None:
+        nhidden = 256
+
+    if dropoutp is None:
+        dropoutp = 0.5
+
+    net.update(
+        make_Nconvpool_1dense_branch('x', net['input-x'],
+                                     convpooldictlist['x'],
+                                     nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('u', net['input-u'],
+                                     convpooldictlist['u'],
+                                     nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('v', net['input-v'],
+                                     convpooldictlist['v'],
+                                     nhidden, dropoutp))
+
+    # Concatenate the two parallel inputs
+    net['concat'] = ConcatLayer((net['dense-x'],
+                                 net['dense-u'],
+                                 net['dense-v']))
+    print("Network: concat columns...")
+
+    # One more dense layer
+    net['dense-across'] = DenseLayer(
+        dropout(net['concat'], p=dropoutp),
+        num_units=(nhidden // 2),
+        nonlinearity=lasagne.nonlinearities.rectify)
+    print("Dense {} with nhidden = {}, dropout = {}".format(
+        'dense-across', nhidden // 2, dropoutp))
+
+    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    net['output_prob'] = DenseLayer(
+        dropout(net['dense-across'], p=dropoutp),
+        num_units=11,
+        nonlinearity=lasagne.nonlinearities.softmax)
+    print("Softmax output prob with n_units = {}, dropout = {}".format(
+        11, dropoutp))
+
+    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
+    return net['output_prob']
