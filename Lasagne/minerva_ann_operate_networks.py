@@ -181,6 +181,11 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
         with np.load(save_model_file) as f:
             param_values = [f['arr_%d' % i] for i in range(len(f.files))]
         lasagne.layers.set_all_param_values(network, param_values)
+    else:
+        # Dump the current network weights to file in case we want to study
+        # intialization trends, etc.
+        np.savez('./initial_parameters.npz',
+                 *lasagne.layers.get_all_param_values(network))
 
     # Create a loss expression for training.
     prediction = lasagne.layers.get_output(network)
