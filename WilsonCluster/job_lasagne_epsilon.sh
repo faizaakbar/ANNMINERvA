@@ -19,7 +19,8 @@ DOTEST=""
 DOTEST="-t"
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x50x25_xuv_me1Bmc.hdf5"
-SAVEMODELNAME="./lminervatriamese_epsilon`date +%s`.npz"
+# SAVEMODELNAME="./lminervatriamese_epsilon`date +%s`.npz"
+SAVEMODELNAME="./transfer_to_epsilon_test1.npz"
 PYTHONPROG="minerva_triamese_epsilon.py"
 
 # print identifying info for this job
