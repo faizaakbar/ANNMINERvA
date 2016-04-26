@@ -4,19 +4,24 @@ Usage:
     python dset_visualize.py [file name] [opt: max # of evts, def==10]
 
 The default file name is: "./nukecc_fuel.hdf5".
+
+Note, one can, if one wants, when working with `Fuel`d data sets, do:
+
+    from fuel.datasets import H5PYDataset
+    train_set = H5PYDataset('./mydat_fuel.hdf5', which_sets=('train',))
+    handle = train_set.open()
+    nexamp = train_set.num_examples
+    data = train_set.get_data(handle, slice(0, nexamp))
+    # ...work with the data
+    train_set.close(handle)
+
+...but we don't do that here. (Just use h5py to cut any requirement of Fuel
+to look at the dsets.)
 """
 import pylab
-# import numpy as np
 import sys
 import h5py
-# Note, one can, if one wants, when working with `Fuel`d data sets, do:
-# from fuel.datasets import H5PYDataset
-# train_set = H5PYDataset('./nukecc_convdata_fuel.hdf5', which_sets=('train',))
-# handle = train_set.open()
-# nexamp = train_set.num_examples
-# data = train_set.get_data(handle, slice(0, nexamp))
-# ...work with the data
-# train_set.close(handle)
+
 max_evts = 10
 evt_plotted = 0
 
@@ -46,6 +51,8 @@ def decode_eventid(eventid):
     return (run, subrun, gate, phys_evt)
 
 f = h5py.File(filename, 'r')
+
+# look for x, u, v data hits
 try:
     data_x_shp = pylab.shape(f['hits-x'])
 except KeyError:
@@ -61,18 +68,26 @@ try:
 except KeyError:
     print("'hits-v' does not exist.")
     data_v_shp = None
+
+# if we have hits, get them, else set those containers to None
 if data_x_shp is not None:
     data_x_shp = (max_evts, data_x_shp[1], data_x_shp[2], data_x_shp[3])
     data_x = pylab.zeros(data_x_shp, dtype='f')
     data_x = f['hits-x'][:max_evts]
+else:
+    data_x = None
 if data_u_shp is not None:
     data_u_shp = (max_evts, data_u_shp[1], data_u_shp[2], data_u_shp[3])
     data_u = pylab.zeros(data_u_shp, dtype='f')
     data_u = f['hits-u'][:max_evts]
+else:
+    data_u = None
 if data_v_shp is not None:
     data_v_shp = (max_evts, data_v_shp[1], data_v_shp[2], data_v_shp[3])
     data_v = pylab.zeros(data_v_shp, dtype='f')
     data_v = f['hits-v'][:max_evts]
+else:
+    data_v = None
 labels_shp = (max_evts,)
 evtids_shp = (max_evts,)
 labels = pylab.zeros(labels_shp, dtype='f')
