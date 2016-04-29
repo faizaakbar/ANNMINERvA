@@ -280,6 +280,8 @@ def get_hadmult_study_data_from_file(filename):
     sume_kaons_arr = []
     n_others_arr = []
     sume_others_arr = []
+    n_hadmultmeas_arr = []
+    sume_hadmultmeas_arr = []
     # format:
     # 0   1   2   3   4   5   6   7
     # run sub gt  slc data... (p:pdg:E)
@@ -307,28 +309,36 @@ def get_hadmult_study_data_from_file(filename):
             n_pi0s = 0
             n_kaons = 0
             n_others = 0
+            n_hadmultmeas = 0
             sume_protons = 0
             sume_neutrons = 0
             sume_pions = 0
             sume_pi0s = 0
             sume_kaons = 0
             sume_others = 0
+            sume_hadmultmeas = 0
             for particle in processed_parts:
                 if particle[0] == PDG_PROTON:
                     n_protons += 1
                     sume_protons += particle[1]
+                    n_hadmultmeas += 1
+                    sume_hadmultmeas += particle[1]
                 elif particle[0] == PDG_NEUTRON:
                     n_neutrons += 1
                     sume_neutrons += particle[1]
                 elif particle[0] == PDG_PIPLUS or particle[0] == PDG_PIMINUS:
                     n_pions += 1
                     sume_pions += particle[1]
+                    n_hadmultmeas += 1
+                    sume_hadmultmeas += particle[1]
                 elif particle[0] == PDG_PIZERO:
                     n_pi0s += 1
                     sume_pi0s += particle[1]
                 elif particle[0] == PDG_KPLUS or particle[0] == PDG_KMINUS:
                     n_kaons += 1
                     sume_kaons += particle[1]
+                    n_hadmultmeas += 1
+                    sume_hadmultmeas += particle[1]
                 elif particle[0] == 0:
                     n_others += 1
                     sume_others += particle[1]
@@ -344,6 +354,8 @@ def get_hadmult_study_data_from_file(filename):
             sume_kaons_arr.append(sume_kaons)
             n_others_arr.append(n_others)
             sume_others_arr.append(sume_others)
+            n_hadmultmeas_arr.append(n_hadmultmeas)
+            sume_hadmultmeas_arr.append(sume_hadmultmeas)
     eventids = np.asarray(eventids, dtype=np.uint64)
     n_protons_arr = np.asarray(n_protons_arr, dtype=np.uint8)
     n_neutrons_arr = np.asarray(n_neutrons_arr, dtype=np.uint8)
@@ -351,12 +363,14 @@ def get_hadmult_study_data_from_file(filename):
     n_pi0s_arr = np.asarray(n_pi0s_arr, dtype=np.uint8)
     n_kaons_arr = np.asarray(n_kaons_arr, dtype=np.uint8)
     n_others_arr = np.asarray(n_others_arr, dtype=np.uint8)
+    n_hadmultmeas_arr = np.asarray(n_hadmultmeas_arr, dtype=np.uint8)
     sume_protons_arr = np.asarray(sume_protons_arr, dtype=np.float32)
     sume_neutrons_arr = np.asarray(sume_neutrons_arr, dtype=np.float32)
     sume_pions_arr = np.asarray(sume_pions_arr, dtype=np.float32)
     sume_pi0s_arr = np.asarray(sume_pi0s_arr, dtype=np.float32)
     sume_kaons_arr = np.asarray(sume_kaons_arr, dtype=np.float32)
     sume_others_arr = np.asarray(sume_others_arr, dtype=np.float32)
+    sume_hadmultmeas_arr = np.asarray(sume_hadmultmeas_arr, dtype=np.float32)
     # pdgs = np.asarray(pdgs, dtype=np.int64)
     # energies = np.asarray(energies, dtype=np.float32)
     storedat = (n_protons_arr, sume_protons_arr,
@@ -365,6 +379,7 @@ def get_hadmult_study_data_from_file(filename):
                 n_pi0s_arr, sume_pi0s_arr,
                 n_kaons_arr, sume_kaons_arr,
                 n_others_arr, sume_others_arr,
+                n_hadmultmeas_arr, sume_hadmultmeas_arr,
                 eventids)
     print("...finished loading")
     return storedat
@@ -562,6 +577,7 @@ def build_hadronmult_dset_description():
                 n_pi0s_arr, sume_pi0s_arr,
                 n_kaons_arr, sume_kaons_arr,
                 n_others_arr, sume_others_arr,
+                n_hadmultmeas_arr, sume_hadmultmeas_arr,
                 eventids)
     """
     dset_description = OrderedDict(
@@ -577,6 +593,8 @@ def build_hadronmult_dset_description():
          ('sume-kaons', ('float32', 'sume-kaons')),
          ('n-others', ('uint8', 'n-others')),
          ('sume-others', ('float32', 'sume-others')),
+         ('n-hadmultmeas', ('uint8', 'n-hadmultmeas')),
+         ('sume-hadmultmeas', ('float32', 'sume-hadmultmeas')),
          ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
     )
     return dset_description
