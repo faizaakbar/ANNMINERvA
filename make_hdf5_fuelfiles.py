@@ -265,7 +265,7 @@ def process_particles_for_hadron_multiplicty(pdgs, energies, thresh=50):
     return data
 
 
-def get_hadmult_study_data_from_file(filename):
+def get_hadmult_study_data_from_file(filename, had_mult_overflow):
     print("...loading data")
     eventids = []
     n_protons_arr = []
@@ -342,6 +342,8 @@ def get_hadmult_study_data_from_file(filename):
                 elif particle[0] == 0:
                     n_others += 1
                     sume_others += particle[1]
+            if n_hadmultmeas > had_mult_overflow:
+                n_hadmultmeas = had_mult_overflow
             n_protons_arr.append(n_protons)
             sume_protons_arr.append(sume_protons)
             n_neutrons_arr.append(n_neutrons)
@@ -695,7 +697,7 @@ def transform_view(dset_vals, view):
         return new_restdata
 
 
-def make_hadronmult_hdf5_file(filebase, hdf5file):
+def make_hadronmult_hdf5_file(filebase, hdf5file, had_mult_overflow):
     """
     note that filebase is a pattern - if multiple files match
     the pattern, then multiple files will be included in the
@@ -715,7 +717,7 @@ def make_hadronmult_hdf5_file(filebase, hdf5file):
 
     for fname in files:
         print("Iterating over file:", fname)
-        dset_vals = get_hadmult_study_data_from_file(fname)
+        dset_vals = get_hadmult_study_data_from_file(fname, had_mult_overflow)
         # write filter functions here if we want to reduce the dset
         # see the vtx study for an example
         total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
@@ -815,6 +817,9 @@ if __name__ == '__main__':
     parser.add_option('-x', '--remove-xpaduv', default=True,
                       help='Insert x padding in u/v', metavar='XPAD_UV',
                       dest='insert_x_padding_into_uv', action='store_false')
+    parser.add_option('--had_mult_overflow', default=5, type='int',
+                      help='Mult. over this becomes it',
+                      metavar='HAD_MULT_OVFLOW', dest='had_mult_overflow')
     parser.add_option('--trim_column_down_x', default=94, type='int',
                       help='Trim column downstream x', metavar='XTRIM_COL_DN',
                       dest='trim_column_down_x')
@@ -873,4 +878,5 @@ if __name__ == '__main__':
                                   apply_trans,
                                   options.insert_x_padding_into_uv)
     elif options.skim == 'had_mult':
-        make_hadronmult_hdf5_file(filebase, hdf5file)
+        make_hadronmult_hdf5_file(filebase, hdf5file,
+                                  options.had_mult_overflow)
