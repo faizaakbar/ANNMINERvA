@@ -10,15 +10,16 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=6
-NEPOCHS=30
+NEPOCHS=12
 LRATE=0.001
 L2REG=0.0001
 
 DOTEST=""
 DOTEST="-t"
 
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_hadmult_127x94x47_xuv_me1Bmc.hdf5"
+IMGX=50
+IMGUV=25
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_hadmult_127x${IMGX}x${IMGUV}_xuv_me1Bmc.hdf5"
 SAVEMODELNAME="./lminerva_hadmult_epsilon`date +%s`.npz"
 PYTHONPROG="minerva_hadmult_epsilon.py"
 
@@ -58,7 +59,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --img_x 94 --img_u 47 --img_v 47
+  --img_x $IMGX --img_u $IMGUV --img_v $IMGUV
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l $DOTEST \
@@ -67,7 +68,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --img_x 94 --img_u 47 --img_v 47
+  --img_x $IMGX --img_u $IMGUV --img_v $IMGUV
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
