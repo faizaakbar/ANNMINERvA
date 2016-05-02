@@ -59,7 +59,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --img_x $IMGX --img_u $IMGUV --img_v $IMGUV
+  --imgh_x $IMGX --imgh_u $IMGUV --imgh_v $IMGUV
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l $DOTEST \
@@ -68,7 +68,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --img_x $IMGX --img_u $IMGUV --img_v $IMGUV
+  --imgh_x $IMGX --imgh_u $IMGUV --imgh_v $IMGUV
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
