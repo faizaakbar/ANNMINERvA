@@ -227,7 +227,8 @@ if __name__ == '__main__':
              be_verbose=options.be_verbose,
              convpooldictlist=convpooldictlist,
              test_all_data=options.test_all_data,
-             nhidden=nhidden)
+             nhidden=nhidden,
+             noutputs=6)
 
     if options.do_predict:
         predict(build_cnn=build_network_function,
@@ -239,4 +240,5 @@ if __name__ == '__main__':
                 be_verbose=options.be_verbose,
                 convpooldictlist=convpooldictlist,
                 test_all_data=options.test_all_data,
-                nhidden=nhidden)
+                nhidden=nhidden,
+                noutputs=6)
