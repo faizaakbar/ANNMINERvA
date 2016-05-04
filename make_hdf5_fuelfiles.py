@@ -387,6 +387,30 @@ def get_hadmult_study_data_from_file(filename, had_mult_overflow):
     return storedat
 
 
+def filter_hadmult_data_for_singlepi0(dsetvals):
+    """"
+    we want to insert the 0/1 bkg/signal flag in as an array just before
+    the eventids array
+    """
+    n_pions = dsetvals[4]
+    n_pi0s = dsetvals[6]
+    n_kaons = dsetvals[8]
+    a_pi0 = n_pi0s == 1
+    a_no_chpi = n_pions == 0
+    a_no_k = n_kaons == 0
+    a_sig_tf = a_pi0 & a_no_chpi & a_no_k
+    a_sig = np.array(a_sig_tf, dtype=np.uint8)
+    returnvals = (dsetvals[0], dsetvals[1],
+                  dsetvals[2], dsetvals[3],
+                  dsetvals[4], dsetvals[5],
+                  dsetvals[6], dsetvals[7],
+                  dsetvals[8], dsetvals[9],
+                  dsetvals[10], dsetvals[11],
+                  dsetvals[12], dsetvals[13],
+                  a_sig, dsetvals[14])
+    return returnvals
+
+
 def get_nukecc_vtx_study_data_from_file(filename, imgw, imgh, trims,
                                         add_target_padding=False,
                                         insert_x_padding_into_uv=True):
@@ -531,7 +555,7 @@ def add_data_to_hdf5file(f, dset_names, dset_vals):
         return total_examples
 
 
-def prep_datasets_for_hadronmult(hdf5file, dset_description):
+def prep_datasets_using_dset_descrip_only(hdf5file, dset_description):
     """
     hdf5file - where we will add dsets,
     dset_desciption - ordered dict containing all the pieces of the dset
@@ -600,6 +624,19 @@ def build_hadronmult_dset_description():
          ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
     )
     return dset_description
+
+
+def build_hadronic_exclusive_state_dset_description():
+    """
+    """
+    dset_description = build_hadronmult_dset_description()
+    excl_dset_description = dset_description.__class__()
+    for k, v in dset_description.items():
+        excl_dset_description[k] = v
+        if k == 'sume-hadmultmeas':
+            excl_dset_description['exclusive-signal'] = \
+                ('uint8', 'exclusive-signal')
+    return excl_dset_description
 
 
 def build_nukecc_vtx_study_dset_description(views, img_dimensions):
@@ -710,7 +747,7 @@ def make_hadronmult_hdf5_file(filebase, hdf5file, had_mult_overflow):
 
     dset_description = build_hadronmult_dset_description()
     print(dset_description)
-    prep_datasets_for_hadronmult(f, dset_description)
+    prep_datasets_using_dset_descrip_only(f, dset_description)
     dset_names = dset_description.keys()
 
     total_examples = 0
@@ -721,6 +758,36 @@ def make_hadronmult_hdf5_file(filebase, hdf5file, had_mult_overflow):
         # write filter functions here if we want to reduce the dset
         # see the vtx study for an example
         total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
+
+    add_split_dict(f, dset_names, total_examples)
+
+    f.close()
+
+
+def make_singlepi0_hdf5_file(filebase, hdf5file, had_mult_overflow):
+    """
+    note that filebase is a pattern - if multiple files match
+    the pattern, then multiple files will be included in the
+    single output file
+    """
+    print('Making hdf5 file for single pi0')
+
+    files = make_file_list(filebase)
+    f = prepare_hdf5_file(hdf5file)
+
+    dset_description = build_hadronic_exclusive_state_dset_description()
+    print(dset_description)
+    prep_datasets_using_dset_descrip_only(f, dset_description)
+    dset_names = dset_description.keys()
+
+    total_examples = 0
+
+    for fname in files:
+        print("Iterating over file:", fname)
+        dset_vals = get_hadmult_study_data_from_file(fname, had_mult_overflow)
+        new_vals = filter_hadmult_data_for_singlepi0(dset_vals)
+        # be careful that the dset_names and new_vals are ordered properly
+        total_examples = add_data_to_hdf5file(f, dset_names, new_vals)
 
     add_split_dict(f, dset_names, total_examples)
 
@@ -880,3 +947,6 @@ if __name__ == '__main__':
     elif options.skim == 'had_mult':
         make_hadronmult_hdf5_file(filebase, hdf5file,
                                   options.had_mult_overflow)
+    elif options.skim == 'single_pi0':
+        make_singlepi0_hdf5_file(filebase, hdf5file,
+                                 options.had_mult_overflow)
