@@ -93,15 +93,20 @@ evtids_shp = (max_evts,)
 labels = pylab.zeros(labels_shp, dtype='f')
 evtids = pylab.zeros(evtids_shp, dtype='uint64')
 labels = f['segments'][:max_evts]
+pcodes = f['planecodes'][:max_evts]
 evtids = f['eventids'][:max_evts]
+zs = f['zs'][:max_evts]
 f.close()
 
 for counter, evtid in enumerate(evtids):
     if evt_plotted > max_evts:
         break
     run, subrun, gate, phys_evt = decode_eventid(evtid)
-    print('{} - {} - {} - {}'.format(run, subrun, gate, phys_evt))
     targ = labels[counter]
+    pcode = pcodes[counter]
+    zz = zs[counter]
+    print('{} - {} - {} - {}: tgt: {:02d}; plncd {:03d}; z {}'.format(
+        run, subrun, gate, phys_evt, targ, pcode, zz))
     evt = []
     if data_x is not None:
         evt.append(data_x[counter])
@@ -121,8 +126,8 @@ for counter, evtid in enumerate(evtids):
         # normalizing each view on its own
         ax.imshow(evt[i][0], cmap=pylab.get_cmap('jet'),
                   interpolation='nearest', vmin=0, vmax=1)
-    figname = 'evt_%s_%s_%s_%s_targ_%d.pdf' % \
-        (run, subrun, gate, phys_evt, targ)
+    figname = 'evt_%s_%s_%s_%s_targ_%d_pcode_%d.pdf' % \
+        (run, subrun, gate, phys_evt, targ, pcode)
     pylab.savefig(figname)
     pylab.close()
     evt_plotted += 1

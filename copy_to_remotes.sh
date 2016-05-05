@@ -1,8 +1,8 @@
 #!/bin/bash
 
 filelist="
-minosmatch_hadmult_127x94x47_xuv_me1Bmc.hdf5
-minosmatch_hadmult_127x94x47_xuv_me1Bmc_README.txt"
+minosmatch_singlepi0_127x50x25_xuv_me1Bmc.hdf5
+minosmatch_singlepi0_127x50x25_xuv_me1Bmc_README.txt"
 
 REMOTE1="tev.fnal.gov:/phihome/perdue/theano/data/"
 REMOTE2="minervagpvm02.fnal.gov:/minerva/data/users/perdue/mlmpr/nukecc"
