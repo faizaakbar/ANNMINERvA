@@ -794,10 +794,22 @@ def make_singlepi0_hdf5_file(filebase, hdf5file, had_mult_overflow):
     f.close()
 
 
+def filter_for_min_z(dset_vals, min_keep_z):
+    """
+    dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
+    """
+    keep_idx = dset_vals[4] > min_keep_z
+    new_vals = []
+    for d in dset_vals:
+        new_vals.append(d[keep_idx])
+    return new_vals
+
+
 def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
                               filebase, hdf5file, add_target_padding=False,
                               apply_transforms=False,
-                              insert_x_padding_into_uv=True):
+                              insert_x_padding_into_uv=True,
+                              min_keep_z=0.0):
     """
     imgw, imgh - ints that specify the image size for `reshape`
     filebase - pattern used for files to match into the output
@@ -841,6 +853,7 @@ def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
         print('data shapes:',
               np.shape(dataX), np.shape(dataU), np.shape(dataV))
         dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
+        dset_vals = filter_for_min_z(dset_vals, min_keep_z)
         dset_vals = filter_nukecc_vtx_det_vals_for_names(dset_vals, dset_names)
         if len(views) == 1 and apply_transforms:
             dset_vals = transform_view(dset_vals, views[0])
@@ -887,6 +900,9 @@ if __name__ == '__main__':
     parser.add_option('--had_mult_overflow', default=5, type='int',
                       help='Mult. over this becomes it',
                       metavar='HAD_MULT_OVFLOW', dest='had_mult_overflow')
+    parser.add_option('--min_keep_z', default=0.0, type='float',
+                      help='Minimum z at which to keep events',
+                      metavar='MIN_KEEP_Z', dest='min_keep_z')
     parser.add_option('--trim_column_down_x', default=94, type='int',
                       help='Trim column downstream x', metavar='XTRIM_COL_DN',
                       dest='trim_column_down_x')
@@ -943,7 +959,8 @@ if __name__ == '__main__':
         make_nukecc_vtx_hdf5_file(options.imgw, options.imgh, trims,
                                   views, filebase, hdf5file, options.padding,
                                   apply_trans,
-                                  options.insert_x_padding_into_uv)
+                                  options.insert_x_padding_into_uv,
+                                  options.min_keep_z)
     elif options.skim == 'had_mult':
         make_hadronmult_hdf5_file(filebase, hdf5file,
                                   options.had_mult_overflow)
