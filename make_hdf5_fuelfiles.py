@@ -634,8 +634,8 @@ def build_hadronic_exclusive_state_dset_description():
     for k, v in dset_description.items():
         excl_dset_description[k] = v
         if k == 'sume-hadmultmeas':
-            excl_dset_description['exclusive-signal'] = \
-                ('uint8', 'exclusive-signal')
+            excl_dset_description['i-signal'] = \
+                ('uint8', 'i-signal')
     return excl_dset_description
 
 
