@@ -10,6 +10,7 @@ extension is expected.
 Currently allowed 'skim' values:
     * nukecc_vtx
     * had_mult
+    * single_pi0
 
 The default output name is 'minerva_fuel.hdf5'. The default skim type is
 'nukecc_vtx'. Default image width and heights are 127 x 94. Target padding
