@@ -16,7 +16,8 @@ def desc(f, n):
     """
     Check a merged hdf5 file
     """
-    print "evtid: ", f['eventids'][n]
+    run, sub, gate, pe = decode_eventid(f['eventids'][n])
+    print "evtid: ", run, ",", sub, ",", gate, ",", pe
     print "nkaon: ", f['n-kaons'][n]
     print "nneut: ", f['n-neutrons'][n]
     print "nothr: ", f['n-others'][n]
