@@ -10,16 +10,16 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=12
+NEPOCHS=4
 LRATE=0.001
 L2REG=0.0001
 
 DOTEST=""
 DOTEST="-t"
 
-IMGX=50
-IMGUV=25
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_hadmult_127x${IMGX}x${IMGUV}_xuv_me1Bmc.hdf5"
+IMGX=72
+IMGUV=36
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x${IMGX}x${IMGUV}_xuv_me1Amc.hdf5"
 SAVEMODELNAME="./lminerva_hadmult_epsilon`date +%s`.npz"
 PYTHONPROG="minerva_hadmult_epsilon.py"
 

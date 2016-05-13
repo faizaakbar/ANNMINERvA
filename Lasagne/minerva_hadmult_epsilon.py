@@ -108,87 +108,87 @@ if __name__ == '__main__':
 
     # x
     convpooldictlist_x = []
-    # assume 127x(N) images
+    # assume 127x72 images
     x_convpool1dict = {}
     x_convpool1dict['nfilters'] = 12
-    x_convpool1dict['filter_size'] = (8, 3)
-    x_convpool1dict['pool_size'] = (2, 1)
+    x_convpool1dict['filter_size'] = (8, 5)
+    x_convpool1dict['pool_size'] = (2, 2)
     convpooldictlist_x.append(x_convpool1dict)
-    # after 8x3 filters -> 120x(N-2) image, then maxpool -> 60x(N-2)
+    # after 8x5 filters -> 120x68 image, then maxpool -> 60x34
     x_convpool2dict = {}
     x_convpool2dict['nfilters'] = 20
     x_convpool2dict['filter_size'] = (7, 3)
-    x_convpool2dict['pool_size'] = (2, 1)
+    x_convpool2dict['pool_size'] = (2, 2)
     convpooldictlist_x.append(x_convpool2dict)
-    # after 7x3 filters -> 54x(N-4) image, then maxpool -> 27x(N-4)
+    # after 7x3 filters -> 54x32 image, then maxpool -> 27x16
     x_convpool3dict = {}
     x_convpool3dict['nfilters'] = 28
     x_convpool3dict['filter_size'] = (6, 3)
-    x_convpool3dict['pool_size'] = (2, 1)
+    x_convpool3dict['pool_size'] = (2, 2)
     convpooldictlist_x.append(x_convpool3dict)
-    # after 6x3 filters -> 22x(N-6) image, then maxpool -> 11x(N-6)
+    # after 6x3 filters -> 22x14 image, then maxpool -> 11x7
     x_convpool4dict = {}
     x_convpool4dict['nfilters'] = 36
-    x_convpool4dict['filter_size'] = (6, 3)
-    x_convpool4dict['pool_size'] = (2, 1)
+    x_convpool4dict['filter_size'] = (3, 3)
+    x_convpool4dict['pool_size'] = (1, 1)
     convpooldictlist_x.append(x_convpool4dict)
-    # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
+    # after 6x3 filters -> 9x5 image, then maxpool -> 9x5
 
     # u
     convpooldictlist_u = []
-    # assume 127x(N) images
+    # assume 127x36 images
     u_convpool1dict = {}
     u_convpool1dict['nfilters'] = 12
     u_convpool1dict['filter_size'] = (8, 5)
-    u_convpool1dict['pool_size'] = (2, 1)
+    u_convpool1dict['pool_size'] = (2, 2)
     convpooldictlist_u.append(u_convpool1dict)
-    # after 8x3 filters -> 120x(N-2) image, then maxpool -> 60x(N-2)
+    # after 8x3 filters -> 120x32 image, then maxpool -> 60x16
     u_convpool2dict = {}
     u_convpool2dict['nfilters'] = 20
     u_convpool2dict['filter_size'] = (7, 3)
-    u_convpool2dict['pool_size'] = (2, 1)
+    u_convpool2dict['pool_size'] = (2, 2)
     convpooldictlist_u.append(u_convpool2dict)
-    # after 7x3 filters -> 54x(N-4) image, then maxpool -> 27x(N-4)
+    # after 7x3 filters -> 54x14 image, then maxpool -> 27x7
     u_convpool3dict = {}
     u_convpool3dict['nfilters'] = 28
     u_convpool3dict['filter_size'] = (6, 3)
     u_convpool3dict['pool_size'] = (2, 1)
     convpooldictlist_u.append(u_convpool3dict)
-    # after 6x3 filters -> 22x(N-6) image, then maxpool -> 11x(N-6)
+    # after 6x3 filters -> 22x5 image, then maxpool -> 11x5
     u_convpool4dict = {}
     u_convpool4dict['nfilters'] = 36
-    u_convpool4dict['filter_size'] = (6, 3)
-    u_convpool4dict['pool_size'] = (2, 1)
+    u_convpool4dict['filter_size'] = (3, 3)
+    u_convpool4dict['pool_size'] = (1, 1)
     convpooldictlist_u.append(u_convpool4dict)
-    # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
+    # after 6x3 filters -> 9x3 image, then maxpool -> 9x3
 
     # v
     convpooldictlist_v = []
-    # assume 127x(N) images
+    # assume 127x36 images
     v_convpool1dict = {}
     v_convpool1dict['nfilters'] = 12
     v_convpool1dict['filter_size'] = (8, 5)
-    v_convpool1dict['pool_size'] = (2, 1)
+    v_convpool1dict['pool_size'] = (2, 2)
     convpooldictlist_v.append(v_convpool1dict)
-    # after 8x3 filters -> 120x(N-2) image, then maxpool -> 60x(N-2)
+    # after 8x3 filters -> 120x32 image, then maxpool -> 60x16
     v_convpool2dict = {}
     v_convpool2dict['nfilters'] = 20
     v_convpool2dict['filter_size'] = (7, 3)
-    v_convpool2dict['pool_size'] = (2, 1)
+    v_convpool2dict['pool_size'] = (2, 2)
     convpooldictlist_v.append(v_convpool2dict)
-    # after 7x3 filters -> 54x(N-4) image, then maxpool -> 27x(N-4)
+    # after 7x3 filters -> 54x14 image, then maxpool -> 27x7
     v_convpool3dict = {}
     v_convpool3dict['nfilters'] = 28
     v_convpool3dict['filter_size'] = (6, 3)
     v_convpool3dict['pool_size'] = (2, 1)
     convpooldictlist_v.append(v_convpool3dict)
-    # after 6x3 filters -> 22x(N-6) image, then maxpool -> 11x(N-6)
+    # after 6x3 filters -> 22x5 image, then maxpool -> 11x5
     v_convpool4dict = {}
     v_convpool4dict['nfilters'] = 36
-    v_convpool4dict['filter_size'] = (6, 3)
-    v_convpool4dict['pool_size'] = (2, 1)
+    v_convpool4dict['filter_size'] = (3, 3)
+    v_convpool4dict['pool_size'] = (1, 1)
     convpooldictlist_v.append(v_convpool4dict)
-    # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
+    # after 6x3 filters -> 9x3 image, then maxpool -> 9x3
 
     convpooldictlist['x'] = convpooldictlist_x
     convpooldictlist['u'] = convpooldictlist_u
