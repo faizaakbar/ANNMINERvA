@@ -1,0 +1,805 @@
+PBS prologue
+Job mnv-conv-1463181737 submitted from mic.fnal.gov started Fri May 13 18:22:21 CDT 2016 jobid 112769.tev.fnal.gov
+gpu1
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is a640c2b12e20
+python minerva_hadmult_epsilon.py -l -t   -n 4   -r 0.001   -g 0.0001   -s ./lminerva_hadmult_epsilon1463181741.npz   -d /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5   --imgh_x 72 --imgh_u 36 --imgh_v 36
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+minerva_hadmult_epsilon.py
+ Begin with saved parameters? False
+ Saved parameters file: ./lminerva_hadmult_epsilon1463181741.npz
+ Saved parameters file exists? False
+ Datasets: ['/phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5']
+ Dataset size: 8733743723
+ Planned number of epochs: 4
+ Learning rate: 0.001
+ Momentum: 0.9
+ L2 regularization penalty scale: 0.0001
+ Batch size: 500
+Loading data...
+ Learning sample size = 3791975 examples
+ Validation sample size = 456864 examples
+ Testing sample size = 319806 examples
+Convpool conv-x-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-x-0
+Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-x-1
+Convpool conv-x-2 params: {'filter_size': (6, 3), 'pool_size': (2, 2), 'nfilters': 28}
+Convpool maxpool-x-2
+Convpool conv-x-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-x-3
+Dense dense-x with nhidden = 196, dropout = 0.5
+Convpool conv-u-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-u-0
+Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-u-1
+Convpool conv-u-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+Convpool maxpool-u-2
+Convpool conv-u-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-u-3
+Dense dense-u with nhidden = 196, dropout = 0.5
+Convpool conv-v-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-v-0
+Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-v-1
+Convpool conv-v-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+Convpool maxpool-v-2
+Convpool conv-v-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-v-3
+Dense dense-v with nhidden = 196, dropout = 0.5
+Network: concat columns...
+Dense dense-across with nhidden = 98, dropout = 0.5
+Softmax output prob with n_units = 11, dropout = 0.5
+n-parameters:  832247
+
+In -->          Layer    --> Out    Description                                                  
+-------         -----    -------    -----------                                                  
+[]              0        [1]        <lasagne.layers.input.InputLayer object at 0x2acc071ab710>   
+[0]             1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2acc071ab810>   
+[1]             2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc071ab850>
+[2]             3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2acc071c57d0>   
+[3]             4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc2c26a890>
+[4]             5        [6]        <lasagne.layers.conv.Conv2DLayer object at 0x2acc071c5810>   
+[5]             6        [7]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc071c5a90>
+[6]             7        [8]        <lasagne.layers.conv.Conv2DLayer object at 0x2acc071c5ad0>   
+[7]             8        [9]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc071c5d50>
+[8]             9        [10]       <lasagne.layers.noise.DropoutLayer object at 0x2acc071ab7d0> 
+[9]             10       [33]       <lasagne.layers.dense.DenseLayer object at 0x2acc071c5fd0>   
+[]              11       [12]       <lasagne.layers.input.InputLayer object at 0x2acc071ab750>   
+[11]            12       [13]       <lasagne.layers.conv.Conv2DLayer object at 0x2acc084ce690>   
+[12]            13       [14]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc084ce6d0>
+[13]            14       [15]       <lasagne.layers.conv.Conv2DLayer object at 0x2acc084ce650>   
+[14]            15       [16]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc084ce990>
+[15]            16       [17]       <lasagne.layers.conv.Conv2DLayer object at 0x2acc084ce9d0>   
+[16]            17       [18]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc084cec50>
+[17]            18       [19]       <lasagne.layers.conv.Conv2DLayer object at 0x2acc084cec90>   
+[18]            19       [20]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc084cef10>
+[19]            20       [21]       <lasagne.layers.noise.DropoutLayer object at 0x2acc084ce050> 
+[20]            21       [33]       <lasagne.layers.dense.DenseLayer object at 0x2acc084d9210>   
+[]              22       [23]       <lasagne.layers.input.InputLayer object at 0x2acc071ab790>   
+[22]            23       [24]       <lasagne.layers.conv.Conv2DLayer object at 0x2acc084d94d0>   
+[23]            24       [25]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc084d9510>
+[24]            25       [26]       <lasagne.layers.conv.Conv2DLayer object at 0x2acc084d9490>   
+[25]            26       [27]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc084d97d0>
+[26]            27       [28]       <lasagne.layers.conv.Conv2DLayer object at 0x2acc084d9810>   
+[27]            28       [29]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc084d9a90>
+[28]            29       [30]       <lasagne.layers.conv.Conv2DLayer object at 0x2acc084d9ad0>   
+[29]            30       [31]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2acc084d9d50>
+[30]            31       [32]       <lasagne.layers.noise.DropoutLayer object at 0x2acc084d9250> 
+[31]            32       [33]       <lasagne.layers.dense.DenseLayer object at 0x2acc084d9fd0>   
+[10, 21, 32]    33       [34]       <lasagne.layers.merge.ConcatLayer object at 0x2acc084e4050>  
+[33]            34       [35]       <lasagne.layers.noise.DropoutLayer object at 0x2acc084e4310> 
+[34]            35       [36]       <lasagne.layers.dense.DenseLayer object at 0x2acc084e42d0>   
+[35]            36       [37]       <lasagne.layers.noise.DropoutLayer object at 0x2acc084e4390> 
+[36]            37       []         <lasagne.layers.dense.DenseLayer object at 0x2acc084e4690>   
+
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        
+
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        
+Starting training...
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.004s.
+  -Iterating over the slice took 45.582s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.162s.
+  -Iterating over the slice took 45.276s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.830s.
+  -Iterating over the slice took 45.541s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.192s.
+  -Iterating over the slice took 45.377s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.967s.
+  -Iterating over the slice took 45.398s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.936s.
+  -Iterating over the slice took 45.422s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.408s.
+  -Iterating over the slice took 45.413s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.752s.
+  -Iterating over the slice took 45.507s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 51.051s.
+  -Iterating over the slice took 45.379s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.721s.
+  -Iterating over the slice took 45.638s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 44.136s.
+  -Iterating over the slice took 45.572s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.421s.
+  -Iterating over the slice took 45.385s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.387s.
+  -Iterating over the slice took 45.347s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.385s.
+  -Iterating over the slice took 45.379s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.326s.
+  -Iterating over the slice took 45.378s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.420s.
+  -Iterating over the slice took 45.387s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.278s.
+  -Iterating over the slice took 45.373s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.084s.
+  -Iterating over the slice took 45.354s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.561s.
+  -Iterating over the slice took 45.342s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.836s.
+  -Iterating over the slice took 45.338s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.582s.
+  -Iterating over the slice took 45.375s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.346s.
+  -Iterating over the slice took 45.343s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.673s.
+  -Iterating over the slice took 45.370s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.460s.
+  -Iterating over the slice took 45.368s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.024s.
+  -Iterating over the slice took 45.349s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.488s.
+  -Iterating over the slice took 45.343s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.205s.
+  -Iterating over the slice took 45.345s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.123s.
+  -Iterating over the slice took 45.387s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 51.048s.
+  -Iterating over the slice took 45.353s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.472s.
+  -Iterating over the slice took 46.418s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.616s.
+  -Iterating over the slice took 45.385s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.222s.
+  -Iterating over the slice took 45.375s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.911s.
+  -Iterating over the slice took 46.363s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.860s.
+  -Iterating over the slice took 46.507s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.702s.
+  -Iterating over the slice took 46.457s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.779s.
+  -Iterating over the slice took 46.427s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.587s.
+  -Iterating over the slice took 45.366s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.271s.
+  -Iterating over the slice took 45.403s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 51.324s.
+  -Iterating over the slice took 46.453s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.609s.
+  -Iterating over the slice took 45.370s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.499s.
+  -Iterating over the slice took 45.360s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.760s.
+  -Iterating over the slice took 45.385s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.876s.
+  -Iterating over the slice took 46.460s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.496s.
+  -Iterating over the slice took 45.408s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.431s.
+  -Iterating over the slice took 45.511s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.762s.
+  -Iterating over the slice took 45.694s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.799s.
+  -Iterating over the slice took 45.710s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.172s.
+  -Iterating over the slice took 45.998s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.610s.
+  -Iterating over the slice took 46.337s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.659s.
+  -Iterating over the slice took 45.419s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.540s.
+  -Iterating over the slice took 45.741s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.028s.
+  -Iterating over the slice took 45.366s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.975s.
+  -Iterating over the slice took 45.447s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.344s.
+  -Iterating over the slice took 45.416s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.369s.
+  -Iterating over the slice took 45.376s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.451s.
+  -Iterating over the slice took 45.380s.
+  Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.930s.
+  -Iterating over the slice took 45.344s.
+  Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.718s.
+  -Iterating over the slice took 45.403s.
+  Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.574s.
+  -Iterating over the slice took 46.449s.
+  Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.090s.
+  -Iterating over the slice took 45.470s.
+  Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.603s.
+  -Iterating over the slice took 45.417s.
+  Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.202s.
+  -Iterating over the slice took 45.405s.
+  Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.872s.
+  -Iterating over the slice took 45.353s.
+  Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.501s.
+  -Iterating over the slice took 45.371s.
+  Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.310s.
+  -Iterating over the slice took 45.348s.
+  Loading slice (3250000, 3300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.589s.
+  -Iterating over the slice took 45.412s.
+  Loading slice (3300000, 3350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.276s.
+  -Iterating over the slice took 45.385s.
+  Loading slice (3350000, 3400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.155s.
+  -Iterating over the slice took 45.352s.
+  Loading slice (3400000, 3450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.556s.
+  -Iterating over the slice took 46.403s.
+  Loading slice (3450000, 3500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.016s.
+  -Iterating over the slice took 46.256s.
+  Loading slice (3500000, 3550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.379s.
+  -Iterating over the slice took 45.977s.
+  Loading slice (3550000, 3600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.185s.
+  -Iterating over the slice took 45.987s.
+  Loading slice (3600000, 3650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.146s.
+  -Iterating over the slice took 45.373s.
+  Loading slice (3650000, 3700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.476s.
+  -Iterating over the slice took 45.386s.
+  Loading slice (3700000, 3750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.797s.
+  -Iterating over the slice took 45.381s.
+  Loading slice (3750000, 3791975) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 46.529s.
+  -Iterating over the slice took 38.106s.
+  The validation pass took 598.718s.
+Epoch 1 of 4 took 7849.552s
+  training loss:		1.259063
+  validation loss:		1.135777
+  validation accuracy:		53.46 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.850s.
+  -Iterating over the slice took 44.927s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.792s.
+  -Iterating over the slice took 44.906s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.819s.
+  -Iterating over the slice took 44.918s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.200s.
+  -Iterating over the slice took 44.917s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.031s.
+  -Iterating over the slice took 44.916s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.418s.
+  -Iterating over the slice took 44.905s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.975s.
+  -Iterating over the slice took 44.929s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.677s.
+  -Iterating over the slice took 45.396s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.283s.
+  -Iterating over the slice took 45.365s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.389s.
+  -Iterating over the slice took 45.349s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.411s.
+  -Iterating over the slice took 45.361s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.058s.
+  -Iterating over the slice took 45.360s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.343s.
+  -Iterating over the slice took 46.418s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.255s.
+  -Iterating over the slice took 45.365s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.390s.
+  -Iterating over the slice took 45.410s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.414s.
+  -Iterating over the slice took 46.317s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.940s.
+  -Iterating over the slice took 45.339s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.930s.
+  -Iterating over the slice took 45.357s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.267s.
+  -Iterating over the slice took 45.378s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.291s.
+  -Iterating over the slice took 45.565s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.184s.
+  -Iterating over the slice took 45.362s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.019s.
+  -Iterating over the slice took 45.356s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.828s.
+  -Iterating over the slice took 45.367s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.185s.
+  -Iterating over the slice took 45.368s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.033s.
+  -Iterating over the slice took 45.359s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.482s.
+  -Iterating over the slice took 45.362s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.857s.
+  -Iterating over the slice took 45.323s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.727s.
+  -Iterating over the slice took 45.363s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.108s.
+  -Iterating over the slice took 45.357s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.309s.
+  -Iterating over the slice took 45.363s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.272s.
+  -Iterating over the slice took 45.373s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.986s.
+  -Iterating over the slice took 45.362s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.770s.
+  -Iterating over the slice took 45.392s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.168s.
+  -Iterating over the slice took 45.389s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.996s.
+  -Iterating over the slice took 45.374s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.390s.
+  -Iterating over the slice took 45.379s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.933s.
+  -Iterating over the slice took 45.359s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.786s.
+  -Iterating over the slice took 45.364s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.172s.
+  -Iterating over the slice took 45.365s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.146s.
+  -Iterating over the slice took 45.361s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.189s.
+  -Iterating over the slice took 45.369s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.067s.
+  -Iterating over the slice took 45.369s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.878s.
+  -Iterating over the slice took 45.356s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.187s.
+  -Iterating over the slice took 45.380s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.507s.
+  -Iterating over the slice took 45.337s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.245s.
+  -Iterating over the slice took 45.365s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.928s.
+  -Iterating over the slice took 45.381s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.926s.
+  -Iterating over the slice took 45.364s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.463s.
+  -Iterating over the slice took 45.371s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.258s.
+  -Iterating over the slice took 45.365s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.224s.
+  -Iterating over the slice took 45.369s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.115s.
+  -Iterating over the slice took 45.337s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.845s.
+  -Iterating over the slice took 45.366s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.293s.
+  -Iterating over the slice took 45.409s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.903s.
+  -Iterating over the slice took 45.409s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.323s.
+  -Iterating over the slice took 45.364s.
+  Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.950s.
+  -Iterating over the slice took 45.391s.
+  Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.765s.
+  -Iterating over the slice took 45.394s.
+  Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.281s.
+  -Iterating over the slice took 45.378s.
+  Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.041s.
+  -Iterating over the slice took 45.364s.
+  Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.223s.
+  -Iterating over the slice took 45.396s.
+  Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.043s.
+  -Iterating over the slice took 45.365s.
+  Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.680s.
+  -Iterating over the slice took 45.369s.
+  Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.358s.
+  -Iterating over the slice took 45.338s.
+  Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.884s.
+  -Iterating over the slice took 45.402s.
+  Loading slice (3250000, 3300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.414s.
+  -Iterating over the slice took 45.370s.
+  Loading slice (3300000, 3350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.957s.
+  -Iterating over the slice took 45.398s.
+  Loading slice (3350000, 3400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.857s.
+  -Iterating over the slice took 45.377s.
+  Loading slice (3400000, 3450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.140s.
+  -Iterating over the slice took 45.375s.
+  Loading slice (3450000, 3500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.128s.
+  -Iterating over the slice took 45.361s.
+  Loading slice (3500000, 3550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.919s.
+  -Iterating over the slice took 45.333s.
+  Loading slice (3550000, 3600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.102s.
+  -Iterating over the slice took 45.387s.
+  Loading slice (3600000, 3650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.686s.
+  -Iterating over the slice took 45.368s.
+  Loading slice (3650000, 3700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.153s.
+  -Iterating over the slice took 45.398s.
+  Loading slice (3700000, 3750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.702s.
+  -Iterating over the slice took 45.668s.
+  Loading slice (3750000, 3791975) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 46.231s.
+  -Iterating over the slice took 38.103s.
+  The validation pass took 599.782s.
+Epoch 2 of 4 took 7802.128s
+  training loss:		1.150831
+  validation loss:		1.097889
+  validation accuracy:		55.31 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.727s.
+  -Iterating over the slice took 46.303s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.687s.
+  -Iterating over the slice took 45.362s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.768s.
+  -Iterating over the slice took 45.363s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.256s.
+  -Iterating over the slice took 45.359s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.038s.
+  -Iterating over the slice took 46.499s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.355s.
+  -Iterating over the slice took 45.373s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.872s.
+  -Iterating over the slice took 45.356s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.651s.
+  -Iterating over the slice took 45.359s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.241s.
+  -Iterating over the slice took 45.367s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.045s.
+  -Iterating over the slice took 45.358s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.391s.
+  -Iterating over the slice took 45.363s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.135s.
+  -Iterating over the slice took 45.372s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.888s.
+  -Iterating over the slice took 45.370s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.262s.
+  -Iterating over the slice took 45.377s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.928s.
+  -Iterating over the slice took 45.376s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.424s.
+  -Iterating over the slice took 45.393s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.922s.
+  -Iterating over the slice took 45.381s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.839s.
+  -Iterating over the slice took 45.370s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.428s.
+  -Iterating over the slice took 45.345s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.003s.
+  -Iterating over the slice took 45.367s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.114s.
+  -Iterating over the slice took 45.361s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.032s.
+  -Iterating over the slice took 45.381s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.808s.
+  -Iterating over the slice took 45.366s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.235s.
+  -Iterating over the slice took 45.378s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.176s.
+  -Iterating over the slice took 45.372s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.473s.
+  -Iterating over the slice took 45.374s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.882s.
+  -Iterating over the slice took 45.359s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.609s.
+  -Iterating over the slice took 45.365s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.121s.
+  -Iterating over the slice took 45.366s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.016s.
+  -Iterating over the slice took 45.367s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.243s.
+  -Iterating over the slice took 45.369s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.946s.
+  -Iterating over the slice took 45.396s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.799s.
+  -Iterating over the slice took 45.366s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.149s.
+  -Iterating over the slice took 45.401s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.793s.
+  -Iterating over the slice took 46.462s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.414s.
+  -Iterating over the slice took 45.366s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.903s.
+  -Iterating over the slice took 45.395s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.773s.
+  -Iterating over the slice took 45.402s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.270s.
+  -Iterating over the slice took 45.373s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.192s.
+  -Iterating over the slice took 45.369s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.278s.
+  -Iterating over the slice took 45.374s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.978s.
+  -Iterating over the slice took 45.365s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.861s.
+  -Iterating over the slice took 45.398s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.270s.
+  -Iterating over the slice took 45.403s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.745s.
+  -Iterating over the slice took 45.363s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.365s.
+  -Iterating over the slice took 45.361s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.996s.
+  -Iterating over the slice took 45.368s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.008s.
+  -Iterating over the slice took 45.367s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.457s.
+  -Iterating over the slice took 45.367s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.280s.
+  -Iterating over the slice took 45.363s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.241s.
+  -Iterating over the slice took 45.387s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.038s.
+  -Iterating over the slice took 45.390s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.777s.
+  -Iterating over the slice took 45.373s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.195s.
+  -Iterating over the slice took 45.380s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.912s.
+  -Iterating over the slice took 46.547s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.415s.
+  -Iterating over the slice took 45.362s.
+  Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.027s.
+  -Iterating over the slice took 45.367s.
+  Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.732s.
+  -Iterating over the slice took 45.369s.
+  Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.249s.
+  -Iterating over the slice took 45.346s.
+  Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.964s.
+  -Iterating over the slice took 45.366s.
+  Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.299s.
+  -Iterating over the slice took 45.413s.
+  Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.028s.
+  -Iterating over the slice took 45.410s.
+  Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.785s.
+  -Iterating over the slice took 45.367s.
+  Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.292s.
+  -Iterating over the slice took 45.384s.
+  Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.794s.
+  -Iterating over the slice took 45.370s.
+  Loading slice (3250000, 3300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.240s.
+  -Iterating over the slice took 45.330s.
+  Loading slice (3300000, 3350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.832s.
+  -Iterating over the slice took 45.334s.
+  Loading slice (3350000, 3400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.757s.
+  -Iterating over the slice took 45.365s.
+  Loading slice (3400000, 3450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.292s.
+  -Iterating over the slice took 45.400s.
+  Loading slice (3450000, 3500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.684s.
+  -Iterating over the slice took 45.338s.
+  Loading slice (3500000, 3550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.291s.
+  -Iterating over the slice took 45.383s.
+  Loading slice (3550000, 3600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.216s.
+  -Iterating over the slice took 45.378s.
+  Loading slice (3600000, 3650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.789s.
+  -Iterating over the slice took 45.376s.
+  Loading slice (3650000, 3700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.247s.
+  -Iterating over the slice took 45.381s.
+  Loading slice (3700000, 3750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.837s.
+  -Iterating over the slice took 45.366s.
+  Loading slice (3750000, 3791975) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 46.259s.
+  -Iterating over the slice took 38.096s.
+  The validation pass took 595.900s.
+Epoch 3 of 4 took 7801.744s
+  training loss:		1.124660
+  validation loss:		1.078361
+  validation accuracy:		56.25 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.891s.
+  -Iterating over the slice took 44.913s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.806s.
+  -Iterating over the slice took 44.904s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.842s.
+  -Iterating over the slice took 44.915s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.896s.
+  -Iterating over the slice took 44.886s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.061s.
+  -Iterating over the slice took 44.918s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.476s.
+  -Iterating over the slice took 44.907s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.941s.
+  -Iterating over the slice took 44.927s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.703s.
+  -Iterating over the slice took 45.398s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.328s.
+  -Iterating over the slice took 45.347s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.187s.
+  -Iterating over the slice took 45.373s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.200s.
+  -Iterating over the slice took 45.870s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.151s.
+  -Iterating over the slice took 46.434s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.821s.
+  -Iterating over the slice took 45.367s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 44.174s.
+  -Iterating over the slice took 46.389s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.059s.
+  -Iterating over the slice took 45.371s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.446s.
+  -Iterating over the slice took 45.377s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.695s.
+  -Iterating over the slice took 45.369s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.713s.
+  -Iterating over the slice took 45.390s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.305s.
+  -Iterating over the slice took 45.379s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.174s.
+  -Iterating over the slice took 45.361s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.317s.
+  -Iterating over the slice took 45.413s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.165s.
+  -Iterating over the slice took 45.413s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.908s.
+  -Iterating over the slice took 45.674s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.278s.
+  -Iterating over the slice took 45.377s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.812s.
+  -Iterating over the slice took 45.378s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.482s.
+  -Iterating over the slice took 45.408s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.004s.
+  -Iterating over the slice took 45.424s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.692s.
+  -Iterating over the slice took 45.369s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.223s.
+  -Iterating over the slice took 45.384s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.885s.
+  -Iterating over the slice took 46.302s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.367s.
+  -Iterating over the slice took 45.383s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.070s.
+  -Iterating over the slice took 45.420s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.903s.
+  -Iterating over the slice took 45.371s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.243s.
+  -Iterating over the slice took 45.935s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.138s.
+  -Iterating over the slice took 46.407s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.544s.
+  -Iterating over the slice took 46.496s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.007s.
+  -Iterating over the slice took 45.397s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.739s.
+  -Iterating over the slice took 46.462s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.562s.
+  -Iterating over the slice took 46.380s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.454s.
+  -Iterating over the slice took 46.441s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.306s.
+  -Iterating over the slice took 45.411s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.969s.
+  -Iterating over the slice took 46.181s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.639s.
+  -Iterating over the slice took 45.467s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.195s.
+  -Iterating over the slice took 45.394s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.684s.
+  -Iterating over the slice took 46.194s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.433s.
+  -Iterating over the slice took 45.402s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.964s.
+  -Iterating over the slice took 45.396s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.878s.
+  -Iterating over the slice took 45.382s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.332s.
+  -Iterating over the slice took 45.379s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.232s.
+  -Iterating over the slice took 45.373s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.640s.
+  -Iterating over the slice took 46.501s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.012s.
+  -Iterating over the slice took 45.522s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.071s.
+  -Iterating over the slice took 46.506s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.150s.
+  -Iterating over the slice took 45.381s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.811s.
+  -Iterating over the slice took 45.376s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.302s.
+  -Iterating over the slice took 45.408s.
+  Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.889s.
+  -Iterating over the slice took 45.425s.
+  Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.669s.
+  -Iterating over the slice took 45.381s.
+  Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.088s.
+  -Iterating over the slice took 45.341s.
+  Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.053s.
+  -Iterating over the slice took 45.382s.
+  Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.316s.
+  -Iterating over the slice took 45.458s.
+  Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.541s.
+  -Iterating over the slice took 46.505s.
+  Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.655s.
+  -Iterating over the slice took 46.079s.
+  Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 44.152s.
+  -Iterating over the slice took 46.441s.
+  Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.191s.
+  -Iterating over the slice took 46.449s.
+  Loading slice (3250000, 3300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.481s.
+  -Iterating over the slice took 45.540s.
+  Loading slice (3300000, 3350000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.897s.
+  -Iterating over the slice took 45.851s.
+  Loading slice (3350000, 3400000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.650s.
+  -Iterating over the slice took 45.378s.
+  Loading slice (3400000, 3450000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.159s.
+  -Iterating over the slice took 45.375s.
+  Loading slice (3450000, 3500000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.059s.
+  -Iterating over the slice took 45.381s.
+  Loading slice (3500000, 3550000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.208s.
+  -Iterating over the slice took 45.370s.
+  Loading slice (3550000, 3600000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.968s.
+  -Iterating over the slice took 45.415s.
+  Loading slice (3600000, 3650000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.925s.
+  -Iterating over the slice took 46.294s.
+  Loading slice (3650000, 3700000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 44.112s.
+  -Iterating over the slice took 46.445s.
+  Loading slice (3700000, 3750000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.917s.
+  -Iterating over the slice took 45.374s.
+  Loading slice (3750000, 3791975) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 46.144s.
+  -Iterating over the slice took 38.092s.
+  The validation pass took 600.390s.
+Epoch 4 of 4 took 7828.918s
+  training loss:		1.109317
+  validation loss:		1.065774
+  validation accuracy:		56.81 %
+---
+Finished 4 epochs.
+Loading data for testing...
+ Learning sample size = 3791975 examples
+ Validation sample size = 456864 examples
+ Testing sample size = 319806 examples
+ Used testing sample size = 319806 examples
+Convpool conv-x-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-x-0
+Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-x-1
+Convpool conv-x-2 params: {'filter_size': (6, 3), 'pool_size': (2, 2), 'nfilters': 28}
+Convpool maxpool-x-2
+Convpool conv-x-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-x-3
+Dense dense-x with nhidden = 196, dropout = 0.5
+Convpool conv-u-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-u-0
+Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-u-1
+Convpool conv-u-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+Convpool maxpool-u-2
+Convpool conv-u-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-u-3
+Dense dense-u with nhidden = 196, dropout = 0.5
+Convpool conv-v-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-v-0
+Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-v-1
+Convpool conv-v-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+Convpool maxpool-v-2
+Convpool conv-v-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-v-3
+Dense dense-v with nhidden = 196, dropout = 0.5
+Network: concat columns...
+Dense dense-across with nhidden = 98, dropout = 0.5
+Softmax output prob with n_units = 11, dropout = 0.5
+n-parameters:  832247
+Starting testing...
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 51.226s.
+  -Iterating over the slice took 579.328s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.973s.
+  -Iterating over the slice took 584.879s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.455s.
+  -Iterating over the slice took 588.523s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 51.007s.
+  -Iterating over the slice took 580.959s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.692s.
+  -Iterating over the slice took 587.478s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.367s.
+  -Iterating over the slice took 577.947s.
+  Loading slice (300000, 319806) from /phihome/perdue/theano/data/minosmatch_hadmult_tracker_127x72x36_xuv_me1Amc.hdf5 took 22.938s.
+  -Iterating over the slice took 232.730s.
+Final results:
+  test loss:			1.061848
+  test accuracy:		57.09 %
+   target 0 accuracy:			55.594 %
+   target 1 accuracy:			74.372 %
+   target 2 accuracy:			56.215 %
+   target 3 accuracy:			34.838 %
+   target 4 accuracy:			4.352 %
+   target 5 accuracy:			70.086 %
+Job mnv-conv-1463181737 submitted from mic.fnal.gov finished Sat May 14 04:12:03 CDT 2016 jobid 112769.tev.fnal.gov
+PBS epilogue
