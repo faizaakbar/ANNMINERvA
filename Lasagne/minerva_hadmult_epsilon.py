@@ -57,7 +57,7 @@ if __name__ == '__main__':
                       help='Verbose predictions', metavar='BE_VERBOSE',
                       action='store_true')
     parser.add_option('-s', '--save_file', dest='save_model_file',
-                      default='./lminervatriamese_epsilon.npz',
+                      default='./lminervatriamese_hadmult_epsilon.npz',
                       help='File name for parameters',
                       metavar='SAVE_FILE_NAME')
     parser.add_option('-o', '--load_params', dest='start_with_saved_params',
