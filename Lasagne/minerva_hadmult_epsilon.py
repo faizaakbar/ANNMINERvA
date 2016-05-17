@@ -199,6 +199,7 @@ if __name__ == '__main__':
     imgh = (options.imgh_x,
             options.imgh_u,
             options.imgh_v)
+    noutputs = 6    # 0, 1, 2, 3, 4, 5+
 
     if options.do_learn:
         learn(build_cnn=build_network_function,
@@ -214,7 +215,8 @@ if __name__ == '__main__':
               save_model_file=options.save_model_file,
               start_with_saved_params=options.start_with_saved_params,
               convpooldictlist=convpooldictlist,
-              nhidden=nhidden)
+              nhidden=nhidden,
+              noutputs=noutputs)
 
     if options.do_test:
         test(build_cnn=build_network_function,
@@ -228,7 +230,7 @@ if __name__ == '__main__':
              convpooldictlist=convpooldictlist,
              test_all_data=options.test_all_data,
              nhidden=nhidden,
-             noutputs=6)
+             noutputs=noutputs)
 
     if options.do_predict:
         predict(build_cnn=build_network_function,
@@ -241,4 +243,4 @@ if __name__ == '__main__':
                 convpooldictlist=convpooldictlist,
                 test_all_data=options.test_all_data,
                 nhidden=nhidden,
-                noutputs=6)
+                noutputs=noutputs)

@@ -172,7 +172,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     # Build the model
     network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
-                        dropoutp=dropoutp)
+                        dropoutp=dropoutp, noutputs=noutputs)
     print(network_repr.get_network_str(
         lasagne.layers.get_all_layers(network),
         get_network=False, incomings=True, outgoings=True))
@@ -364,7 +364,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
     # Build the model
     network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
-                        dropoutp=dropoutp)
+                        dropoutp=dropoutp, noutputs=noutputs)
     with np.load(save_model_file) as f:
         param_values = [f['arr_%d' % i] for i in range(len(f.files))]
     lasagne.layers.set_all_param_values(network, param_values)
@@ -518,7 +518,7 @@ def categorical_predict(build_cnn=None, data_file_list=None,
     # Build the model
     network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
-                        dropoutp=dropoutp)
+                        dropoutp=dropoutp, noutputs=noutputs)
     with np.load(save_model_file) as f:
         param_values = [f['arr_%d' % i] for i in range(len(f.files))]
     lasagne.layers.set_all_param_values(network, param_values)
@@ -617,7 +617,7 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
     # Build the model
     network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
                         convpooldictlist=convpooldictlist, nhidden=nhidden,
-                        dropoutp=dropoutp)
+                        dropoutp=dropoutp, noutputs=noutputs)
     with np.load(save_model_file) as f:
         param_values = [f['arr_%d' % i] for i in range(len(f.files))]
     lasagne.layers.set_all_param_values(network, param_values)

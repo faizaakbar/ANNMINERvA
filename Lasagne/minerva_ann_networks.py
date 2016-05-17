@@ -14,7 +14,7 @@ from lasagne.layers import flatten
 def build_triamese_alpha(inputlist, imgh=50, imgw=50,
                          convpool1dict=None, convpool2dict=None,
                          convpooldictlist=None, nhidden=None,
-                         dropoutp=None):
+                         dropoutp=None, noutputs=11):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
@@ -90,10 +90,11 @@ def build_triamese_alpha(inputlist, imgh=50, imgw=50,
     l_concat = ConcatLayer((l_branch_x, l_branch_u, l_branch_v))
     print("Network: Concat all three columns...")
 
-    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    # And, finally, the noutputs-unit output layer with 50% dropout
+    # on its inputs:
     outp = DenseLayer(
         dropout(l_concat, p=.5),
-        num_units=11,
+        num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax)
     print("Network: Softmax classification layer.")
     print("n-parameters: ", lasagne.layers.count_params(outp))
@@ -215,7 +216,7 @@ def build_triamese_inception(inputlist, imgh=50, imgw=50):
 
 
 def build_triamese_beta(inputlist, imgh=50, imgw=50, convpooldictlist=None,
-                        nhidden=None, dropoutp=None):
+                        nhidden=None, dropoutp=None, noutputs=11):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
@@ -272,20 +273,21 @@ def build_triamese_beta(inputlist, imgh=50, imgw=50, convpooldictlist=None,
     print("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
-    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    # And, finally, the `noutputs`-unit output layer with `dropoutp` dropout
+    # on its inputs:
     net['output_prob'] = DenseLayer(
         dropout(net['dense-across'], p=dropoutp),
-        num_units=11,
+        num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax)
     print("Softmax output prob with n_units = {}, dropout = {}".format(
-        11, dropoutp))
+        noutputs, dropoutp))
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
 
 
 def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
-                         nhidden=None, dropoutp=None):
+                         nhidden=None, dropoutp=None, noutputs=11):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions - no pooling.
@@ -369,13 +371,14 @@ def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
     print("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
-    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    # And, finally, the `noutputs`-unit output layer with `dropoutp` dropout
+    # on its inputs:
     net['output_prob'] = DenseLayer(
         dropout(net['dense-across'], p=dropoutp),
-        num_units=11,
+        num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax)
     print("Softmax output prob with n_units = {}, dropout = {}".format(
-        11, dropoutp))
+        noutputs, dropoutp))
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
@@ -442,7 +445,8 @@ def build_triamese_delta(inputlist, imgh=68, imgw=127, convpooldictlist=None,
     print("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
-    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    # And, finally, the `noutputs`-unit output layer with `dropoutp` dropout
+    # on its inputs:
     net['output_prob'] = DenseLayer(
         dropout(net['dense-across'], p=dropoutp),
         num_units=noutputs,
@@ -455,7 +459,7 @@ def build_triamese_delta(inputlist, imgh=68, imgw=127, convpooldictlist=None,
 
 
 def build_beta_x(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                 nhidden=None, dropoutp=None):
+                 nhidden=None, dropoutp=None, noutputs=11):
     """
     This network is modeled after the 'triamese' (tri-columnar) beta model,
     but is meant to operate on the x-view only.
@@ -499,20 +503,21 @@ def build_beta_x(inputlist, imgh=68, imgw=127, convpooldictlist=None,
     print("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
-    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    # And, finally, the `noutputs`-unit output layer with `dropoutp` dropout
+    # on its inputs:
     net['output_prob'] = DenseLayer(
         dropout(net['dense-across'], p=dropoutp),
-        num_units=11,
+        num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax)
     print("Softmax output prob with n_units = {}, dropout = {}".format(
-        11, dropoutp))
+        noutputs, dropoutp))
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
 
 
 def build_beta_u(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                 nhidden=None, dropoutp=None):
+                 nhidden=None, dropoutp=None, noutputs=11):
     """
     This network is modeled after the 'triamese' (tri-columnar) beta model,
     but is meant to operate on the u-view only.
@@ -520,11 +525,12 @@ def build_beta_u(inputlist, imgh=68, imgw=127, convpooldictlist=None,
     return build_beta_single_view(inputlist=inputlist, view='u',
                                   imgh=imgh, imgw=imgw,
                                   convpooldictlist=convpooldictlist,
-                                  nhidden=nhidden, dropoutp=dropoutp)
+                                  nhidden=nhidden, dropoutp=dropoutp,
+                                  noutputs=noutputs)
 
 
 def build_beta_v(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                 nhidden=None, dropoutp=None):
+                 nhidden=None, dropoutp=None, noutputs=11):
     """
     This network is modeled after the 'triamese' (tri-columnar) beta model,
     but is meant to operate on the v-view only.
@@ -532,12 +538,13 @@ def build_beta_v(inputlist, imgh=68, imgw=127, convpooldictlist=None,
     return build_beta_single_view(inputlist=inputlist, view='v',
                                   imgh=imgh, imgw=imgw,
                                   convpooldictlist=convpooldictlist,
-                                  nhidden=nhidden, dropoutp=dropoutp)
+                                  nhidden=nhidden, dropoutp=dropoutp,
+                                  noutputs=noutputs)
 
 
 def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
                            convpooldictlist=None,
-                           nhidden=None, dropoutp=None):
+                           nhidden=None, dropoutp=None, noutputs=11):
     """
     This network is modeled after the 'triamese' (tri-columnar) beta model,
     but is meant to operate on one view only.
@@ -585,13 +592,14 @@ def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
     print("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
-    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    # And, finally, the `noutputs`-unit output layer with `dropoutp` dropout
+    # on its inputs:
     net['output_prob'] = DenseLayer(
         dropout(net['dense-across'], p=dropoutp),
-        num_units=11,
+        num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax)
     print("Softmax output prob with n_units = {}, dropout = {}".format(
-        11, dropoutp))
+        noutputs, dropoutp))
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
@@ -599,7 +607,7 @@ def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
 
 def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,
                            convpooldictlist=None,
-                           nhidden=None, dropoutp=None):
+                           nhidden=None, dropoutp=None, noutputs=11):
     """
     'triamese' (one branch for each view, feeding a fully-connected network)
 
@@ -658,13 +666,14 @@ def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,
     print("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
-    # And, finally, the 11-unit output layer with 50% dropout on its inputs:
+    # And, finally, the `noutputs`-unit output layer with `dropoutp` dropout 
+    # on its inputs:
     net['output_prob'] = DenseLayer(
         dropout(net['dense-across'], p=dropoutp),
-        num_units=11,
+        num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax)
     print("Softmax output prob with n_units = {}, dropout = {}".format(
-        11, dropoutp))
+        noutputs, dropoutp))
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
