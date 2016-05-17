@@ -1,0 +1,801 @@
+PBS prologue
+Job mnv-conv-1463439445 submitted from mic.fnal.gov started Mon May 16 17:57:27 CDT 2016 jobid 112886.tev.fnal.gov
+gpu1
+PBS_O_WORKDIR is /home/perdue/ANNMINERvA/WilsonCluster
+Git repo version is ade93a1d62e0
+python minerva_singlepi0_epsilon.py -l -t   -n 4   -r 0.001   -g 0.0001   -s ./lminerva_singlepi0_epsilon1463439447.npz   -d /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5   --imgh_x 72 --imgh_u 36 --imgh_v 36
+Using gpu device 0: Tesla K20m (CNMeM is disabled)
+/usr/local/python2/lib/python2.7/site-packages/theano/tensor/signal/downsample.py:5: UserWarning: downsample module has been moved to the pool module.
+  warnings.warn("downsample module has been moved to the pool module.")
+Starting...
+minerva_singlepi0_epsilon.py
+ Begin with saved parameters? False
+ Saved parameters file: ./lminerva_singlepi0_epsilon1463439447.npz
+ Saved parameters file exists? False
+ Datasets: ['/phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5']
+ Dataset size: 8734219976
+ Planned number of epochs: 4
+ Learning rate: 0.001
+ Momentum: 0.9
+ L2 regularization penalty scale: 0.0001
+ Batch size: 500
+Loading data...
+ Learning sample size = 3791975 examples
+ Validation sample size = 456864 examples
+ Testing sample size = 319806 examples
+Convpool conv-x-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-x-0
+Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-x-1
+Convpool conv-x-2 params: {'filter_size': (6, 3), 'pool_size': (2, 2), 'nfilters': 28}
+Convpool maxpool-x-2
+Convpool conv-x-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-x-3
+Dense dense-x with nhidden = 196, dropout = 0.5
+Convpool conv-u-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-u-0
+Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-u-1
+Convpool conv-u-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+Convpool maxpool-u-2
+Convpool conv-u-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-u-3
+Dense dense-u with nhidden = 196, dropout = 0.5
+Convpool conv-v-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-v-0
+Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-v-1
+Convpool conv-v-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+Convpool maxpool-v-2
+Convpool conv-v-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-v-3
+Dense dense-v with nhidden = 196, dropout = 0.5
+Network: concat columns...
+Dense dense-across with nhidden = 98, dropout = 0.5
+Softmax output prob with n_units = 11, dropout = 0.5
+n-parameters:  832247
+
+In -->          Layer    --> Out    Description                                                  
+-------         -----    -------    -----------                                                  
+[]              0        [1]        <lasagne.layers.input.InputLayer object at 0x2ae7defd8a10>   
+[0]             1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2ae7defd8f10>   
+[1]             2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7defd8f50>
+[2]             3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2ae7bb1e4ed0>   
+[3]             4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7b3ebcb10>
+[4]             5        [6]        <lasagne.layers.conv.Conv2DLayer object at 0x2ae7bb1f51d0>   
+[5]             6        [7]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7bb1e4f10>
+[6]             7        [8]        <lasagne.layers.conv.Conv2DLayer object at 0x2ae7bb1f5210>   
+[7]             8        [9]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7bb1f5490>
+[8]             9        [10]       <lasagne.layers.noise.DropoutLayer object at 0x2ae7defd8ed0> 
+[9]             10       [33]       <lasagne.layers.dense.DenseLayer object at 0x2ae7bb1f5750>   
+[]              11       [12]       <lasagne.layers.input.InputLayer object at 0x2ae7defd8a50>   
+[11]            12       [13]       <lasagne.layers.conv.Conv2DLayer object at 0x2ae7bb1f5d90>   
+[12]            13       [14]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7bb1f5dd0>
+[13]            14       [15]       <lasagne.layers.conv.Conv2DLayer object at 0x2ae7bb1ff0d0>   
+[14]            15       [16]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7bb1f5d50>
+[15]            16       [17]       <lasagne.layers.conv.Conv2DLayer object at 0x2ae7bb1ff110>   
+[16]            17       [18]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7bb1ff390>
+[17]            18       [19]       <lasagne.layers.conv.Conv2DLayer object at 0x2ae7bb1ff3d0>   
+[18]            19       [20]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7bb1ff650>
+[19]            20       [21]       <lasagne.layers.noise.DropoutLayer object at 0x2ae7bb1f5790> 
+[20]            21       [33]       <lasagne.layers.dense.DenseLayer object at 0x2ae7bb1ff910>   
+[]              22       [23]       <lasagne.layers.input.InputLayer object at 0x2ae7defd8450>   
+[22]            23       [24]       <lasagne.layers.conv.Conv2DLayer object at 0x2ae7bb1ffbd0>   
+[23]            24       [25]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7bb1ffc10>
+[24]            25       [26]       <lasagne.layers.conv.Conv2DLayer object at 0x2ae7bb1ffb90>   
+[25]            26       [27]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7bb1ffed0>
+[26]            27       [28]       <lasagne.layers.conv.Conv2DLayer object at 0x2ae7defdd1d0>   
+[27]            28       [29]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7bb1fff10>
+[28]            29       [30]       <lasagne.layers.conv.Conv2DLayer object at 0x2ae7defdd210>   
+[29]            30       [31]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ae7defdd490>
+[30]            31       [32]       <lasagne.layers.noise.DropoutLayer object at 0x2ae7bb1ff950> 
+[31]            32       [33]       <lasagne.layers.dense.DenseLayer object at 0x2ae7defdd750>   
+[10, 21, 32]    33       [34]       <lasagne.layers.merge.ConcatLayer object at 0x2ae7defdd790>  
+[33]            34       [35]       <lasagne.layers.noise.DropoutLayer object at 0x2ae7defdda10> 
+[34]            35       [36]       <lasagne.layers.dense.DenseLayer object at 0x2ae7defdd9d0>   
+[35]            36       [37]       <lasagne.layers.noise.DropoutLayer object at 0x2ae7defdda90> 
+[36]            37       []         <lasagne.layers.dense.DenseLayer object at 0x2ae7defddd90>   
+
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        
+
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        
+Starting training...
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 41.951s.
+  -Iterating over the slice took 46.193s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.557s.
+  -Iterating over the slice took 45.621s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.887s.
+  -Iterating over the slice took 46.169s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.852s.
+  -Iterating over the slice took 46.240s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.883s.
+  -Iterating over the slice took 46.275s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.996s.
+  -Iterating over the slice took 46.258s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.756s.
+  -Iterating over the slice took 46.191s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.076s.
+  -Iterating over the slice took 45.995s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.196s.
+  -Iterating over the slice took 46.245s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.216s.
+  -Iterating over the slice took 46.252s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.127s.
+  -Iterating over the slice took 46.199s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.506s.
+  -Iterating over the slice took 46.196s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.202s.
+  -Iterating over the slice took 46.004s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.339s.
+  -Iterating over the slice took 46.162s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 57.205s.
+  -Iterating over the slice took 46.525s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.149s.
+  -Iterating over the slice took 46.037s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.960s.
+  -Iterating over the slice took 46.308s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.427s.
+  -Iterating over the slice took 45.846s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 51.068s.
+  -Iterating over the slice took 46.639s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 61.265s.
+  -Iterating over the slice took 46.206s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 44.041s.
+  -Iterating over the slice took 46.007s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.468s.
+  -Iterating over the slice took 45.661s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.585s.
+  -Iterating over the slice took 45.791s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.798s.
+  -Iterating over the slice took 45.860s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.478s.
+  -Iterating over the slice took 46.126s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.356s.
+  -Iterating over the slice took 46.013s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.647s.
+  -Iterating over the slice took 45.951s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.592s.
+  -Iterating over the slice took 45.675s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.765s.
+  -Iterating over the slice took 45.733s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.752s.
+  -Iterating over the slice took 45.796s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.866s.
+  -Iterating over the slice took 45.751s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.639s.
+  -Iterating over the slice took 45.690s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.523s.
+  -Iterating over the slice took 46.116s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.774s.
+  -Iterating over the slice took 46.016s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.502s.
+  -Iterating over the slice took 46.043s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.989s.
+  -Iterating over the slice took 45.987s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.350s.
+  -Iterating over the slice took 46.046s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.436s.
+  -Iterating over the slice took 45.755s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.362s.
+  -Iterating over the slice took 45.789s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.374s.
+  -Iterating over the slice took 46.026s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.952s.
+  -Iterating over the slice took 46.039s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.755s.
+  -Iterating over the slice took 46.051s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.415s.
+  -Iterating over the slice took 46.015s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.848s.
+  -Iterating over the slice took 45.792s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.085s.
+  -Iterating over the slice took 45.865s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.372s.
+  -Iterating over the slice took 45.856s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.556s.
+  -Iterating over the slice took 45.575s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.760s.
+  -Iterating over the slice took 46.013s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.234s.
+  -Iterating over the slice took 45.985s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.760s.
+  -Iterating over the slice took 45.846s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.224s.
+  -Iterating over the slice took 45.994s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.528s.
+  -Iterating over the slice took 46.262s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.264s.
+  -Iterating over the slice took 46.211s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.385s.
+  -Iterating over the slice took 46.189s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.322s.
+  -Iterating over the slice took 46.079s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.765s.
+  -Iterating over the slice took 46.108s.
+  Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.153s.
+  -Iterating over the slice took 46.032s.
+  Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.265s.
+  -Iterating over the slice took 46.062s.
+  Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.693s.
+  -Iterating over the slice took 46.012s.
+  Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.680s.
+  -Iterating over the slice took 46.214s.
+  Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.620s.
+  -Iterating over the slice took 46.199s.
+  Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.634s.
+  -Iterating over the slice took 46.124s.
+  Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 57.063s.
+  -Iterating over the slice took 45.977s.
+  Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.463s.
+  -Iterating over the slice took 46.241s.
+  Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 57.526s.
+  -Iterating over the slice took 46.450s.
+  Loading slice (3250000, 3300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 52.861s.
+  -Iterating over the slice took 46.664s.
+  Loading slice (3300000, 3350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 44.414s.
+  -Iterating over the slice took 46.103s.
+  Loading slice (3350000, 3400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.813s.
+  -Iterating over the slice took 45.697s.
+  Loading slice (3400000, 3450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.087s.
+  -Iterating over the slice took 45.690s.
+  Loading slice (3450000, 3500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.095s.
+  -Iterating over the slice took 45.800s.
+  Loading slice (3500000, 3550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.563s.
+  -Iterating over the slice took 45.966s.
+  Loading slice (3550000, 3600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.370s.
+  -Iterating over the slice took 46.031s.
+  Loading slice (3600000, 3650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.984s.
+  -Iterating over the slice took 46.096s.
+  Loading slice (3650000, 3700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.808s.
+  -Iterating over the slice took 46.039s.
+  Loading slice (3700000, 3750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.673s.
+  -Iterating over the slice took 46.007s.
+  Loading slice (3750000, 3791975) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 46.372s.
+  -Iterating over the slice took 38.631s.
+  The validation pass took 596.743s.
+Epoch 1 of 4 took 7881.579s
+  training loss:		0.325617
+  validation loss:		0.304246
+  validation accuracy:		90.57 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.935s.
+  -Iterating over the slice took 45.604s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.821s.
+  -Iterating over the slice took 45.636s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.088s.
+  -Iterating over the slice took 45.362s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.741s.
+  -Iterating over the slice took 45.402s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.340s.
+  -Iterating over the slice took 45.639s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.357s.
+  -Iterating over the slice took 45.611s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.650s.
+  -Iterating over the slice took 45.596s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.340s.
+  -Iterating over the slice took 45.641s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.301s.
+  -Iterating over the slice took 45.580s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.398s.
+  -Iterating over the slice took 45.605s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.507s.
+  -Iterating over the slice took 45.618s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.754s.
+  -Iterating over the slice took 45.585s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.083s.
+  -Iterating over the slice took 45.561s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.007s.
+  -Iterating over the slice took 45.306s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.987s.
+  -Iterating over the slice took 45.997s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.842s.
+  -Iterating over the slice took 45.730s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.227s.
+  -Iterating over the slice took 45.748s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.752s.
+  -Iterating over the slice took 45.690s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.885s.
+  -Iterating over the slice took 45.624s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.579s.
+  -Iterating over the slice took 45.610s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.537s.
+  -Iterating over the slice took 45.757s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.440s.
+  -Iterating over the slice took 45.756s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.734s.
+  -Iterating over the slice took 45.715s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 44.290s.
+  -Iterating over the slice took 45.815s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.450s.
+  -Iterating over the slice took 45.766s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.600s.
+  -Iterating over the slice took 45.752s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.947s.
+  -Iterating over the slice took 45.779s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.599s.
+  -Iterating over the slice took 45.825s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.725s.
+  -Iterating over the slice took 45.810s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.821s.
+  -Iterating over the slice took 45.760s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.425s.
+  -Iterating over the slice took 45.720s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.281s.
+  -Iterating over the slice took 45.445s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.931s.
+  -Iterating over the slice took 45.719s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.107s.
+  -Iterating over the slice took 45.749s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.714s.
+  -Iterating over the slice took 45.553s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.782s.
+  -Iterating over the slice took 45.706s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.436s.
+  -Iterating over the slice took 45.905s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.355s.
+  -Iterating over the slice took 45.428s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 51.657s.
+  -Iterating over the slice took 45.556s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 61.934s.
+  -Iterating over the slice took 45.403s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 46.457s.
+  -Iterating over the slice took 45.258s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.435s.
+  -Iterating over the slice took 45.578s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.164s.
+  -Iterating over the slice took 45.596s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.883s.
+  -Iterating over the slice took 45.613s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.512s.
+  -Iterating over the slice took 45.561s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.392s.
+  -Iterating over the slice took 45.583s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.567s.
+  -Iterating over the slice took 45.576s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.674s.
+  -Iterating over the slice took 45.783s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.368s.
+  -Iterating over the slice took 45.745s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.811s.
+  -Iterating over the slice took 45.693s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.561s.
+  -Iterating over the slice took 45.764s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.437s.
+  -Iterating over the slice took 45.667s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.557s.
+  -Iterating over the slice took 46.032s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.881s.
+  -Iterating over the slice took 45.994s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.202s.
+  -Iterating over the slice took 46.036s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.581s.
+  -Iterating over the slice took 45.710s.
+  Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.260s.
+  -Iterating over the slice took 45.747s.
+  Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.492s.
+  -Iterating over the slice took 45.785s.
+  Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.675s.
+  -Iterating over the slice took 45.732s.
+  Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.167s.
+  -Iterating over the slice took 45.703s.
+  Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.542s.
+  -Iterating over the slice took 45.666s.
+  Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.156s.
+  -Iterating over the slice took 46.025s.
+  Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.982s.
+  -Iterating over the slice took 45.885s.
+  Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.749s.
+  -Iterating over the slice took 45.814s.
+  Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.948s.
+  -Iterating over the slice took 45.744s.
+  Loading slice (3250000, 3300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.575s.
+  -Iterating over the slice took 46.043s.
+  Loading slice (3300000, 3350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.592s.
+  -Iterating over the slice took 45.808s.
+  Loading slice (3350000, 3400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.171s.
+  -Iterating over the slice took 45.802s.
+  Loading slice (3400000, 3450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.237s.
+  -Iterating over the slice took 46.000s.
+  Loading slice (3450000, 3500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.173s.
+  -Iterating over the slice took 46.466s.
+  Loading slice (3500000, 3550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.378s.
+  -Iterating over the slice took 46.223s.
+  Loading slice (3550000, 3600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.389s.
+  -Iterating over the slice took 46.189s.
+  Loading slice (3600000, 3650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.199s.
+  -Iterating over the slice took 46.192s.
+  Loading slice (3650000, 3700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.455s.
+  -Iterating over the slice took 46.199s.
+  Loading slice (3700000, 3750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.236s.
+  -Iterating over the slice took 46.203s.
+  Loading slice (3750000, 3791975) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 46.853s.
+  -Iterating over the slice took 38.781s.
+  The validation pass took 602.338s.
+Epoch 2 of 4 took 7864.959s
+  training loss:		0.302055
+  validation loss:		0.293718
+  validation accuracy:		90.57 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.792s.
+  -Iterating over the slice took 46.189s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.016s.
+  -Iterating over the slice took 45.946s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.208s.
+  -Iterating over the slice took 45.387s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.888s.
+  -Iterating over the slice took 45.782s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.006s.
+  -Iterating over the slice took 45.668s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.722s.
+  -Iterating over the slice took 45.349s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.099s.
+  -Iterating over the slice took 45.732s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.271s.
+  -Iterating over the slice took 45.718s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.588s.
+  -Iterating over the slice took 45.726s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.128s.
+  -Iterating over the slice took 45.745s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.542s.
+  -Iterating over the slice took 45.735s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.824s.
+  -Iterating over the slice took 45.737s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.297s.
+  -Iterating over the slice took 45.729s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.524s.
+  -Iterating over the slice took 45.731s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.759s.
+  -Iterating over the slice took 45.725s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.439s.
+  -Iterating over the slice took 45.700s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.235s.
+  -Iterating over the slice took 45.730s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.514s.
+  -Iterating over the slice took 45.733s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.424s.
+  -Iterating over the slice took 45.724s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.295s.
+  -Iterating over the slice took 45.746s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.591s.
+  -Iterating over the slice took 45.709s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.372s.
+  -Iterating over the slice took 45.734s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.779s.
+  -Iterating over the slice took 45.721s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.333s.
+  -Iterating over the slice took 45.735s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.311s.
+  -Iterating over the slice took 45.770s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.685s.
+  -Iterating over the slice took 45.703s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.126s.
+  -Iterating over the slice took 45.716s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.228s.
+  -Iterating over the slice took 45.736s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.490s.
+  -Iterating over the slice took 45.738s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.765s.
+  -Iterating over the slice took 45.765s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.506s.
+  -Iterating over the slice took 45.732s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.291s.
+  -Iterating over the slice took 45.732s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.002s.
+  -Iterating over the slice took 45.761s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.572s.
+  -Iterating over the slice took 45.726s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.186s.
+  -Iterating over the slice took 45.727s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.502s.
+  -Iterating over the slice took 45.724s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.048s.
+  -Iterating over the slice took 45.713s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.327s.
+  -Iterating over the slice took 45.737s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.856s.
+  -Iterating over the slice took 45.715s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.749s.
+  -Iterating over the slice took 45.718s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.296s.
+  -Iterating over the slice took 45.735s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.006s.
+  -Iterating over the slice took 45.735s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.022s.
+  -Iterating over the slice took 45.735s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.251s.
+  -Iterating over the slice took 45.685s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.053s.
+  -Iterating over the slice took 45.736s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.416s.
+  -Iterating over the slice took 45.732s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.017s.
+  -Iterating over the slice took 45.720s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.766s.
+  -Iterating over the slice took 45.734s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.266s.
+  -Iterating over the slice took 45.729s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.548s.
+  -Iterating over the slice took 45.744s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.327s.
+  -Iterating over the slice took 45.729s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.252s.
+  -Iterating over the slice took 45.333s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.085s.
+  -Iterating over the slice took 45.741s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.165s.
+  -Iterating over the slice took 45.735s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.064s.
+  -Iterating over the slice took 45.761s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.487s.
+  -Iterating over the slice took 45.730s.
+  Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.168s.
+  -Iterating over the slice took 45.723s.
+  Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.038s.
+  -Iterating over the slice took 45.758s.
+  Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.485s.
+  -Iterating over the slice took 45.705s.
+  Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.287s.
+  -Iterating over the slice took 45.741s.
+  Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.779s.
+  -Iterating over the slice took 45.612s.
+  Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.305s.
+  -Iterating over the slice took 45.629s.
+  Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.145s.
+  -Iterating over the slice took 45.749s.
+  Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.222s.
+  -Iterating over the slice took 45.736s.
+  Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.229s.
+  -Iterating over the slice took 45.738s.
+  Loading slice (3250000, 3300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.439s.
+  -Iterating over the slice took 45.737s.
+  Loading slice (3300000, 3350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.959s.
+  -Iterating over the slice took 45.729s.
+  Loading slice (3350000, 3400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.076s.
+  -Iterating over the slice took 45.760s.
+  Loading slice (3400000, 3450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.468s.
+  -Iterating over the slice took 45.734s.
+  Loading slice (3450000, 3500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.317s.
+  -Iterating over the slice took 45.742s.
+  Loading slice (3500000, 3550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.172s.
+  -Iterating over the slice took 45.729s.
+  Loading slice (3550000, 3600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.076s.
+  -Iterating over the slice took 45.772s.
+  Loading slice (3600000, 3650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.917s.
+  -Iterating over the slice took 45.726s.
+  Loading slice (3650000, 3700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.261s.
+  -Iterating over the slice took 45.711s.
+  Loading slice (3700000, 3750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.678s.
+  -Iterating over the slice took 45.705s.
+  Loading slice (3750000, 3791975) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 45.959s.
+  -Iterating over the slice took 38.407s.
+  The validation pass took 599.757s.
+Epoch 3 of 4 took 7853.910s
+  training loss:		0.293833
+  validation loss:		0.287817
+  validation accuracy:		90.57 %
+---
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.975s.
+  -Iterating over the slice took 45.728s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 49.829s.
+  -Iterating over the slice took 45.724s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.923s.
+  -Iterating over the slice took 45.728s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.223s.
+  -Iterating over the slice took 45.714s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.925s.
+  -Iterating over the slice took 45.732s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.945s.
+  -Iterating over the slice took 45.718s.
+  Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.974s.
+  -Iterating over the slice took 45.718s.
+  Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.819s.
+  -Iterating over the slice took 46.200s.
+  Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.460s.
+  -Iterating over the slice took 46.225s.
+  Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.259s.
+  -Iterating over the slice took 46.191s.
+  Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.254s.
+  -Iterating over the slice took 46.174s.
+  Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.122s.
+  -Iterating over the slice took 46.193s.
+  Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.940s.
+  -Iterating over the slice took 46.214s.
+  Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.331s.
+  -Iterating over the slice took 46.235s.
+  Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.933s.
+  -Iterating over the slice took 46.212s.
+  Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.414s.
+  -Iterating over the slice took 46.213s.
+  Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.058s.
+  -Iterating over the slice took 46.221s.
+  Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.785s.
+  -Iterating over the slice took 46.219s.
+  Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.296s.
+  -Iterating over the slice took 46.222s.
+  Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.198s.
+  -Iterating over the slice took 46.224s.
+  Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.279s.
+  -Iterating over the slice took 46.197s.
+  Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.137s.
+  -Iterating over the slice took 46.199s.
+  Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.892s.
+  -Iterating over the slice took 46.221s.
+  Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.352s.
+  -Iterating over the slice took 46.170s.
+  Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.841s.
+  -Iterating over the slice took 46.227s.
+  Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.464s.
+  -Iterating over the slice took 46.224s.
+  Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.075s.
+  -Iterating over the slice took 46.231s.
+  Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.862s.
+  -Iterating over the slice took 46.220s.
+  Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.292s.
+  -Iterating over the slice took 46.225s.
+  Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.221s.
+  -Iterating over the slice took 46.227s.
+  Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.237s.
+  -Iterating over the slice took 46.219s.
+  Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.215s.
+  -Iterating over the slice took 46.221s.
+  Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.121s.
+  -Iterating over the slice took 46.228s.
+  Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.213s.
+  -Iterating over the slice took 46.196s.
+  Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.080s.
+  -Iterating over the slice took 46.231s.
+  Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.462s.
+  -Iterating over the slice took 46.224s.
+  Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.948s.
+  -Iterating over the slice took 46.211s.
+  Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.880s.
+  -Iterating over the slice took 46.231s.
+  Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.389s.
+  -Iterating over the slice took 46.224s.
+  Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.313s.
+  -Iterating over the slice took 46.229s.
+  Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.408s.
+  -Iterating over the slice took 46.199s.
+  Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.080s.
+  -Iterating over the slice took 46.193s.
+  Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.768s.
+  -Iterating over the slice took 46.229s.
+  Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.319s.
+  -Iterating over the slice took 46.204s.
+  Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.757s.
+  -Iterating over the slice took 46.227s.
+  Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.437s.
+  -Iterating over the slice took 46.198s.
+  Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 42.936s.
+  -Iterating over the slice took 46.196s.
+  Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.953s.
+  -Iterating over the slice took 46.257s.
+  Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.328s.
+  -Iterating over the slice took 46.226s.
+  Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.534s.
+  -Iterating over the slice took 45.790s.
+  Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.368s.
+  -Iterating over the slice took 46.005s.
+  Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.205s.
+  -Iterating over the slice took 46.120s.
+  Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.883s.
+  -Iterating over the slice took 46.227s.
+  Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.244s.
+  -Iterating over the slice took 46.184s.
+  Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.072s.
+  -Iterating over the slice took 46.233s.
+  Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.409s.
+  -Iterating over the slice took 46.045s.
+  Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.092s.
+  -Iterating over the slice took 46.226s.
+  Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.625s.
+  -Iterating over the slice took 46.078s.
+  Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.294s.
+  -Iterating over the slice took 46.216s.
+  Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.349s.
+  -Iterating over the slice took 46.146s.
+  Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 44.245s.
+  -Iterating over the slice took 45.909s.
+  Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.183s.
+  -Iterating over the slice took 46.115s.
+  Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.301s.
+  -Iterating over the slice took 46.301s.
+  Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.193s.
+  -Iterating over the slice took 46.230s.
+  Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.033s.
+  -Iterating over the slice took 46.140s.
+  Loading slice (3250000, 3300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.499s.
+  -Iterating over the slice took 46.208s.
+  Loading slice (3300000, 3350000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.081s.
+  -Iterating over the slice took 46.197s.
+  Loading slice (3350000, 3400000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.800s.
+  -Iterating over the slice took 46.228s.
+  Loading slice (3400000, 3450000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.428s.
+  -Iterating over the slice took 46.232s.
+  Loading slice (3450000, 3500000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.126s.
+  -Iterating over the slice took 46.022s.
+  Loading slice (3500000, 3550000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.171s.
+  -Iterating over the slice took 46.223s.
+  Loading slice (3550000, 3600000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 50.275s.
+  -Iterating over the slice took 46.235s.
+  Loading slice (3600000, 3650000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 53.717s.
+  -Iterating over the slice took 46.225s.
+  Loading slice (3650000, 3700000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.262s.
+  -Iterating over the slice took 46.229s.
+  Loading slice (3700000, 3750000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 54.082s.
+  -Iterating over the slice took 46.263s.
+  Loading slice (3750000, 3791975) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 46.214s.
+  -Iterating over the slice took 38.816s.
+  The validation pass took 603.559s.
+Epoch 4 of 4 took 7873.355s
+  training loss:		0.289025
+  validation loss:		0.283679
+  validation accuracy:		90.57 %
+---
+Finished 4 epochs.
+Loading data for testing...
+ Learning sample size = 3791975 examples
+ Validation sample size = 456864 examples
+ Testing sample size = 319806 examples
+ Used testing sample size = 319806 examples
+Convpool conv-x-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-x-0
+Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-x-1
+Convpool conv-x-2 params: {'filter_size': (6, 3), 'pool_size': (2, 2), 'nfilters': 28}
+Convpool maxpool-x-2
+Convpool conv-x-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-x-3
+Dense dense-x with nhidden = 196, dropout = 0.5
+Convpool conv-u-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-u-0
+Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-u-1
+Convpool conv-u-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+Convpool maxpool-u-2
+Convpool conv-u-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-u-3
+Dense dense-u with nhidden = 196, dropout = 0.5
+Convpool conv-v-0 params: {'filter_size': (8, 5), 'pool_size': (2, 2), 'nfilters': 12}
+Convpool maxpool-v-0
+Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 2), 'nfilters': 20}
+Convpool maxpool-v-1
+Convpool conv-v-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+Convpool maxpool-v-2
+Convpool conv-v-3 params: {'filter_size': (3, 3), 'pool_size': (1, 1), 'nfilters': 36}
+Convpool maxpool-v-3
+Dense dense-v with nhidden = 196, dropout = 0.5
+Network: concat columns...
+Dense dense-across with nhidden = 98, dropout = 0.5
+Softmax output prob with n_units = 11, dropout = 0.5
+n-parameters:  832247
+Starting testing...
+  Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 51.094s.
+  -Iterating over the slice took 589.272s.
+  Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.931s.
+  -Iterating over the slice took 588.999s.
+  Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.533s.
+  -Iterating over the slice took 589.196s.
+  Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 51.292s.
+  -Iterating over the slice took 589.467s.
+  Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 55.757s.
+  -Iterating over the slice took 589.159s.
+  Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 43.550s.
+  -Iterating over the slice took 589.144s.
+  Loading slice (300000, 319806) from /phihome/perdue/theano/data/minosmatch_singlepi0_tracker_127x72x36_xuv_me1Amc.hdf5 took 22.831s.
+  -Iterating over the slice took 232.948s.
+Final results:
+  test loss:			0.282709
+  test accuracy:		90.63 %
+   target 0 accuracy:			100.000 %
+   target 1 accuracy:			0.000 %
+Job mnv-conv-1463439445 submitted from mic.fnal.gov finished Tue May 17 03:51:04 CDT 2016 jobid 112886.tev.fnal.gov
+PBS epilogue
