@@ -10,7 +10,7 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=4
+NEPOCHS=8
 LRATE=0.001
 L2REG=0.0001
 
