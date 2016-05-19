@@ -10,11 +10,15 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=8
 NEPOCHS=20
+NEPOCHS=1
 LRATE=0.001
 L2REG=0.0001
 NOUTPUTS=67
+TGTIDX=2
+
+DOTEST=""
+DOTEST="-t"
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x25_u_me1Bmc.hdf5"
 SAVEMODELNAME="./lminerva_betau`date +%s`.npz"
@@ -50,23 +54,23 @@ cp /home/perdue/ANNMINERvA/Lasagne/network_repr.py ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/predictiondb.py ${PBS_O_WORKDIR}
 
 cat << EOF
-python ${PYTHONPROG} -l \
+python ${PYTHONPROG} -l $DOTEST \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --imgh $IMGH --noutputs $NOUTPUTS
+  --imgh $IMGH --noutputs $NOUTPUTS --tgtidx $TGTIDX
 # $START_FROM
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
-python ${PYTHONPROG} -l \
+python ${PYTHONPROG} -l $DOTEST \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --imgh $IMGH --noutputs $NOUTPUTS
+  --imgh $IMGH --noutputs $NOUTPUTS --tgtidx $TGTIDX
 # $START_FROM
 
 # nepochs and lrate don't matter for prediction, but setting them for log-file
