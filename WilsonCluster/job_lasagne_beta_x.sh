@@ -19,6 +19,7 @@ TGTIDX=2
 
 DOTEST=""
 DOTEST="-t"
+IMGH=50
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x50_x_me1Bmc.hdf5"
 SAVEMODELNAME="./lminerva_betax`date +%s`.npz"
