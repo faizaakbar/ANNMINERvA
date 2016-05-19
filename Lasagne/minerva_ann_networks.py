@@ -458,90 +458,6 @@ def build_triamese_delta(inputlist, imgh=68, imgw=127, convpooldictlist=None,
     return net['output_prob']
 
 
-def build_beta_x(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                 nhidden=None, dropoutp=None, noutputs=11):
-    """
-    This network is modeled after the 'triamese' (tri-columnar) beta model,
-    but is meant to operate on the x-view only.
-
-    TODO: make this look like build_beta_u/v.
-    """
-    net = {}
-    # Input layer
-    input_var_x = inputlist[0]
-    tshape = (None, 1, imgw, imgh)
-    net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
-
-    if convpooldictlist is None:
-        convpooldictlist = []
-        convpool1dict = {}
-        convpool1dict['nfilters'] = 32
-        convpool1dict['filter_size'] = (3, 3)
-        convpool1dict['pool_size'] = (2, 2)
-        convpooldictlist.append(convpool1dict)
-        convpool2dict = {}
-        convpool2dict['nfilters'] = 32
-        convpool2dict['filter_size'] = (3, 3)
-        convpool2dict['pool_size'] = (2, 2)
-        convpooldictlist.append(convpool2dict)
-
-    if nhidden is None:
-        nhidden = 256
-
-    if dropoutp is None:
-        dropoutp = 0.5
-
-    net.update(
-        make_Nconvpool_1dense_branch('x', net['input-x'], convpooldictlist,
-                                     nhidden, dropoutp))
-
-    # One more dense layer
-    net['dense-across'] = DenseLayer(
-        dropout(net['dense-x'], p=dropoutp),
-        num_units=(nhidden // 2),
-        nonlinearity=lasagne.nonlinearities.rectify)
-    print("Dense {} with nhidden = {}, dropout = {}".format(
-        'dense-across', nhidden // 2, dropoutp))
-
-    # And, finally, the `noutputs`-unit output layer with `dropoutp` dropout
-    # on its inputs:
-    net['output_prob'] = DenseLayer(
-        dropout(net['dense-across'], p=dropoutp),
-        num_units=noutputs,
-        nonlinearity=lasagne.nonlinearities.softmax)
-    print("Softmax output prob with n_units = {}, dropout = {}".format(
-        noutputs, dropoutp))
-
-    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
-    return net['output_prob']
-
-
-def build_beta_u(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                 nhidden=None, dropoutp=None, noutputs=11):
-    """
-    This network is modeled after the 'triamese' (tri-columnar) beta model,
-    but is meant to operate on the u-view only.
-    """
-    return build_beta_single_view(inputlist=inputlist, view='u',
-                                  imgh=imgh, imgw=imgw,
-                                  convpooldictlist=convpooldictlist,
-                                  nhidden=nhidden, dropoutp=dropoutp,
-                                  noutputs=noutputs)
-
-
-def build_beta_v(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                 nhidden=None, dropoutp=None, noutputs=11):
-    """
-    This network is modeled after the 'triamese' (tri-columnar) beta model,
-    but is meant to operate on the v-view only.
-    """
-    return build_beta_single_view(inputlist=inputlist, view='v',
-                                  imgh=imgh, imgw=imgw,
-                                  convpooldictlist=convpooldictlist,
-                                  nhidden=nhidden, dropoutp=dropoutp,
-                                  noutputs=noutputs)
-
-
 def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
                            convpooldictlist=None,
                            nhidden=None, dropoutp=None, noutputs=11):
@@ -603,6 +519,45 @@ def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
+
+
+def build_beta_x(inputlist, imgh=68, imgw=127, convpooldictlist=None,
+                 nhidden=None, dropoutp=None, noutputs=11):
+    """
+    This network is modeled after the 'triamese' (tri-columnar) beta model,
+    but is meant to operate on the u-view only.
+    """
+    return build_beta_single_view(inputlist=inputlist, view='x',
+                                  imgh=imgh, imgw=imgw,
+                                  convpooldictlist=convpooldictlist,
+                                  nhidden=nhidden, dropoutp=dropoutp,
+                                  noutputs=noutputs)
+
+
+def build_beta_u(inputlist, imgh=68, imgw=127, convpooldictlist=None,
+                 nhidden=None, dropoutp=None, noutputs=11):
+    """
+    This network is modeled after the 'triamese' (tri-columnar) beta model,
+    but is meant to operate on the u-view only.
+    """
+    return build_beta_single_view(inputlist=inputlist, view='u',
+                                  imgh=imgh, imgw=imgw,
+                                  convpooldictlist=convpooldictlist,
+                                  nhidden=nhidden, dropoutp=dropoutp,
+                                  noutputs=noutputs)
+
+
+def build_beta_v(inputlist, imgh=68, imgw=127, convpooldictlist=None,
+                 nhidden=None, dropoutp=None, noutputs=11):
+    """
+    This network is modeled after the 'triamese' (tri-columnar) beta model,
+    but is meant to operate on the v-view only.
+    """
+    return build_beta_single_view(inputlist=inputlist, view='v',
+                                  imgh=imgh, imgw=imgw,
+                                  convpooldictlist=convpooldictlist,
+                                  nhidden=nhidden, dropoutp=dropoutp,
+                                  noutputs=noutputs)
 
 
 def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,

@@ -66,6 +66,8 @@ if __name__ == '__main__':
                       help='Image width (x/u/v)', metavar='IMGW', type='int')
     parser.add_option('--imgh', dest='imgh', default=50,
                       help='Image height (z)', metavar='IMGH', type='int')
+    parser.add_option('--noutputs', dest='noutputs', default=11,
+                      help='number of outputs', metavar='NOUTPUTS', type='int')
     (options, args) = parser.parse_args()
 
     if not options.do_learn and not options.do_test:
@@ -139,6 +141,7 @@ if __name__ == '__main__':
               save_model_file=options.save_model_file,
               start_with_saved_params=options.start_with_saved_params,
               convpooldictlist=convpooldictlist,
+              noutputs=options.noutputs,
               nhidden=nhidden)
 
     if options.do_test:
@@ -153,4 +156,5 @@ if __name__ == '__main__':
              be_verbose=options.be_verbose,
              convpooldictlist=convpooldictlist,
              test_all_data=options.test_all_data,
+             noutputs=options.noutputs,
              nhidden=nhidden)

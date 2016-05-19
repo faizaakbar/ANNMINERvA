@@ -14,6 +14,7 @@ NEPOCHS=8
 NEPOCHS=16
 LRATE=0.001
 L2REG=0.0001
+NOUTPUTS=67
 
 DOTEST=""
 DOTEST="-t"
@@ -57,7 +58,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --imgh 50
+  --imgh $IMGH --noutputs $NOUTPUTS
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l $DOTEST \
@@ -66,7 +67,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --imgh 50
+  --imgh $IMGH --noutputs $NOUTPUTS
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0

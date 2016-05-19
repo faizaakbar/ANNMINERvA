@@ -14,6 +14,7 @@ NEPOCHS=8
 NEPOCHS=20
 LRATE=0.001
 L2REG=0.0001
+NOUTPUTS=67
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x25_v_me1Bmc.hdf5"
 SAVEMODELNAME="./lminerva_betav`date +%s`.npz"
@@ -55,7 +56,7 @@ python ${PYTHONPROG} -l \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --imgh $IMGH
+  --imgh $IMGH --noutputs $NOUTPUTS
 # $START_FROM
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
@@ -65,7 +66,7 @@ python ${PYTHONPROG} -l \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  --imgh $IMGH
+  --imgh $IMGH --noutputs $NOUTPUTS
 # $START_FROM
 
 # nepochs and lrate don't matter for prediction, but setting them for log-file
