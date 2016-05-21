@@ -3,15 +3,15 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
-# not 2 #PBS -l nodes=gpu2:gpu:ppn=1,walltime=24:00:00
-#PBS -l nodes=gpu1:gpu:ppn=1,walltime=24:00:00
+# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
+#PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
 # #PBS -l nodes=1:gpu,walltime=24:00:00
 #PBS -A minervaG
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
 NEPOCHS=20
-NEPOCHS=1
+NEPOCHS=12
 LRATE=0.001
 L2REG=0.0001
 NOUTPUTS=67
