@@ -3,8 +3,8 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
-# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
-#PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
+#PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
+# not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
 # #PBS -l nodes=1:gpu,walltime=24:00:00
 #PBS -A minervaG
 #PBS -q gpu
@@ -72,31 +72,6 @@ python ${PYTHONPROG} -l $DOTEST \
   -d $DATAFILENAME \
   --imgh $IMGH --noutputs $NOUTPUTS --tgtidx $TGTIDX
 # $START_FROM
-
-# nepochs and lrate don't matter for prediction, but setting them for log-file
-# homogeneity
-# cat << EOF
-# python ${PYTHONPROG} -t \
-#   -n $NEPOCHS \
-#   -r $LRATE \
-#   -g $L2REG \
-#   -d $DATAFILENAME \
-#   -s $SAVEMODELNAME -a
-# EOF
-# python ${PYTHONPROG} -t \
-#   -n $NEPOCHS \
-#   -r $LRATE \
-#   -g $L2REG \
-#   -d $DATAFILENAME \
-#   -s $SAVEMODELNAME -a
-
-# Always use fcp to copy any large result files you want to keep back
-# to the file server before exiting your script. The /scratch area on the
-# workers is wiped clean between jobs.
-
-# not really large, but okay... but, no fcp available
-# /usr/local/bin/fcp -c /usr/bin/rcp mlp_best_model.pkl /home/perdue
-# the pkl should just be in my launch dir...
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
