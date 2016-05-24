@@ -10,17 +10,19 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=6
 NEPOCHS=30
+NEPOCHS=12
 LRATE=0.001
 L2REG=0.0001
+NOUTPUTS=67
+TGTIDX=4
 
 DOTEST=""
 DOTEST="-t"
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x50x25_xuv_me1Bmc.hdf5"
-# SAVEMODELNAME="./lminervatriamese_epsilon`date +%s`.npz"
-SAVEMODELNAME="./transfer_to_epsilon_test2.npz"
+SAVEMODELNAME="./lminervatriamese_epsilon`date +%s`.npz"
+# SAVEMODELNAME="./transfer_to_epsilon_test2.npz"
 PYTHONPROG="minerva_triamese_epsilon.py"
 
 # print identifying info for this job
@@ -58,7 +60,8 @@ python ${PYTHONPROG} -l $DOTEST \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
-  -d $DATAFILENAME 
+  -d $DATAFILENAME \
+  --noutputs $NOUTPUTS --tgtidx $TGTIDX
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l $DOTEST \
@@ -66,7 +69,8 @@ python ${PYTHONPROG} -l $DOTEST \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
-  -d $DATAFILENAME 
+  -d $DATAFILENAME \
+  --noutputs $NOUTPUTS --tgtidx $TGTIDX
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
