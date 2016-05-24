@@ -5,7 +5,7 @@
 #PBS -o ./lasagne_conv_out_job.txt
 # not 2 #PBS -l nodes=gpu2:gpu:ppn=1,walltime=24:00:00
 # not 1 #PBS -l nodes=gpu1:gpu:ppn=1,walltime=24:00:00
-#PBS -l nodes=1:gpu,walltime=24:00:00
+#PBS -l nodes=1:gpu:pnn=2,walltime=24:00:00
 #PBS -A minervaG
 #PBS -q gpu
 #restore to turn off email #PBS -m n
