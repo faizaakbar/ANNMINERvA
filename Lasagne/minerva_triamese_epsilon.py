@@ -78,6 +78,10 @@ if __name__ == '__main__':
                       help='Image height (z) u', metavar='IMGH_U', type='int')
     parser.add_option('--imgh_v', dest='imgh_v', default=25,
                       help='Image height (z) v', metavar='IMGH_V', type='int')
+    parser.add_option('--noutputs', dest='noutputs', default=11,
+                      help='number of outputs', metavar='NOUTPUTS', type='int')
+    parser.add_option('--tgtidx', dest='tgtidx', default=5,
+                      help='train-to index in hdf5', metavar='TGTIDX', type='int')
     (options, args) = parser.parse_args()
 
     if not options.do_learn and \
@@ -208,6 +212,8 @@ if __name__ == '__main__':
         learn(build_cnn=build_network_function,
               imgw=imgw,
               imgh=imgh,
+              target_idx=options.tgtidx,
+              noutputs=options.noutputs,
               num_epochs=options.n_epochs,
               learning_rate=options.lrate,
               momentum=options.momentum,
@@ -223,6 +229,8 @@ if __name__ == '__main__':
         test(build_cnn=build_network_function,
              imgw=imgw,
              imgh=imgh,
+             target_idx=options.tgtidx,
+             noutputs=options.noutputs,
              data_file_list=options.dataset,
              l2_penalty_scale=options.l2_penalty_scale,
              save_model_file=options.save_model_file,
@@ -235,6 +243,8 @@ if __name__ == '__main__':
         predict(build_cnn=build_network_function,
                 imgw=imgw,
                 imgh=imgh,
+                target_idx=options.tgtidx,
+                noutputs=options.noutputs,
                 data_file_list=options.dataset,
                 save_model_file=options.save_model_file,
                 be_verbose=options.be_verbose,
