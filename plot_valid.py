@@ -136,25 +136,25 @@ if PRINT_REPO_ON_PLOT:
     pylab.annotate(repo,
                    xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]),
                    xytext=(0.35, 0.5), textcoords='figure fraction')
-pylab.annotate("Learning rate = %f" % (learning_rate),
+pylab.annotate("Learning rate = %4.3f" % (learning_rate),
                xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]),
                xytext=(0.35, 0.45), textcoords='figure fraction')
 pylab.annotate("Learning schedule = %s" % (learning_rate_schedule),
                xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]),
                xytext=(0.35, 0.4), textcoords='figure fraction')
-pylab.annotate("Momentum = %f" % (momentum),
+pylab.annotate("Momentum = %2.1f" % (momentum),
                xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]),
                xytext=(0.35, 0.35), textcoords='figure fraction')
-pylab.annotate("L2 penalty = %f" % (l2_pen),
+pylab.annotate("L2 penalty = %5.4f" % (l2_pen),
                xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]),
                xytext=(0.35, 0.3), textcoords='figure fraction')
-pylab.annotate("Training size = %d" % (num_learn),
+pylab.annotate("Training size = %g" % (num_learn),
                xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]),
                xytext=(0.35, 0.25), textcoords='figure fraction')
 pylab.annotate("Batch size = %d" % (batch_sz),
                xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]),
                xytext=(0.35, 0.2), textcoords='figure fraction')
-pylab.annotate("Final accuracy = %f%%" % (val_accs[-1]),
+pylab.annotate("Final accuracy = %4.2f%%" % (val_accs[-1]),
                xy=(epochs[len(epochs) // 2], val_accs[len(val_accs) // 2]),
                xytext=(0.35, 0.15), textcoords='figure fraction')
 pylab.savefig('lasagne_conv_out_job%d_val_acc_vs_epoch_%s.pdf' % (tstamp, repo))
@@ -169,19 +169,19 @@ if PRINT_REPO_ON_PLOT:
     pylab.annotate(repo,
                    xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]),
                    xytext=(0.4, 0.6), textcoords='figure fraction')
-pylab.annotate("Learning rate = %f" % (learning_rate),
+pylab.annotate("Learning rate = %4.3f" % (learning_rate),
                xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]),
                xytext=(0.4, 0.55), textcoords='figure fraction')
 pylab.annotate("Learning schedule = %s" % (learning_rate_schedule),
                xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]),
                xytext=(0.4, 0.5), textcoords='figure fraction')
-pylab.annotate("Momentum = %f" % (momentum),
+pylab.annotate("Momentum = %2.1f" % (momentum),
                xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]),
                xytext=(0.4, 0.45), textcoords='figure fraction')
-pylab.annotate("L2 penalty = %f" % (l2_pen),
+pylab.annotate("L2 penalty = %5.4f" % (l2_pen),
                xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]),
                xytext=(0.4, 0.4), textcoords='figure fraction')
-pylab.annotate("Training size = %d" % (num_learn),
+pylab.annotate("Training size = %g" % (num_learn),
                xy=(epochs[len(epochs) // 2], val_loss[len(val_loss) // 2]),
                xytext=(0.4, 0.35), textcoords='figure fraction')
 pylab.annotate("Batch size = %d" % (batch_sz),
@@ -201,10 +201,10 @@ if PRINT_REPO_ON_PLOT:
                    xy=(epochs[len(epochs) // 2],
                        run_times[len(run_times) // 2]),
                    xytext=(0.25, 0.8), textcoords='figure fraction')
-pylab.annotate("Learning rate = %f" % (learning_rate),
+pylab.annotate("Learning rate = %4.3f" % (learning_rate),
                xy=(epochs[len(epochs) // 2], run_times[len(run_times) // 2]),
                xytext=(0.25, 0.75), textcoords='figure fraction')
-pylab.annotate("Momentum = %f" % (momentum),
+pylab.annotate("Momentum = %2.1f" % (momentum),
                xy=(epochs[len(epochs) // 2], run_times[len(run_times) // 2]),
                xytext=(0.25, 0.70), textcoords='figure fraction')
 pylab.annotate("Training size = %d" % (num_learn),
