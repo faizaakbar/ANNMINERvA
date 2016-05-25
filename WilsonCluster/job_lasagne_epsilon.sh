@@ -3,8 +3,8 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
-#PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
-# not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
+# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
+#PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
 # have to pick... #PBS -l nodes=1:gpu,walltime=24:00:00
 #PBS -A minervaG
 #PBS -q gpu
