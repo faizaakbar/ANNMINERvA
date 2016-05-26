@@ -3,15 +3,15 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
-# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
-#PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
+#PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
+# not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
 # have to pick... #PBS -l nodes=1:gpu,walltime=24:00:00
 #PBS -A minervaG
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=30
 NEPOCHS=12
+NEPOCHS=30
 LRATE=0.001
 L2REG=0.0001
 NOUTPUTS=67
@@ -21,8 +21,9 @@ DOTEST=""
 DOTEST="-t"
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x50x25_xuv_me1Bmc.hdf5"
-SAVEMODELNAME="./lminervatriamese_epsilon`date +%s`.npz"
+# SAVEMODELNAME="./lminervatriamese_epsilon`date +%s`.npz"
 # SAVEMODELNAME="./transfer_to_epsilon_test2.npz"
+SAVEMODELNAME="./transfer_to_epsilon_noutputs67_test3.npz"
 PYTHONPROG="minerva_triamese_epsilon.py"
 
 # print identifying info for this job
