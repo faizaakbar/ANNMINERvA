@@ -810,7 +810,8 @@ def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
                               filebase, hdf5file, add_target_padding=False,
                               apply_transforms=False,
                               insert_x_padding_into_uv=True,
-                              min_keep_z=0.0):
+                              min_keep_z=0.0,
+                              cap_planecode=213):
     """
     imgw, imgh - ints that specify the image size for `reshape`
     filebase - pattern used for files to match into the output
@@ -820,6 +821,10 @@ def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
 
     note that imgw traverses the "y" direction and imgh traverses the "x"
     direction in the classic mathematician's graph
+
+    note that `cap_planecode` is used to just map all planecode values
+    above the cap to the cap (to make 'large' n-ouput classifiers more
+    tractable)
 
     note that filebase is a pattern - if multiple files match
     the pattern, then multiple files will be included in the
@@ -851,6 +856,8 @@ def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
             get_nukecc_vtx_study_data_from_file(
                 fname, imgw, imgh, trims, add_target_padding,
                 insert_x_padding_into_uv)
+        plane_caps = np.zeros_like(planecodes) + cap_planecode
+        planecodes = np.minimum(planecodes, plane_caps)
         print('data shapes:',
               np.shape(dataX), np.shape(dataU), np.shape(dataV))
         dset_vals = [dataX, dataU, dataV, targs, zs, planecodes, eventids]
@@ -904,6 +911,9 @@ if __name__ == '__main__':
     parser.add_option('--min_keep_z', default=0.0, type='float',
                       help='Minimum z at which to keep events',
                       metavar='MIN_KEEP_Z', dest='min_keep_z')
+    parser.add_option('--cap_planecode', default=213, type='int',
+                      help='Cap planecode values (but keep all events)',
+                      metavar='MAX_PLANECODE', dest='cap_planecode')
     parser.add_option('--trim_column_down_x', default=94, type='int',
                       help='Trim column downstream x', metavar='XTRIM_COL_DN',
                       dest='trim_column_down_x')
@@ -961,7 +971,8 @@ if __name__ == '__main__':
                                   views, filebase, hdf5file, options.padding,
                                   apply_trans,
                                   options.insert_x_padding_into_uv,
-                                  options.min_keep_z)
+                                  options.min_keep_z,
+                                  options.cap_planecode)
     elif options.skim == 'had_mult':
         make_hadronmult_hdf5_file(filebase, hdf5file,
                                   options.had_mult_overflow)
