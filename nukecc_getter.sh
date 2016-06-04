@@ -17,11 +17,12 @@ fileroots="minosmatch_127x94_me1Bmc_"
 fileroots="minosmatch_nukecczdefs_fullz_127x94_me1Amc_"
 fileroots="minosmatch_nukecczdefs_127x94_me1Bmc_"
 fileroots="minosmatch_hadmult_me1Amc_"
+fileroots="minosmatch_nukecczdefs_fullz_127x94_me1Bmc_"
 
 MINERVA_RELEASE="v10r8p8"
-REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/nukeccskimmer_minosmatch_127x94_nukecczdefs"
 REMOTE_DIR="/minerva/app/users/perdue/cmtuser/Minerva_${MINERVA_RELEASE}/Ana/NuclearTargetVertexing/ana/make_hist"
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/hadmult_skims/cvs_rev1_1"
+REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/nukeccskimmer_minosmatch_127x94_nukecczdefs"
 
 for file in $fileroots
 do
