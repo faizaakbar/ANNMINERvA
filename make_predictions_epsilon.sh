@@ -1,9 +1,12 @@
 #!/bin/sh
 
+DATE="1465065844"
+MODEL=lminervatriamese_epsilon${DATE}.npz
+
 python Lasagne/minerva_triamese_epsilon.py \
   -d minosmatch_nukecczdefs_127x50x25_xuv_me1Amc.hdf5 \
-  -t \
   -p \
-  -v \
+  -t \
   -a \
-  -s models/lminervatriamese_epsilon1464985025.npz | tee evt_log_me1A_epsilon1464985025.txt
+  -s models/${MODEL} | tee evt_log_me1A_epsilon${DATE}.txt
+  # -v \
