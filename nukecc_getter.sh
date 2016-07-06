@@ -13,9 +13,10 @@ fi
 echo "Grabbing runs $START to $STOP..."
 
 fileroots="minosmatch_nukecczdefs_fullz_127x94_minerva1mc_"
+fileroots="minosmatch_hadmult_minerva1mc_"
 
-REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/hadmult_skims/cvs_rev1_1"
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/nukeccskimmer_minosmatch_127x94_nukecczdefs"
+REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/hadmult_skims/cvs_rev1_1"
 
 for file in $fileroots
 do
