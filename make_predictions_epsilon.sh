@@ -9,10 +9,14 @@ DATAFILE=minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_minerva1mc_0000.hdf
 # LOGFILE=evt_log_me1A_epsilon${DATE}.txt
 LOGFILE=evt_log_minerva1_epsilon${DATE}_0000.txt
 
+# `-p` == make predictions (db file)
+# `-t` == run test (no db file)
+# `-v` == run in verbose mode
+# `-a` == use the whole file as if it were the "test" sample
 python Lasagne/minerva_triamese_epsilon.py \
   -d $DATAFILE \
-  -p \
+  -t \
+  -v \
   -a \
   -s models/${MODEL} | tee $LOGFILE
-  # -t \
-  # -v \
+  # -p \
