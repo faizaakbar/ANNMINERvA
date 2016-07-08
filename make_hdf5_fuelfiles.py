@@ -11,6 +11,7 @@ Currently allowed 'skim' values:
     * nukecc_vtx
     * had_mult
     * single_pi0
+    * muon_dat
 
 The default output name is 'minerva_fuel.hdf5'. The default skim type is
 'nukecc_vtx'. Default image width and heights are 127 x 94. Target padding
@@ -33,6 +34,14 @@ and W correpsonds to the view axis
 * The 'had_mult' `--skim` option expects data layout like:
     # 0   1   2   3   4   5   6   7
     # run sub gt  slc data... (p:pdg:E)
+
+* The 'muon_dat' `--skim` option expects data layout like:
+    # 0   1   2   3   4          5          6         7           8
+    # run sub gt  slc vtx_reco_x vtx_reco_y vtx_reco_z vtx_reco_t muon_E
+    # 9            10           11          12          13
+    # muon_theta_X muon_theta_Y muon_orig_x muon_orig_y muon_orig_z
+    # 14                15                16           17
+    # vtx_n_tracks_prim vtx_fit_converged vtx_fit_chi2 vtx_used_short_track
 """
 from __future__ import print_function
 import sys
@@ -388,6 +397,70 @@ def get_hadmult_study_data_from_file(filename, had_mult_overflow):
     return storedat
 
 
+def get_muon_data_from_file(filename):
+    print("...loading data")
+    eventids = []
+    vtx_xs = []
+    vtx_ys = []
+    vtx_zs = []
+    vtx_ts = []
+    # muon_E
+    # muon_theta_X
+    # muon_theta_Y
+    orig_xs = []
+    orig_ys = []
+    orig_zs = []
+    n_tracks = []
+    fit_converged =[]
+    fit_chi2 = []
+    used_short_track =[]
+    # format:
+    # 0   1   2   3   4          5          6         7           8
+    # run sub gt  slc vtx_reco_x vtx_reco_y vtx_reco_z vtx_reco_t muon_E
+    # 9            10           11          12          13
+    # muon_theta_X muon_theta_Y muon_orig_x muon_orig_y muon_orig_z
+    # 14                15                16           17
+    # vtx_n_tracks_prim vtx_fit_converged vtx_fit_chi2 vtx_used_short_track
+
+    with gzip.open(filename, 'r') as f:
+        for line in f.readlines():
+            if line[0] == '#':
+                continue
+            elems = line.split()
+            eventid = elems[0] + elems[1].zfill(4) + elems[2].zfill(4) \
+                + elems[3].zfill(2)
+            eventids.append(eventid)
+            vtx_xs.append(elems[4])
+            vtx_ys.append(elems[5])
+            vtx_zs.append(elems[6])
+            vtx_ts.append(elems[7])
+            orig_xs.append(elems[11])
+            orig_ys.append(elems[12])
+            orig_zs.append(elems[13])
+            n_tracks.append(elems[14])
+            fit_converged.append(elems[15])
+            fit_chi2.append(elems[16])
+            used_short_track.append(elems[17])
+    eventids = np.asarray(eventids, dtype=np.uint64)
+    vtx_xs = np.asarray(vtx_xs, dtype=np.float32)
+    vtx_ys = np.asarray(vtx_ys, dtype=np.float32)
+    vtx_zs = np.asarray(vtx_zs, dtype=np.float32)
+    vtx_ts = np.asarray(vtx_ts, dtype=np.float32)
+    orig_xs = np.asarray(orig_xs, dtype=np.float32)
+    orig_ys = np.asarray(orig_ys, dtype=np.float32)
+    orig_zs = np.asarray(orig_zs, dtype=np.float32)
+    n_tracks = np.asarray(n_tracks, dtype=np.uint8)
+    fit_converged = np.asarray(fit_converged, dtype=np.uint8)
+    fit_chi2 = np.asarray(fit_chi2, dtype=np.float32)
+    used_short_track = np.asarray(used_short_track, dtype=np.uint8)
+    storedat = (vtx_xs, vtx_ys, vtx_zs, vtx_ts,
+                orig_xs, orig_ys, orig_zs,
+                n_tracks, fit_converged, fit_chi2, used_short_track,
+                eventids)
+    print("...finished loading")
+    return storedat
+
+
 def filter_hadmult_data_for_singlepi0(dsetvals):
     """"
     we want to insert the 0/1 bkg/signal flag in as an array just before
@@ -640,6 +713,32 @@ def build_hadronic_exclusive_state_dset_description():
     return excl_dset_description
 
 
+def build_muon_data_dset_description():
+    """
+    storedat = (vtx_reco_x, vtx_reco_y, vtx_reco_z, vtx_reco_t, 
+                muon_orig_x, muon_orig_y, muon_orig_z,
+                vtx_n_tracks_prim, vtx_fit_converged,
+                vtx_fit_chi2, vtx_used_short_track,
+                eventids)
+    excluded: muon_E, muon_theta_X, muon_theta_Y
+    """
+    dset_description = OrderedDict(
+        (('vtx_reco_x', ('float32', 'vtx_reco_x')),
+         ('vtx_reco_y', ('float32', 'vtx_reco_y')),
+         ('vtx_reco_z', ('float32', 'vtx_reco_z')),
+         ('vtx_reco_t', ('float32', 'vtx_reco_t')),
+         ('muon_orig_x', ('float32', 'muon_orig_x')),
+         ('muon_orig_y', ('float32', 'muon_orig_y')),
+         ('muon_orig_z', ('float32', 'muon_orig_z')),
+         ('vtx_n_tracks_prim', ('uint8', 'vtx_n_tracks_prim')),
+         ('vtx_fit_converged', ('uint8', 'vtx_fit_converged')),
+         ('vtx_fit_chi2', ('float32', 'vtx_fit_chi2')),
+         ('vtx_used_short_track', ('uint8', 'vtx_used_short_track')),
+         ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
+    )
+    return dset_description
+
+
 def build_nukecc_vtx_study_dset_description(views, img_dimensions):
     """
     views - list or string of 'xuv' views to include
@@ -804,6 +903,33 @@ def filter_for_min_z(dset_vals, min_keep_z):
     for d in dset_vals:
         new_vals.append(d[keep_idx])
     return new_vals
+
+
+def make_muondat_hdf5_file(filebase, hdf5file):
+    """
+    note that filebase is a pattern - if multiple files match
+    the pattern, then multiple files will be included in the
+    single output file
+    """
+    print('Making hdf5 file for muon data')
+    files = make_file_list(filebase)
+    f = prepare_hdf5_file(hdf5file)
+
+    dset_description = build_muon_data_dset_description()
+    print(dset_description)
+    prep_datasets_using_dset_descrip_only(f, dset_description)
+    dset_names = dset_description.keys()
+
+    total_examples = 0
+
+    for fname in files:
+        print("Iterating over file:", fname)
+        dset_vals = get_muon_data_from_file(fname)
+        total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
+
+    add_split_dict(f, dset_names, total_examples)
+
+    f.close()
 
 
 def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
@@ -979,3 +1105,5 @@ if __name__ == '__main__':
     elif options.skim == 'single_pi0':
         make_singlepi0_hdf5_file(filebase, hdf5file,
                                  options.had_mult_overflow)
+    elif options.skim == 'muon_dat':
+        make_muondat_hdf5_file(filebase, hdf5file)
