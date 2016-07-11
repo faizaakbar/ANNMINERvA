@@ -83,6 +83,8 @@ PDG_NUMUBAR = -14
 PDG_ANTITAU = -15
 PDG_NUTAUBAR = -16
 
+NUM_MUONDAT_VARS = 10
+
 
 def compute_target_padding():
     """
@@ -417,9 +419,9 @@ def get_muon_data_from_file(filename):
             eventid = elems[0] + elems[1].zfill(4) + elems[2].zfill(4) \
                 + elems[3].zfill(2)
             eventids.append(eventid)
-            muon_data = [elems[4], elems[5], elems[6], elems[7], elems[11], 
-                         elems[12], elems[13], elems[14], elems[15], elems[16],
-                         elems[17]]
+            item_data = [elems[4], elems[5], elems[6], elems[11], elems[12],
+                         elems[13], elems[14], elems[15], elems[16], elems[17]]
+            muon_data.append(item_data)
     eventids = np.asarray(eventids, dtype=np.uint64)
     muon_data = np.asarray(muon_data, dtype=np.float32)
     storedat = (muon_data, eventids)
@@ -640,9 +642,9 @@ def prep_datasets_for_muondata(hdf5file, dset_description):
     hdf5file - where we will add dsets,
     dset_desciption - ordered dict containing all the pieces of the dset
     """
-    data_set = hdf5file.create_dataset('muon_data', (0, 11),
+    data_set = hdf5file.create_dataset('muon_data', (0, NUM_MUONDAT_VARS),
                                        dtype='float32', compression='gzip',
-                                       maxshape=(None, 11))
+                                       maxshape=(None, NUM_MUONDAT_VARS))
     data_set.dims[0].label = 'batch'
     data_set.dims[1].label = 'muon data'
     create_1d_dset(hdf5file, 'eventids', 'uint64',
@@ -695,15 +697,15 @@ def build_hadronic_exclusive_state_dset_description():
 
 def build_muon_data_dset_description():
     """
-    muon_data = [vtx_reco_x, vtx_reco_y, vtx_reco_z, vtx_reco_t, 
+    muon_data = [vtx_reco_x, vtx_reco_y, vtx_reco_z, 
                  muon_orig_x, muon_orig_y, muon_orig_z,
                  vtx_n_tracks_prim, vtx_fit_converged,
                  vtx_fit_chi2, vtx_used_short_track]
     storedat = (muon_data, eventids)
-    excluded: muon_E, muon_theta_X, muon_theta_Y
+    excluded: vtx_reco_t, muon_E, muon_theta_X, muon_theta_Y
     """
     dset_description = OrderedDict(
-        (('muon_data', (11, 1)),
+        (('muon_data', (NUM_MUONDAT_VARS, 1)),
          ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
     )
     return dset_description
