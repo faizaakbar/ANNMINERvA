@@ -20,7 +20,6 @@ do
     -b ${INBASE}_${paddednum} \
     -o ${OUTBASE}_${paddednum}.hdf5 \
     -x \
-    --trim_column_up_x 22 --trim_column_down_x 94 \
-    --trim_column_up_uv 11 --trim_column_down_uv 47 \
-    --min_keep_z 5810
+    --trim_column_down_x 94 \
+    --trim_column_down_uv 47
 done
