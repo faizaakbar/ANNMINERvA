@@ -12,6 +12,7 @@ Currently allowed 'skim' values:
     * had_mult
     * single_pi0
     * muon_dat
+    * time_dat
 
 The default output name is 'minerva_fuel.hdf5'. The default skim type is
 'nukecc_vtx'. Default image width and heights are 127 x 94. Target padding
@@ -42,6 +43,10 @@ and W correpsonds to the view axis
     # muon_theta_X muon_theta_Y muon_orig_x muon_orig_y muon_orig_z
     # 14                15                16           17
     # vtx_n_tracks_prim vtx_fit_converged vtx_fit_chi2 vtx_used_short_track
+
+* The 'time_dat' `--skim` option expects data layout like:
+    # 0   1   2   3   4   5     6     7
+    # seg z   pln run sub gate  slice data (X:[t] U:[t] ... etc.)...
 """
 from __future__ import print_function
 import sys
@@ -516,6 +521,57 @@ def get_nukecc_vtx_study_data_from_file(filename, imgw, imgh, trims,
     return storedat
 
 
+def get_time_data_from_file(filename, imgw, imgh, trims,
+                                        add_target_padding=False,
+                                        insert_x_padding_into_uv=True):
+    """
+    imgw, imgh - specify the size of the raw data image in the file
+
+    trim_column_up - specify if we want to trim the target region of
+    the detector off for tracker analysis
+    trim_column_dn - specify if we want to cut the downstream part of
+    the detector off to speed up target analysis
+
+    NOTE: trim_column_up and trim_column_dn use AFTER PADDING NUMBERS!
+
+    add_target_padding - add in blanks for the targets in the target region?
+
+    Return (dataX, dataU, dataV, eventids) in that order.
+    """
+    print("...loading data")
+    eventids = []
+    dataX = []
+    dataU = []
+    dataV = []
+    # format:
+    # 0   1   2   3   4   5   6   7
+    # seg z   pln run sub gt  slc data...
+
+    with gzip.open(filename, 'r') as f:
+        for line in f.readlines():
+            if line[0] == '#':
+                continue
+            elems = line.split()
+            eventid = elems[0] + elems[1].zfill(4) + elems[2].zfill(4) \
+                + elems[3].zfill(2)
+            eventids.append(eventid)
+            rowdat = elems[4:]
+            hitsX, hitsU, hitsV = unpack_xuv_skim_data(
+                rowdat, imgw, imgh, add_target_padding,
+                trims, insert_x_padding_into_uv)
+            dataX.append(hitsX)
+            dataU.append(hitsU)
+            dataV.append(hitsV)
+
+    eventids = np.asarray(eventids, dtype=np.uint64)
+    dataX = transform_to_4d_tensor(np.asarray(dataX, dtype=np.float32))
+    dataU = transform_to_4d_tensor(np.asarray(dataU, dtype=np.float32))
+    dataV = transform_to_4d_tensor(np.asarray(dataV, dtype=np.float32))
+    storedat = (dataX, dataU, dataV, eventids)
+    print("...finished loading")
+    return storedat
+
+
 def transform_to_4d_tensor(tensr):
     shpvar = np.shape(tensr)
     shpvar = (shpvar[0], 1, shpvar[1], shpvar[2])
@@ -637,6 +693,27 @@ def prep_datasets_for_targetz(hdf5file, dset_description, img_dimensions):
                        'run+subrun+gate+slices[0]')
 
 
+def prep_datasets_for_times(hdf5file, dset_description, img_dimensions):
+    """
+    hdf5file - where we will add dsets,
+    dset_desciption - ordered dict containing all the pieces of the dset
+    img_dimensions - list [x,u,v] of tuples of (w, h)
+    """
+    dset_names = dset_description.keys()
+    if 'times-x' in dset_names:
+        create_view_dset(hdf5file, 'times-x',
+                         img_dimensions[0][0], img_dimensions[0][1])
+    if 'times-u' in dset_names:
+        create_view_dset(hdf5file, 'times-u',
+                         img_dimensions[1][0], img_dimensions[1][1])
+    if 'times-v' in dset_names:
+        create_view_dset(hdf5file, 'times-v',
+                         img_dimensions[2][0], img_dimensions[2][1])
+    if 'eventids' in dset_names:
+        create_1d_dset(hdf5file, 'eventids', 'uint64',
+                       'run+subrun+gate+slices[0]')
+
+
 def prep_datasets_for_muondata(hdf5file, dset_description):
     """
     hdf5file - where we will add dsets,
@@ -734,6 +811,26 @@ def build_nukecc_vtx_study_dset_description(views, img_dimensions):
     return dset_description
 
 
+def build_time_dat_dset_description(views, img_dimensions):
+    """
+    views - list or string of 'xuv' views to include
+    img_dimensions - a list of tuples of (w,h) - should be final output size
+    """
+    dset_description = OrderedDict(
+        (('times-x', img_dimensions[0]),
+         ('times-u', img_dimensions[1]),
+         ('times-v', img_dimensions[2]),
+         ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
+    )
+    if 'x' not in views:
+        del dset_description['times-x']
+    if 'u' not in views:
+        del dset_description['times-u']
+    if 'v' not in views:
+        del dset_description['times-v']
+    return dset_description
+
+
 def filter_nukecc_vtx_det_vals_for_names(vals, names):
     """
     look through all the dsets we wish to include by name and only keep
@@ -748,6 +845,27 @@ def filter_nukecc_vtx_det_vals_for_names(vals, names):
     """
     new_vals = []
     full_name_list = build_nukecc_vtx_study_dset_description(
+        'xuv', [(0, 0), (0, 0), (0, 0)]).keys()
+    for i, name in enumerate(full_name_list):
+        if name in names:
+            new_vals.append(vals[i])
+    return new_vals
+
+
+def filter_times_det_vals_for_names(vals, names):
+    """
+    look through all the dsets we wish to include by name and only keep
+    the vals that match that name (by index!) in the return vector.
+
+    note that we are relying on the vals showing up in the same order
+    as the names generated from the times dset description generator.
+    there is no extra metadata in the list to identify the correct pairing.
+
+    raw time vals structure is like:
+        dset_vals = [dataX, dataU, dataV, eventids]
+    """
+    new_vals = []
+    full_name_list = build_time_dat_dset_description(
         'xuv', [(0, 0), (0, 0), (0, 0)]).keys()
     for i, name in enumerate(full_name_list):
         if name in names:
@@ -970,6 +1088,67 @@ def make_nukecc_vtx_hdf5_file(imgw, imgh, trims, views,
     f.close()
 
 
+def make_time_dat_hdf5_file(imgw, imgh, trims, views,
+                            filebase, hdf5file, add_target_padding=False,
+                            apply_transforms=False,
+                            insert_x_padding_into_uv=True):
+    """
+    imgw, imgh - ints that specify the image size for `reshape`
+    filebase - pattern used for files to match into the output
+    hdf5file - name of the output file
+
+    NOTE: trims [x,u,v] are for AFTER padding numbers!
+
+    note that imgw traverses the "y" direction and imgh traverses the "x"
+    direction in the classic mathematician's graph
+
+    note that `cap_planecode` is used to just map all planecode values
+    above the cap to the cap (to make 'large' n-ouput classifiers more
+    tractable)
+
+    note that filebase is a pattern - if multiple files match
+    the pattern, then multiple files will be included in the
+    single output file
+    """
+    print('Making hdf5 file for img-in x: {} x {} and out {} x {}-{}'.format(
+        imgw, imgh, imgw, trims[0][0], trims[0][1]))
+    print('Making hdf5 file for img-in u: {} x {} and out {} x {}-{}'.format(
+        imgw, imgh, imgw, trims[1][0], trims[1][1]))
+    print('Making hdf5 file for img-in v: {} x {} and out {} x {}-{}'.format(
+        imgw, imgh, imgw, trims[2][0], trims[2][1]))
+
+    files = make_file_list(filebase)
+    f = prepare_hdf5_file(hdf5file)
+
+    img_dims = [(imgw, trims[0][1] - trims[0][0]),
+                (imgw, trims[1][1] - trims[1][0]),
+                (imgw, trims[2][1] - trims[2][0])]
+    dset_description = build_time_dat_dset_description(views, img_dims)
+    print(dset_description)
+    prep_datasets_for_times(f, dset_description, img_dims)
+    dset_names = dset_description.keys()
+
+    total_examples = 0
+
+    for fname in files:
+        print("Iterating over file:", fname)
+        dataX, dataU, dataV, eventids = \
+            get_time_data_from_file(
+                fname, imgw, imgh, trims, add_target_padding,
+                insert_x_padding_into_uv)
+        print('data shapes:',
+              np.shape(dataX), np.shape(dataU), np.shape(dataV))
+        dset_vals = [dataX, dataU, dataV, eventids]
+        dset_vals = filter_times_det_vals_for_names(dset_vals, dset_names)
+        if len(views) == 1 and apply_transforms:
+            dset_vals = transform_view(dset_vals, views[0])
+        total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
+
+    add_split_dict(f, dset_names, total_examples)
+
+    f.close()
+
+
 if __name__ == '__main__':
 
     from optparse import OptionParser
@@ -1071,6 +1250,11 @@ if __name__ == '__main__':
                                   options.insert_x_padding_into_uv,
                                   options.min_keep_z,
                                   options.cap_planecode)
+    if options.skim == 'time_dat':
+        make_time_dat_hdf5_file(options.imgw, options.imgh, trims,
+                                views, filebase, hdf5file, options.padding,
+                                apply_trans,
+                                options.insert_x_padding_into_uv)
     elif options.skim == 'had_mult':
         make_hadronmult_hdf5_file(filebase, hdf5file,
                                   options.had_mult_overflow)
