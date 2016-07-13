@@ -15,7 +15,7 @@ echo "Grabbing runs $START to $STOP..."
 fileroots="minosmatch_nukecczdefs_fullz_127x94_minerva1mc_"
 fileroots="minosmatch_hadmult_minerva1mc_"
 fileroots="minosmatch_muondat_me1Bmc_"
-fileroots="ztest_minerva1mc_"
+fileroots="ztest_times_minerva1mc_"
 
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/hadmult_skims/cvs_rev1_1"
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/muon_skims/cvs_rev1_3"
