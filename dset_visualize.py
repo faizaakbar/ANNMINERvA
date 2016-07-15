@@ -132,6 +132,10 @@ except KeyError:
 
 f.close()
 
+colorbar_tile = 'scaled energy'
+if have_times:
+    colorbar_tile = 'scaled times'
+
 for counter, evtid in enumerate(evtids):
     if evt_plotted > max_evts:
         break
@@ -147,19 +151,25 @@ for counter, evtid in enumerate(evtids):
             run, subrun, gate, phys_evt)
     print(pstring)
     evt = []
+    titles = []
     if data_x is not None:
         evt.append(data_x[counter])
+        titles.append('x view')
     if data_u is not None:
         evt.append(data_u[counter])
+        titles.append('u view')
     if data_v is not None:
         evt.append(data_v[counter])
+        titles.append('v view')
     fig = pylab.figure(figsize=(9, 3))
     gs = pylab.GridSpec(1, len(evt))
     # print np.where(evt == np.max(evt))
     # print np.max(evt)
     for i in range(len(evt)):
         ax = pylab.subplot(gs[i])
-        ax.axis('off')
+        ax.axis('on')
+        ax.xaxis.set_major_locator(pylab.NullLocator())
+        ax.yaxis.set_major_locator(pylab.NullLocator())
         # images are normalized such the max e-dep has val 1, independent
         # of view, so set vmin, vmax here to keep matplotlib from
         # normalizing each view on its own
@@ -167,12 +177,15 @@ for counter, evtid in enumerate(evtids):
         cmap = 'jet'
         if have_times:
             minv = -1
-            cmap = 'seismic'
-            ax.axis('on')
-            ax.xaxis.set_major_locator(pylab.NullLocator())
-            ax.yaxis.set_major_locator(pylab.NullLocator())
-        ax.imshow(evt[i][0], cmap=pylab.get_cmap(cmap),
-                  interpolation='nearest', vmin=minv, vmax=1)
+            cmap = 'bwr'
+        im = ax.imshow(evt[i][0], cmap=pylab.get_cmap(cmap),
+                       interpolation='nearest', vmin=minv, vmax=1)
+        cbar = pylab.colorbar(im, fraction=0.04)
+        cbar.set_label(colorbar_tile, size=9)
+        cbar.ax.tick_params(labelsize=6)
+        pylab.title(titles[i], fontsize=12)
+        pylab.xlabel("plane", fontsize=10)
+        pylab.ylabel("strip", fontsize=10)
     if labels_shp is not None:
         figname = 'evt_%s_%s_%s_%s_targ_%d_pcode_%d.pdf' % \
                   (run, subrun, gate, phys_evt, targ, pcode)
