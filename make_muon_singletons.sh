@@ -13,8 +13,8 @@ elif [[ $# > 1 ]]; then
   STOP=$2
 fi
 
-INPUT_BASENAME=minosmatch_muondat_me1Bmc
-OUTPUTNAME=minosmatch_muondat_me1Bmc
+INPUT_BASENAME=minosmatch_muondat_wt_me1Bmc
+OUTPUTNAME=minosmatch_muondat_wt_me1Bmc
 
 for i in `seq ${START} 1 ${STOP}`
 do
