@@ -1,8 +1,10 @@
 #!/bin/bash
 
 filelist="
-../HDF5files/minosmatch_nukecczdefs_genallz_pcodecap66_muondat_127x50x25_xuv_me1Bmc.hdf5
-../HDF5files/minosmatch_nukecczdefs_genallz_pcodecap66_muondat_127x50x25_xuv_me1Bmc_README.txt
+minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_txtutv_me1Bmc.hdf5
+minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_txtutv_vtxinfo_me1Bmc.hdf5
+minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_txtutv_me1Bmc_README.txt
+minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_txtutv_vtxinfo_me1Bmc_README.txt
 "
 
 REMOTE1="tev.fnal.gov:/phihome/perdue/theano/data/"
