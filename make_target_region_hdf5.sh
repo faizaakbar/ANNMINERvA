@@ -11,12 +11,14 @@ elif [[ $# > 1 ]]; then
   STOP=$2
 fi
 
-INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_me1Bmc
-OUTBASE=minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_me1Bmc
+SAMPLE=me1Bdata
+
+INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}
+OUTBASE=minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_${SAMPLE}
 
 # time-lattice images
-INBASET=minosmatch_nukecczdefs_fullzwitht_127x94_me1Bmc
-OUTBASET=minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_txtutv_me1Bmc
+INBASET=minosmatch_nukecczdefs_fullzwitht_127x94_${SAMPLE}
+OUTBASET=minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_txtutv_${SAMPLE}
 
 for i in `seq ${START} 1 ${STOP}`
 do
