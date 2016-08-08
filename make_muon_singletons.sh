@@ -13,7 +13,7 @@ elif [[ $# > 1 ]]; then
   STOP=$2
 fi
 
-SAMPLE=me1Bdata
+SAMPLE=me1Bmc
 
 INPUT_BASENAME=minosmatch_muondat_wt_${SAMPLE}
 OUTPUTNAME=minosmatch_muondat_wt_${SAMPLE}
