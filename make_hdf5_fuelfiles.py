@@ -496,7 +496,7 @@ def get_nukecc_vtx_study_data_from_file(filename, imgw, imgh, trims,
             targs.append(int(elems[0]))
             zs.append(float(elems[1]))
             rawid = int(elems[2])
-            planeid = icodes[rawid]
+            planeid = icodes.get(rawid, rawid)
             planeids.append(planeid)
             eventid = elems[3] + elems[4].zfill(4) + elems[5].zfill(4) \
                 + elems[6].zfill(2)
