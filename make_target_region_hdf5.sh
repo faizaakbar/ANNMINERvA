@@ -31,7 +31,8 @@ cat << EOF
     -x \
     --trim_column_down_x 50 \
     --trim_column_down_uv 25 \
-    --cap_planecode 66
+    --cap_planecode 66 \
+    --min_keep_z -2e6
 EOF
   python make_hdf5_fuelfiles.py \
     -b ${INBASE}_${paddednum} \
@@ -39,24 +40,25 @@ EOF
     -x \
     --trim_column_down_x 50 \
     --trim_column_down_uv 25 \
-    --cap_planecode 66
+    --cap_planecode 66 \
+    --min_keep_z -2e6
 # time lattice
-cat << EOF
-  python make_hdf5_fuelfiles.py \
-    --skim time_dat \
-    -b ${INBASET}_${paddednum} \
-    -o ${OUTBASET}_${paddednum}.hdf5 \
-    -x \
-    --trim_column_down_x 50 \
-    --trim_column_down_uv 25 \
-    --cap_planecode 66
-EOF
-  python make_hdf5_fuelfiles.py \
-    --skim time_dat \
-    -b ${INBASET}_${paddednum} \
-    -o ${OUTBASET}_${paddednum}.hdf5 \
-    -x \
-    --trim_column_down_x 50 \
-    --trim_column_down_uv 25 \
-    --cap_planecode 66
+# cat << EOF
+#   python make_hdf5_fuelfiles.py \
+#     --skim time_dat \
+#     -b ${INBASET}_${paddednum} \
+#     -o ${OUTBASET}_${paddednum}.hdf5 \
+#     -x \
+#     --trim_column_down_x 50 \
+#     --trim_column_down_uv 25 \
+#     --cap_planecode 66
+# EOF
+#   python make_hdf5_fuelfiles.py \
+#     --skim time_dat \
+#     -b ${INBASET}_${paddednum} \
+#     -o ${OUTBASET}_${paddednum}.hdf5 \
+#     -x \
+#     --trim_column_down_x 50 \
+#     --trim_column_down_uv 25 \
+#     --cap_planecode 66
 done
