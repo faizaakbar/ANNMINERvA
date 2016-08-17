@@ -31,7 +31,9 @@ def reorder_matrix(ndarr):
     new_arr[:, 10] = mid_arr[:, 10]
     return new_arr
 
+# /minerva/data/users/perdue/RecoTracks/files/nukecc_20160715-16_112200-112204.txt
 arr_all_me1Bmc_part1 = np.zeros((11, 11), dtype=np.float)
+# /minerva/data/users/perdue/RecoTracks/files/nukecc_20160715-16_112200-112204.txt
 arr_pass_me1Bmc_part1 = np.zeros((11, 11), dtype=np.float)
 
 # /minerva/data/users/perdue/RecoTracks/files/nukecc_20160719_112205.txt
@@ -69,10 +71,39 @@ arr_pass_me1Bmc_part2 = reorder_matrix(np.array(arr_pass_me1Bmc_part2,
                                                 dtype=np.float))
 
 # /minerva/data/users/perdue/RecoTracks/files/nukecc_20160630_10200-10249.txt
-arr_all_minerva1mc_part1 = np.zeros((11, 11), dtype=np.float) 
+arr_all_minerva1mc_part1 = [
+    [ 4604,1776,2728,737,98,86,1188,1653,1304,25,273,],
+    [ 1241,56209,7885,1712,263,246,6530,4052,3385,68,773,],
+    [ 50,522,69039,3581,422,374,6168,13464,5556,64,1416,],
+    [ 16,71,451,61259,575,435,201,5619,13340,93,1542,],
+    [ 2,1,23,152,44793,2584,13,45,5271,2404,4662,],
+    [ 1,3,15,65,2230,60930,14,20,789,3339,10932,],
+    [ 58,1139,5275,991,159,126,21523,2518,1782,33,415,],
+    [ 8,65,1289,3768,195,157,171,26139,3029,37,638,],
+    [ 5,11,108,1610,4174,1426,61,205,86739,346,4685,],
+    [ 2,2,3,12,1185,2073,0,0,148,4457,926,],
+    [ 21,18,52,74,440,3634,46,56,529,142,1290627,],
+]
+arr_all_minerva1mc_part1 = reorder_matrix(np.array(arr_all_minerva1mc_part1,
+                                                   dtype=np.float))
+
 
 # /minerva/data/users/perdue/RecoTracks/files/nukecc_20160630_10200-10249.txt
-arr_pass_minerva1mc_part1 = np.zeros((11, 11), dtype=np.float) 
+arr_pass_minerva1mc_part1 = [
+    [ 684,980,4,2,0,0,92,4,0,0,0,],
+    [ 421,36005,50,7,0,2,2565,25,5,0,1,],
+    [ 5,295,39576,118,0,2,3229,5470,26,0,2,],
+    [ 1,44,243,37242,0,3,115,2999,3724,0,4,],
+    [ 0,0,11,73,25384,628,6,16,2592,1086,49,],
+    [ 1,2,6,31,1106,35456,7,10,354,1717,1966,],
+    [ 14,726,1730,8,0,1,13021,402,3,0,1,],
+    [ 2,33,745,1513,0,1,88,15770,134,0,1,],
+    [ 1,6,49,905,1410,50,34,114,50547,28,17,],
+    [ 0,1,2,7,710,1038,0,0,80,2721,29,],
+    [ 0,7,26,43,198,2095,33,29,241,79,590635,],
+]
+arr_pass_minerva1mc_part1 = reorder_matrix(np.array(arr_pass_minerva1mc_part1,
+                                                    dtype=np.float))
 
 # /minerva/data/users/perdue/RecoTracks/files/nukecc_20160701_10200-10249.txt
 arr_all_minerva1mc_part2 = [
@@ -122,6 +153,10 @@ pur_all_me1Bmc = np.zeros_like(arr_all_me1Bmc)
 for i in range(np.shape(arr_all_me1Bmc)[0]):
     pur_all_me1Bmc[i, :] = arr_all_me1Bmc[i, :] / arr_all_me1Bmc.sum(axis=1)[i]
 
+pur_all_minerva1mc = np.zeros_like(arr_all_minerva1mc)
+for i in range(np.shape(arr_all_minerva1mc)[0]):
+    pur_all_minerva1mc[i, :] = arr_all_minerva1mc[i, :] / arr_all_minerva1mc.sum(axis=1)[i]
+
 # We column normalize (divide by `axis=0` to get the _efficiency_ - it is
 # saying "okay, I have an event really coming from target 1 (reading the
 # "y-axis"), was it reconstructed in target 1?, etc. (reading along the x for
@@ -130,3 +165,7 @@ for i in range(np.shape(arr_all_me1Bmc)[0]):
 eff_all_me1Bmc = np.zeros_like(arr_all_me1Bmc)
 for i in range(np.shape(arr_all_me1Bmc)[0]):
     eff_all_me1Bmc[:, i] = arr_all_me1Bmc[:, i] / arr_all_me1Bmc.sum(axis=0)[i]
+
+eff_all_minerva1mc = np.zeros_like(arr_all_minerva1mc)
+for i in range(np.shape(arr_all_minerva1mc)[0]):
+    eff_all_minerva1mc[:, i] = arr_all_minerva1mc[:, i] / arr_all_minerva1mc.sum(axis=0)[i]
