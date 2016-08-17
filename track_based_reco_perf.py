@@ -157,6 +157,14 @@ pur_all_minerva1mc = np.zeros_like(arr_all_minerva1mc)
 for i in range(np.shape(arr_all_minerva1mc)[0]):
     pur_all_minerva1mc[i, :] = arr_all_minerva1mc[i, :] / arr_all_minerva1mc.sum(axis=1)[i]
 
+pur_pass_me1Bmc = np.zeros_like(arr_pass_me1Bmc)
+for i in range(np.shape(arr_pass_me1Bmc)[0]):
+    pur_pass_me1Bmc[i, :] = arr_pass_me1Bmc[i, :] / arr_pass_me1Bmc.sum(axis=1)[i]
+
+pur_pass_minerva1mc = np.zeros_like(arr_pass_minerva1mc)
+for i in range(np.shape(arr_pass_minerva1mc)[0]):
+    pur_pass_minerva1mc[i, :] = arr_pass_minerva1mc[i, :] / arr_pass_minerva1mc.sum(axis=1)[i]
+
 # We column normalize (divide by `axis=0` to get the _efficiency_ - it is
 # saying "okay, I have an event really coming from target 1 (reading the
 # "y-axis"), was it reconstructed in target 1?, etc. (reading along the x for
@@ -169,3 +177,11 @@ for i in range(np.shape(arr_all_me1Bmc)[0]):
 eff_all_minerva1mc = np.zeros_like(arr_all_minerva1mc)
 for i in range(np.shape(arr_all_minerva1mc)[0]):
     eff_all_minerva1mc[:, i] = arr_all_minerva1mc[:, i] / arr_all_minerva1mc.sum(axis=0)[i]
+
+eff_pass_me1Bmc = np.zeros_like(arr_pass_me1Bmc)
+for i in range(np.shape(arr_pass_me1Bmc)[0]):
+    eff_pass_me1Bmc[:, i] = arr_pass_me1Bmc[:, i] / arr_pass_me1Bmc.sum(axis=0)[i]
+
+eff_pass_minerva1mc = np.zeros_like(arr_pass_minerva1mc)
+for i in range(np.shape(arr_pass_minerva1mc)[0]):
+    eff_pass_minerva1mc[:, i] = arr_pass_minerva1mc[:, i] / arr_pass_minerva1mc.sum(axis=0)[i]
