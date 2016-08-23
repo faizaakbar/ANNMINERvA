@@ -31,73 +31,79 @@ def reorder_matrix(ndarr):
     new_arr[:, 10] = mid_arr[:, 10]
     return new_arr
 
-# /minerva/data/users/perdue/RecoTracks/files/nukecc_20160715-16_112200-112204.txt
-arr_all_me1Bmc_part1 = [
-    [ 16305,7161,1408,995,152,151,2669,1529,1592,42,726,],
-    [ 9354,141496,3262,1938,245,222,13089,3060,3105,49,683,],
-    [ 145,1145,145031,5141,449,334,14803,15241,6472,89,1272,],
-    [ 35,184,913,118631,682,443,342,10980,22028,104,1545,],
-    [ 1,10,41,226,87390,4619,19,71,10613,4644,6043,],
-    [ 0,14,13,122,4217,117318,16,44,1404,6440,16741,],
-    [ 136,2676,5169,1201,115,100,49428,1955,1724,25,352,],
-    [ 20,148,2678,6463,226,184,320,51374,4154,26,614,],
-    [ 11,59,202,3115,7492,2215,94,411,165364,560,5245,],
-    [ 0,2,4,28,2186,3882,1,7,265,9196,1271,],
-    [ 19,71,68,143,713,6964,73,105,955,278,2390407,],
+# /minerva/data/users/perdue/RecoTracks/files/nukecc_20160321_112200-05_127x94.txt
+# 150k events...
+arr_all_me1Bmc = [
+    [ 659,292,61,48,6,3,127,54,59,2,32,],
+    [ 402,5853,145,90,16,10,562,131,126,1,25,],
+    [ 5,58,6058,232,21,11,621,689,288,3,51,],
+    [ 1,4,37,5066,18,17,11,457,933,2,71,],
+    [ 0,1,2,7,3666,171,3,1,422,210,259,],
+    [ 0,0,0,7,158,4988,1,3,56,324,706,],
+    [ 6,141,250,63,3,6,2260,83,80,1,13,],
+    [ 0,1,98,253,10,1,18,2158,148,2,32,],
+    [ 0,4,16,135,346,88,5,18,6961,33,228,],
+    [ 0,0,0,3,91,163,0,0,9,394,53,],
+    [ 1,5,3,4,28,288,7,5,38,11,101095,],
 ]
-arr_all_me1Bmc_part1 = reorder_matrix(np.array(arr_all_me1Bmc_part1,
-                                               dtype=np.float))
+# 300k events...
+arr_all_me1Bmc = [
+    [ 1383,603,119,96,12,8,236,118,134,5,66,],
+    [ 756,11680,262,181,29,19,1089,260,252,4,60,],
+    [ 16,110,12216,431,30,23,1280,1359,579,5,98,],
+    [ 5,10,84,10124,43,39,22,940,1835,2,138,],
+    [ 1,2,4,24,7366,376,4,4,872,392,503,],
+    [ 0,1,0,12,344,9916,1,8,106,624,1400,],
+    [ 14,240,468,111,8,8,4331,174,156,1,28,],
+    [ 1,7,198,488,23,11,30,4358,315,3,69,],
+    [ 1,11,25,254,671,178,9,38,13902,61,434,],
+    [ 0,0,1,5,183,339,0,0,21,759,102,],
+    [ 4,8,3,11,61,575,10,8,76,22,202467,],
+]
+arr_all_me1Bmc = reorder_matrix(np.array(arr_all_me1Bmc,
+                                         dtype=np.float))
 
-# /minerva/data/users/perdue/RecoTracks/files/nukecc_20160715-16_112200-112204.txt
-arr_pass_me1Bmc_part1 = [
-    [ 6243,2892,17,20,1,1,172,9,9,0,4,],
-    [ 5429,96466,109,22,1,1,6019,41,11,0,1,],
-    [ 71,760,95721,193,0,3,8753,6179,44,1,4,],
-    [ 13,122,608,81431,4,5,225,6652,7883,0,8,],
-    [ 0,7,24,136,55603,1627,15,37,6094,2560,116,],
-    [ 0,7,9,80,2422,77106,9,27,750,3986,4383,],
-    [ 45,1787,2495,21,0,3,33980,168,4,0,2,],
-    [ 8,93,1791,3179,0,2,207,34961,209,0,3,],
-    [ 7,41,112,2053,3138,106,63,247,110494,59,32,],
-    [ 0,1,2,17,1402,2352,1,5,143,6297,58,],
-    [ 5,45,39,91,389,4447,37,63,548,153,1249845,],
+# /minerva/data/users/perdue/RecoTracks/files/nukecc_20160321_112200-05_127x94.txt
+# 150k events...
+arr_pass_me1Bmc = [
+    [ 270,194,31,28,3,2,60,27,28,1,12,],
+    [ 248,4172,91,57,8,6,366,85,75,0,8,],
+    [ 1,39,4398,154,12,7,445,434,175,2,19,],
+    [ 0,0,30,3666,8,11,7,331,605,1,33,],
+    [ 0,1,2,6,2602,127,3,1,307,148,134,],
+    [ 0,0,0,4,118,3588,1,3,33,237,439,],
+    [ 2,98,159,41,3,4,1609,45,52,0,3,],
+    [ 0,0,73,175,5,1,12,1536,85,1,15,],
+    [ 0,4,10,96,222,55,5,15,4903,15,105,],
+    [ 0,0,0,2,70,125,0,0,3,288,32,],
+    [ 1,2,1,1,16,214,7,4,23,7,62693,],
 ]
-arr_pass_me1Bmc_part1 = reorder_matrix(np.array(arr_pass_me1Bmc_part1,
-                                                dtype=np.float))
+# 300k events...
+arr_pass_me1Bmc = [
+    [ 549,403,63,57,7,5,122,56,59,2,21,],
+    [ 457,8355,161,119,15,10,716,160,138,1,14,],
+    [ 10,83,8856,294,16,14,901,885,339,3,41,],
+    [ 3,5,62,7385,24,25,17,679,1191,1,62,],
+    [ 0,2,3,19,5244,279,4,3,609,269,266,],
+    [ 0,1,0,7,253,7194,1,5,64,453,853,],
+    [ 5,171,298,67,5,4,3118,105,95,0,11,],
+    [ 0,4,146,336,15,5,23,3126,180,2,34,],
+    [ 0,7,16,187,420,113,9,29,9784,28,220,],
+    [ 0,0,0,4,139,255,0,0,13,546,60,],
+    [ 3,3,1,4,41,420,9,6,50,15,125653,],
+]
+arr_pass_me1Bmc = reorder_matrix(np.array(arr_pass_me1Bmc,
+                                          dtype=np.float))
 
-# /minerva/data/users/perdue/RecoTracks/files/nukecc_20160719_112205.txt
-arr_all_me1Bmc_part2 = [
-    [ 1885,790,159,121,17,15,299,170,178,5,83,],
-    [ 1064,15673,370,221,23,21,1461,346,310,3,72,],
-    [ 14,139,16137,549,48,31,1641,1635,702,8,154,],
-    [ 2,20,136,13247,61,56,41,1233,2497,16,188,],
-    [ 0,1,9,21,9706,520,1,13,1153,488,694,],
-    [ 0,2,1,12,468,13156,2,7,151,754,1851,],
-    [ 16,296,522,149,8,15,5589,219,208,3,35,],
-    [ 1,21,301,713,19,13,25,5720,460,3,54,],
-    [ 1,5,24,367,845,258,10,35,18222,64,610,],
-    [ 0,0,0,3,203,470,0,1,32,1000,140,],
-    [ 0,8,13,13,89,763,11,13,114,31,268064,],
-]
-arr_all_me1Bmc_part2 = reorder_matrix(np.array(arr_all_me1Bmc_part2,
-                                               dtype=np.float))
+# 
+arr_all_me1Amc = np.zeros((11, 11), dtype=np.float)
+arr_all_me1Amc = reorder_matrix(np.array(arr_all_me1Amc,
+                                         dtype=np.float))
 
-# /minerva/data/users/perdue/RecoTracks/files/nukecc_20160719_112205.txt
-arr_pass_me1Bmc_part2 = [
-    [ 722,352,2,5,0,0,15,3,0,0,0,],
-    [ 576,10681,18,3,0,0,647,3,1,0,0,],
-    [ 6,86,10660,18,1,0,987,635,9,0,0,],
-    [ 1,14,79,9102,0,3,26,794,851,0,1,],
-    [ 0,1,7,13,6193,181,1,8,664,253,13,],
-    [ 0,1,0,6,259,8690,1,3,88,470,456,],
-    [ 6,205,272,3,0,1,3852,18,2,0,0,],
-    [ 0,13,201,346,0,0,18,3925,28,0,0,],
-    [ 1,5,18,258,362,20,4,20,12182,5,4,],
-    [ 0,0,0,2,124,284,0,0,20,680,6,],
-    [ 0,4,7,8,47,496,5,10,66,15,140430,],
-]
-arr_pass_me1Bmc_part2 = reorder_matrix(np.array(arr_pass_me1Bmc_part2,
-                                                dtype=np.float))
+# 
+arr_pass_me1Amc = np.zeros((11, 11), dtype=np.float)
+arr_pass_me1Amc = reorder_matrix(np.array(arr_pass_me1Amc,
+                                          dtype=np.float))
 
 # /minerva/data/users/perdue/RecoTracks/files/nukecc_20160630_10200-10249.txt
 arr_all_minerva1mc_part1 = [
@@ -167,8 +173,8 @@ arr_pass_minerva1mc_part2 = [
 arr_pass_minerva1mc_part2 = reorder_matrix(np.array(arr_pass_minerva1mc_part2,
                                                     dtype=np.float))
 
-arr_all_me1Bmc = arr_all_me1Bmc_part1 + arr_all_me1Bmc_part2
-arr_pass_me1Bmc = arr_pass_me1Bmc_part1 + arr_pass_me1Bmc_part2
+arr_all_memc = arr_all_me1Bmc + arr_all_me1Amc
+arr_pass_memc = arr_pass_me1Bmc + arr_pass_me1Amc
 
 arr_all_minerva1mc = arr_all_minerva1mc_part1 + arr_all_minerva1mc_part2
 arr_pass_minerva1mc = arr_pass_minerva1mc_part1 + arr_pass_minerva1mc_part2
@@ -177,17 +183,17 @@ arr_pass_minerva1mc = arr_pass_minerva1mc_part1 + arr_pass_minerva1mc_part2
 # "okay, I reconstructed an event in target 1, what fraction of the events 
 # really come from target 1? what fraction came from other z's?, etc."
 
-pur_all_me1Bmc = np.zeros_like(arr_all_me1Bmc)
-for i in range(np.shape(arr_all_me1Bmc)[0]):
-    pur_all_me1Bmc[i, :] = arr_all_me1Bmc[i, :] / arr_all_me1Bmc.sum(axis=1)[i]
+pur_all_memc = np.zeros_like(arr_all_memc)
+for i in range(np.shape(arr_all_memc)[0]):
+    pur_all_memc[i, :] = arr_all_memc[i, :] / arr_all_memc.sum(axis=1)[i]
 
 pur_all_minerva1mc = np.zeros_like(arr_all_minerva1mc)
 for i in range(np.shape(arr_all_minerva1mc)[0]):
     pur_all_minerva1mc[i, :] = arr_all_minerva1mc[i, :] / arr_all_minerva1mc.sum(axis=1)[i]
 
-pur_pass_me1Bmc = np.zeros_like(arr_pass_me1Bmc)
-for i in range(np.shape(arr_pass_me1Bmc)[0]):
-    pur_pass_me1Bmc[i, :] = arr_pass_me1Bmc[i, :] / arr_pass_me1Bmc.sum(axis=1)[i]
+pur_pass_memc = np.zeros_like(arr_pass_memc)
+for i in range(np.shape(arr_pass_memc)[0]):
+    pur_pass_memc[i, :] = arr_pass_memc[i, :] / arr_pass_memc.sum(axis=1)[i]
 
 pur_pass_minerva1mc = np.zeros_like(arr_pass_minerva1mc)
 for i in range(np.shape(arr_pass_minerva1mc)[0]):
@@ -198,17 +204,17 @@ for i in range(np.shape(arr_pass_minerva1mc)[0]):
 # "y-axis"), was it reconstructed in target 1?, etc. (reading along the x for
 # a given y)"
 
-eff_all_me1Bmc = np.zeros_like(arr_all_me1Bmc)
-for i in range(np.shape(arr_all_me1Bmc)[0]):
-    eff_all_me1Bmc[:, i] = arr_all_me1Bmc[:, i] / arr_all_me1Bmc.sum(axis=0)[i]
+eff_all_memc = np.zeros_like(arr_all_memc)
+for i in range(np.shape(arr_all_memc)[0]):
+    eff_all_memc[:, i] = arr_all_memc[:, i] / arr_all_memc.sum(axis=0)[i]
 
 eff_all_minerva1mc = np.zeros_like(arr_all_minerva1mc)
 for i in range(np.shape(arr_all_minerva1mc)[0]):
     eff_all_minerva1mc[:, i] = arr_all_minerva1mc[:, i] / arr_all_minerva1mc.sum(axis=0)[i]
 
-eff_pass_me1Bmc = np.zeros_like(arr_pass_me1Bmc)
-for i in range(np.shape(arr_pass_me1Bmc)[0]):
-    eff_pass_me1Bmc[:, i] = arr_pass_me1Bmc[:, i] / arr_pass_me1Bmc.sum(axis=0)[i]
+eff_pass_memc = np.zeros_like(arr_pass_memc)
+for i in range(np.shape(arr_pass_memc)[0]):
+    eff_pass_memc[:, i] = arr_pass_memc[:, i] / arr_pass_memc.sum(axis=0)[i]
 
 eff_pass_minerva1mc = np.zeros_like(arr_pass_minerva1mc)
 for i in range(np.shape(arr_pass_minerva1mc)[0]):
