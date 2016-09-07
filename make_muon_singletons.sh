@@ -15,8 +15,8 @@ fi
 
 SAMPLE=minerva1mc
 
-INPUT_BASENAME=minosmatch_muondat_wt_${SAMPLE}
-OUTPUTNAME=minosmatch_muondat_wt_${SAMPLE}
+INPUT_BASENAME=minosmatch_muondat_${SAMPLE}
+OUTPUTNAME=minosmatch_muondat_${SAMPLE}
 
 for i in `seq ${START} 1 ${STOP}`
 do

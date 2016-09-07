@@ -14,13 +14,13 @@ fi
 DOENGY="yes"
 DOTIME="no"
 
-SAMPLE=minerva1mc
+SAMPLE=minerva13Bmc
 
 # energy lattice images
-# INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}
-# OUTBASE=minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_${SAMPLE}
-INBASE=minosmatch_nukecczdefs_fullz_127x94_${SAMPLE}
-OUTBASE=minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_${SAMPLE}
+# INBASE=minosmatch_nukecczdefs_fullz_127x94_${SAMPLE}
+# OUTBASE=minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_${SAMPLE}
+INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}
+OUTBASE=minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_${SAMPLE}
 
 # time-lattice images
 INBASET=minosmatch_nukecczdefs_fullzwitht_127x94_${SAMPLE}
