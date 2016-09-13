@@ -19,7 +19,7 @@ echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${P
 cat ${PBS_NODEFILE}
 
 cd $HOME
-source caffe_gpu_setup.sh
+source caffe_setup.sh
 
 cd ${PBS_O_WORKDIR}
 echo "PBS_O_WORKDIR is `pwd`"
