@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export CUDA_VISIBLE_DEVICES=`cat /tmp/pbs.prologue.$PBS_JOBID`
+
 export PATH=/usr/local/Python-2.7.8/bin:$PATH
 export PATH=/usr/local/protobuf/bin:$PATH
 export PATH=/usr/local/caffe/bin:$PATH
