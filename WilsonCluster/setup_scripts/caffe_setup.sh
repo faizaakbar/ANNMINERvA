@@ -5,6 +5,7 @@ export PATH=/usr/local/protobuf/bin:$PATH
 export PATH=/usr/local/caffe.gradient-reversal/bin:$PATH #or use caffe.latest
 export PATH=/usr/local/cuda/bin:$PATH
 
+export LD_LIBRARY_PATH=/usr/local/boost_1_59_0/lib/:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/gcc-4.9.1/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/gcc-4.9.1/lib64:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
