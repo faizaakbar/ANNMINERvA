@@ -5,7 +5,7 @@ name: "vertex_epsilon_xuv_adv"
 
 # ---------------------- Data Layers -------------------------
 # ---------------------- Source ------------------------------
-# source=me1Amc, target=minerva1
+# source = ME MC, target = LE MC
 # Training
 
 layer {
@@ -15,12 +15,12 @@ layer {
     phase: TRAIN
   }
   hdf5_data_param {
-    source: "/lustre/atlas/proj-shared/hep105/sohini/vertex/vertex_epsilon_source.trainlist"
+    source: "/phihome/perdue/caffe/data/minerva/lists/vertex_epsilon_adv_source.trainlist"
     batch_size: 50
   }
-  top: "hits-x_me1Bmc"
-  top: "hits-u_me1Bmc"
-  top: "hits-v_me1Bmc"
+  top: "hits-x-MEMC"
+  top: "hits-u-MEMC"
+  top: "hits-v-MEMC"
   top: "segments"
 }
 
@@ -34,7 +34,7 @@ layer {
       type: "constant"
       value: 0
     }
-    num: 50 #make same as batch size
+    num: 50 # must be same as batch size
     channels: 1
     height: 1
     width: 1
@@ -44,7 +44,7 @@ layer {
 
 
 # --------------------- Target  ------------------------------
-#Training
+# Training
 
 layer {
   name: "target_data" 
@@ -53,12 +53,12 @@ layer {
     phase: TRAIN
   }
   hdf5_data_param {
-    source: "/lustre/atlas/proj-shared/hep105/sohini/vertex/vertex_epsilon_target.trainlist"
+    source: "/phihome/perdue/caffe/data/minerva/lists/vertex_epsilon_adv_target.trainlist"
     batch_size: 50
   }
-  top: "hits-x_minerva1mc"
-  top: "hits-u_minerva1mc"
-  top: "hits-v_minerva1mc"
+  top: "hits-x-LEMC"
+  top: "hits-u-LEMC"
+  top: "hits-v-LEMC"
 }
 
 layer {
@@ -68,9 +68,9 @@ layer {
   dummy_data_param {
     data_filler {
       type: "constant"
-      value: 0
+      value: 1
     }
-    num: 50 #make same as batch size
+    num: 50 # must be same as batch size
     channels: 1
     height: 1
     width: 1
@@ -78,17 +78,17 @@ layer {
   include: { phase: TRAIN }
 }
 
-#Testing
+# ----------------- Source or Target -------------------------
+# Validation 
 
-#????
 layer {
-  name: "target_data" 
+  name: "target_data"  # what is the right name? - source_data?
   type: "HDF5Data"
   include {
     phase: TEST
   }
   hdf5_data_param {
-    source: "/lustre/atlas/proj-shared/hep105/sohini/vertex/vertex_epsilon_target.testlist"
+    source: "/phihome/perdue/caffe/data/minerva/lists/vertex_epsilon_adv_source.validlist"
     batch_size: 50
   }
   top: "hits-x"
@@ -98,13 +98,13 @@ layer {
 }
 
 layer {
-  name: "target_domain_labels"
+  name: "target_domain_labels"  # source_domain_labels?
   type: "DummyData"
   top: "dc_labels"
   dummy_data_param {
     data_filler {
       type: "constant"
-      value: 1
+      value: 0  # use 1 when checking target validation
     }
     num: 50
     channels: 1
@@ -119,11 +119,11 @@ layer {
 layer {
   name: "concat_data_x"
   type: "Concat"
-  bottom: "hits-x_me1Amc"
-  bottom: "hits-x_minerva1mc"
+  bottom: "hits-x-MEMC"
+  bottom: "hits-x-LEMC"
   top: "hits-x"
   concat_param {
-    axis: 0 #concat_dim -> axis
+    axis: 0  # concat_dim -> axis
   }
   include: { phase: TRAIN }
 }
@@ -131,8 +131,8 @@ layer {
 layer {
   name: "concat_data_u"
   type: "Concat"
-  bottom: "hits-u_me1Amc"
-  bottom: "hits-u_minerva1mc"
+  bottom: "hits-u-MEMC"
+  bottom: "hits-u-LEMC"
   top: "hits-u"
   concat_param {
     axis: 0
@@ -143,8 +143,8 @@ layer {
 layer {
   name: "concat_data_v"
   type: "Concat"
-  bottom: "hits-v_me1Amc"
-  bottom: "hits-v_minerva1mc"
+  bottom: "hits-v-MEMC"
+  bottom: "hits-v-LEMC"
   top: "hits-v"
   concat_param {
     axis: 0
