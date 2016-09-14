@@ -28,7 +28,10 @@ do
   filenum=`echo $i | perl -ne 'printf "%03d",$_;'`
   ls -1 ${BASED}/unrenamed/${FILEROOT}_${filenum}.hdf5 >> $OUTROOT.testlist
 done
-
+DESTD=/phihome/perdue/caffe/data/minerva/lists
+mv $OUTROOT.trainlist $DESTD
+mv $OUTROOT.validlist $DESTD
+mv $OUTROOT.testlist $DESTD
 
 # vertex adv trainlist based on LE Minerva1 & Minerva 13B MC (target domain)
 # (no validation here - these are DANN partners...)
@@ -67,3 +70,6 @@ do
   filenum=`echo $i | perl -ne 'printf "%03d",$_;'`
   ls -1 ${BASED}/${FILEROOT}_${filenum}.hdf5 >> $OUTROOT.testlist
 done
+DESTD=/phihome/perdue/caffe/data/minerva/lists
+mv $OUTROOT.trainlist $DESTD
+mv $OUTROOT.testlist $DESTD
