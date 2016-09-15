@@ -80,6 +80,10 @@ def categorical_learn_and_validate(
     Run learning and validation for triamese networks using AdaGrad for
     learning rate evolution, nesterov momentum; read the data files in
     chunks into memory.
+
+    `get_hits_and_targets` should extract a list `[inputs, targets]` from
+    a data slice where `inputs` could be one item or 3 depending on the views
+    studied (so total length is 2 or 4, most likely)
     """
     print("Loading data...")
     train_sizes, valid_sizes, _ = \
@@ -266,6 +270,13 @@ def categorical_test(
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the
     data files in chunks into memory.
+
+    `get_eventids_hits_and_targets_fn` needs to extract from a data slice
+    a tuple of (eventids, [inputs], targets), where `[inputs]` might hold
+    a single view or all three, etc.
+
+    `get_list_of_hits_fn` needs to extract from a data slice a list of
+    `[inputs]` that might hold a single view or all three, etc.
     """
     print("Loading data for testing...")
     tstamp = get_tstamp_from_model_name(runopts['save_model_file'])
@@ -407,6 +418,10 @@ def categorical_predict(
     """
     Make predictions based on the model _only_ (e.g., this routine should
     be used to produce prediction db's quickly or for data)
+
+    `get_eventids_hits_and_targets_fn` needs to extract from a data slice
+    a tuple of (eventids, [inputs], targets), where `[inputs]` might hold
+    a single view or all three, etc.
     """
     print("Loading data for testing...")
     train_sizes, valid_sizes, test_sizes = \
