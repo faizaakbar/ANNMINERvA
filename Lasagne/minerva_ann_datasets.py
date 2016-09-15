@@ -3,6 +3,7 @@
 Functions for loading and handling examples for MINERvA ANN work.
 """
 import os
+import logging
 
 import numpy as np
 
@@ -12,6 +13,8 @@ from fuel.schemes import SequentialScheme
 from fuel.streams import DataStream
 
 from six.moves import range
+
+logger = logging.getLogger(__name__)
 
 
 def load_dataset(data_file, load_in_memory=False):
@@ -83,11 +86,11 @@ def get_and_print_dataset_subsizes(data_file_list):
         train_sizes.append(lsize)
         valid_sizes.append(vsize)
         test_sizes.append(tsize)
-    print(" Learning sample size = {} examples".format(
+    logger.info(" Learning sample size = {} examples".format(
         np.sum(train_sizes)))
-    print(" Validation sample size = {} examples".format(
+    logger.info(" Validation sample size = {} examples".format(
         np.sum(valid_sizes)))
-    print(" Testing sample size = {} examples".format(
+    logger.info(" Testing sample size = {} examples".format(
         np.sum(test_sizes)))
     return train_sizes, valid_sizes, test_sizes
 

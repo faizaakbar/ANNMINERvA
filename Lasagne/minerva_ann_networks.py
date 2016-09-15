@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import logging
+
 import lasagne
 from lasagne.layers import InputLayer
 from lasagne.layers import Conv2DLayer
@@ -9,6 +11,8 @@ from lasagne.layers import DenseLayer
 from lasagne.layers import ConcatLayer
 from lasagne.layers import dropout
 from lasagne.layers import flatten
+
+logger = logging.getLogger(__name__)
 
 
 def build_triamese_alpha(inputlist, imgh=50, imgw=50,
@@ -144,7 +148,7 @@ def make_Nconvpool_1dense_branch(view, input_layer, cpdictlist,
     mpname = ''
     for i, cpdict in enumerate(cpdictlist):
         convname = 'conv-{}-{}'.format(view, i)
-        print("Convpool {} params: {}".format(convname, cpdict))
+        logger.info("Convpool {} params: {}".format(convname, cpdict))
         # the first time through, use `input`, after use the last layer
         # from the previous iteration - ah loose scoping rules...
         if i == 0:
@@ -159,13 +163,13 @@ def make_Nconvpool_1dense_branch(view, input_layer, cpdictlist,
         mpname = 'maxpool-{}-{}'.format(view, i)
         net[mpname] = MaxPool2DLayer(
             net[convname], pool_size=cpdict['pool_size'])
-        print("Convpool {}".format(mpname))
+        logger.info("Convpool {}".format(mpname))
     densename = 'dense-{}'.format(view)
     net[densename] = DenseLayer(
         dropout(net[mpname], p=dropoutp),
         num_units=nhidden,
         nonlinearity=lasagne.nonlinearities.rectify)
-    print("Dense {} with nhidden = {}, dropout = {}".format(
+    logger.info("Dense {} with nhidden = {}, dropout = {}".format(
         densename, nhidden, dropoutp))
     return net
 
@@ -607,14 +611,14 @@ def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,
     net['concat'] = ConcatLayer((net['dense-x'],
                                  net['dense-u'],
                                  net['dense-v']))
-    print("Network: concat columns...")
+    logger.info("Network: concat columns...")
 
     # One more dense layer
     net['dense-across'] = DenseLayer(
         dropout(net['concat'], p=dropoutp),
         num_units=(nhidden // 2),
         nonlinearity=lasagne.nonlinearities.rectify)
-    print("Dense {} with nhidden = {}, dropout = {}".format(
+    logger.info("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
     # And, finally, the `noutputs`-unit output layer
@@ -623,7 +627,9 @@ def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,
         num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax
     )
-    print("Softmax output prob with n_units = {}".format(noutputs))
+    logger.info("Softmax output prob with n_units = {}".format(noutputs))
 
-    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
+    logger.info(
+        "n-parameters: %s" % lasagne.layers.count_params(net['output_prob'])
+    )
     return net['output_prob']

@@ -21,6 +21,8 @@ from minerva_ann_datasets import get_and_print_dataset_subsizes
 from minerva_ann_datasets import slices_maker
 from minerva_ann_datasets import make_scheme_and_stream
 
+logger = logging.getLogger(__name__)
+
 
 def get_used_data_sizes_for_testing(train_sizes, valid_sizes, test_sizes,
                                     test_all_data):
@@ -30,7 +32,7 @@ def get_used_data_sizes_for_testing(train_sizes, valid_sizes, test_sizes,
         used_data_size += np.sum(train_sizes) + np.sum(valid_sizes)
         used_sizes = \
             list(np.sum([train_sizes, valid_sizes, test_sizes], axis=0))
-    print(" Used testing sample size = {} examples".format(used_data_size))
+    logger.info(" Used testing sample size = {} examples".format(used_data_size))
     return used_sizes, used_data_size
 
 
@@ -60,7 +62,6 @@ def categorical_learn_and_validate(
     a data slice where `inputs` could be one item or 3 depending on the views
     studied (so total length is 2 or 4, most likely)
     """
-    logger = logging.getLogger(__name__)
     logger.info("Loading data...")
     train_sizes, valid_sizes, _ = \
         get_and_print_dataset_subsizes(runopts['data_file_list'])
@@ -262,7 +263,7 @@ def categorical_test(
     `get_list_of_hits_fn` needs to extract from a data slice a list of
     `[inputs]` that might hold a single view or all three, etc.
     """
-    print("Loading data for testing...")
+    logger.info("Loading data for testing...")
     tstamp = get_tstamp_from_model_name(runopts['save_model_file'])
     train_sizes, valid_sizes, test_sizes = \
         get_and_print_dataset_subsizes(runopts['data_file_list'])
