@@ -14,6 +14,7 @@ appropriate data file.
 from __future__ import print_function
 
 import os
+import sys
 
 import theano.tensor as T
 
@@ -139,13 +140,21 @@ if __name__ == '__main__':
     (options, args) = parser.parse_args()
 
     if not options.do_learn and \
-            not options.do_test and \
-            not options.do_predict:
+       not options.do_test and \
+       not options.do_predict:
         print("\nSpecify learn (-l), test (-t), and/or predict (-p):\n\n")
         print(__doc__)
+        sys.exit(1)
 
-    print("Starting...")
-    print(__file__)
+    import logging
+    logging.basicConfig(
+        filename='minerva_tricolumnar_epsilon.log',
+        level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
+    logger = logging.getLogger(__name__)
+    logger.info("Starting...")
+    logger.info(__file__)
 
     build_network_function = build_triamese_epsilon
     learn = categorical_learn_and_validate
@@ -272,20 +281,24 @@ if __name__ == '__main__':
     networkstr['l1_penalty_scale'] = None
     networkstr['l2_penalty_scale'] = options.l2_penalty_scale
 
-    print(" Begin with saved parameters?", runopts['start_with_saved_params'])
-    print(" Saved parameters file:", runopts['save_model_file'])
-    print(" Saved parameters file exists?",
-          os.path.isfile(runopts['save_model_file']))
-    print(" Datasets:", runopts['data_file_list'])
+    logger.info(
+        " Begin with saved pars? %s" % runopts['start_with_saved_params']
+    )
+    logger.info(" Saved parameters file: %s" % runopts['save_model_file'])
+    logger.info(" Saved parameters file exists? %s" % \
+                os.path.isfile(runopts['save_model_file']))
+    logger.info(" Datasets: %s" % runopts['data_file_list'])
     dataset_statsinfo = 0
     for d in runopts['data_file_list']:
         dataset_statsinfo += os.stat(d).st_size
-    print(" Dataset size:", dataset_statsinfo)
-    print(" Planned number of epochs:", hyperpars['num_epochs'])
-    print(" Learning rate:", hyperpars['learning_rate'])
-    print(" Momentum:", hyperpars['momentum'])
-    print(" Batch size:", hyperpars['batchsize'])
-    print(" L2 regularization penalty scale:", networkstr['l2_penalty_scale'])
+    logger.info(" Dataset size: %s" % dataset_statsinfo)
+    logger.info(" Planned number of epochs: %s" % hyperpars['num_epochs'])
+    logger.info(" Learning rate: %s" % hyperpars['learning_rate'])
+    logger.info(" Momentum: %s" % hyperpars['momentum'])
+    logger.info(" Batch size: %s" % hyperpars['batchsize'])
+    logger.info(
+        " L2 regularization penalty scale: %s" % networkstr['l2_penalty_scale']
+    )
 
     if options.do_learn:
         networkstr['input_list'] = get_theano_input_tensors()
@@ -318,4 +331,3 @@ if __name__ == '__main__':
                 get_eventids_hits_and_targets_fn=get_eventids_hits_and_targets,
                 get_id_tagged_inputlist_fn=get_hits_and_targets_tup
         )
-

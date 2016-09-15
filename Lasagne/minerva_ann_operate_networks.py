@@ -3,6 +3,8 @@ from __future__ import print_function
 
 import os
 import time
+import logging
+
 from six.moves import range
 
 import numpy as np
@@ -58,7 +60,8 @@ def categorical_learn_and_validate(
     a data slice where `inputs` could be one item or 3 depending on the views
     studied (so total length is 2 or 4, most likely)
     """
-    print("Loading data...")
+    logger = logging.getLogger(__name__)
+    logger.info("Loading data...")
     train_sizes, valid_sizes, _ = \
         get_and_print_dataset_subsizes(runopts['data_file_list'])
 
@@ -73,12 +76,13 @@ def categorical_learn_and_validate(
                            nhidden=networkstr['nhidden'],
                            dropoutp=networkstr['dropoutp'],
                            noutputs=networkstr['noutputs'])
-    print(network_repr.get_network_str(
+    logger.info(network_repr.get_network_str(
         lasagne.layers.get_all_layers(network),
         get_network=False, incomings=True, outgoings=True))
     if runopts['start_with_saved_params'] and \
        os.path.isfile(runopts['save_model_file']):
-        print(" Loading parameters file:", runopts['save_model_file'])
+        logger.info(" Loading parameters file: %s" % \
+                    runopts['save_model_file'])
         with np.load(runopts['save_model_file']) as f:
             param_values = [f['arr_%d' % i] for i in range(len(f.files))]
         lasagne.layers.set_all_param_values(network, param_values)
@@ -98,7 +102,7 @@ def categorical_learn_and_validate(
 
     # Create update expressions for training.
     params = lasagne.layers.get_all_params(network, trainable=True)
-    print(
+    logger.info(
         """
         ////
         Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
@@ -108,7 +112,7 @@ def categorical_learn_and_validate(
         """)
     updates_adagrad = lasagne.updates.adagrad(
         loss, params, learning_rate=hyperpars['learning_rate'], epsilon=1e-06)
-    print(
+    logger.info(
         """
         ////
         Apply Nesterov momentum using Lisa Lab's modifications.
@@ -136,7 +140,7 @@ def categorical_learn_and_validate(
     val_fn = theano.function(inputlist, [test_loss, test_acc],
                              allow_input_downcast=True)
 
-    print("Starting training...")
+    logger.info("Starting training...")
     #
     # TODO: early stopping logic goes here...
     #
@@ -165,10 +169,12 @@ def categorical_learn_and_validate(
                     train_set, hyperpars['batchsize']
                 )
                 t1 = time.time()
-                print("  Loading slice {} from {} took {:.3f}s.".format(
-                    tslice, data_file, t1 - t0))
+                logger.info(
+                    "  Loading slice {} from {} took {:.3f}s.".format(
+                        tslice, data_file, t1 - t0)
+                )
                 if runopts['debug_print']:
-                    print("   dset sources:", train_set.provides_sources)
+                    logger.info("   dset sources:", train_set.provides_sources)
 
                 t0 = time.time()
                 for data in train_dstream.get_epoch_iterator():
@@ -179,8 +185,9 @@ def categorical_learn_and_validate(
                     train_err += train_fn(*inputs)
                     train_batches += 1
                 t1 = time.time()
-                print("  -Iterating over the slice took {:.3f}s.".format(
-                    t1 - t0))
+                logger.info(
+                    "  -Iterating over the slice took {:.3f}s.".format(t1 - t0)
+                )
 
                 del train_set       # hint to garbage collector
                 del train_dstream   # hint to garbage collector
@@ -212,23 +219,31 @@ def categorical_learn_and_validate(
                     del valid_dstream
 
             t1 = time.time()
-            print("  The validation pass took {:.3f}s.".format(t1 - t0))
+            logger.info("  The validation pass took {:.3f}s.".format(t1 - t0))
 
         # Dump the current network weights to file at the end of epoch
         np.savez(runopts['save_model_file'],
                  *lasagne.layers.get_all_param_values(network))
 
         # Then we print the results for this epoch:
-        print("Epoch {} of {} took {:.3f}s".format(
-            epoch + 1, hyperpars['num_epochs'], time.time() - start_time))
-        print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
+        logger.info(
+            "\nEpoch {} of {} took {:.3f}s"
+            "\n  training loss:\t\t{:.6f}".format(
+                epoch + 1, hyperpars['num_epochs'], time.time() - start_time,
+                train_err / train_batches
+            )
+        )
         if runopts['do_validation_pass']:
-            print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
-            print("  validation accuracy:\t\t{:.2f} %".format(
-                val_acc / val_batches * 100))
-            print("---")
+            logger.info(
+                "\n  validation loss:\t\t{:.6f}"
+                "\n  validation accuracy:\t\t{:.2f} %".format(
+                    val_err / val_batches,
+                    val_acc / val_batches * 100
+                )
+            )
+            logger.info("---")
 
-    print("Finished {} epochs.".format(epoch + 1))
+    logger.info("Finished {} epochs.".format(epoch + 1))
 
 
 def categorical_test(
