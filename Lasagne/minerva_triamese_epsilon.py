@@ -208,6 +208,20 @@ if __name__ == '__main__':
             options.imgh_u,
             options.imgh_v)
 
+    hyperpars={}
+    hyperpars['num_epochs'] = options.n_epochs
+    hyperpars['learning_rate'] = options.lrate
+    hyperpars['momentum'] = options.momentum
+    hyperpars['l1_penalty_scale'] = None
+    hyperpars['l2_penalty_scale'] = options.l2_penalty_scale
+    hyperpars['batchsize'] = options.batchsize
+
+    imgdat = {}
+    imgdat['views'] = 'xuv'
+    imgdat['imgw'] = options.imgw
+    imgdat['imgh'] = (options.imgh_x, options.imgh_u, options.imgh_v)
+
+
     if options.do_learn:
         learn(build_cnn=build_network_function,
               imgw=imgw,
