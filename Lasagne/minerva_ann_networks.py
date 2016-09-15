@@ -624,11 +624,10 @@ def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,
     # And, finally, the `noutputs`-unit output layer with `dropoutp` dropout 
     # on its inputs:
     net['output_prob'] = DenseLayer(
-        dropout(net['dense-across'], p=dropoutp),
+        net['dense-across'],
         num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax)
-    print("Softmax output prob with n_units = {}, dropout = {}".format(
-        noutputs, dropoutp))
+    print("Softmax output prob with n_units = {}".format(noutputs))
 
     print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
     return net['output_prob']
