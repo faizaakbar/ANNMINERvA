@@ -15,31 +15,11 @@ from lasagne.objectives import categorical_crossentropy
 
 from minerva_ann_datasets import load_datasubset
 from minerva_ann_datasets import load_all_datasubsets
-from minerva_ann_datasets import get_dataset_sizes
+from minerva_ann_datasets import get_and_print_dataset_subsizes
 from minerva_ann_datasets import slices_maker
 from minerva_ann_datasets import make_scheme_and_stream
 
 
-def get_and_print_dataset_subsizes(data_file_list):
-    """
-    get a list of the sizes of each 'subset' (train/valid/test) in
-    each data file and return a 3-tuple of lists of lists of sizes
-    """
-    train_sizes = []
-    valid_sizes = []
-    test_sizes = []
-    for data_file in data_file_list:
-        lsize, vsize, tsize = get_dataset_sizes(data_file)
-        train_sizes.append(lsize)
-        valid_sizes.append(vsize)
-        test_sizes.append(tsize)
-    print(" Learning sample size = {} examples".format(
-        np.sum(train_sizes)))
-    print(" Validation sample size = {} examples".format(
-        np.sum(valid_sizes)))
-    print(" Testing sample size = {} examples".format(
-        np.sum(test_sizes)))
-    return train_sizes, valid_sizes, test_sizes
 
 
 def get_used_data_sizes_for_testing(train_sizes, valid_sizes, test_sizes,
