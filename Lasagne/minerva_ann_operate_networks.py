@@ -20,8 +20,6 @@ from minerva_ann_datasets import slices_maker
 from minerva_ann_datasets import make_scheme_and_stream
 
 
-
-
 def get_used_data_sizes_for_testing(train_sizes, valid_sizes, test_sizes,
                                     test_all_data):
     used_data_size = np.sum(test_sizes)
@@ -43,22 +41,6 @@ def build_inputlist(input_var_x, input_var_u, input_var_v, views):
     if 'v' in views:
         inputlist.append(input_var_v)
     return inputlist
-
-
-def get_list_of_hits_and_targets_from_data(data, views, target_idx):
-    """
-    data[0] should be eventids
-    """
-    inputs = []
-    if views == 'xuv':
-        inputu, inputv, inputx, targets = \
-            data[1], data[2], data[3], data[target_idx]
-        inputs = [inputx, inputu, inputv, targets]
-    else:
-        input_view, targets = \
-            data[1], data[target_idx]
-        inputs = [input_view, targets]
-    return inputs
 
 
 def get_eventids_hits_and_targets_from_data(data, views, target_idx):
@@ -131,7 +113,8 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                                    do_validation_pass=True,
                                    convpooldictlist=None,
                                    nhidden=None, dropoutp=None,
-                                   debug_print=False):
+                                   debug_print=False,
+                                   get_list_of_hits_and_targets_from_data=None):
     """
     Run learning and validation for triamese networks using AdaGrad for
     learning rate evolution, nesterov momentum; read the data files in
@@ -316,7 +299,8 @@ def categorical_test(build_cnn=None, data_file_list=None,
                      be_verbose=False, convpooldictlist=None,
                      nhidden=None, dropoutp=None,
                      test_all_data=False, debug_print=False,
-                     noutputs=11):
+                     noutputs=11,
+                     get_list_of_hits_and_targets_from_data=None):
     """
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the
@@ -459,7 +443,8 @@ def categorical_predict(build_cnn=None, data_file_list=None,
                         be_verbose=False, convpooldictlist=None,
                         nhidden=None, dropoutp=None, write_db=True,
                         test_all_data=False, debug_print=False,
-                        noutputs=11):
+                        noutputs=11,
+                        get_list_of_hits_and_targets_from_data=None):
     """
     Make predictions based on the model _only_ (e.g., this routine should
     be used to produce prediction db's quickly or for data)
@@ -565,7 +550,8 @@ def view_layer_activations(build_cnn=None, data_file_list=None,
                            save_model_file='./params_file.npz',
                            be_verbose=False, convpooldictlist=None,
                            nhidden=None, dropoutp=None, write_db=True,
-                           test_all_data=False, debug_print=False):
+                           test_all_data=False, debug_print=False,
+                           get_list_of_hits_and_targets_from_data=None):
     """
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the

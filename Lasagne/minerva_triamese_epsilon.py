@@ -215,11 +215,31 @@ if __name__ == '__main__':
     hyperpars['l1_penalty_scale'] = None
     hyperpars['l2_penalty_scale'] = options.l2_penalty_scale
     hyperpars['batchsize'] = options.batchsize
+    hyperpars['dropoutp'] = 0.5
+    hyperpars['learning_strategy'] = 'adagrad'
 
     imgdat = {}
     imgdat['views'] = 'xuv'
     imgdat['imgw'] = options.imgw
     imgdat['imgh'] = (options.imgh_x, options.imgh_u, options.imgh_v)
+
+
+    def get_list_of_hits_and_targets_from_data(data, views, target_idx):
+        """
+        data[0] should be eventids
+        data[1], [2], [3] should be hits-x, -u, -v
+        views is something we shouldn't have to pass in - TODO FIX
+        """
+        inputs = []
+        if views == 'xuv':
+            inputu, inputv, inputx, targets = data[1], \
+                                              data[2], \
+                                              data[3], data[target_idx]
+            inputs = [inputx, inputu, inputv, targets]
+        else:
+            input_view, targets = data[1], data[target_idx]
+            inputs = [input_view, targets]
+        return inputs
 
 
     if options.do_learn:
@@ -237,7 +257,9 @@ if __name__ == '__main__':
               save_model_file=options.save_model_file,
               start_with_saved_params=options.start_with_saved_params,
               convpooldictlist=convpooldictlist,
-              nhidden=nhidden)
+              nhidden=nhidden,
+              get_list_of_hits_and_targets_from_data=get_list_of_hits_and_targets_from_data
+        )
 
     if options.do_test:
         test(build_cnn=build_network_function,
