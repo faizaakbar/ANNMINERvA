@@ -16,11 +16,8 @@ NEPOCHS=12
 LRATE=0.001
 L2REG=0.0001
 
-# NOUTPUTS=67
-# TGTIDX=4
-
-NOUTPUTS=11
-TGTIDX=5
+# NOUTPUTS=11
+# TGTIDX=5
 
 DOTEST=""
 DOTEST="-t"
@@ -30,7 +27,7 @@ DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallz_pcodeca
 SAVEMODELNAME="./lminervatriamese_epsilon`date +%s`.npz"
 # SAVEMODELNAME="./transfer_to_epsilon_test2.npz"
 # SAVEMODELNAME="./transfer_to_epsilon_noutputs67_test3.npz"
-PYTHONPROG="minerva_triamese_epsilon.py"
+PYTHONPROG="minerva_tricolumnar_epsilon.py"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
@@ -67,8 +64,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
-  -d $DATAFILENAME \
-  --noutputs $NOUTPUTS --tgtidx $TGTIDX
+  -d $DATAFILENAME
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l $DOTEST \
@@ -76,8 +72,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
-  -d $DATAFILENAME \
-  --noutputs $NOUTPUTS --tgtidx $TGTIDX
+  -d $DATAFILENAME
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
