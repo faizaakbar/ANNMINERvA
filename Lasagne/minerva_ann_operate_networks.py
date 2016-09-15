@@ -43,22 +43,6 @@ def build_inputlist(input_var_x, input_var_u, input_var_v, views):
     return inputlist
 
 
-def get_eventids_hits_and_targets_from_data(data, views, target_idx):
-    """
-    data[0] should be eventids
-    """
-    inputs = []
-    if views == 'xuv':
-        eventids, inputu, inputv, inputx, targets = \
-            data[0], data[1], data[2], data[3], data[target_idx]
-        inputs = [inputx, inputu, inputv]
-    else:
-        eventids, input_view, targets = \
-            data[0], data[1], data[target_idx]
-        inputs = [input_view]
-    return eventids, inputs, targets
-
-
 def get_id_tagged_inputlist_from_data(data, views):
     """
     data[0] should be eventids
@@ -75,20 +59,6 @@ def get_id_tagged_inputlist_from_data(data, views):
     return eventids, inputs
 
 
-def get_list_of_hits_from_data(data, views):
-    """
-    data[0] should be eventids
-    """
-    inputs = []
-    if views == 'xuv':
-        inputu, inputv, inputx = data[1], data[2], data[3]
-        inputs = [inputx, inputu, inputv]
-    else:
-        input_view = data[1]
-        inputs = [input_view]
-    return inputs
-
-
 def get_tstamp_from_model_name(save_model_file):
     """
     extract timestamp from model file - assume it is the first set of numbers;
@@ -102,19 +72,10 @@ def get_tstamp_from_model_name(save_model_file):
     return tstamp
 
 
-def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
-                                   learning_rate=0.01, momentum=0.9,
-                                   l2_penalty_scale=1e-04, batchsize=500,
-                                   imgw=50, imgh=50, views='xuv',
-                                   target_idx=5, noutputs=11,
-                                   data_file_list=None,
-                                   save_model_file='./params_file.npz',
-                                   start_with_saved_params=False,
-                                   do_validation_pass=True,
-                                   convpooldictlist=None,
-                                   nhidden=None, dropoutp=None,
-                                   debug_print=False,
-                                   get_list_of_hits_and_targets_from_data=None):
+def categorical_learn_and_validate(
+        build_cnn_fn, hyperpars, imgdat, runopts, networkstr,
+        get_list_of_hits_and_targets_fn
+):
     """
     Run learning and validation for triamese networks using AdaGrad for
     learning rate evolution, nesterov momentum; read the data files in
@@ -122,7 +83,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     """
     print("Loading data...")
     train_sizes, valid_sizes, _ = \
-        get_and_print_dataset_subsizes(data_file_list)
+        get_and_print_dataset_subsizes(runopts['data_file_list'])
 
     # Prepare Theano variables for inputs and targets
     input_var_x = T.tensor4('inputs')
@@ -133,15 +94,19 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
 
     # Build the model
-    network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
-                        convpooldictlist=convpooldictlist, nhidden=nhidden,
-                        dropoutp=dropoutp, noutputs=noutputs)
+    network = build_cnn_fn(inputlist=inputlist,
+                           imgw=imgdat['imgw'], imgh=imgdat['imgh'],
+                           convpooldictlist=networkstr['topology'],
+                           nhidden=networkstr['nhidden'],
+                           dropoutp=networkstr['dropoutp'],
+                           noutputs=networkstr['noutputs'])
     print(network_repr.get_network_str(
         lasagne.layers.get_all_layers(network),
         get_network=False, incomings=True, outgoings=True))
-    if start_with_saved_params and os.path.isfile(save_model_file):
-        print(" Loading parameters file:", save_model_file)
-        with np.load(save_model_file) as f:
+    if runopts['start_with_saved_params'] and \
+       os.path.isfile(runopts['save_model_file']):
+        print(" Loading parameters file:", runopts['save_model_file'])
+        with np.load(runopts['save_model_file']) as f:
             param_values = [f['arr_%d' % i] for i in range(len(f.files))]
         lasagne.layers.set_all_param_values(network, param_values)
     else:
@@ -154,7 +119,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     prediction = lasagne.layers.get_output(network)
     l2_penalty = lasagne.regularization.regularize_layer_params(
         lasagne.layers.get_all_layers(network),
-        lasagne.regularization.l2) * l2_penalty_scale
+        lasagne.regularization.l2) * networkstr['l2_penalty_scale']
     loss = categorical_crossentropy(prediction, target_var) + l2_penalty
     loss = loss.mean()
 
@@ -169,7 +134,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
         ////
         """)
     updates_adagrad = lasagne.updates.adagrad(
-        loss, params, learning_rate=learning_rate, epsilon=1e-06)
+        loss, params, learning_rate=hyperpars['learning_rate'], epsilon=1e-06)
     print(
         """
         ////
@@ -177,7 +142,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
         ////
         """)
     updates = lasagne.updates.apply_nesterov_momentum(
-        updates_adagrad, params, momentum=momentum)
+        updates_adagrad, params, momentum=hyperpars['momentum'])
 
     # Create a loss expression for validation/testing. Note we do a
     # deterministic forward pass through the network, disabling dropout.
@@ -212,18 +177,20 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     valid_set = None
 
     epoch = 0
-    for epoch in range(num_epochs):
+    for epoch in range(hyperpars['num_epochs']):
 
         start_time = time.time()
         train_err = 0
         train_batches = 0
-        for i, data_file in enumerate(data_file_list):
+        for i, data_file in enumerate(runopts['data_file_list']):
             # In each epoch, we do a full pass over the training data:
             for tslice in train_slices[i]:
 
                 t0 = time.time()
                 train_set = load_datasubset(data_file, 'train', tslice)
-                _, train_dstream = make_scheme_and_stream(train_set, batchsize)
+                _, train_dstream = make_scheme_and_stream(
+                    train_set, hyperpars['batchsize']
+                )
                 t1 = time.time()
                 print("  Loading slice {} from {} took {:.3f}s.".format(
                     tslice, data_file, t1 - t0))
@@ -235,8 +202,7 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                     # data order in the hdf5 looks like:
                     #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                     # (Check the file carefully for data names, etc.)
-                    inputs = get_list_of_hits_and_targets_from_data(
-                        data, views, target_idx)
+                    inputs = get_list_of_hits_and_targets_fn(views)
                     train_err += train_fn(*inputs)
                     train_batches += 1
                 t1 = time.time()
@@ -246,24 +212,24 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
                 del train_set       # hint to garbage collector
                 del train_dstream   # hint to garbage collector
 
-        if do_validation_pass:
+        if runopts['do_validation_pass']:
             # And a full pass over the validation data
             t0 = time.time()
             val_err = 0
             val_acc = 0
             val_batches = 0
-            for i, data_file in enumerate(data_file_list):
+            for i, data_file in enumerate(runopts['data_file_list']):
                 for vslice in valid_slices[i]:
                     valid_set = load_datasubset(data_file, 'valid', vslice)
-                    _, valid_dstream = make_scheme_and_stream(valid_set,
-                                                              batchsize)
+                    _, valid_dstream = make_scheme_and_stream(
+                        valid_set, hyperpars['batchsize']
+                    )
 
                     for data in valid_dstream.get_epoch_iterator():
                         # data order in the hdf5 looks like:
                         #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                         # (Check the file carefully for data names, etc.)
-                        inputs = get_list_of_hits_and_targets_from_data(
-                            data, views, target_idx)
+                        inputs = get_list_of_hits_and_targets_fn(data)
                         err, acc = val_fn(*inputs)
                         val_err += err
                         val_acc += acc
@@ -276,14 +242,14 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
             print("  The validation pass took {:.3f}s.".format(t1 - t0))
 
         # Dump the current network weights to file at the end of epoch
-        np.savez(save_model_file,
+        np.savez(runopts['save_model_file'],
                  *lasagne.layers.get_all_param_values(network))
 
         # Then we print the results for this epoch:
         print("Epoch {} of {} took {:.3f}s".format(
-            epoch + 1, num_epochs, time.time() - start_time))
+            epoch + 1, hyperpars['num_epochs'], time.time() - start_time))
         print("  training loss:\t\t{:.6f}".format(train_err / train_batches))
-        if do_validation_pass:
+        if runopts['do_validation_pass']:
             print("  validation loss:\t\t{:.6f}".format(val_err / val_batches))
             print("  validation accuracy:\t\t{:.2f} %".format(
                 val_acc / val_batches * 100))
@@ -292,26 +258,19 @@ def categorical_learn_and_validate(build_cnn=None, num_epochs=500,
     print("Finished {} epochs.".format(epoch + 1))
 
 
-def categorical_test(build_cnn=None, data_file_list=None,
-                     l2_penalty_scale=1e-04, views='xuv',
-                     imgw=50, imgh=50, target_idx=5,
-                     save_model_file='./params_file.npz',
-                     be_verbose=False, convpooldictlist=None,
-                     nhidden=None, dropoutp=None,
-                     test_all_data=False, debug_print=False,
-                     noutputs=11,
-                     get_list_of_hits_and_targets_from_data=None):
+def categorical_test(
+        build_cnn_fn, hyperpars, imgdat, runopts, networkstr=networkstr,
+        get_eventids_hits_and_targets_fn, get_list_of_hits_fn
+):
     """
     Run tests on the reserved test sample ("trainiing" examples with true
     values to check that were not used for learning or validation); read the
     data files in chunks into memory.
-
-    noutputs=11 for zsegments, other vals for planecodes, etc.
     """
     print("Loading data for testing...")
-    tstamp = get_tstamp_from_model_name(save_model_file)
+    tstamp = get_tstamp_from_model_name(runopts['save_model_file'])
     train_sizes, valid_sizes, test_sizes = \
-        get_and_print_dataset_subsizes(data_file_list)
+        get_and_print_dataset_subsizes(runopts['data_file_list'])
     used_sizes, used_data_size = get_used_data_sizes_for_testing(train_sizes,
                                                                  valid_sizes,
                                                                  test_sizes,
@@ -326,10 +285,13 @@ def categorical_test(build_cnn=None, data_file_list=None,
     inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
 
     # Build the model
-    network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
-                        convpooldictlist=convpooldictlist, nhidden=nhidden,
-                        dropoutp=dropoutp, noutputs=noutputs)
-    with np.load(save_model_file) as f:
+    network = build_cnn_fn(inputlist=inputlist,
+                           imgw=imgdat['imgw'], imgh=imgdat['imgh'],
+                           convpooldictlist=networkstr['topology'],
+                           nhidden=networkstr['nhidden'],
+                           dropoutp=networkstr['dropoutp'],
+                           noutputs=networkstr['noutputs'])
+    with np.load(runopts['save_model_file']) as f:
         param_values = [f['arr_%d' % i] for i in range(len(f.files))]
     lasagne.layers.set_all_param_values(network, param_values)
 
@@ -337,7 +299,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
     test_prediction = lasagne.layers.get_output(network, deterministic=True)
     l2_penalty = lasagne.regularization.regularize_layer_params(
         lasagne.layers.get_all_layers(network),
-        lasagne.regularization.l2) * l2_penalty_scale
+        lasagne.regularization.l2) * networkstr['l2_penalty_scale']
     test_loss = categorical_crossentropy(test_prediction, target_var) + \
         l2_penalty
     test_loss = test_loss.mean()
@@ -363,7 +325,7 @@ def categorical_test(build_cnn=None, data_file_list=None,
     test_acc = 0
     test_batches = 0
     # look at some concrete predictions
-    num_poss_segs = noutputs
+    num_poss_segs = networkstr['noutputs']
     pred_target = np.zeros(num_poss_segs, dtype='float32')
     true_target = np.zeros(num_poss_segs, dtype='float32')
     targs_mat = np.zeros(num_poss_segs * num_poss_segs,
@@ -374,9 +336,9 @@ def categorical_test(build_cnn=None, data_file_list=None,
         test_slices.append(slices_maker(tsize, slice_size=50000))
     test_set = None
 
-    evt_print_freq = 1   # TODO: pass this in?
+    verbose_evt_print_freq = 1
     evtcounter = 0
-    for i, data_file in enumerate(data_file_list):
+    for i, data_file in enumerate(runopts['data_file_list']):
 
         for tslice in test_slices[i]:
             t0 = time.time()
@@ -385,30 +347,31 @@ def categorical_test(build_cnn=None, data_file_list=None,
                 test_set = load_all_datasubsets(data_file, tslice)
             else:
                 test_set = load_datasubset(data_file, 'test', tslice)
-            _, test_dstream = make_scheme_and_stream(test_set, 1,
-                                                     shuffle=False)
+            _, test_dstream = make_scheme_and_stream(
+                test_set, 1, shuffle=False
+            )
             t1 = time.time()
             print("  Loading slice {} from {} took {:.3f}s.".format(
-                tslice, data_file, t1 - t0))
-            if debug_print:
+                tslice, data_file, t1 - t0)
+            )
+            if runopts['debug_print']:
                 print("   dset sources:", test_set.provides_sources)
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
                 eventids, inputlist, targets = \
-                    get_eventids_hits_and_targets_from_data(
-                        data, views, target_idx)
+                    get_eventids_hits_and_targets_fn(data)
                 inputlist.append(targets)
                 err, acc = val_fn(*inputlist)
                 test_err += err
                 test_acc += acc
                 test_batches += 1
-                hits_list = get_list_of_hits_from_data(data, views)
+                hits_list = get_list_of_hits_fn(data)
                 probs, pred = pred_fn(*hits_list)
                 pred_targ = zip(pred, targets)
                 evtcounter += 1
-                if be_verbose:
-                    if evtcounter % evt_print_freq == 0:
+                if runopts['be_verbose']:
+                    if evtcounter % verbose_evt_print_freq == 0:
                         print("{}/{} - {}: (prediction, true target): {}, {}".
                               format(evtcounter,
                                      used_data_size,
@@ -437,23 +400,17 @@ def categorical_test(build_cnn=None, data_file_list=None,
             i, acc_target[i]))
 
 
-def categorical_predict(build_cnn=None, data_file_list=None,
-                        views='xuv', imgw=50, imgh=50, target_idx=5,
-                        save_model_file='./params_file.npz',
-                        be_verbose=False, convpooldictlist=None,
-                        nhidden=None, dropoutp=None, write_db=True,
-                        test_all_data=False, debug_print=False,
-                        noutputs=11,
-                        get_list_of_hits_and_targets_from_data=None):
+def categorical_predict(
+        build_cnn_fn, hyperpars, imgdat, runopts, networkstr=networkstr,
+        get_eventids_hits_and_targets_fn
+):
     """
     Make predictions based on the model _only_ (e.g., this routine should
     be used to produce prediction db's quickly or for data)
-
-    noutputs=11 for zsegments, other vals for planecodes, etc.
     """
     print("Loading data for testing...")
     train_sizes, valid_sizes, test_sizes = \
-        get_and_print_dataset_subsizes(data_file_list)
+        get_and_print_dataset_subsizes(runopts['data_file_list'])
     used_sizes, used_data_size = get_used_data_sizes_for_testing(train_sizes,
                                                                  valid_sizes,
                                                                  test_sizes,
@@ -467,7 +424,7 @@ def categorical_predict(build_cnn=None, data_file_list=None,
         print("Cannot import sqlalchemy...")
         write_db = False
     if write_db:
-        tstamp = get_tstamp_from_model_name(save_model_file)
+        tstamp = get_tstamp_from_model_name(runopts['save_model_file'])
         metadata = MetaData()
         dbname = 'prediction' + tstamp
         eng = predictiondb.get_engine(dbname)
@@ -481,10 +438,13 @@ def categorical_predict(build_cnn=None, data_file_list=None,
     inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
 
     # Build the model
-    network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
-                        convpooldictlist=convpooldictlist, nhidden=nhidden,
-                        dropoutp=dropoutp, noutputs=noutputs)
-    with np.load(save_model_file) as f:
+    network = build_cnn_fn(inputlist=inputlist,
+                           imgw=imgdat['imgw'], imgh=imgdat['imgh'],
+                           convpooldictlist=networkstr['topology'],
+                           nhidden=networkstr['nhidden'],
+                           dropoutp=networkstr['dropoutp'],
+                           noutputs=networkstr['noutputs'])
+    with np.load(runopts['save_model_file']) as f:
         param_values = [f['arr_%d' % i] for i in range(len(f.files))]
     lasagne.layers.set_all_param_values(network, param_values)
 
@@ -504,8 +464,8 @@ def categorical_predict(build_cnn=None, data_file_list=None,
 
     evtcounter = 0
     batch_size = 500
-    evt_print_freq = batch_size * 4
-    for i, data_file in enumerate(data_file_list):
+    verbose_evt_print_freq = batch_size * 4
+    for i, data_file in enumerate(runopts['data_file_list']):
 
         for tslice in test_slices[i]:
             t0 = time.time()
@@ -515,11 +475,12 @@ def categorical_predict(build_cnn=None, data_file_list=None,
             else:
                 test_set = load_datasubset(data_file, 'test', tslice)
             _, test_dstream = make_scheme_and_stream(test_set,
-                                                     batch_size,
+                                                     hyperpars['batch_size'],
                                                      shuffle=False)
             t1 = time.time()
             print("  Loading slice {} from {} took {:.3f}s.".format(
-                tslice, data_file, t1 - t0))
+                tslice, data_file, t1 - t0)
+            )
             if debug_print:
                 print("   dset sources:", test_set.provides_sources)
 
@@ -533,7 +494,7 @@ def categorical_predict(build_cnn=None, data_file_list=None,
                     for i, evtid in enumerate(eventids):
                         filldb(tbl, con, evtid, pred[i], probs[i])
                 if be_verbose:
-                    if evtcounter % evt_print_freq == 0:
+                    if evtcounter % verbose_evt_print_freq == 0:
                         print("processed {}/{}". format(evtcounter,
                                                         used_data_size))
             t1 = time.time()
@@ -543,177 +504,6 @@ def categorical_predict(build_cnn=None, data_file_list=None,
             del test_dstream
 
     print("Finished producing predictions!")
-
-
-def view_layer_activations(build_cnn=None, data_file_list=None,
-                           imgw=50, imgh=50, views='xuv', target_idx=5,
-                           save_model_file='./params_file.npz',
-                           be_verbose=False, convpooldictlist=None,
-                           nhidden=None, dropoutp=None, write_db=True,
-                           test_all_data=False, debug_print=False,
-                           get_list_of_hits_and_targets_from_data=None):
-    """
-    Run tests on the reserved test sample ("trainiing" examples with true
-    values to check that were not used for learning or validation); read the
-    data files in chunks into memory.
-    """
-    print("Loading data for testing...")
-    train_sizes, valid_sizes, test_sizes = \
-        get_and_print_dataset_subsizes(data_file_list)
-    used_sizes, _ = get_used_data_sizes_for_testing(train_sizes,
-                                                    valid_sizes,
-                                                    test_sizes,
-                                                    test_all_data)
-
-    # extract timestamp from model file - assume it is the first set of numbers
-    # otherwise just use "now"
-    import re
-    tstamp = str(time.time()).split('.')[0]
-    m = re.search(r"[0-9]+", save_model_file)
-    if m:
-        tstamp = m.group(0)
-
-    # Prepare Theano variables for inputs and targets
-    input_var_x = T.tensor4('inputs')
-    input_var_u = T.tensor4('inputs')
-    input_var_v = T.tensor4('inputs')
-
-    inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
-
-    # Build the model
-    network = build_cnn(inputlist=inputlist, imgw=imgw, imgh=imgh,
-                        convpooldictlist=convpooldictlist, nhidden=nhidden,
-                        dropoutp=dropoutp, noutputs=noutputs)
-    with np.load(save_model_file) as f:
-        param_values = [f['arr_%d' % i] for i in range(len(f.files))]
-    lasagne.layers.set_all_param_values(network, param_values)
-    print(network_repr.get_network_str(
-        lasagne.layers.get_all_layers(network),
-        get_network=False, incomings=True, outgoings=True))
-
-    layers = lasagne.layers.get_all_layers(network)
-    # layer assignment is _highly_ network specific...
-    layer_conv_x1 = lasagne.layers.get_output(layers[1])
-    layer_conv_u1 = lasagne.layers.get_output(layers[8])
-    layer_conv_v1 = lasagne.layers.get_output(layers[15])
-    layer_pool_x1 = lasagne.layers.get_output(layers[2])
-    layer_pool_u1 = lasagne.layers.get_output(layers[9])
-    layer_pool_v1 = lasagne.layers.get_output(layers[16])
-    layer_conv_x2 = lasagne.layers.get_output(layers[3])
-    layer_conv_u2 = lasagne.layers.get_output(layers[10])
-    layer_conv_v2 = lasagne.layers.get_output(layers[17])
-    layer_pool_x2 = lasagne.layers.get_output(layers[4])
-    layer_pool_u2 = lasagne.layers.get_output(layers[11])
-    layer_pool_v2 = lasagne.layers.get_output(layers[18])
-    vis_conv_x1 = theano.function(inputlist,
-                                  [layer_conv_x1],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_conv_u1 = theano.function(inputlist,
-                                  [layer_conv_u1],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_conv_v1 = theano.function(inputlist,
-                                  [layer_conv_v1],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_pool_x1 = theano.function(inputlist,
-                                  [layer_pool_x1],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_pool_u1 = theano.function(inputlist,
-                                  [layer_pool_u1],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_pool_v1 = theano.function(inputlist,
-                                  [layer_pool_v1],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_conv_x2 = theano.function(inputlist,
-                                  [layer_conv_x2],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_conv_u2 = theano.function(inputlist,
-                                  [layer_conv_u2],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_conv_v2 = theano.function(inputlist,
-                                  [layer_conv_v2],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_pool_x2 = theano.function(inputlist,
-                                  [layer_pool_x2],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_pool_u2 = theano.function(inputlist,
-                                  [layer_pool_u2],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-    vis_pool_v2 = theano.function(inputlist,
-                                  [layer_pool_v2],
-                                  allow_input_downcast=True,
-                                  on_unused_input='warn')
-
-    print("Starting visualization...")
-    test_slices = []
-    for tsize in used_sizes:
-        test_slices.append(slices_maker(tsize, slice_size=50000))
-    test_set = None
-
-    for i, data_file in enumerate(data_file_list):
-
-        for tslice in test_slices[i]:
-            t0 = time.time()
-            test_set = None
-            if test_all_data:
-                test_set = load_all_datasubsets(data_file, tslice)
-            else:
-                test_set = load_datasubset(data_file, 'test', tslice)
-            _, test_dstream = make_scheme_and_stream(test_set, 1,
-                                                     shuffle=False)
-            t1 = time.time()
-            print("  Loading slice {} from {} took {:.3f}s.".format(
-                tslice, data_file, t1 - t0))
-            if debug_print:
-                print("   dset sources:", test_set.provides_sources)
-
-            t0 = time.time()
-            for data in test_dstream.get_epoch_iterator():
-                # data order in the hdf5 looks like:
-                #  ids, hits-u, hits-v, hits-x, planes, segments, zs
-                # (Check the file carefully for data names, etc.)
-                eventids, inputlist, targets = \
-                    get_eventids_hits_and_targets_from_data(
-                        data, views, target_idx)
-                conv_x1 = vis_conv_x1(*inputlist)
-                conv_u1 = vis_conv_u1(*inputlist)
-                conv_v1 = vis_conv_v1(*inputlist)
-                pool_x1 = vis_pool_x1(*inputlist)
-                pool_u1 = vis_pool_u1(*inputlist)
-                pool_v1 = vis_pool_v1(*inputlist)
-                conv_x2 = vis_conv_x2(*inputlist)
-                conv_u2 = vis_conv_u2(*inputlist)
-                conv_v2 = vis_conv_v2(*inputlist)
-                pool_x2 = vis_pool_x2(*inputlist)
-                pool_u2 = vis_pool_u2(*inputlist)
-                pool_v2 = vis_pool_v2(*inputlist)
-                vis_file = 'vis_' + str(targets[0]) + '_conv_1_' + tstamp + \
-                    '_' + str(eventids[0]) + '.npy'
-                np.save(vis_file, [conv_x1, conv_u1, conv_v1])
-                vis_file = 'vis_' + str(targets[0]) + '_pool_1_' + tstamp + \
-                    '_' + str(eventids[0]) + '.npy'
-                np.save(vis_file, [pool_x1, pool_u1, pool_v1])
-                vis_file = 'vis_' + str(targets[0]) + '_conv_2_' + tstamp + \
-                    '_' + str(eventids[0]) + '.npy'
-                np.save(vis_file, [conv_x2, conv_u2, conv_v2])
-                vis_file = 'vis_' + str(targets[0]) + '_pool_2_' + tstamp + \
-                    '_' + str(eventids[0]) + '.npy'
-                np.save(vis_file, [pool_x2, pool_u2, pool_v2])
-            t1 = time.time()
-            print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
-
-            del test_set
-            del test_dstream
 
 
 def decode_eventid(eventid):

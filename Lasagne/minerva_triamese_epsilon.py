@@ -25,6 +25,42 @@ def arg_list_split(option, opt, value, parser):
     setattr(parser.values, option.dest, value.split(','))
 
 
+def get_hits(data):
+    """
+    data[1], [2], [3] should be hits-x, -u, -v
+    
+    return a list of [hits-x, hits-u, hits-v]
+    """
+    inputu, inputv, inputx = data[1], data[2], data[3]
+    inputs = [inputx, inputu, inputv]
+    return inputs
+
+
+def get_hits_and_targets(data):
+    """
+    data[0] should be eventids
+    data[1], [2], [3] should be hits-x, -u, -v
+    data[5] should be segments (the target)
+
+    return everything in one list [inputs, targets]
+    """
+    inputu, inputv, inputx = data[1], data[2], data[3]
+    inputs = [inputx, inputu, inputv, data[5]]
+    return inputs
+
+
+def get_eventids_hits_and_targets(data):
+    """
+    data[0] should be eventids
+    data[1], [2], [3] should be hits-x, -u, -v
+    data[5] should be segments
+    
+    return a tuple of (eventids, [inputs], targets)
+    """
+    inputs = [data[1], data[2], data[3]]
+    return data[0], inputs, data[5]
+
+
 if __name__ == '__main__':
 
     from optparse import OptionParser
@@ -80,8 +116,6 @@ if __name__ == '__main__':
                       help='Image height (z) v', metavar='IMGH_V', type='int')
     parser.add_option('--noutputs', dest='noutputs', default=11,
                       help='number of outputs', metavar='NOUTPUTS', type='int')
-    parser.add_option('--tgtidx', dest='tgtidx', default=5,
-                      help='train-to index in hdf5', metavar='TGTIDX', type='int')
     (options, args) = parser.parse_args()
 
     if not options.do_learn and \
@@ -92,20 +126,6 @@ if __name__ == '__main__':
 
     print("Starting...")
     print(__file__)
-    print(" Begin with saved parameters?", options.start_with_saved_params)
-    print(" Saved parameters file:", options.save_model_file)
-    print(" Saved parameters file exists?",
-          os.path.isfile(options.save_model_file))
-    print(" Datasets:", options.dataset)
-    dataset_statsinfo = 0
-    for d in options.dataset:
-        dataset_statsinfo += os.stat(d).st_size
-    print(" Dataset size:", dataset_statsinfo)
-    print(" Planned number of epochs:", options.n_epochs)
-    print(" Learning rate:", options.lrate)
-    print(" Momentum:", options.momentum)
-    print(" L2 regularization penalty scale:", options.l2_penalty_scale)
-    print(" Batch size:", options.batchsize)
 
     build_network_function = build_triamese_epsilon
     learn = categorical_learn_and_validate
@@ -202,88 +222,76 @@ if __name__ == '__main__':
     convpooldictlist['u'] = convpooldictlist_u
     convpooldictlist['v'] = convpooldictlist_v
 
-    nhidden = 196
-    imgw = options.imgw
-    imgh = (options.imgh_x,
-            options.imgh_u,
-            options.imgh_v)
-
     hyperpars={}
     hyperpars['num_epochs'] = options.n_epochs
     hyperpars['learning_rate'] = options.lrate
     hyperpars['momentum'] = options.momentum
-    hyperpars['l1_penalty_scale'] = None
-    hyperpars['l2_penalty_scale'] = options.l2_penalty_scale
     hyperpars['batchsize'] = options.batchsize
-    hyperpars['dropoutp'] = 0.5
-    hyperpars['learning_strategy'] = 'adagrad'
+    hyperpars['learning_strategy'] = 'adagrad'   # meaningless right now
 
     imgdat = {}
     imgdat['views'] = 'xuv'
     imgdat['imgw'] = options.imgw
     imgdat['imgh'] = (options.imgh_x, options.imgh_u, options.imgh_v)
 
+    runopts = {}
+    runopts['data_file_list'] = options.dataset
+    runopts['save_model_file'] = options.save_model_file
+    runopts['start_with_saved_params'] = options.start_with_saved_params
+    runopts['do_validation_pass'] = True
+    runopts['debug_print'] = False
+    runopts['be_verbose'] = options.be_verbose
+    runopts['test_all_data'] = options.test_all_data
+    runopts['write_db'] = True
 
-    def get_list_of_hits_and_targets_from_data(data, views, target_idx):
-        """
-        data[0] should be eventids
-        data[1], [2], [3] should be hits-x, -u, -v
-        views is something we shouldn't have to pass in - TODO FIX
-        """
-        inputs = []
-        if views == 'xuv':
-            inputu, inputv, inputx, targets = data[1], \
-                                              data[2], \
-                                              data[3], data[target_idx]
-            inputs = [inputx, inputu, inputv, targets]
-        else:
-            input_view, targets = data[1], data[target_idx]
-            inputs = [input_view, targets]
-        return inputs
+    networkstr = {}
+    networkstr['topology'] = convpooldictlist
+    networkstr['nhidden'] = 196
+    networkstr['dropoutp'] = 0.5
+    networkstr['noutputs'] = 11
+    networkstr['l1_penalty_scale'] = None
+    networkstr['l2_penalty_scale'] = options.l2_penalty_scale
 
+    print(" Begin with saved parameters?", runopts['start_with_saved_params'])
+    print(" Saved parameters file:", runopts['save_model_file'])
+    print(" Saved parameters file exists?",
+          os.path.isfile(runopts['save_model_file']))
+    print(" Datasets:", runopts['data_file_list'])
+    dataset_statsinfo = 0
+    for d in runopts['data_file_list']:
+        dataset_statsinfo += os.stat(d).st_size
+    print(" Dataset size:", dataset_statsinfo)
+    print(" Planned number of epochs:", hyperpars['num_epochs'])
+    print(" Learning rate:", hyperpars['learning_rate'])
+    print(" Momentum:", hyperpars['momentum'])
+    print(" Batch size:", hyperpars['batchsize'])
+    print(" L2 regularization penalty scale:", networkstr['l2_penalty_scale'])
 
     if options.do_learn:
-        learn(build_cnn=build_network_function,
-              imgw=imgw,
-              imgh=imgh,
-              target_idx=options.tgtidx,
-              noutputs=options.noutputs,
-              num_epochs=options.n_epochs,
-              learning_rate=options.lrate,
-              momentum=options.momentum,
-              l2_penalty_scale=options.l2_penalty_scale,
-              batchsize=options.batchsize,
-              data_file_list=options.dataset,
-              save_model_file=options.save_model_file,
-              start_with_saved_params=options.start_with_saved_params,
-              convpooldictlist=convpooldictlist,
-              nhidden=nhidden,
-              get_list_of_hits_and_targets_from_data=get_list_of_hits_and_targets_from_data
+        learn(build_cnn_fn=build_network_function,
+              hyperpars=hyperpars,
+              imgdat=imgdat,
+              runopts=runopts,
+              networkstr=networkstr,
+              get_list_of_hits_and_targets_fn=get_hits_and_targets
         )
 
     if options.do_test:
-        test(build_cnn=build_network_function,
-             imgw=imgw,
-             imgh=imgh,
-             target_idx=options.tgtidx,
-             noutputs=options.noutputs,
-             data_file_list=options.dataset,
-             l2_penalty_scale=options.l2_penalty_scale,
-             save_model_file=options.save_model_file,
-             be_verbose=options.be_verbose,
-             convpooldictlist=convpooldictlist,
-             test_all_data=options.test_all_data,
-             nhidden=nhidden)
+        test(build_cnn_fn=build_network_function,
+             hyperpars=hyperpars,
+             imgdat=imgdat,
+             runopts=runopts,
+             networkstr=networkstr,
+             get_eventids_hits_and_targets_fn=get_eventids_hits_and_targets,
+             get_list_of_hits_fn=get_hits
+        )
 
     if options.do_predict:
         predict(build_cnn=build_network_function,
-                imgw=imgw,
-                imgh=imgh,
-                target_idx=options.tgtidx,
-                noutputs=options.noutputs,
-                data_file_list=options.dataset,
-                save_model_file=options.save_model_file,
-                be_verbose=options.be_verbose,
-                convpooldictlist=convpooldictlist,
-                test_all_data=options.test_all_data,
-                nhidden=nhidden)
+                hyperpars=hyperpars,
+                imgdat=imgdat,
+                runopts=runopts,
+                networkstr=networkstr,
+                get_eventids_hits_and_targets_fn=get_eventids_hits_and_targets
+        )
+
