@@ -296,7 +296,7 @@ if __name__ == '__main__':
         )
 
     if options.do_predict:
-        predict(build_cnn=build_network_function,
+        predict(build_cnn_fn=build_network_function,
                 hyperpars=hyperpars,
                 imgdat=imgdat,
                 runopts=runopts,

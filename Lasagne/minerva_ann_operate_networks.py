@@ -424,7 +424,7 @@ def categorical_predict(
     except ImportError:
         print("Cannot import sqlalchemy...")
         write_db = False
-    if write_db:
+    if runopts['write_db']:
         tstamp = get_tstamp_from_model_name(runopts['save_model_file'])
         metadata = MetaData()
         dbname = 'prediction' + tstamp
@@ -466,36 +466,35 @@ def categorical_predict(
     test_set = None
 
     evtcounter = 0
-    batch_size = 500
-    verbose_evt_print_freq = batch_size * 4
+    verbose_evt_print_freq = hyperpars['batchsize'] * 4
     for i, data_file in enumerate(runopts['data_file_list']):
 
         for tslice in test_slices[i]:
             t0 = time.time()
             test_set = None
-            if test_all_data:
+            if runopts['test_all_data']:
                 test_set = load_all_datasubsets(data_file, tslice)
             else:
                 test_set = load_datasubset(data_file, 'test', tslice)
             _, test_dstream = make_scheme_and_stream(test_set,
-                                                     hyperpars['batch_size'],
+                                                     hyperpars['batchsize'],
                                                      shuffle=False)
             t1 = time.time()
             print("  Loading slice {} from {} took {:.3f}s.".format(
                 tslice, data_file, t1 - t0)
             )
-            if debug_print:
+            if runopts['debug_print']:
                 print("   dset sources:", test_set.provides_sources)
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
                 eventids, hits_list = get_id_tagged_inputlist_fn(data)
                 probs, pred = pred_fn(*hits_list)
-                evtcounter += batch_size
-                if write_db:
+                evtcounter += hyperpars['batchsize']
+                if runopts['write_db']:
                     for i, evtid in enumerate(eventids):
                         filldb(tbl, con, evtid, pred[i], probs[i])
-                if be_verbose:
+                if runopts['be_verbose']:
                     if evtcounter % verbose_evt_print_freq == 0:
                         print("processed {}/{}". format(evtcounter,
                                                         used_data_size))
