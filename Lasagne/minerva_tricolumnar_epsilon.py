@@ -49,15 +49,24 @@ def get_hits_and_targets(data):
     return inputs
 
 
+def get_hits_and_targets_tup(data):
+    """
+    data[0] should be eventids
+    """
+    eventids, inputu, inputv, inputx = data[0], data[1], data[2], data[3]
+    inputs = [inputx, inputu, inputv]
+    return eventids, inputs
+
+
 def get_eventids_hits_and_targets(data):
     """
     data[0] should be eventids
-    data[1], [2], [3] should be hits-x, -u, -v
+    data[1], [2], [3] should be hits-u, -v, -x
     data[5] should be segments
     
     return a tuple of (eventids, [inputs], targets)
     """
-    inputs = [data[1], data[2], data[3]]
+    inputs = [data[3], data[1], data[2]]
     return data[0], inputs, data[5]
 
 
@@ -292,6 +301,7 @@ if __name__ == '__main__':
                 imgdat=imgdat,
                 runopts=runopts,
                 networkstr=networkstr,
-                get_eventids_hits_and_targets_fn=get_eventids_hits_and_targets
+                get_eventids_hits_and_targets_fn=get_eventids_hits_and_targets,
+                get_id_tagged_inputlist_fn=get_hits_and_targets_tup
         )
 

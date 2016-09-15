@@ -43,22 +43,6 @@ def build_inputlist(input_var_x, input_var_u, input_var_v, views):
     return inputlist
 
 
-def get_id_tagged_inputlist_from_data(data, views):
-    """
-    data[0] should be eventids
-    """
-    inputs = []
-    if views == 'xuv':
-        eventids, inputu, inputv, inputx = \
-            data[0], data[1], data[2], data[3]
-        inputs = [inputx, inputu, inputv]
-    else:
-        eventids, input_view = \
-            data[0], data[1]
-        inputs = [input_view]
-    return eventids, inputs
-
-
 def get_tstamp_from_model_name(save_model_file):
     """
     extract timestamp from model file - assume it is the first set of numbers;
@@ -95,7 +79,9 @@ def categorical_learn_and_validate(
     input_var_v = T.tensor4('inputs')
     target_var = T.ivector('targets')
 
-    inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
+    inputlist = build_inputlist(
+        input_var_x, input_var_u, input_var_v, imgdat['views']
+    )
 
     # Build the model
     network = build_cnn_fn(inputlist=inputlist,
@@ -198,7 +184,7 @@ def categorical_learn_and_validate(
                 t1 = time.time()
                 print("  Loading slice {} from {} took {:.3f}s.".format(
                     tslice, data_file, t1 - t0))
-                if debug_print:
+                if runopts['debug_print']:
                     print("   dset sources:", train_set.provides_sources)
 
                 t0 = time.time()
@@ -206,7 +192,7 @@ def categorical_learn_and_validate(
                     # data order in the hdf5 looks like:
                     #  ids, hits-u, hits-v, hits-x, planes, segments, zs
                     # (Check the file carefully for data names, etc.)
-                    inputs = get_list_of_hits_and_targets_fn(views)
+                    inputs = get_list_of_hits_and_targets_fn(data)
                     train_err += train_fn(*inputs)
                     train_batches += 1
                 t1 = time.time()
@@ -263,7 +249,7 @@ def categorical_learn_and_validate(
 
 
 def categorical_test(
-        build_cnn_fn, hyperpars, imgdat, runopts, networkstr=networkstr,
+        build_cnn_fn, hyperpars, imgdat, runopts, networkstr,
         get_eventids_hits_and_targets_fn, get_list_of_hits_fn
 ):
     """
@@ -282,10 +268,9 @@ def categorical_test(
     tstamp = get_tstamp_from_model_name(runopts['save_model_file'])
     train_sizes, valid_sizes, test_sizes = \
         get_and_print_dataset_subsizes(runopts['data_file_list'])
-    used_sizes, used_data_size = get_used_data_sizes_for_testing(train_sizes,
-                                                                 valid_sizes,
-                                                                 test_sizes,
-                                                                 test_all_data)
+    used_sizes, used_data_size = get_used_data_sizes_for_testing(
+        train_sizes, valid_sizes, test_sizes, runopts['test_all_data']
+    )
 
     # Prepare Theano variables for inputs and targets
     input_var_x = T.tensor4('inputs')
@@ -293,7 +278,9 @@ def categorical_test(
     input_var_v = T.tensor4('inputs')
     target_var = T.ivector('targets')
 
-    inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
+    inputlist = build_inputlist(
+        input_var_x, input_var_u, input_var_v, imgdat['views']
+    )
 
     # Build the model
     network = build_cnn_fn(inputlist=inputlist,
@@ -354,7 +341,7 @@ def categorical_test(
         for tslice in test_slices[i]:
             t0 = time.time()
             test_set = None
-            if test_all_data:
+            if runopts['test_all_data']:
                 test_set = load_all_datasubsets(data_file, tslice)
             else:
                 test_set = load_datasubset(data_file, 'test', tslice)
@@ -412,8 +399,8 @@ def categorical_test(
 
 
 def categorical_predict(
-        build_cnn_fn, hyperpars, imgdat, runopts, networkstr=networkstr,
-        get_eventids_hits_and_targets_fn
+        build_cnn_fn, hyperpars, imgdat, runopts, networkstr,
+        get_eventids_hits_and_targets_fn, get_id_tagged_inputlist_fn
 ):
     """
     Make predictions based on the model _only_ (e.g., this routine should
@@ -426,10 +413,9 @@ def categorical_predict(
     print("Loading data for testing...")
     train_sizes, valid_sizes, test_sizes = \
         get_and_print_dataset_subsizes(runopts['data_file_list'])
-    used_sizes, used_data_size = get_used_data_sizes_for_testing(train_sizes,
-                                                                 valid_sizes,
-                                                                 test_sizes,
-                                                                 test_all_data)
+    used_sizes, used_data_size = get_used_data_sizes_for_testing(
+        train_sizes, valid_sizes, test_sizes, runopts['test_all_data']
+    )
 
     metadata = None
     try:
@@ -450,7 +436,9 @@ def categorical_predict(
     input_var_x = T.tensor4('inputs')
     input_var_u = T.tensor4('inputs')
     input_var_v = T.tensor4('inputs')
-    inputlist = build_inputlist(input_var_x, input_var_u, input_var_v, views)
+    inputlist = build_inputlist(
+        input_var_x, input_var_u, input_var_v, imgdat['views']
+    )
 
     # Build the model
     network = build_cnn_fn(inputlist=inputlist,
@@ -501,8 +489,7 @@ def categorical_predict(
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
-                eventids, hits_list = \
-                    get_id_tagged_inputlist_from_data(data, views)
+                eventids, hits_list = get_id_tagged_inputlist_fn(data)
                 probs, pred = pred_fn(*hits_list)
                 evtcounter += batch_size
                 if write_db:

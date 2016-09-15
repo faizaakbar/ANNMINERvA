@@ -4,6 +4,8 @@ Functions for loading and handling examples for MINERvA ANN work.
 """
 import os
 
+import numpy as np
+
 from fuel.datasets.hdf5 import H5PYDataset
 from fuel.schemes import ShuffledScheme
 from fuel.schemes import SequentialScheme
