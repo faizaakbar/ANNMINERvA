@@ -32,17 +32,6 @@ def get_used_data_sizes_for_testing(train_sizes, valid_sizes, test_sizes,
     return used_sizes, used_data_size
 
 
-def build_inputlist(input_var_x, input_var_u, input_var_v, views):
-    inputlist = []
-    if 'x' in views:
-        inputlist.append(input_var_x)
-    if 'u' in views:
-        inputlist.append(input_var_u)
-    if 'v' in views:
-        inputlist.append(input_var_v)
-    return inputlist
-
-
 def get_tstamp_from_model_name(save_model_file):
     """
     extract timestamp from model file - assume it is the first set of numbers;
@@ -74,14 +63,8 @@ def categorical_learn_and_validate(
         get_and_print_dataset_subsizes(runopts['data_file_list'])
 
     # Prepare Theano variables for inputs and targets
-    input_var_x = T.tensor4('inputs')
-    input_var_u = T.tensor4('inputs')
-    input_var_v = T.tensor4('inputs')
     target_var = T.ivector('targets')
-
-    inputlist = build_inputlist(
-        input_var_x, input_var_u, input_var_v, imgdat['views']
-    )
+    inputlist = networkstr['input_list']
 
     # Build the model
     network = build_cnn_fn(inputlist=inputlist,
@@ -273,14 +256,8 @@ def categorical_test(
     )
 
     # Prepare Theano variables for inputs and targets
-    input_var_x = T.tensor4('inputs')
-    input_var_u = T.tensor4('inputs')
-    input_var_v = T.tensor4('inputs')
+    inputlist = networkstr['input_list']
     target_var = T.ivector('targets')
-
-    inputlist = build_inputlist(
-        input_var_x, input_var_u, input_var_v, imgdat['views']
-    )
 
     # Build the model
     network = build_cnn_fn(inputlist=inputlist,
@@ -433,12 +410,7 @@ def categorical_predict(
         tbl = predictiondb.get_active_table(metadata, eng)
 
     # Prepare Theano variables for inputs
-    input_var_x = T.tensor4('inputs')
-    input_var_u = T.tensor4('inputs')
-    input_var_v = T.tensor4('inputs')
-    inputlist = build_inputlist(
-        input_var_x, input_var_u, input_var_v, imgdat['views']
-    )
+    inputlist = networkstr['input_list']
 
     # Build the model
     network = build_cnn_fn(inputlist=inputlist,

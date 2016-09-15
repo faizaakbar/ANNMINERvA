@@ -15,6 +15,8 @@ from __future__ import print_function
 
 import os
 
+import theano.tensor as T
+
 from minerva_ann_networks import build_triamese_epsilon
 from minerva_ann_operate_networks import categorical_learn_and_validate
 from minerva_ann_operate_networks import categorical_test
@@ -23,6 +25,15 @@ from minerva_ann_operate_networks import categorical_predict
 
 def arg_list_split(option, opt, value, parser):
     setattr(parser.values, option.dest, value.split(','))
+
+def get_theano_input_tensors():
+    """
+    Prepare Theano variables for inputs - must remake these for each graph
+    """
+    input_var_x = T.tensor4('inputs')
+    input_var_u = T.tensor4('inputs')
+    input_var_v = T.tensor4('inputs')
+    return [input_var_x, input_var_u, input_var_v]
 
 
 def get_hits(data):
@@ -277,6 +288,7 @@ if __name__ == '__main__':
     print(" L2 regularization penalty scale:", networkstr['l2_penalty_scale'])
 
     if options.do_learn:
+        networkstr['input_list'] = get_theano_input_tensors()
         learn(build_cnn_fn=build_network_function,
               hyperpars=hyperpars,
               imgdat=imgdat,
@@ -286,6 +298,7 @@ if __name__ == '__main__':
         )
 
     if options.do_test:
+        networkstr['input_list'] = get_theano_input_tensors()
         test(build_cnn_fn=build_network_function,
              hyperpars=hyperpars,
              imgdat=imgdat,
@@ -296,6 +309,7 @@ if __name__ == '__main__':
         )
 
     if options.do_predict:
+        networkstr['input_list'] = get_theano_input_tensors()
         predict(build_cnn_fn=build_network_function,
                 hyperpars=hyperpars,
                 imgdat=imgdat,
