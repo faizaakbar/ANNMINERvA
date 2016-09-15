@@ -113,6 +113,8 @@ def slices_maker(n, slice_size=100000):
 def load_datasubset(data_file, subset, slice_to_load):
     """
     Always load data in memory
+    subset = 'train', 'valid', or 'test'
+    slice_to_load = a tuple (not a slice object) with start, stop event #'s
     """
     if os.path.exists(data_file):
         dset = H5PYDataset(data_file, which_sets=(subset,),
