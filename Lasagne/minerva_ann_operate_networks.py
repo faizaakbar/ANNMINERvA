@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
-
 import os
 import time
 import logging
@@ -174,8 +172,7 @@ def categorical_learn_and_validate(
                     "  Loading slice {} from {} took {:.3f}s.".format(
                         tslice, data_file, t1 - t0)
                 )
-                if runopts['debug_print']:
-                    logger.info("   dset sources:", train_set.provides_sources)
+                logger.debug("   dset sources:", train_set.provides_sources)
 
                 t0 = time.time()
                 for data in train_dstream.get_epoch_iterator():
@@ -310,7 +307,7 @@ def categorical_test(
     val_fn = theano.function(inputlist, [test_loss, test_acc],
                              allow_input_downcast=True)
 
-    print("Starting testing...")
+    logger.info("Starting testing...")
     # compute and print the test error and...
     test_err = 0
     test_acc = 0
@@ -342,11 +339,10 @@ def categorical_test(
                 test_set, 1, shuffle=False
             )
             t1 = time.time()
-            print("  Loading slice {} from {} took {:.3f}s.".format(
+            logger.info("  Loading slice {} from {} took {:.3f}s.".format(
                 tslice, data_file, t1 - t0)
             )
-            if runopts['debug_print']:
-                print("   dset sources:", test_set.provides_sources)
+            logger.debug("   dset sources:", test_set.provides_sources)
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
@@ -363,7 +359,7 @@ def categorical_test(
                 evtcounter += 1
                 if runopts['be_verbose']:
                     if evtcounter % verbose_evt_print_freq == 0:
-                        print("{}/{} - {}: (prediction, true target): {}, {}".
+                        logger.info("{}/{} - {}: (prediction, true target): {}, {}".
                               format(evtcounter,
                                      used_data_size,
                                      eventids[0],
@@ -374,7 +370,7 @@ def categorical_test(
                     if p == t:
                         pred_target[p] += 1
             t1 = time.time()
-            print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
+            logger.info("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
 
             del test_set
             del test_dstream
@@ -382,12 +378,14 @@ def categorical_test(
     acc_target = 100.0 * pred_target / true_target.astype('float32')
     perf_file = 'perfmat' + tstamp + '.npy'
     np.save(perf_file, targs_mat)
-    print("Final results:")
-    print("  test loss:\t\t\t{:.6f}".format(test_err / test_batches))
-    print("  test accuracy:\t\t{:.2f} %".format(
-        test_acc / test_batches * 100))
+    logger.info(
+        "\nFinal results:"
+        "\n  test loss:\t\t\t{:.6f}"
+        "\n  test accuracy:\t\t{:.2f} %".format(
+            test_err / test_batches, test_acc / test_batches * 100)
+    )
     for i, v in enumerate(acc_target):
-        print("   target {} accuracy:\t\t\t{:.3f} %".format(
+        logger.info("   target {} accuracy:\t\t\t{:.3f} %".format(
             i, acc_target[i]))
 
 
@@ -403,7 +401,7 @@ def categorical_predict(
     a tuple of (eventids, [inputs], targets), where `[inputs]` might hold
     a single view or all three, etc.
     """
-    print("Loading data for testing...")
+    logger.info("Loading data for prediction...")
     train_sizes, valid_sizes, test_sizes = \
         get_and_print_dataset_subsizes(runopts['data_file_list'])
     used_sizes, used_data_size = get_used_data_sizes_for_testing(
@@ -415,7 +413,7 @@ def categorical_predict(
         import predictiondb
         from sqlalchemy import MetaData
     except ImportError:
-        print("Cannot import sqlalchemy...")
+        logger.info("Cannot import sqlalchemy...")
         write_db = False
     if runopts['write_db']:
         tstamp = get_tstamp_from_model_name(runopts['save_model_file'])
@@ -446,7 +444,7 @@ def categorical_predict(
                               [test_prediction, test_prediction_values],
                               allow_input_downcast=True)
 
-    print("Starting prediction...")
+    logger.info("Starting prediction...")
 
     test_slices = []
     for tsize in used_sizes:
@@ -468,11 +466,10 @@ def categorical_predict(
                                                      hyperpars['batchsize'],
                                                      shuffle=False)
             t1 = time.time()
-            print("  Loading slice {} from {} took {:.3f}s.".format(
+            logger.info("  Loading slice {} from {} took {:.3f}s.".format(
                 tslice, data_file, t1 - t0)
             )
-            if runopts['debug_print']:
-                print("   dset sources:", test_set.provides_sources)
+            logger.debug("   dset sources: %s" % test_set.provides_sources)
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
@@ -484,15 +481,15 @@ def categorical_predict(
                         filldb(tbl, con, evtid, pred[i], probs[i])
                 if runopts['be_verbose']:
                     if evtcounter % verbose_evt_print_freq == 0:
-                        print("processed {}/{}". format(evtcounter,
+                        logger.info("processed {}/{}". format(evtcounter,
                                                         used_data_size))
             t1 = time.time()
-            print("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
+            logger.info("  -Iterating over the slice took {:.3f}s.".format(t1 - t0))
 
             del test_set
             del test_dstream
 
-    print("Finished producing predictions!")
+    logger.info("Finished producing predictions!")
 
 
 def decode_eventid(eventid):
@@ -541,7 +538,7 @@ def filldb(dbtable, dbconnection,
         except:
             import sys
             e = sys.exc_info()[0]
-            print('db error: {}'.format(e))
+            logger.info('db error: {}'.format(e))
         return result
-    print('unknown database interface!')
+    logger.info('unknown database interface!')
     return None

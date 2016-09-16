@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-from __future__ import print_function
-
 import logging
 
 import lasagne
@@ -36,15 +34,15 @@ def build_triamese_alpha(inputlist, imgh=50, imgw=50,
         convpool1dict['nfilters'] = 32
         convpool1dict['filter_size'] = (3, 3)
         convpool1dict['pool_size'] = (2, 2)
-    print("Convpool1 params:", convpool1dict)
+    logger.info("Convpool1 params: {}".format(convpool1dict))
 
     if convpool2dict is None:
         convpool2dict = {}
         convpool2dict['nfilters'] = 32
         convpool2dict['filter_size'] = (3, 3)
         convpool2dict['pool_size'] = (2, 2)
-    print("Convpool2 params:", convpool2dict)
-    print("Network: one dense layer per column...")
+    logger.info("Convpool2 params: {}".format(convpool2dict))
+    logger.info("Network: one dense layer per column...")
 
     def make_branch(input_layer,
                     num_filters1, filter_size1, pool_size1,
@@ -92,7 +90,7 @@ def build_triamese_alpha(inputlist, imgh=50, imgw=50,
 
     # Concatenate the parallel inputs
     l_concat = ConcatLayer((l_branch_x, l_branch_u, l_branch_v))
-    print("Network: Concat all three columns...")
+    logger.info("Network: Concat all three columns...")
 
     # And, finally, the noutputs-unit output layer
     outp = DenseLayer(
@@ -100,9 +98,9 @@ def build_triamese_alpha(inputlist, imgh=50, imgw=50,
         num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax
     )
-    print("Network: Softmax classification layer.")
-    print("n-parameters: ", lasagne.layers.count_params(outp))
+    logger.info("Network: Softmax classification layer.")
 
+    logger.info("n-parameters: {}".format(lasagne.layers.count_params(outp)))
     return outp
 
 
@@ -215,7 +213,9 @@ def build_triamese_inception(inputlist, imgh=50, imgw=50):
         num_units=11,
         nonlinearity=lasagne.nonlinearities.softmax)
 
-    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
+    logger.info("n-parameters: {}".format(
+        lasagne.layers.count_params(net['output_prob']))
+    )
     return net['output_prob']
 
 
@@ -267,14 +267,14 @@ def build_triamese_beta(inputlist, imgh=50, imgw=50, convpooldictlist=None,
     net['concat'] = ConcatLayer((net['dense-x'],
                                  net['dense-u'],
                                  net['dense-v']))
-    print("Network: concat columns...")
+    logger.info("Network: concat columns...")
 
     # One more dense layer
     net['dense-across'] = DenseLayer(
         dropout(net['concat'], p=dropoutp),
         num_units=(nhidden // 2),
         nonlinearity=lasagne.nonlinearities.rectify)
-    print("Dense {} with nhidden = {}, dropout = {}".format(
+    logger.info("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
     # And, finally, the `noutputs`-unit output layer
@@ -283,9 +283,11 @@ def build_triamese_beta(inputlist, imgh=50, imgw=50, convpooldictlist=None,
         num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax
     )
-    print("Softmax output prob with n_units = {}".format(noutputs))
+    logger.info("Softmax output prob with n_units = {}".format(noutputs))
 
-    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
+    logger.info("n-parameters: {}".format(
+        lasagne.layers.count_params(net['output_prob']))
+    )
     return net['output_prob']
 
 
@@ -331,7 +333,7 @@ def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
         prev_layername = ''
         for i, cpdict in enumerate(cpdictlist):
             convname = 'conv-{}-{}'.format(view, i)
-            print("Convpool {} params: {}".format(convname, cpdict))
+            logger.info("Convpool {} params: {}".format(convname, cpdict))
             # the first time through, use `input`, after use the last layer
             # from the previous iteration - ah loose scoping rules...
             if i == 0:
@@ -349,7 +351,7 @@ def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
             dropout(net[convname], p=dropoutp),
             num_units=nhidden,
             nonlinearity=lasagne.nonlinearities.rectify)
-        print("Dense {} with nhidden = {}, dropout = {}".format(
+        logger.info("Dense {} with nhidden = {}, dropout = {}".format(
             densename, nhidden, dropoutp))
         return net
 
@@ -364,14 +366,14 @@ def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
     net['concat'] = ConcatLayer((net['dense-x'],
                                  net['dense-u'],
                                  net['dense-v']))
-    print("Network: concat columns...")
+    logger.info("Network: concat columns...")
 
     # One more dense layer
     net['dense-across'] = DenseLayer(
         dropout(net['concat'], p=dropoutp),
         num_units=(nhidden // 2),
         nonlinearity=lasagne.nonlinearities.rectify)
-    print("Dense {} with nhidden = {}, dropout = {}".format(
+    logger.info("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
     # And, finally, the `noutputs`-unit output layer
@@ -380,9 +382,11 @@ def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
         num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax
     )
-    print("Softmax output prob with n_units = {}".format(noutputs))
+    logger.info("Softmax output prob with n_units = {}".format(noutputs))
 
-    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
+    logger.info("n-parameters: {}".format(
+        lasagne.layers.count_params(net['output_prob']))
+    )
     return net['output_prob']
 
 
@@ -437,14 +441,14 @@ def build_triamese_delta(inputlist, imgh=68, imgw=127, convpooldictlist=None,
     net['concat'] = ConcatLayer((net['dense-x'],
                                  net['dense-u'],
                                  net['dense-v']))
-    print("Network: concat columns...")
+    logger.info("Network: concat columns...")
 
     # One more dense layer
     net['dense-across'] = DenseLayer(
         dropout(net['concat'], p=dropoutp),
         num_units=(nhidden // 2),
         nonlinearity=lasagne.nonlinearities.rectify)
-    print("Dense {} with nhidden = {}, dropout = {}".format(
+    logger.info("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
     # And, finally, the `noutputs`-unit output layer
@@ -453,9 +457,11 @@ def build_triamese_delta(inputlist, imgh=68, imgw=127, convpooldictlist=None,
         num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax
     )
-    print("Softmax output prob with n_units = {}".format(noutputs))
+    logger.info("Softmax output prob with n_units = {}".format(noutputs))
 
-    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
+    logger.info("n-parameters: {}".format(
+        lasagne.layers.count_params(net['output_prob']))
+    )
     return net['output_prob']
 
 
@@ -506,7 +512,7 @@ def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
         dropout(net[dense_name], p=dropoutp),
         num_units=(nhidden // 2),
         nonlinearity=lasagne.nonlinearities.rectify)
-    print("Dense {} with nhidden = {}, dropout = {}".format(
+    logger.info("Dense {} with nhidden = {}, dropout = {}".format(
         'dense-across', nhidden // 2, dropoutp))
 
     # And, finally, the `noutputs`-unit output layer
@@ -515,9 +521,11 @@ def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
         num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax
     )
-    print("Softmax output prob with n_units = {}".format(noutputs))
+    logger.info("Softmax output prob with n_units = {}".format(noutputs))
 
-    print("n-parameters: ", lasagne.layers.count_params(net['output_prob']))
+    logger.info("n-parameters: {}".format(
+        lasagne.layers.count_params(net['output_prob']))
+    )
     return net['output_prob']
 
 
