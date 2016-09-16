@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 """
-This is an attempt at a "triamese" network operating on Minerva X, U, V.
+This is an attempt at a "tricolumnar" network operating on Minerva X, U, V.
 
 Execution:
-    python minerva_triamese_epsilon.py -h / --help
+    python minerva_tricolmnar_epsilon.py -h / --help
 
-At a minimum, we must supply either the `--learn` or `--test` flag.
-
-See ANNMINERvA/fuel_up_convdata.py for an HDF5 builder that sets up an
-appropriate data file.
-
+At a minimum, we must supply either the `--learn`, `--test`, or `--predict`
+flag.
 """
 from __future__ import print_function
 
@@ -90,6 +87,9 @@ if __name__ == '__main__':
                       help='Data set list (csv)', metavar='DATASETLIST',
                       type='string', action='callback',
                       callback=arg_list_split)
+    parser.add_option('-f', '--logfile', dest='logfilename',
+                      help='Log file name', metavar='LOGFILENAME',
+                      default=None, type='string')
     parser.add_option('-n', '--nepochs', dest='n_epochs', default=200,
                       help='Number of epochs', metavar='N_EPOCHS',
                       type='int')
@@ -147,9 +147,9 @@ if __name__ == '__main__':
         sys.exit(1)
 
     import logging
+    logfilename = options.logfilename or 'minerva_tricolumnar_epsilon.log'
     logging.basicConfig(
-        filename='minerva_tricolumnar_epsilon.log',
-        level=logging.INFO,
+        filename=logfilename, level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
     logger = logging.getLogger(__name__)
