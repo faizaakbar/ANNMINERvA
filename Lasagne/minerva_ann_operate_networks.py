@@ -172,7 +172,9 @@ def categorical_learn_and_validate(
                     "  Loading slice {} from {} took {:.3f}s.".format(
                         tslice, data_file, t1 - t0)
                 )
-                logger.debug("   dset sources:", train_set.provides_sources)
+                logger.debug(
+                    "   dset sources: {}".format(train_set.provides_sources)
+                )
 
                 t0 = time.time()
                 for data in train_dstream.get_epoch_iterator():
@@ -342,7 +344,9 @@ def categorical_test(
             logger.info("  Loading slice {} from {} took {:.3f}s.".format(
                 tslice, data_file, t1 - t0)
             )
-            logger.debug("   dset sources:", test_set.provides_sources)
+            logger.debug(
+                "   dset sources: {}".format(test_set.provides_sources)
+            )
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
@@ -469,7 +473,9 @@ def categorical_predict(
             logger.info("  Loading slice {} from {} took {:.3f}s.".format(
                 tslice, data_file, t1 - t0)
             )
-            logger.debug("   dset sources: %s" % test_set.provides_sources)
+            logger.debug(
+                "   dset sources: {}".format(test_set.provides_sources)
+            )
 
             t0 = time.time()
             for data in test_dstream.get_epoch_iterator():
