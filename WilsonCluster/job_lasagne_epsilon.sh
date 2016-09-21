@@ -13,8 +13,11 @@
 
 NEPOCHS=30
 NEPOCHS=12
+NEPOCHS=1
 LRATE=0.001
 L2REG=0.0001
+
+DATET=`date +%s`
 
 # NOUTPUTS=11
 # TGTIDX=5
@@ -23,8 +26,9 @@ DOTEST=""
 DOTEST="-t"
 
 # DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x50x25_xuv_me1Bmc.hdf5"
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
-SAVEMODELNAME="./lminervatriamese_epsilon`date +%s`.npz"
+# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc_0000.hdf5"
+SAVEMODELNAME="./lminervatriamese_epsiloni${DATET}.npz"
 # SAVEMODELNAME="./transfer_to_epsilon_test2.npz"
 # SAVEMODELNAME="./transfer_to_epsilon_noutputs67_test3.npz"
 PYTHONPROG="minerva_tricolumnar_epsilon.py"
@@ -52,6 +56,7 @@ if [[ $DIRTY != "" ]]; then
   echo ""
   # exit 0
 fi
+LOGFILENAME=minerva_tricolumnar_epsilon_${DATET}_${GIT_VERSION}.log
 
 cp /home/perdue/ANNMINERvA/Lasagne/${PYTHONPROG} ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/minerva_ann_*.py ${PBS_O_WORKDIR}
@@ -64,7 +69,8 @@ python ${PYTHONPROG} -l $DOTEST \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
-  -d $DATAFILENAME
+  -d $DATAFILENAME \
+  -f $LOGFILENAME
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l $DOTEST \
@@ -72,7 +78,8 @@ python ${PYTHONPROG} -l $DOTEST \
   -r $LRATE \
   -g $L2REG \
   -s $SAVEMODELNAME \
-  -d $DATAFILENAME
+  -d $DATAFILENAME \
+  -f $LOGFILENAME
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
