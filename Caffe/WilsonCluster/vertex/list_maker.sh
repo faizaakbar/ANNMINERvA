@@ -21,7 +21,7 @@ done
 for i in `seq $VALIDMIN 1 $VALIDMAX`
 do
   filenum=`echo $i | perl -ne 'printf "%03d",$_;'`
-  ls -1 ${BASED}/${FILEROOT}_${filenum}.hdf5 >> $OUTROOT.validlist
+  ls -1 ${BASED}/unrenamed/${FILEROOT}_${filenum}.hdf5 >> $OUTROOT.validlist
 done
 for i in `seq $TESTMIN 1 $TESTMAX`
 do
