@@ -54,7 +54,7 @@ def get_theano_input_tensors():
 
 def get_hits(data):
     """
-    data[1], [2], [3] should be hits-x, -u, -v, data[4] is muon-dat
+    data[1], [2], [3] should be hits-u, -v, -x, data[4] is muon-dat
     
     return a list of [hits-x, hits-u, hits-v, muon-data]
     """
@@ -97,7 +97,7 @@ def get_eventids_hits_and_targets(data):
     return a tuple of (eventids, [inputs], targets)
     """
     inputs = [data[3], data[1], data[2], data[4]]
-    return data[0], inputs, data[5]
+    return data[0], inputs, data[6]
 
 
 if __name__ == '__main__':
