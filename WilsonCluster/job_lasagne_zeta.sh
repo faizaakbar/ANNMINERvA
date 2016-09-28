@@ -13,7 +13,7 @@
 
 NEPOCHS=30
 NEPOCHS=12
-NEPOCHS=1
+NEPOCHS=6
 LRATE=0.001
 L2REG=0.0001
 
@@ -22,8 +22,8 @@ DATET=`date +%s`
 DOTEST=""
 DOTEST="-t"
 
-# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_txtutv_muondat_me1Bmc.hdf5"
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_txtutv_muondat_me1Bmc_0000.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_txtutv_muondat_me1Bmc.hdf5"
+# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_txtutv_muondat_me1Bmc_0000.hdf5"
 SAVEMODELNAME="./lminerva_vtx_zeta${DATET}.npz"
 PYTHONPROG="minerva_vtx_zeta.py"
 
