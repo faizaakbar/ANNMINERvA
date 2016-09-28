@@ -641,3 +641,87 @@ def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,
         "n-parameters: %s" % lasagne.layers.count_params(net['output_prob'])
     )
     return net['output_prob']
+
+
+def build_network_zeta(inputlist,
+                       imgh=(50, 25, 25),
+                       imgw=127,
+                       convpooldictlist=None,
+                       nhidden=None,
+                       dropoutp=None,
+                       noutputs=11):
+    """
+    here, `inputlist` should have img tensors for x, u, v, and for muon_data
+
+    here, `imgh` is a tuple of sizes for `(x, u, v)`. `imgw` is the same
+    for all three views.
+
+    also, the `convpooldictlist` here must be a dictionary of dictionaries,
+    with the set of convolution and pooling defined independently for 'x', 'u',
+    and 'v' - e.g., `convpooldictlist['x']` will be a dictionary similar to
+    the dictionaries used by network models like `beta`, etc.
+    """
+    net = {}
+    # Input layer
+    input_var_x, input_var_u, input_var_v, input_var_muon = \
+        inputlist[0], inputlist[1], inputlist[2], inputlist[3]
+    net['input-x'] = InputLayer(shape=(None, 1, imgw, imgh[0]),
+                                input_var=input_var_x)
+    net['input-u'] = InputLayer(shape=(None, 1, imgw, imgh[1]),
+                                input_var=input_var_u)
+    net['input-v'] = InputLayer(shape=(None, 1, imgw, imgh[2]),
+                                input_var=input_var_v)
+    net['input-muon-dat'] = InputLayer(shape=(None, 10),
+                                       input_var=input_var_muon)
+
+    if convpooldictlist is None:
+        raise Exception('Conv-pool dictionaries must be defined!')
+
+    if nhidden is None:
+        nhidden = 256
+
+    if dropoutp is None:
+        dropoutp = 0.5
+
+    net.update(
+        make_Nconvpool_1dense_branch('x', net['input-x'],
+                                     convpooldictlist['x'],
+                                     nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('u', net['input-u'],
+                                     convpooldictlist['u'],
+                                     nhidden, dropoutp))
+    net.update(
+        make_Nconvpool_1dense_branch('v', net['input-v'],
+                                     convpooldictlist['v'],
+                                     nhidden, dropoutp))
+
+    # Concatenate the parallel inputs, include the muon data
+    net['concat'] = ConcatLayer((
+        net['dense-x'],
+        net['dense-u'],
+        net['dense-v'],
+        net['input-muon-dat']
+    ))
+    logger.info("Network: concat columns...")
+
+    # One more dense layer
+    net['dense-across'] = DenseLayer(
+        dropout(net['concat'], p=dropoutp),
+        num_units=(nhidden // 2),
+        nonlinearity=lasagne.nonlinearities.rectify)
+    logger.info("Dense {} with nhidden = {}, dropout = {}".format(
+        'dense-across', nhidden // 2, dropoutp))
+
+    # And, finally, the `noutputs`-unit output layer
+    net['output_prob'] = DenseLayer(
+        net['dense-across'],
+        num_units=noutputs,
+        nonlinearity=lasagne.nonlinearities.softmax
+    )
+    logger.info("Softmax output prob with n_units = {}".format(noutputs))
+
+    logger.info(
+        "n-parameters: %s" % lasagne.layers.count_params(net['output_prob'])
+    )
+    return net['output_prob']
