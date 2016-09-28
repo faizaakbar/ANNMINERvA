@@ -36,7 +36,7 @@ def get_theano_input_tensors():
 
 def get_hits(data):
     """
-    data[1], [2], [3] should be hits-x, -u, -v
+    data[1], [2], [3] should be hits-u, -v, -x
     
     return a list of [hits-x, hits-u, hits-v]
     """
@@ -48,7 +48,7 @@ def get_hits(data):
 def get_hits_and_targets(data):
     """
     data[0] should be eventids
-    data[1], [2], [3] should be hits-x, -u, -v
+    data[1], [2], [3] should be hits-u, -v, -x
     data[5] should be segments (the target)
 
     return everything in one list [inputs, targets]
