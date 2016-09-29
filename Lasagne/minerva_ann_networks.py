@@ -696,12 +696,21 @@ def build_network_zeta(inputlist,
                                      convpooldictlist['v'],
                                      nhidden, dropoutp))
 
+    # put a softmax on the muon vars
+    net['softed-muon-dat'] = DenseLayer(
+        net['input-muon-dat'],
+        num_units=noutputs,
+        nonlinearity=lasagne.nonlinearities.softmax
+    )
+    logger.info("Softmax on muon dat with n_units = {}".format(noutputs))
+
+
     # Concatenate the parallel inputs, include the muon data
     net['concat'] = ConcatLayer((
         net['dense-x'],
         net['dense-u'],
         net['dense-v'],
-        net['input-muon-dat']
+        net['softed-muon-dat']
     ))
     logger.info("Network: concat columns...")
 
