@@ -50,7 +50,7 @@ if [[ $DIRTY != "" ]]; then
   echo ""
   # exit 0
 fi
-LOGFILENAME=minerva_tricolumanr_time_epsilon_${DATET}_${GIT_VERSION}.log
+LOGFILENAME=minerva_tricolumnar_time_epsilon_${DATET}_${GIT_VERSION}.log
 
 cp /home/perdue/ANNMINERvA/Lasagne/${PYTHONPROG} ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/minerva_ann_*.py ${PBS_O_WORKDIR}
