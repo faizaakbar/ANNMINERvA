@@ -19,18 +19,12 @@ L2REG=0.0001
 
 DATET=`date +%s`
 
-# NOUTPUTS=11
-# TGTIDX=5
-
 DOTEST=""
 DOTEST="-t"
 
-# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_127x50x25_xuv_me1Bmc.hdf5"
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
 # DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc_0000.hdf5"
 SAVEMODELNAME="./lminervatriamese_epsiloni${DATET}.npz"
-# SAVEMODELNAME="./transfer_to_epsilon_test2.npz"
-# SAVEMODELNAME="./transfer_to_epsilon_noutputs67_test3.npz"
 PYTHONPROG="minerva_tricolumnar_epsilon.py"
 
 # print identifying info for this job
