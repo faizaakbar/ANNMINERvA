@@ -178,9 +178,6 @@ def categorical_learn_and_validate(
 
                 t0 = time.time()
                 for data in train_dstream.get_epoch_iterator():
-                    # data order in the hdf5 looks like:
-                    #  ids, hits-u, hits-v, hits-x, planes, segments, zs
-                    # (Check the file carefully for data names, etc.)
                     inputs = get_list_of_hits_and_targets_fn(data)
                     train_err += train_fn(*inputs)
                     train_batches += 1
@@ -206,9 +203,6 @@ def categorical_learn_and_validate(
                     )
 
                     for data in valid_dstream.get_epoch_iterator():
-                        # data order in the hdf5 looks like:
-                        #  ids, hits-u, hits-v, hits-x, planes, segments, zs
-                        # (Check the file carefully for data names, etc.)
                         inputs = get_list_of_hits_and_targets_fn(data)
                         err, acc = val_fn(*inputs)
                         val_err += err
