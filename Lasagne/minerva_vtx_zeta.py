@@ -158,6 +158,8 @@ if __name__ == '__main__':
                       help='Image height (z) v', metavar='IMGH_V', type='int')
     parser.add_option('--noutputs', dest='noutputs', default=11,
                       help='number of outputs', metavar='NOUTPUTS', type='int')
+    parser.add_option('--img_depth', dest='img_depth', default=1,
+                      help='image depth', metavar='IMG_DEPTH', type='int')
     (options, args) = parser.parse_args()
 
     if not options.do_learn and \
@@ -299,6 +301,7 @@ if __name__ == '__main__':
     networkstr['nhidden'] = 196
     networkstr['dropoutp'] = 0.5
     networkstr['noutputs'] = 11
+    networkstr['img_depth'] = options.img_depth
     networkstr['l1_penalty_scale'] = None
     networkstr['l2_penalty_scale'] = options.l2_penalty_scale
 

@@ -74,7 +74,9 @@ def categorical_learn_and_validate(
                            convpooldictlist=networkstr['topology'],
                            nhidden=networkstr['nhidden'],
                            dropoutp=networkstr['dropoutp'],
-                           noutputs=networkstr['noutputs'])
+                           noutputs=networkstr['noutputs'],
+                           depth=networkstr['img_depth']
+    )
     logger.info(network_repr.get_network_str(
         lasagne.layers.get_all_layers(network),
         get_network=False, incomings=True, outgoings=True))
@@ -274,7 +276,9 @@ def categorical_test(
                            convpooldictlist=networkstr['topology'],
                            nhidden=networkstr['nhidden'],
                            dropoutp=networkstr['dropoutp'],
-                           noutputs=networkstr['noutputs'])
+                           noutputs=networkstr['noutputs'],
+                           depth=networkstr['img_depth']
+    )
     with np.load(runopts['save_model_file']) as f:
         param_values = [f['arr_%d' % i] for i in range(len(f.files))]
     lasagne.layers.set_all_param_values(network, param_values)
@@ -430,7 +434,9 @@ def categorical_predict(
                            convpooldictlist=networkstr['topology'],
                            nhidden=networkstr['nhidden'],
                            dropoutp=networkstr['dropoutp'],
-                           noutputs=networkstr['noutputs'])
+                           noutputs=networkstr['noutputs'],
+                           depth=networkstr['img_depth']
+    )
     with np.load(runopts['save_model_file']) as f:
         param_values = [f['arr_%d' % i] for i in range(len(f.files))]
     lasagne.layers.set_all_param_values(network, param_values)

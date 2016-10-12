@@ -16,7 +16,9 @@ logger = logging.getLogger(__name__)
 def build_triamese_alpha(inputlist, imgh=50, imgw=50,
                          convpool1dict=None, convpool2dict=None,
                          convpooldictlist=None, nhidden=None,
-                         dropoutp=None, noutputs=11):
+                         dropoutp=None, noutputs=11,
+                         depth=1
+):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
@@ -24,7 +26,7 @@ def build_triamese_alpha(inputlist, imgh=50, imgw=50,
     # Input layer
     input_var_x, input_var_u, input_var_v = \
         inputlist[0], inputlist[1], inputlist[2]
-    tshape = (None, 1, imgw, imgh)
+    tshape = (None, depth, imgw, imgh)
     l_in1_x = InputLayer(shape=tshape, input_var=input_var_x)
     l_in1_u = InputLayer(shape=tshape, input_var=input_var_u)
     l_in1_v = InputLayer(shape=tshape, input_var=input_var_v)
@@ -220,7 +222,7 @@ def build_triamese_inception(inputlist, imgh=50, imgw=50):
 
 
 def build_triamese_beta(inputlist, imgh=50, imgw=50, convpooldictlist=None,
-                        nhidden=None, dropoutp=None, noutputs=11):
+                        nhidden=None, dropoutp=None, noutputs=11, depth=1):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
@@ -229,7 +231,7 @@ def build_triamese_beta(inputlist, imgh=50, imgw=50, convpooldictlist=None,
     # Input layer
     input_var_x, input_var_u, input_var_v = \
         inputlist[0], inputlist[1], inputlist[2]
-    tshape = (None, 1, imgw, imgh)
+    tshape = (None, depth, imgw, imgh)
     net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
     net['input-u'] = InputLayer(shape=tshape, input_var=input_var_u)
     net['input-v'] = InputLayer(shape=tshape, input_var=input_var_v)
@@ -292,7 +294,7 @@ def build_triamese_beta(inputlist, imgh=50, imgw=50, convpooldictlist=None,
 
 
 def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
-                         nhidden=None, dropoutp=None, noutputs=11):
+                         nhidden=None, dropoutp=None, noutputs=11, depth=1):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions - no pooling.
@@ -301,7 +303,7 @@ def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
     # Input layer
     input_var_x, input_var_u, input_var_v = \
         inputlist[0], inputlist[1], inputlist[2]
-    tshape = (None, 1, imgw, imgh)
+    tshape = (None, depth, imgw, imgh)
     net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
     net['input-u'] = InputLayer(shape=tshape, input_var=input_var_u)
     net['input-v'] = InputLayer(shape=tshape, input_var=input_var_v)
@@ -391,7 +393,7 @@ def build_triamese_gamma(inputlist, imgh=50, imgw=50, convpooldictlist=None,
 
 
 def build_triamese_delta(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                         nhidden=None, dropoutp=None, noutputs=67):
+                         nhidden=None, dropoutp=None, noutputs=67, depth=1):
     """
     'triamese' (one branch for each view, feeding a fully-connected network),
     model using two layers of convolutions and pooling.
@@ -403,7 +405,7 @@ def build_triamese_delta(inputlist, imgh=68, imgw=127, convpooldictlist=None,
     # Input layer
     input_var_x, input_var_u, input_var_v = \
         inputlist[0], inputlist[1], inputlist[2]
-    tshape = (None, 1, imgw, imgh)
+    tshape = (None, depth, imgw, imgh)
     net['input-x'] = InputLayer(shape=tshape, input_var=input_var_x)
     net['input-u'] = InputLayer(shape=tshape, input_var=input_var_u)
     net['input-v'] = InputLayer(shape=tshape, input_var=input_var_v)
@@ -467,7 +469,9 @@ def build_triamese_delta(inputlist, imgh=68, imgw=127, convpooldictlist=None,
 
 def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
                            convpooldictlist=None,
-                           nhidden=None, dropoutp=None, noutputs=11):
+                           nhidden=None, dropoutp=None, noutputs=11,
+                           depth=1
+):
     """
     This network is modeled after the 'triamese' (tri-columnar) beta model,
     but is meant to operate on one view only.
@@ -479,7 +483,7 @@ def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
     net = {}
     # Input layer
     input_var = inputlist[0]
-    tshape = (None, 1, imgw, imgh)
+    tshape = (None, depth, imgw, imgh)
     input_name = 'input-' + view
     net[input_name] = InputLayer(shape=tshape, input_var=input_var)
 
@@ -530,7 +534,7 @@ def build_beta_single_view(inputlist, view='x', imgh=68, imgw=127,
 
 
 def build_beta_x(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                 nhidden=None, dropoutp=None, noutputs=11):
+                 nhidden=None, dropoutp=None, noutputs=11, depth=1):
     """
     This network is modeled after the 'triamese' (tri-columnar) beta model,
     but is meant to operate on the u-view only.
@@ -539,11 +543,11 @@ def build_beta_x(inputlist, imgh=68, imgw=127, convpooldictlist=None,
                                   imgh=imgh, imgw=imgw,
                                   convpooldictlist=convpooldictlist,
                                   nhidden=nhidden, dropoutp=dropoutp,
-                                  noutputs=noutputs)
+                                  noutputs=noutputs, depth=depth)
 
 
 def build_beta_u(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                 nhidden=None, dropoutp=None, noutputs=11):
+                 nhidden=None, dropoutp=None, noutputs=11, depth=1):
     """
     This network is modeled after the 'triamese' (tri-columnar) beta model,
     but is meant to operate on the u-view only.
@@ -552,11 +556,11 @@ def build_beta_u(inputlist, imgh=68, imgw=127, convpooldictlist=None,
                                   imgh=imgh, imgw=imgw,
                                   convpooldictlist=convpooldictlist,
                                   nhidden=nhidden, dropoutp=dropoutp,
-                                  noutputs=noutputs)
+                                  noutputs=noutputs, depth=depth)
 
 
 def build_beta_v(inputlist, imgh=68, imgw=127, convpooldictlist=None,
-                 nhidden=None, dropoutp=None, noutputs=11):
+                 nhidden=None, dropoutp=None, noutputs=11, depth=1):
     """
     This network is modeled after the 'triamese' (tri-columnar) beta model,
     but is meant to operate on the v-view only.
@@ -565,12 +569,14 @@ def build_beta_v(inputlist, imgh=68, imgw=127, convpooldictlist=None,
                                   imgh=imgh, imgw=imgw,
                                   convpooldictlist=convpooldictlist,
                                   nhidden=nhidden, dropoutp=dropoutp,
-                                  noutputs=noutputs)
+                                  noutputs=noutputs, depth=depth)
 
 
 def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,
                            convpooldictlist=None,
-                           nhidden=None, dropoutp=None, noutputs=11):
+                           nhidden=None, dropoutp=None, noutputs=11,
+                           depth=1
+):
     """
     'triamese' (one branch for each view, feeding a fully-connected network)
 
@@ -586,11 +592,11 @@ def build_triamese_epsilon(inputlist, imgh=(50, 25, 25), imgw=127,
     # Input layer
     input_var_x, input_var_u, input_var_v = \
         inputlist[0], inputlist[1], inputlist[2]
-    net['input-x'] = InputLayer(shape=(None, 1, imgw, imgh[0]),
+    net['input-x'] = InputLayer(shape=(None, depth, imgw, imgh[0]),
                                 input_var=input_var_x)
-    net['input-u'] = InputLayer(shape=(None, 1, imgw, imgh[1]),
+    net['input-u'] = InputLayer(shape=(None, depth, imgw, imgh[1]),
                                 input_var=input_var_u)
-    net['input-v'] = InputLayer(shape=(None, 1, imgw, imgh[2]),
+    net['input-v'] = InputLayer(shape=(None, depth, imgw, imgh[2]),
                                 input_var=input_var_v)
 
     if convpooldictlist is None:
@@ -649,7 +655,9 @@ def build_network_zeta(inputlist,
                        convpooldictlist=None,
                        nhidden=None,
                        dropoutp=None,
-                       noutputs=11):
+                       noutputs=11,
+                       depth=1
+):
     """
     here, `inputlist` should have img tensors for x, u, v, and for muon_data
 
@@ -665,11 +673,11 @@ def build_network_zeta(inputlist,
     # Input layer
     input_var_x, input_var_u, input_var_v, input_var_muon = \
         inputlist[0], inputlist[1], inputlist[2], inputlist[3]
-    net['input-x'] = InputLayer(shape=(None, 1, imgw, imgh[0]),
+    net['input-x'] = InputLayer(shape=(None, depth, imgw, imgh[0]),
                                 input_var=input_var_x)
-    net['input-u'] = InputLayer(shape=(None, 1, imgw, imgh[1]),
+    net['input-u'] = InputLayer(shape=(None, depth, imgw, imgh[1]),
                                 input_var=input_var_u)
-    net['input-v'] = InputLayer(shape=(None, 1, imgw, imgh[2]),
+    net['input-v'] = InputLayer(shape=(None, depth, imgw, imgh[2]),
                                 input_var=input_var_v)
     net['input-muon-dat'] = InputLayer(shape=(None, 10),
                                        input_var=input_var_muon)
