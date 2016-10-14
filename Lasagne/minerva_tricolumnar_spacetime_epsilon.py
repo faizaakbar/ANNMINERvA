@@ -8,6 +8,18 @@ Execution:
 
 At a minimum, we must supply either the `--learn`, `--test`, or `--predict`
 flag.
+
+This script expects hdf5 structure like:
+
+groups in the hdf5 file
+-----------------------
+eventids
+hitimes-u
+hitimes-v
+hitimes-x
+planecodes
+segments
+zs
 """
 from __future__ import print_function
 
@@ -46,20 +58,21 @@ def get_hits(data):
     return inputs
 
 
-def get_hits_and_targets(data):
-    """
-    data[0] should be eventids
-    data[1], [2], [3] should be hitimes-u, -v, -x
-    data[5] should be segments (the target)
+def make_get_hits_and_targets(target_idx):
+    def get_hits_and_targets(data):
+        """
+        data[0] should be eventids
+        data[1], [2], [3] should be hitimes-u, -v, -x
+        data[target_idx] should be segments (the target)
+        return everything in one list [inputs, targets]
+        """
+        inputu, inputv, inputx = data[1], data[2], data[3]
+        inputs = [inputx, inputu, inputv, data[target_idx]]
+        return inputs
+    return get_hits_and_targets
 
-    return everything in one list [inputs, targets]
-    """
-    inputu, inputv, inputx = data[1], data[2], data[3]
-    inputs = [inputx, inputu, inputv, data[5]]
-    return inputs
 
-
-def get_hits_and_targets_tup(data):
+def get_evtids_and_hits_tup(data):
     """
     data[0] should be eventids
     """
@@ -68,16 +81,17 @@ def get_hits_and_targets_tup(data):
     return eventids, inputs
 
 
-def get_eventids_hits_and_targets(data):
-    """
-    data[0] should be eventids
-    data[1], [2], [3] should be hitimes-u, -v, -x
-    data[5] should be segments
-    
-    return a tuple of (eventids, [inputs], targets)
-    """
-    inputs = [data[3], data[1], data[2]]
-    return data[0], inputs, data[5]
+def make_get_eventids_hits_and_targets(target_idx):
+    def get_eventids_hits_and_targets(data):
+        """
+        data[0] should be eventids
+        data[1], [2], [3] should be hitimes-u, -v, -x
+        data[5] should be segments
+        return a tuple of (eventids, [inputs], targets)
+        """
+        inputs = [data[3], data[1], data[2]]
+        return data[0], inputs, data[target_idx]
+    return get_eventids_hits_and_targets
 
 
 if __name__ == '__main__':
@@ -138,6 +152,8 @@ if __name__ == '__main__':
                       help='Image height (z) v', metavar='IMGH_V', type='int')
     parser.add_option('--noutputs', dest='noutputs', default=11,
                       help='number of outputs', metavar='NOUTPUTS', type='int')
+    parser.add_option('--target_idx', dest='target_idx', default=5,
+                      help='target index in hdf5', metavar='TGT_IDX', type='int')
     parser.add_option('--img_depth', dest='img_depth', default=2,
                       help='image depth', metavar='IMG_DEPTH', type='int')
     (options, args) = parser.parse_args()
@@ -280,7 +296,7 @@ if __name__ == '__main__':
     networkstr['topology'] = convpooldictlist
     networkstr['nhidden'] = 196
     networkstr['dropoutp'] = 0.5
-    networkstr['noutputs'] = 11
+    networkstr['noutputs'] = options.noutputs
     networkstr['img_depth'] = options.img_depth
     networkstr['l1_penalty_scale'] = None
     networkstr['l2_penalty_scale'] = options.l2_penalty_scale
@@ -303,35 +319,47 @@ if __name__ == '__main__':
     logger.info(
         " L2 regularization penalty scale: %s" % networkstr['l2_penalty_scale']
     )
+    logger.info(" Target index: %s" % options.target_idx)
+    logger.info(" Number of categories in target variable: %s" %
+                networkstr['noutputs'])
 
     if options.do_learn:
         networkstr['input_list'] = get_theano_input_tensors()
+        get_list_of_hits_and_targets_fn = make_get_hits_and_targets(
+            options.target_idx
+        )
         learn(build_cnn_fn=build_network_function,
               hyperpars=hyperpars,
               imgdat=imgdat,
               runopts=runopts,
               networkstr=networkstr,
-              get_list_of_hits_and_targets_fn=get_hits_and_targets
+              get_list_of_hits_and_targets_fn=get_list_of_hits_and_targets_fn
         )
 
     if options.do_test:
         networkstr['input_list'] = get_theano_input_tensors()
+        get_eventids_hits_and_targets_fn = make_get_eventids_hits_and_targets(
+            options.target_idx
+        )
         test(build_cnn_fn=build_network_function,
              hyperpars=hyperpars,
              imgdat=imgdat,
              runopts=runopts,
              networkstr=networkstr,
-             get_eventids_hits_and_targets_fn=get_eventids_hits_and_targets,
+             get_eventids_hits_and_targets_fn=get_eventids_hits_and_targets_fn,
              get_list_of_hits_fn=get_hits
         )
 
     if options.do_predict:
         networkstr['input_list'] = get_theano_input_tensors()
+        get_eventids_hits_and_targets_fn = make_get_eventids_hits_and_targets(
+            options.target_idx
+        )
         predict(build_cnn_fn=build_network_function,
                 hyperpars=hyperpars,
                 imgdat=imgdat,
                 runopts=runopts,
                 networkstr=networkstr,
-                get_eventids_hits_and_targets_fn=get_eventids_hits_and_targets,
-                get_id_tagged_inputlist_fn=get_hits_and_targets_tup
+                get_eventids_hits_and_targets_fn=get_eventids_hits_and_targets_fn,
+                get_id_tagged_inputlist_fn=get_evtids_and_hits_tup
         )
