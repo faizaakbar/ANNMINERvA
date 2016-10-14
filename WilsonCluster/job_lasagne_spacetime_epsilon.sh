@@ -12,8 +12,8 @@
 #restore to turn off email #PBS -m n
 
 NEPOCHS=30
-NEPOCHS=1
 NEPOCHS=12
+NEPOCHS=1
 LRATE=0.001
 L2REG=0.0001
 
@@ -21,6 +21,12 @@ DATET=`date +%s`
 
 DOTEST=""
 DOTEST="-t"
+
+# TGTIDX=5
+# NOUTPUTS=11
+
+TGTIDX=4
+NOUTPUTS=67
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
 SAVEMODELNAME="./lminerva_spacetime_epsilon${DATET}.npz"
@@ -49,7 +55,7 @@ if [[ $DIRTY != "" ]]; then
   echo ""
   # exit 0
 fi
-LOGFILENAME=minerva_tricolumnar_spacetime_epsilon_${DATET}_${GIT_VERSION}.log
+LOGFILENAME=minerva_tricolumnar_spacetime_epsilon_${NOUTPUTS}_${DATET}_${GIT_VERSION}.log
 
 cp /home/perdue/ANNMINERvA/Lasagne/${PYTHONPROG} ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/minerva_ann_*.py ${PBS_O_WORKDIR}
@@ -63,7 +69,9 @@ python ${PYTHONPROG} -l $DOTEST \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  -f $LOGFILENAME
+  -f $LOGFILENAME \
+  --target_idx $TGTIDX \
+  --noutputs $NOUTPUTS
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l $DOTEST \
@@ -72,7 +80,9 @@ python ${PYTHONPROG} -l $DOTEST \
   -g $L2REG \
   -s $SAVEMODELNAME \
   -d $DATAFILENAME \
-  -f $LOGFILENAME
+  -f $LOGFILENAME \
+  --target_idx $TGTIDX \
+  --noutputs $NOUTPUTS
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
