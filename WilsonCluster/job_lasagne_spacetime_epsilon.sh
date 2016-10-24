@@ -30,8 +30,12 @@ NOUTPUTS=11
 # NOUTPUTS=67
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
-SAVEMODELNAME="./lminerva_spacetime_epsilon${DATET}.npz"
+# SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
+SAVEMODELNAME="./lminerva_spacetime_11_epsilon1476988984.npz"
 PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
+
+LOAD_SAVEMODEL=""
+LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
@@ -68,7 +72,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
-  -s $SAVEMODELNAME \
+  -s $SAVEMODELNAME $LOAD_SAVEMODEL \
   -d $DATAFILENAME \
   -f $LOGFILENAME \
   --target_idx $TGTIDX \
@@ -79,7 +83,7 @@ python ${PYTHONPROG} -l $DOTEST \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
-  -s $SAVEMODELNAME \
+  -s $SAVEMODELNAME $LOAD_SAVEMODEL \
   -d $DATAFILENAME \
   -f $LOGFILENAME \
   --target_idx $TGTIDX \
