@@ -12,13 +12,11 @@ elif [[ $# > 1 ]]; then
 fi
 
 DOENGY="yes"
-DOTIME="no"
+DOTIME="yes"
 
-SAMPLE=minerva13Bmc
+SAMPLE=me1Amc
 
 # energy lattice images
-# INBASE=minosmatch_nukecczdefs_fullz_127x94_${SAMPLE}
-# OUTBASE=minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_${SAMPLE}
 INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}
 OUTBASE=minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_${SAMPLE}
 
