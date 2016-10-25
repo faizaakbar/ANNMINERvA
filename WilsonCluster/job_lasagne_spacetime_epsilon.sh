@@ -14,7 +14,7 @@
 NEPOCHS=30
 NEPOCHS=12
 NEPOCHS=1
-NEPOCHS=10
+NEPOCHS=7
 LRATE=0.001
 L2REG=0.0001
 
@@ -31,7 +31,7 @@ NOUTPUTS=11
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
 # SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
-SAVEMODELNAME="./lminerva_spacetime_11_epsilon1476988984.npz"
+SAVEMODELNAME="./lminerva_spacetime_11_epsilon1477324174.npz"
 PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
 
 LOAD_SAVEMODEL=""
