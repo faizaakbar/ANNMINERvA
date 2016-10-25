@@ -11,7 +11,6 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=30
 NEPOCHS=12
 NEPOCHS=1
 NEPOCHS=7
