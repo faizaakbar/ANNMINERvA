@@ -712,7 +712,6 @@ def build_network_zeta(inputlist,
     )
     logger.info("Softmax on muon dat with n_units = {}".format(noutputs))
 
-
     # Concatenate the parallel inputs, include the muon data
     net['concat'] = ConcatLayer((
         net['dense-x'],
@@ -742,3 +741,76 @@ def build_network_zeta(inputlist,
         "n-parameters: %s" % lasagne.layers.count_params(net['output_prob'])
     )
     return net['output_prob']
+
+
+def build_dann_xview_epsilon(
+        imgh=50, imgw=127, convpooldictlist=None, nhidden=None, dropoutp=None,
+        noutputs=11, depth=1
+):
+    """
+    here, `imgh` is the size for x (could probably sneak in u or v instead).
+
+    also, the `convpooldictlist` here must be a dictionary of dictionaries,
+    with the set of convolution and pooling defined independently for 'x', 'u',
+    and 'v' - e.g., `convpooldictlist['x']` will be a dictionary similar to
+    the dictionaries used by network models like `beta`, etc.
+    """
+    net = {}
+    # Input layer
+    net['input-x'] = InputLayer(
+        shape=(None, depth, imgw, imgh),
+        name='Input'
+    )
+
+    if convpooldictlist is None:
+        raise Exception('Conv-pool dictionaries must be defined!')
+
+    if nhidden is None:
+        nhidden = 256
+
+    if dropoutp is None:
+        dropoutp = 0.5
+
+    net.update(
+        make_Nconvpool_1dense_branch('x', net['input-x'],
+                                     convpooldictlist['x'],
+                                     nhidden, dropoutp))
+
+    # Feature Classifier
+    # -------------------
+    # One more dense layer
+    net['dense-across-features'] = DenseLayer(
+        dropout(net['dense-x'], p=dropoutp),
+        num_units=(nhidden // 2),
+        nonlinearity=lasagne.nonlinearities.rectify)
+    logger.info("Dense {} with nhidden = {}, dropout = {}".format(
+        'dense-across-features', nhidden // 2, dropoutp))
+
+    # And, finally, the `noutputs`-unit output layer
+    net['output_prob'] = DenseLayer(
+        net['dense-across'],
+        num_units=noutputs,
+        nonlinearity=lasagne.nonlinearities.softmax
+    )
+    logger.info("Softmax output prob with n_units = {}".format(noutputs))
+
+    # Domain Classifier
+    # -------------------
+    # One more dense layer
+    net['dense-across-domain'] = DenseLayer(
+        dropout(net['dense-x'], p=dropoutp),
+        num_units=(nhidden // 2),
+        nonlinearity=lasagne.nonlinearities.rectify)
+    logger.info("Dense {} with nhidden = {}, dropout = {}".format(
+        'dense-across-domain', nhidden // 2, dropoutp))
+
+    # And, finally, the `noutputs`-unit output layer
+    net['domain_prob'] = DenseLayer(
+        net['dense-across-domain'],
+        num_units=2,
+        nonlinearity=lasagne.nonlinearities.softmax
+    )
+    logger.info("Softmax output prob with n_units = {}".format(noutputs))
+
+    # can compute number of parameters by set ops if so desired
+    return net['output_prob'], net['domain_prob']

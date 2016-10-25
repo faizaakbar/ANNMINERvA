@@ -52,6 +52,90 @@ def categorical_learn_and_validate(
         get_list_of_hits_and_targets_fn
 ):
     """
+    Run learning and validation for a DANN - start with one view only
+    """
+    logger.info("Loading data...")
+    train_sizes, valid_sizes, _ = \
+        get_and_print_dataset_subsizes(runopts['data_file_list'])
+    train_sizes_dp, valid_sizes_dp, _ = \
+        get_and_print_dataset_subsizes(runopts['dann_partner_file_list'])
+
+    # Prepare Theano variables for inputs and targets
+    label_source = T.ivector('targets')             # source distribition labels
+    input_source = networkstr['input_list']         # source distribution input
+    domain_source = 0                               # source dist. domain label
+    input_target = networkstr['input_list_target']  # target domain input
+    domain_target = 1                               # tgt. dist. dom. lab.
+
+    feature_net, domain_net = build_cnn_fn(
+        imgw=imgdat['imgw'], imgh=imgdat['imgh'],
+        convpooldictlist=networkstr['topology'],
+        nhidden=networkstr['nhidden'],
+        dropoutp=networkstr['dropoutp'],
+        noutputs=networkstr['noutputs'],
+        depth=networkstr['img_depth']
+    )
+    logger.info(network_repr.get_network_str(
+        lasagne.layers.get_all_layers(feature_net),
+        get_network=False, incomings=True, outgoings=True)
+    )
+    logger.info(network_repr.get_network_str(
+        lasagne.layers.get_all_layers(domain_net),
+        get_network=False, incomings=True, outgoings=True)
+    )
+
+    # Create a loss expression for training, skip l1/l2 penalty for now
+    pred_label_source, pred_domain_source = lasagne.layers.get_output(
+        [feature_net, domain_net], input_source
+    )
+    pred_domain_target = lasagne.layers.get_output(domain_net, input_target)
+    loss_features = categorical_crossentropy(pred_label_source, label_source)
+    loss_domain = categorical_crossentropy(pred_domain_source, domain_source)
+    loss_domain += categorical_crossentropy(pred_domain_target, domain_target)
+
+    # to define updates we need the different sets of parameters
+    params1 = lasagne.layers.get_all_params(feature_net)
+    params2 = lasagne.layers.get_all_params(domain_net)
+    common_pars = set(params1) & set(params2)
+
+    updates = lasagne.updates.nesterov_momentum(
+        loss_features - networkstr['dann_lambda'] * loss_domain,
+        params1,
+        momentum=hyperpars['momentum']
+    )
+    updates.update(lasagne.updates.nesterov_momentum(
+        loss_domain,
+        list(set(params2) - common),
+        momentum=hyperpars['momentum']
+    ))
+
+    # Create a loss expression for validation/testing. Note we do a
+    # deterministic forward pass through the network. Drop l1/l2 penalty for now.
+    test_prediction = lasagne.layers.get_output(feature_net, deterministic=True)
+    test_loss = categorical_crossentropy(test_prediction, label_source)
+    test_loss = test_loss.mean()
+    # Also create an expression for the classification accuracy:
+    test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), label_source),
+                      dtype=theano.config.floatX)
+
+    # Compile a function performing a training step on a mini-batch.
+    train_fn = theano.function([input_source, label_source, input_target],
+                               [loss_features, loss_domain],
+                               updates=updates,
+                               allow_input_downcast=True)
+    # Compile a second function computing the validation loss and accuracy:
+    val_fn = theano.function(inputlist,
+                             [test_loss, test_acc],
+                             allow_input_downcast=True)
+
+    # now, do loops over data to train...
+
+
+def categorical_learn_and_validate(
+        build_cnn_fn, hyperpars, imgdat, runopts, networkstr,
+        get_list_of_hits_and_targets_fn
+):
+    """
     Run learning and validation for triamese networks using AdaGrad for
     learning rate evolution, nesterov momentum; read the data files in
     chunks into memory.
