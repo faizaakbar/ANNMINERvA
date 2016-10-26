@@ -128,7 +128,136 @@ def categorical_learn_and_validate(
                              [test_loss, test_acc],
                              allow_input_downcast=True)
 
+    # we will loop over training files, and then for each file we will loop
+    # over the set of created slices (event id ranges in the file)
+    train_slices = []
+    for tsize in train_sizes:
+        train_slices.append(slices_maker(tsize, slice_size=50000))
+    valid_slices = []
+    for vsize in valid_sizes:
+        valid_slices.append(slices_maker(vsize, slice_size=50000))
+    train_set = None
+    valid_set = None
+
+    # because the number of DANN partner files may be different than the
+    # number of training files, and sizes different as well, we need to
+    # make a list of tuples - [(filename, slice)] - that holds the bucket
+    # of events we want to use for domain training. we will just pull from
+    # this list by index, incrementing as we move through classification
+    # training slices, and wrapping around as needed via modulus operators.
+    # (we could have built a similar single list for the training data, but
+    # had no need at the time the original loop was composed...)
+    dp_train_slices = []
+    dp_valid_slices = []
+    for i, tfile in enumerate(runopts['dann_partner_file_list']):
+        for tsize in train_sizes_dp[i]:
+            tslices = slices_maker(tsize, slice_size=50000)
+            for ts in tslices:
+                dp_train_slices.append((tfile, ts))
+    for i, vfile in enumerate(runopts['dann_partner_file_list']):
+        for vsize in valid_sizes_dp[i]:
+            vslices = slices_maker(vsize, slice_size=50000)
+            for vs in vslices:
+                dp_valid_slices.append((vfile, vs))
+    n_dp_slices = len(dp_train_slices)  # == len(dp_valid_slices)
+
+    n_total_train_slices = 0
+    for i, _ in enumerate(runopts['data_file_list']):
+        n_total_train_slices += len(train_slices[i])
+
     # now, do loops over data to train...
+    # logger.info("Starting training...")
+    # epoch = 0
+    # for epoch in range(hyperpars['num_epochs']):
+
+    #     start_time = time.time()
+    #     train_err = 0
+    #     train_batches = 0
+    #     dp_index = 0   # track location in dp_slices, mod with total train slices
+    #     for i, data_file in enumerate(runopts['data_file_list']):
+    #         # In each epoch, we do a full pass over the training data:
+    #         for tslice in train_slices[i]:
+
+    #             t0 = time.time()
+    #             train_set = load_datasubset(data_file, 'train', tslice)
+    #             _, train_dstream = make_scheme_and_stream(
+    #                 train_set, hyperpars['batchsize']
+    #             )
+    #             t1 = time.time()
+    #             logger.info(
+    #                 "  Loading slice {} from {} took {:.3f}s.".format(
+    #                     tslice, data_file, t1 - t0)
+    #             )
+    #             logger.debug(
+    #                 "   dset sources: {}".format(train_set.provides_sources)
+    #             )
+
+    #             # load the dann partner data here
+    
+    #             # now train with both classifier data and domain partner data
+    #             t0 = time.time()
+    #             for data in train_dstream.get_epoch_iterator():
+    #                 inputs = get_list_of_hits_and_targets_fn(data)
+    #                 train_err += train_fn(*inputs)
+    #                 train_batches += 1
+    #             t1 = time.time()
+    #             logger.info(
+    #                 "  -Iterating over the slice took {:.3f}s.".format(t1 - t0)
+    #             )
+    #             dp_index = (dp_index + 1) % n_total_train_slices
+
+    #             del train_set       # hint to garbage collector
+    #             del train_dstream   # hint to garbage collector
+
+    #     if runopts['do_validation_pass']:
+    #         # And a full pass over the validation data
+    #         t0 = time.time()
+    #         val_err = 0
+    #         val_acc = 0
+    #         val_batches = 0
+    #         for i, data_file in enumerate(runopts['data_file_list']):
+    #             for vslice in valid_slices[i]:
+    #                 valid_set = load_datasubset(data_file, 'valid', vslice)
+    #                 _, valid_dstream = make_scheme_and_stream(
+    #                     valid_set, hyperpars['batchsize']
+    #                 )
+
+    #                 for data in valid_dstream.get_epoch_iterator():
+    #                     inputs = get_list_of_hits_and_targets_fn(data)
+    #                     err, acc = val_fn(*inputs)
+    #                     val_err += err
+    #                     val_acc += acc
+    #                     val_batches += 1
+
+    #                 del valid_set
+    #                 del valid_dstream
+
+    #         t1 = time.time()
+    #         logger.info("  The validation pass took {:.3f}s.".format(t1 - t0))
+
+    #     # Dump the current network weights to file at the end of epoch
+    #     np.savez(runopts['save_model_file'],
+    #              *lasagne.layers.get_all_param_values(network))
+
+    #     # Then we print the results for this epoch:
+    #     logger.info(
+    #         "\nEpoch {} of {} took {:.3f}s"
+    #         "\n  training loss:\t\t{:.6f}".format(
+    #             epoch + 1, hyperpars['num_epochs'], time.time() - start_time,
+    #             train_err / train_batches
+    #         )
+    #     )
+    #     if runopts['do_validation_pass']:
+    #         logger.info(
+    #             "\n  validation loss:\t\t{:.6f}"
+    #             "\n  validation accuracy:\t\t{:.2f} %".format(
+    #                 val_err / val_batches,
+    #                 val_acc / val_batches * 100
+    #             )
+    #         )
+    #         logger.info("---")
+
+    # logger.info("Finished {} epochs.".format(epoch + 1))
 
 
 def categorical_learn_and_validate(
