@@ -12,12 +12,11 @@ fi
 
 echo "Grabbing runs $START to $STOP..."
 
-fileroots="minosmatch_nukecczdefs_fullz_tproc_127x94_me1Amc_"
+fileroots="minosmatch_nukecczdefs_fullz_tproc_127x94_minerva1nofsimc_"
 
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/muon_skims/cvs_rev1_3/redundant"
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/muon_skims/cvs_rev1_3/with_t_prod"
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/nukeccskimmer_minosmatch_127x94_nukecczdefs/with_t_processing"
-
 
 for file in $fileroots
 do
@@ -30,7 +29,7 @@ do
   done
 done
 
-fileroots="minosmatch_nukecczdefs_fullzwitht_127x94_me1Amc_"
+fileroots="minosmatch_nukecczdefs_fullzwitht_127x94_minerva1nofsimc_"
 
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/nukeccskimmer_minosmatch_127x94_nukecczdefs_withtime/"
 
