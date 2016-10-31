@@ -14,7 +14,8 @@ fi
 DOENGY="yes"
 DOTIME="yes"
 
-SAMPLE=me1Amc
+SAMPLE=minerva1nofsimc
+
 
 # energy lattice images
 INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}
