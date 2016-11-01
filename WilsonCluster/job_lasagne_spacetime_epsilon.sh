@@ -30,7 +30,7 @@ NOUTPUTS=11
 
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
 # SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
-SAVEMODELNAME="./lminerva_spacetime_11_epsilon1477419823.npz"
+SAVEMODELNAME="./lminerva_spacetime_11_epsilon1477582139.npz"
 PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
 
 LOAD_SAVEMODEL=""
