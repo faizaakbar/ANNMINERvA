@@ -1,0 +1,588 @@
+2016-10-31 14:01:04,073 - __main__ - INFO - Starting...
+2016-10-31 14:01:04,073 - __main__ - INFO - minerva_tricolumnar_spacetime_epsilon.py
+2016-10-31 14:01:04,073 - __main__ - INFO -  Begin with saved pars? True
+2016-10-31 14:01:04,073 - __main__ - INFO -  Saved parameters file: ./lminerva_spacetime_11_epsilon1477582139.npz
+2016-10-31 14:01:04,074 - __main__ - INFO -  Saved parameters file exists? True
+2016-10-31 14:01:04,074 - __main__ - INFO -  Datasets: ['/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5']
+2016-10-31 14:01:04,075 - __main__ - INFO -  Dataset size: 6986717674
+2016-10-31 14:01:04,075 - __main__ - INFO -  Planned number of epochs: 3
+2016-10-31 14:01:04,075 - __main__ - INFO -  Learning rate: 0.001
+2016-10-31 14:01:04,076 - __main__ - INFO -  Momentum: 0.9
+2016-10-31 14:01:04,076 - __main__ - INFO -  Batch size: 500
+2016-10-31 14:01:04,076 - __main__ - INFO -  L2 regularization penalty scale: 0.0001
+2016-10-31 14:01:04,076 - __main__ - INFO -  Target index: 5
+2016-10-31 14:01:04,076 - __main__ - INFO -  Number of categories in target variable: 11
+2016-10-31 14:01:04,076 - minerva_ann_operate_networks - INFO - Loading data...
+2016-10-31 14:01:04,141 - minerva_ann_datasets - INFO -  Learning sample size = 3272134 examples
+2016-10-31 14:01:04,142 - minerva_ann_datasets - INFO -  Validation sample size = 394233 examples
+2016-10-31 14:01:04,142 - minerva_ann_datasets - INFO -  Testing sample size = 275964 examples
+2016-10-31 14:01:04,143 - minerva_ann_networks - INFO - Convpool conv-x-0 params: {'filter_size': (8, 3), 'pool_size': (2, 1), 'nfilters': 12}
+2016-10-31 14:01:04,170 - minerva_ann_networks - INFO - Convpool maxpool-x-0
+2016-10-31 14:01:04,170 - minerva_ann_networks - INFO - Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2016-10-31 14:01:04,171 - minerva_ann_networks - INFO - Convpool maxpool-x-1
+2016-10-31 14:01:04,171 - minerva_ann_networks - INFO - Convpool conv-x-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2016-10-31 14:01:04,172 - minerva_ann_networks - INFO - Convpool maxpool-x-2
+2016-10-31 14:01:04,173 - minerva_ann_networks - INFO - Convpool conv-x-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2016-10-31 14:01:04,174 - minerva_ann_networks - INFO - Convpool maxpool-x-3
+2016-10-31 14:01:04,206 - minerva_ann_networks - INFO - Dense dense-x with nhidden = 196, dropout = 0.5
+2016-10-31 14:01:04,206 - minerva_ann_networks - INFO - Convpool conv-u-0 params: {'filter_size': (8, 5), 'pool_size': (2, 1), 'nfilters': 12}
+2016-10-31 14:01:04,207 - minerva_ann_networks - INFO - Convpool maxpool-u-0
+2016-10-31 14:01:04,207 - minerva_ann_networks - INFO - Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2016-10-31 14:01:04,208 - minerva_ann_networks - INFO - Convpool maxpool-u-1
+2016-10-31 14:01:04,209 - minerva_ann_networks - INFO - Convpool conv-u-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2016-10-31 14:01:04,210 - minerva_ann_networks - INFO - Convpool maxpool-u-2
+2016-10-31 14:01:04,210 - minerva_ann_networks - INFO - Convpool conv-u-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2016-10-31 14:01:04,211 - minerva_ann_networks - INFO - Convpool maxpool-u-3
+2016-10-31 14:01:04,222 - minerva_ann_networks - INFO - Dense dense-u with nhidden = 196, dropout = 0.5
+2016-10-31 14:01:04,222 - minerva_ann_networks - INFO - Convpool conv-v-0 params: {'filter_size': (8, 5), 'pool_size': (2, 1), 'nfilters': 12}
+2016-10-31 14:01:04,223 - minerva_ann_networks - INFO - Convpool maxpool-v-0
+2016-10-31 14:01:04,223 - minerva_ann_networks - INFO - Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2016-10-31 14:01:04,224 - minerva_ann_networks - INFO - Convpool maxpool-v-1
+2016-10-31 14:01:04,224 - minerva_ann_networks - INFO - Convpool conv-v-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2016-10-31 14:01:04,226 - minerva_ann_networks - INFO - Convpool maxpool-v-2
+2016-10-31 14:01:04,226 - minerva_ann_networks - INFO - Convpool conv-v-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2016-10-31 14:01:04,227 - minerva_ann_networks - INFO - Convpool maxpool-v-3
+2016-10-31 14:01:04,237 - minerva_ann_networks - INFO - Dense dense-v with nhidden = 196, dropout = 0.5
+2016-10-31 14:01:04,237 - minerva_ann_networks - INFO - Network: concat columns...
+2016-10-31 14:01:04,240 - minerva_ann_networks - INFO - Dense dense-across with nhidden = 98, dropout = 0.5
+2016-10-31 14:01:04,240 - minerva_ann_networks - INFO - Softmax output prob with n_units = 11
+2016-10-31 14:01:04,246 - minerva_ann_networks - INFO - n-parameters: 1686071
+2016-10-31 14:01:04,248 - minerva_ann_operate_networks - INFO - 
+In -->          Layer    --> Out    Description                                                  
+-------         -----    -------    -----------                                                  
+[]              0        [1]        <lasagne.layers.input.InputLayer object at 0x2ad376673290>   
+[0]             1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2ad376673490>   
+[1]             2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad3766733d0>
+[2]             3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2ad37669d1d0>   
+[3]             4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad376673390>
+[4]             5        [6]        <lasagne.layers.conv.Conv2DLayer object at 0x2ad37669d490>   
+[5]             6        [7]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad37669d4d0>
+[6]             7        [8]        <lasagne.layers.conv.Conv2DLayer object at 0x2ad37669d750>   
+[7]             8        [9]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad37669d790>
+[8]             9        [10]       <lasagne.layers.noise.DropoutLayer object at 0x2ad376673350> 
+[9]             10       [33]       <lasagne.layers.dense.DenseLayer object at 0x2ad37669da50>   
+[]              11       [12]       <lasagne.layers.input.InputLayer object at 0x2ad3766732d0>   
+[11]            12       [13]       <lasagne.layers.conv.Conv2DLayer object at 0x2ad3766aa190>   
+[12]            13       [14]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad3766aa0d0>
+[13]            14       [15]       <lasagne.layers.conv.Conv2DLayer object at 0x2ad3766aa390>   
+[14]            15       [16]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad3766aa3d0>
+[15]            16       [17]       <lasagne.layers.conv.Conv2DLayer object at 0x2ad3766aa650>   
+[16]            17       [18]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad3766aa690>
+[17]            18       [19]       <lasagne.layers.conv.Conv2DLayer object at 0x2ad3766aa910>   
+[18]            19       [20]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad3766aa950>
+[19]            20       [21]       <lasagne.layers.noise.DropoutLayer object at 0x2ad37669db10> 
+[20]            21       [33]       <lasagne.layers.dense.DenseLayer object at 0x2ad3766aac10>   
+[]              22       [23]       <lasagne.layers.input.InputLayer object at 0x2ad376673310>   
+[22]            23       [24]       <lasagne.layers.conv.Conv2DLayer object at 0x2ad3766aaf90>   
+[23]            24       [25]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad3766aaed0>
+[24]            25       [26]       <lasagne.layers.conv.Conv2DLayer object at 0x2ad37e8651d0>   
+[25]            26       [27]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad3766aaf50>
+[26]            27       [28]       <lasagne.layers.conv.Conv2DLayer object at 0x2ad37e865490>   
+[27]            28       [29]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad37e8654d0>
+[28]            29       [30]       <lasagne.layers.conv.Conv2DLayer object at 0x2ad37e865750>   
+[29]            30       [31]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2ad37e865790>
+[30]            31       [32]       <lasagne.layers.noise.DropoutLayer object at 0x2ad3766aacd0> 
+[31]            32       [33]       <lasagne.layers.dense.DenseLayer object at 0x2ad37e865a50>   
+[10, 21, 32]    33       [34]       <lasagne.layers.merge.ConcatLayer object at 0x2ad37e865b10>  
+[33]            34       [35]       <lasagne.layers.noise.DropoutLayer object at 0x2ad37e865d90> 
+[34]            35       [36]       <lasagne.layers.dense.DenseLayer object at 0x2ad37e865d10>   
+[35]            36       []         <lasagne.layers.dense.DenseLayer object at 0x2ad37e865d50>   
+2016-10-31 14:01:04,248 - minerva_ann_operate_networks - INFO -  Loading parameters file: ./lminerva_spacetime_11_epsilon1477582139.npz
+2016-10-31 14:01:05,635 - minerva_ann_operate_networks - INFO - 
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        
+2016-10-31 14:01:06,179 - minerva_ann_operate_networks - INFO - 
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        
+2016-10-31 14:01:37,068 - minerva_ann_operate_networks - INFO - Starting training...
+2016-10-31 14:02:47,517 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 70.449s.
+2016-10-31 14:03:52,399 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.881s.
+2016-10-31 14:05:16,969 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 84.556s.
+2016-10-31 14:06:21,119 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.149s.
+2016-10-31 14:07:48,508 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.374s.
+2016-10-31 14:08:52,507 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.998s.
+2016-10-31 14:10:20,149 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.629s.
+2016-10-31 14:11:23,914 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.764s.
+2016-10-31 14:12:51,300 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.371s.
+2016-10-31 14:13:55,800 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.500s.
+2016-10-31 14:15:04,190 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 68.377s.
+2016-10-31 14:16:08,689 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.498s.
+2016-10-31 14:17:35,268 - minerva_ann_operate_networks - INFO -   Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.566s.
+2016-10-31 14:18:40,018 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.750s.
+2016-10-31 14:20:05,602 - minerva_ann_operate_networks - INFO -   Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.571s.
+2016-10-31 14:21:11,153 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 65.550s.
+2016-10-31 14:22:38,353 - minerva_ann_operate_networks - INFO -   Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.187s.
+2016-10-31 14:23:42,722 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.369s.
+2016-10-31 14:25:08,563 - minerva_ann_operate_networks - INFO -   Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.827s.
+2016-10-31 14:26:13,075 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.511s.
+2016-10-31 14:27:20,420 - minerva_ann_operate_networks - INFO -   Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.333s.
+2016-10-31 14:28:24,910 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.489s.
+2016-10-31 14:29:51,742 - minerva_ann_operate_networks - INFO -   Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.820s.
+2016-10-31 14:30:56,251 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.507s.
+2016-10-31 14:32:22,336 - minerva_ann_operate_networks - INFO -   Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.073s.
+2016-10-31 14:33:26,829 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.492s.
+2016-10-31 14:34:51,834 - minerva_ann_operate_networks - INFO -   Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 84.992s.
+2016-10-31 14:35:56,244 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.409s.
+2016-10-31 14:37:23,759 - minerva_ann_operate_networks - INFO -   Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.499s.
+2016-10-31 14:38:28,142 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.382s.
+2016-10-31 14:39:39,684 - minerva_ann_operate_networks - INFO -   Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 71.529s.
+2016-10-31 14:40:44,230 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.546s.
+2016-10-31 14:42:11,084 - minerva_ann_operate_networks - INFO -   Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.839s.
+2016-10-31 14:43:15,538 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.454s.
+2016-10-31 14:44:40,790 - minerva_ann_operate_networks - INFO -   Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.239s.
+2016-10-31 14:45:45,270 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.479s.
+2016-10-31 14:47:10,714 - minerva_ann_operate_networks - INFO -   Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.431s.
+2016-10-31 14:48:15,164 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.449s.
+2016-10-31 14:49:40,469 - minerva_ann_operate_networks - INFO -   Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.293s.
+2016-10-31 14:50:44,932 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.462s.
+2016-10-31 14:52:11,105 - minerva_ann_operate_networks - INFO -   Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.160s.
+2016-10-31 14:53:15,586 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.481s.
+2016-10-31 14:54:23,232 - minerva_ann_operate_networks - INFO -   Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.632s.
+2016-10-31 14:55:27,699 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.467s.
+2016-10-31 14:56:53,298 - minerva_ann_operate_networks - INFO -   Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.586s.
+2016-10-31 14:57:57,789 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.490s.
+2016-10-31 14:59:22,707 - minerva_ann_operate_networks - INFO -   Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 84.905s.
+2016-10-31 15:00:27,211 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.503s.
+2016-10-31 15:01:52,556 - minerva_ann_operate_networks - INFO -   Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.333s.
+2016-10-31 15:02:57,059 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.502s.
+2016-10-31 15:04:23,415 - minerva_ann_operate_networks - INFO -   Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.344s.
+2016-10-31 15:05:27,929 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.512s.
+2016-10-31 15:06:35,861 - minerva_ann_operate_networks - INFO -   Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.920s.
+2016-10-31 15:07:40,393 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.531s.
+2016-10-31 15:09:06,524 - minerva_ann_operate_networks - INFO -   Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.119s.
+2016-10-31 15:10:11,037 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.513s.
+2016-10-31 15:11:36,467 - minerva_ann_operate_networks - INFO -   Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.418s.
+2016-10-31 15:12:40,975 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.507s.
+2016-10-31 15:14:06,291 - minerva_ann_operate_networks - INFO -   Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.303s.
+2016-10-31 15:15:10,791 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.499s.
+2016-10-31 15:16:36,754 - minerva_ann_operate_networks - INFO -   Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.950s.
+2016-10-31 15:17:41,248 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.493s.
+2016-10-31 15:18:49,390 - minerva_ann_operate_networks - INFO -   Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 68.129s.
+2016-10-31 15:19:53,883 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.492s.
+2016-10-31 15:21:20,779 - minerva_ann_operate_networks - INFO -   Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.884s.
+2016-10-31 15:22:25,240 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.459s.
+2016-10-31 15:23:50,970 - minerva_ann_operate_networks - INFO -   Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.717s.
+2016-10-31 15:24:55,474 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.503s.
+2016-10-31 15:26:20,434 - minerva_ann_operate_networks - INFO -   Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 84.948s.
+2016-10-31 15:27:24,916 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.481s.
+2016-10-31 15:28:50,373 - minerva_ann_operate_networks - INFO -   Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.444s.
+2016-10-31 15:29:54,854 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.480s.
+2016-10-31 15:31:21,208 - minerva_ann_operate_networks - INFO -   Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.342s.
+2016-10-31 15:32:25,700 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.491s.
+2016-10-31 15:33:33,290 - minerva_ann_operate_networks - INFO -   Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.578s.
+2016-10-31 15:34:37,771 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.479s.
+2016-10-31 15:36:03,334 - minerva_ann_operate_networks - INFO -   Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.551s.
+2016-10-31 15:37:07,828 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.494s.
+2016-10-31 15:38:32,975 - minerva_ann_operate_networks - INFO -   Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.134s.
+2016-10-31 15:39:37,484 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.508s.
+2016-10-31 15:41:03,598 - minerva_ann_operate_networks - INFO -   Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.102s.
+2016-10-31 15:42:07,829 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.230s.
+2016-10-31 15:43:34,444 - minerva_ann_operate_networks - INFO -   Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.600s.
+2016-10-31 15:44:38,634 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.189s.
+2016-10-31 15:45:47,652 - minerva_ann_operate_networks - INFO -   Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 69.006s.
+2016-10-31 15:46:51,870 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.217s.
+2016-10-31 15:48:18,998 - minerva_ann_operate_networks - INFO -   Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.114s.
+2016-10-31 15:49:23,160 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.161s.
+2016-10-31 15:50:49,064 - minerva_ann_operate_networks - INFO -   Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.889s.
+2016-10-31 15:51:53,631 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.566s.
+2016-10-31 15:53:19,446 - minerva_ann_operate_networks - INFO -   Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.802s.
+2016-10-31 15:54:23,705 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.258s.
+2016-10-31 15:55:51,606 - minerva_ann_operate_networks - INFO -   Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.887s.
+2016-10-31 15:56:56,072 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.465s.
+2016-10-31 15:58:03,664 - minerva_ann_operate_networks - INFO -   Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.579s.
+2016-10-31 15:59:08,103 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.438s.
+2016-10-31 16:00:34,555 - minerva_ann_operate_networks - INFO -   Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.439s.
+2016-10-31 16:01:38,807 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.251s.
+2016-10-31 16:03:04,218 - minerva_ann_operate_networks - INFO -   Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.399s.
+2016-10-31 16:04:08,601 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.382s.
+2016-10-31 16:05:33,905 - minerva_ann_operate_networks - INFO -   Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.291s.
+2016-10-31 16:06:38,168 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.263s.
+2016-10-31 16:08:04,170 - minerva_ann_operate_networks - INFO -   Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.986s.
+2016-10-31 16:09:08,720 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.549s.
+2016-10-31 16:10:35,288 - minerva_ann_operate_networks - INFO -   Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.553s.
+2016-10-31 16:11:39,803 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.514s.
+2016-10-31 16:12:47,587 - minerva_ann_operate_networks - INFO -   Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.772s.
+2016-10-31 16:13:52,075 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.487s.
+2016-10-31 16:15:17,703 - minerva_ann_operate_networks - INFO -   Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.615s.
+2016-10-31 16:16:22,204 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.501s.
+2016-10-31 16:17:47,264 - minerva_ann_operate_networks - INFO -   Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.047s.
+2016-10-31 16:18:51,760 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.495s.
+2016-10-31 16:20:17,028 - minerva_ann_operate_networks - INFO -   Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.254s.
+2016-10-31 16:21:21,542 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.514s.
+2016-10-31 16:22:47,767 - minerva_ann_operate_networks - INFO -   Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.212s.
+2016-10-31 16:23:52,266 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.498s.
+2016-10-31 16:25:00,210 - minerva_ann_operate_networks - INFO -   Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.931s.
+2016-10-31 16:26:04,872 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.662s.
+2016-10-31 16:27:30,875 - minerva_ann_operate_networks - INFO -   Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.990s.
+2016-10-31 16:28:36,324 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 65.448s.
+2016-10-31 16:30:01,620 - minerva_ann_operate_networks - INFO -   Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.283s.
+2016-10-31 16:31:06,161 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.540s.
+2016-10-31 16:32:31,489 - minerva_ann_operate_networks - INFO -   Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.316s.
+2016-10-31 16:33:36,021 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.531s.
+2016-10-31 16:35:01,881 - minerva_ann_operate_networks - INFO -   Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.848s.
+2016-10-31 16:36:06,414 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.532s.
+2016-10-31 16:37:14,370 - minerva_ann_operate_networks - INFO -   Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.944s.
+2016-10-31 16:38:18,890 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.519s.
+2016-10-31 16:39:45,291 - minerva_ann_operate_networks - INFO -   Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.389s.
+2016-10-31 16:40:49,827 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.535s.
+2016-10-31 16:41:49,171 - minerva_ann_operate_networks - INFO -   Loading slice (3250000, 3272134) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 59.331s.
+2016-10-31 16:42:17,777 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 28.606s.
+2016-10-31 16:55:34,436 - minerva_ann_operate_networks - INFO -   The validation pass took 796.652s.
+2016-10-31 16:55:36,289 - minerva_ann_operate_networks - INFO - 
+Epoch 1 of 3 took 10439.220s
+  training loss:		0.138845
+2016-10-31 16:55:36,289 - minerva_ann_operate_networks - INFO - 
+  validation loss:		0.120644
+  validation accuracy:		97.29 %
+2016-10-31 16:55:36,289 - minerva_ann_operate_networks - INFO - ---
+2016-10-31 16:56:44,094 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.805s.
+2016-10-31 16:57:48,632 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.538s.
+2016-10-31 16:59:14,406 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.761s.
+2016-10-31 17:00:18,986 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.579s.
+2016-10-31 17:01:44,503 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.505s.
+2016-10-31 17:02:49,049 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.545s.
+2016-10-31 17:04:14,279 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.217s.
+2016-10-31 17:05:18,825 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.546s.
+2016-10-31 17:06:45,374 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.536s.
+2016-10-31 17:07:49,940 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.565s.
+2016-10-31 17:08:57,692 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.739s.
+2016-10-31 17:10:02,248 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.556s.
+2016-10-31 17:11:28,020 - minerva_ann_operate_networks - INFO -   Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.759s.
+2016-10-31 17:12:32,623 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.603s.
+2016-10-31 17:13:58,175 - minerva_ann_operate_networks - INFO -   Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.539s.
+2016-10-31 17:15:02,729 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.554s.
+2016-10-31 17:16:27,995 - minerva_ann_operate_networks - INFO -   Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.253s.
+2016-10-31 17:17:32,545 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.550s.
+2016-10-31 17:18:58,799 - minerva_ann_operate_networks - INFO -   Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.242s.
+2016-10-31 17:20:02,778 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.978s.
+2016-10-31 17:21:10,530 - minerva_ann_operate_networks - INFO -   Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.739s.
+2016-10-31 17:22:14,459 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.928s.
+2016-10-31 17:23:42,283 - minerva_ann_operate_networks - INFO -   Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.809s.
+2016-10-31 17:24:46,528 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.244s.
+2016-10-31 17:26:13,122 - minerva_ann_operate_networks - INFO -   Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.581s.
+2016-10-31 17:27:16,816 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.693s.
+2016-10-31 17:28:42,328 - minerva_ann_operate_networks - INFO -   Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.499s.
+2016-10-31 17:29:46,138 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.808s.
+2016-10-31 17:31:12,228 - minerva_ann_operate_networks - INFO -   Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.075s.
+2016-10-31 17:32:15,936 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.707s.
+2016-10-31 17:33:26,210 - minerva_ann_operate_networks - INFO -   Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 70.259s.
+2016-10-31 17:34:30,001 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.791s.
+2016-10-31 17:35:57,919 - minerva_ann_operate_networks - INFO -   Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.903s.
+2016-10-31 17:37:01,831 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.911s.
+2016-10-31 17:38:27,465 - minerva_ann_operate_networks - INFO -   Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.621s.
+2016-10-31 17:39:31,116 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.651s.
+2016-10-31 17:40:56,519 - minerva_ann_operate_networks - INFO -   Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.387s.
+2016-10-31 17:42:00,225 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.706s.
+2016-10-31 17:43:25,140 - minerva_ann_operate_networks - INFO -   Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 84.902s.
+2016-10-31 17:44:28,898 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.758s.
+2016-10-31 17:45:55,933 - minerva_ann_operate_networks - INFO -   Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.023s.
+2016-10-31 17:47:00,084 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.150s.
+2016-10-31 17:48:07,544 - minerva_ann_operate_networks - INFO -   Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.446s.
+2016-10-31 17:49:11,528 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.984s.
+2016-10-31 17:50:37,410 - minerva_ann_operate_networks - INFO -   Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.869s.
+2016-10-31 17:51:41,402 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.991s.
+2016-10-31 17:53:06,391 - minerva_ann_operate_networks - INFO -   Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 84.977s.
+2016-10-31 17:54:10,389 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.996s.
+2016-10-31 17:55:36,182 - minerva_ann_operate_networks - INFO -   Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.781s.
+2016-10-31 17:56:39,854 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.671s.
+2016-10-31 17:58:06,446 - minerva_ann_operate_networks - INFO -   Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.577s.
+2016-10-31 17:59:10,145 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.698s.
+2016-10-31 18:00:18,785 - minerva_ann_operate_networks - INFO -   Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 68.627s.
+2016-10-31 18:01:22,469 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.683s.
+2016-10-31 18:02:48,657 - minerva_ann_operate_networks - INFO -   Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.173s.
+2016-10-31 18:03:52,406 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.748s.
+2016-10-31 18:05:19,020 - minerva_ann_operate_networks - INFO -   Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.599s.
+2016-10-31 18:06:22,780 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.760s.
+2016-10-31 18:07:49,100 - minerva_ann_operate_networks - INFO -   Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.304s.
+2016-10-31 18:08:52,861 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.760s.
+2016-10-31 18:10:19,150 - minerva_ann_operate_networks - INFO -   Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.276s.
+2016-10-31 18:11:22,802 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.651s.
+2016-10-31 18:12:31,823 - minerva_ann_operate_networks - INFO -   Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 69.006s.
+2016-10-31 18:13:35,527 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.703s.
+2016-10-31 18:15:03,088 - minerva_ann_operate_networks - INFO -   Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.546s.
+2016-10-31 18:16:07,078 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.989s.
+2016-10-31 18:17:32,455 - minerva_ann_operate_networks - INFO -   Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.365s.
+2016-10-31 18:18:36,463 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.007s.
+2016-10-31 18:20:01,694 - minerva_ann_operate_networks - INFO -   Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.219s.
+2016-10-31 18:21:05,693 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.998s.
+2016-10-31 18:22:31,248 - minerva_ann_operate_networks - INFO -   Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.543s.
+2016-10-31 18:23:35,766 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.517s.
+2016-10-31 18:25:02,397 - minerva_ann_operate_networks - INFO -   Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.618s.
+2016-10-31 18:26:06,912 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.514s.
+2016-10-31 18:27:14,856 - minerva_ann_operate_networks - INFO -   Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.931s.
+2016-10-31 18:28:19,496 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.639s.
+2016-10-31 18:29:47,016 - minerva_ann_operate_networks - INFO -   Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.507s.
+2016-10-31 18:30:51,567 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.550s.
+2016-10-31 18:32:16,769 - minerva_ann_operate_networks - INFO -   Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.189s.
+2016-10-31 18:33:21,327 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.557s.
+2016-10-31 18:34:46,953 - minerva_ann_operate_networks - INFO -   Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.613s.
+2016-10-31 18:35:51,531 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.577s.
+2016-10-31 18:37:17,895 - minerva_ann_operate_networks - INFO -   Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.351s.
+2016-10-31 18:38:22,461 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.566s.
+2016-10-31 18:39:30,314 - minerva_ann_operate_networks - INFO -   Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.840s.
+2016-10-31 18:40:34,865 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.551s.
+2016-10-31 18:42:00,807 - minerva_ann_operate_networks - INFO -   Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.929s.
+2016-10-31 18:43:05,305 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.498s.
+2016-10-31 18:44:31,260 - minerva_ann_operate_networks - INFO -   Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.939s.
+2016-10-31 18:45:35,517 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.256s.
+2016-10-31 18:47:01,120 - minerva_ann_operate_networks - INFO -   Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.591s.
+2016-10-31 18:48:05,693 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.572s.
+2016-10-31 18:49:32,687 - minerva_ann_operate_networks - INFO -   Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.979s.
+2016-10-31 18:50:37,308 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.620s.
+2016-10-31 18:51:47,496 - minerva_ann_operate_networks - INFO -   Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 70.173s.
+2016-10-31 18:52:52,025 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.528s.
+2016-10-31 18:54:18,308 - minerva_ann_operate_networks - INFO -   Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.270s.
+2016-10-31 18:55:22,839 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.530s.
+2016-10-31 18:56:48,058 - minerva_ann_operate_networks - INFO -   Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.206s.
+2016-10-31 18:57:52,474 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.415s.
+2016-10-31 18:59:17,905 - minerva_ann_operate_networks - INFO -   Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.418s.
+2016-10-31 19:00:22,197 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.291s.
+2016-10-31 19:01:48,269 - minerva_ann_operate_networks - INFO -   Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.057s.
+2016-10-31 19:02:53,000 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.730s.
+2016-10-31 19:04:22,304 - minerva_ann_operate_networks - INFO -   Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 89.287s.
+2016-10-31 19:05:27,406 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 65.101s.
+2016-10-31 19:06:36,316 - minerva_ann_operate_networks - INFO -   Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 68.895s.
+2016-10-31 19:07:40,849 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.532s.
+2016-10-31 19:09:06,266 - minerva_ann_operate_networks - INFO -   Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.404s.
+2016-10-31 19:10:10,809 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.542s.
+2016-10-31 19:11:35,835 - minerva_ann_operate_networks - INFO -   Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.014s.
+2016-10-31 19:12:40,372 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.536s.
+2016-10-31 19:14:06,387 - minerva_ann_operate_networks - INFO -   Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.002s.
+2016-10-31 19:15:11,017 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.630s.
+2016-10-31 19:16:38,191 - minerva_ann_operate_networks - INFO -   Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.161s.
+2016-10-31 19:17:42,741 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.549s.
+2016-10-31 19:18:50,265 - minerva_ann_operate_networks - INFO -   Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.512s.
+2016-10-31 19:19:54,809 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.543s.
+2016-10-31 19:21:20,563 - minerva_ann_operate_networks - INFO -   Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.741s.
+2016-10-31 19:22:25,099 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.536s.
+2016-10-31 19:23:50,326 - minerva_ann_operate_networks - INFO -   Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.214s.
+2016-10-31 19:24:54,860 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.534s.
+2016-10-31 19:26:19,883 - minerva_ann_operate_networks - INFO -   Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.009s.
+2016-10-31 19:27:24,411 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.527s.
+2016-10-31 19:28:51,603 - minerva_ann_operate_networks - INFO -   Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.180s.
+2016-10-31 19:29:55,969 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.365s.
+2016-10-31 19:31:05,167 - minerva_ann_operate_networks - INFO -   Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 69.183s.
+2016-10-31 19:32:09,444 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.276s.
+2016-10-31 19:33:37,379 - minerva_ann_operate_networks - INFO -   Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.920s.
+2016-10-31 19:34:41,656 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.277s.
+2016-10-31 19:35:40,917 - minerva_ann_operate_networks - INFO -   Loading slice (3250000, 3272134) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 59.245s.
+2016-10-31 19:36:09,797 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 28.879s.
+2016-10-31 19:49:35,226 - minerva_ann_operate_networks - INFO -   The validation pass took 805.422s.
+2016-10-31 19:49:36,789 - minerva_ann_operate_networks - INFO - 
+Epoch 2 of 3 took 10440.500s
+  training loss:		0.126271
+2016-10-31 19:49:36,789 - minerva_ann_operate_networks - INFO - 
+  validation loss:		0.117096
+  validation accuracy:		97.35 %
+2016-10-31 19:49:36,789 - minerva_ann_operate_networks - INFO - ---
+2016-10-31 19:50:45,931 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 69.142s.
+2016-10-31 19:51:50,212 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.280s.
+2016-10-31 19:53:16,491 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.266s.
+2016-10-31 19:54:20,755 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.263s.
+2016-10-31 19:55:47,438 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.671s.
+2016-10-31 19:56:51,702 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.263s.
+2016-10-31 19:58:18,971 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.256s.
+2016-10-31 19:59:23,238 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.265s.
+2016-10-31 20:00:50,325 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.073s.
+2016-10-31 20:01:53,963 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.636s.
+2016-10-31 20:03:01,790 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.815s.
+2016-10-31 20:04:05,842 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.051s.
+2016-10-31 20:05:31,520 - minerva_ann_operate_networks - INFO -   Loading slice (300000, 350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.662s.
+2016-10-31 20:06:35,471 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.950s.
+2016-10-31 20:08:00,598 - minerva_ann_operate_networks - INFO -   Loading slice (350000, 400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.115s.
+2016-10-31 20:09:04,546 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.947s.
+2016-10-31 20:10:29,835 - minerva_ann_operate_networks - INFO -   Loading slice (400000, 450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.276s.
+2016-10-31 20:11:33,785 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.949s.
+2016-10-31 20:12:59,761 - minerva_ann_operate_networks - INFO -   Loading slice (450000, 500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.963s.
+2016-10-31 20:14:03,556 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.794s.
+2016-10-31 20:15:12,067 - minerva_ann_operate_networks - INFO -   Loading slice (500000, 550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 68.498s.
+2016-10-31 20:16:15,703 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.636s.
+2016-10-31 20:17:41,592 - minerva_ann_operate_networks - INFO -   Loading slice (550000, 600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.873s.
+2016-10-31 20:18:45,283 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.689s.
+2016-10-31 20:20:11,520 - minerva_ann_operate_networks - INFO -   Loading slice (600000, 650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.225s.
+2016-10-31 20:21:15,160 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.639s.
+2016-10-31 20:22:40,267 - minerva_ann_operate_networks - INFO -   Loading slice (650000, 700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.095s.
+2016-10-31 20:23:43,870 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.602s.
+2016-10-31 20:25:09,324 - minerva_ann_operate_networks - INFO -   Loading slice (700000, 750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.442s.
+2016-10-31 20:26:12,944 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.619s.
+2016-10-31 20:27:20,646 - minerva_ann_operate_networks - INFO -   Loading slice (750000, 800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.690s.
+2016-10-31 20:28:24,254 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.607s.
+2016-10-31 20:29:50,743 - minerva_ann_operate_networks - INFO -   Loading slice (800000, 850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.477s.
+2016-10-31 20:30:54,370 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.626s.
+2016-10-31 20:32:19,888 - minerva_ann_operate_networks - INFO -   Loading slice (850000, 900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.505s.
+2016-10-31 20:33:23,595 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.707s.
+2016-10-31 20:34:51,736 - minerva_ann_operate_networks - INFO -   Loading slice (900000, 950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 88.125s.
+2016-10-31 20:35:56,604 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.867s.
+2016-10-31 20:37:23,583 - minerva_ann_operate_networks - INFO -   Loading slice (950000, 1000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.964s.
+2016-10-31 20:38:28,157 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.573s.
+2016-10-31 20:39:55,238 - minerva_ann_operate_networks - INFO -   Loading slice (1000000, 1050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.069s.
+2016-10-31 20:40:59,297 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.058s.
+2016-10-31 20:42:07,754 - minerva_ann_operate_networks - INFO -   Loading slice (1050000, 1100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 68.444s.
+2016-10-31 20:43:11,815 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.060s.
+2016-10-31 20:44:38,514 - minerva_ann_operate_networks - INFO -   Loading slice (1100000, 1150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.686s.
+2016-10-31 20:45:42,575 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.060s.
+2016-10-31 20:47:08,550 - minerva_ann_operate_networks - INFO -   Loading slice (1150000, 1200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.962s.
+2016-10-31 20:48:12,628 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.077s.
+2016-10-31 20:49:38,705 - minerva_ann_operate_networks - INFO -   Loading slice (1200000, 1250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.064s.
+2016-10-31 20:50:42,788 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.082s.
+2016-10-31 20:52:09,379 - minerva_ann_operate_networks - INFO -   Loading slice (1250000, 1300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.577s.
+2016-10-31 20:53:13,413 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.033s.
+2016-10-31 20:54:22,154 - minerva_ann_operate_networks - INFO -   Loading slice (1300000, 1350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 68.726s.
+2016-10-31 20:55:25,797 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.641s.
+2016-10-31 20:56:52,297 - minerva_ann_operate_networks - INFO -   Loading slice (1350000, 1400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.488s.
+2016-10-31 20:57:55,940 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.642s.
+2016-10-31 20:59:21,600 - minerva_ann_operate_networks - INFO -   Loading slice (1400000, 1450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.648s.
+2016-10-31 21:00:25,238 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.638s.
+2016-10-31 21:01:50,758 - minerva_ann_operate_networks - INFO -   Loading slice (1450000, 1500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.507s.
+2016-10-31 21:02:54,344 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.585s.
+2016-10-31 21:04:19,588 - minerva_ann_operate_networks - INFO -   Loading slice (1500000, 1550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.232s.
+2016-10-31 21:05:23,192 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 63.603s.
+2016-10-31 21:06:34,977 - minerva_ann_operate_networks - INFO -   Loading slice (1550000, 1600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 71.768s.
+2016-10-31 21:07:39,558 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.580s.
+2016-10-31 21:09:08,305 - minerva_ann_operate_networks - INFO -   Loading slice (1600000, 1650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 88.734s.
+2016-10-31 21:10:12,397 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.091s.
+2016-10-31 21:11:38,701 - minerva_ann_operate_networks - INFO -   Loading slice (1650000, 1700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.292s.
+2016-10-31 21:12:45,895 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 67.193s.
+2016-10-31 21:14:11,582 - minerva_ann_operate_networks - INFO -   Loading slice (1700000, 1750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.674s.
+2016-10-31 21:15:16,236 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.653s.
+2016-10-31 21:16:42,731 - minerva_ann_operate_networks - INFO -   Loading slice (1750000, 1800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.483s.
+2016-10-31 21:17:47,338 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.607s.
+2016-10-31 21:19:13,506 - minerva_ann_operate_networks - INFO -   Loading slice (1800000, 1850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.152s.
+2016-10-31 21:20:17,723 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.217s.
+2016-10-31 21:21:25,558 - minerva_ann_operate_networks - INFO -   Loading slice (1850000, 1900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.822s.
+2016-10-31 21:22:29,743 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.184s.
+2016-10-31 21:23:55,706 - minerva_ann_operate_networks - INFO -   Loading slice (1900000, 1950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.951s.
+2016-10-31 21:24:59,883 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.176s.
+2016-10-31 21:26:25,318 - minerva_ann_operate_networks - INFO -   Loading slice (1950000, 2000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.422s.
+2016-10-31 21:27:29,505 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.186s.
+2016-10-31 21:28:54,969 - minerva_ann_operate_networks - INFO -   Loading slice (2000000, 2050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.452s.
+2016-10-31 21:29:59,143 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.173s.
+2016-10-31 21:31:25,549 - minerva_ann_operate_networks - INFO -   Loading slice (2050000, 2100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.394s.
+2016-10-31 21:32:29,756 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.206s.
+2016-10-31 21:33:37,603 - minerva_ann_operate_networks - INFO -   Loading slice (2100000, 2150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 67.834s.
+2016-10-31 21:34:41,815 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.212s.
+2016-10-31 21:36:10,239 - minerva_ann_operate_networks - INFO -   Loading slice (2150000, 2200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 88.411s.
+2016-10-31 21:37:15,553 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 65.313s.
+2016-10-31 21:38:47,810 - minerva_ann_operate_networks - INFO -   Loading slice (2200000, 2250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 92.241s.
+2016-10-31 21:39:53,604 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 65.793s.
+2016-10-31 21:41:20,174 - minerva_ann_operate_networks - INFO -   Loading slice (2250000, 2300000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.555s.
+2016-10-31 21:42:24,369 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.194s.
+2016-10-31 21:49:34,001 - minerva_ann_operate_networks - INFO -   Loading slice (2300000, 2350000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 429.620s.
+2016-10-31 21:50:38,718 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.717s.
+2016-10-31 21:54:25,855 - minerva_ann_operate_networks - INFO -   Loading slice (2350000, 2400000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 227.122s.
+2016-10-31 21:55:30,115 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.260s.
+2016-10-31 21:59:15,417 - minerva_ann_operate_networks - INFO -   Loading slice (2400000, 2450000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 225.287s.
+2016-10-31 22:00:20,112 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.695s.
+2016-10-31 22:06:19,220 - minerva_ann_operate_networks - INFO -   Loading slice (2450000, 2500000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 359.092s.
+2016-10-31 22:07:23,458 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.238s.
+2016-10-31 22:08:49,163 - minerva_ann_operate_networks - INFO -   Loading slice (2500000, 2550000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 85.687s.
+2016-10-31 22:09:53,771 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.607s.
+2016-10-31 22:12:04,086 - minerva_ann_operate_networks - INFO -   Loading slice (2550000, 2600000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 130.300s.
+2016-10-31 22:13:08,486 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 64.399s.
+2016-10-31 23:10:15,419 - minerva_ann_operate_networks - INFO -   Loading slice (2600000, 2650000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 3426.917s.
+2016-10-31 23:12:33,875 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 138.455s.
+2016-10-31 23:30:34,615 - minerva_ann_operate_networks - INFO -   Loading slice (2650000, 2700000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 1080.719s.
+2016-10-31 23:46:56,509 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 981.894s.
+2016-11-01 00:53:46,208 - minerva_ann_operate_networks - INFO -   Loading slice (2700000, 2750000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 4009.683s.
+2016-11-01 01:14:16,242 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 1230.032s.
+2016-11-01 01:34:36,152 - minerva_ann_operate_networks - INFO -   Loading slice (2750000, 2800000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 1219.883s.
+2016-11-01 01:50:35,272 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 959.119s.
+2016-11-01 02:15:06,065 - minerva_ann_operate_networks - INFO -   Loading slice (2800000, 2850000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 1470.763s.
+2016-11-01 02:24:31,730 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 565.665s.
+2016-11-01 02:36:18,420 - minerva_ann_operate_networks - INFO -   Loading slice (2850000, 2900000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 706.665s.
+2016-11-01 02:56:30,896 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 1212.474s.
+2016-11-01 03:10:37,088 - minerva_ann_operate_networks - INFO -   Loading slice (2900000, 2950000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 846.175s.
+2016-11-01 03:33:23,049 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 1365.960s.
+2016-11-01 03:44:30,632 - minerva_ann_operate_networks - INFO -   Loading slice (2950000, 3000000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 667.565s.
+2016-11-01 03:59:52,906 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 922.273s.
+2016-11-01 04:17:58,023 - minerva_ann_operate_networks - INFO -   Loading slice (3000000, 3050000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 1085.093s.
+2016-11-01 04:40:25,041 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 1347.016s.
+2016-11-01 05:18:17,225 - minerva_ann_operate_networks - INFO -   Loading slice (3050000, 3100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 2272.163s.
+2016-11-01 05:32:21,009 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 843.783s.
+2016-11-01 05:56:59,186 - minerva_ann_operate_networks - INFO -   Loading slice (3100000, 3150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 1478.141s.
+2016-11-01 06:19:30,153 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 1350.967s.
+2016-11-01 07:15:06,597 - minerva_ann_operate_networks - INFO -   Loading slice (3150000, 3200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 3336.420s.
+2016-11-01 07:26:17,526 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 670.928s.
+2016-11-01 07:42:48,268 - minerva_ann_operate_networks - INFO -   Loading slice (3200000, 3250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 990.719s.
+2016-11-01 08:35:12,166 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 3143.896s.
+2016-11-01 08:36:12,736 - minerva_ann_operate_networks - INFO -   Loading slice (3250000, 3272134) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 60.539s.
+2016-11-01 08:36:41,640 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 28.903s.
+2016-11-01 08:50:23,568 - minerva_ann_operate_networks - INFO -   The validation pass took 821.870s.
+2016-11-01 08:50:26,794 - minerva_ann_operate_networks - INFO - 
+Epoch 3 of 3 took 46849.983s
+  training loss:		0.123862
+2016-11-01 08:50:26,797 - minerva_ann_operate_networks - INFO - 
+  validation loss:		0.115841
+  validation accuracy:		97.37 %
+2016-11-01 08:50:26,797 - minerva_ann_operate_networks - INFO - ---
+2016-11-01 08:50:26,797 - minerva_ann_operate_networks - INFO - Finished 3 epochs.
+2016-11-01 08:50:28,432 - minerva_ann_operate_networks - INFO - Loading data for testing...
+2016-11-01 08:50:28,546 - minerva_ann_datasets - INFO -  Learning sample size = 3272134 examples
+2016-11-01 08:50:28,546 - minerva_ann_datasets - INFO -  Validation sample size = 394233 examples
+2016-11-01 08:50:28,546 - minerva_ann_datasets - INFO -  Testing sample size = 275964 examples
+2016-11-01 08:50:28,546 - minerva_ann_operate_networks - INFO -  Used testing sample size = 275964 examples
+2016-11-01 08:50:28,612 - minerva_ann_networks - INFO - Convpool conv-x-0 params: {'filter_size': (8, 3), 'pool_size': (2, 1), 'nfilters': 12}
+2016-11-01 08:50:28,764 - minerva_ann_networks - INFO - Convpool maxpool-x-0
+2016-11-01 08:50:28,764 - minerva_ann_networks - INFO - Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2016-11-01 08:50:28,765 - minerva_ann_networks - INFO - Convpool maxpool-x-1
+2016-11-01 08:50:28,765 - minerva_ann_networks - INFO - Convpool conv-x-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2016-11-01 08:50:28,766 - minerva_ann_networks - INFO - Convpool maxpool-x-2
+2016-11-01 08:50:28,766 - minerva_ann_networks - INFO - Convpool conv-x-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2016-11-01 08:50:28,768 - minerva_ann_networks - INFO - Convpool maxpool-x-3
+2016-11-01 08:50:28,868 - minerva_ann_networks - INFO - Dense dense-x with nhidden = 196, dropout = 0.5
+2016-11-01 08:50:28,868 - minerva_ann_networks - INFO - Convpool conv-u-0 params: {'filter_size': (8, 5), 'pool_size': (2, 1), 'nfilters': 12}
+2016-11-01 08:50:28,869 - minerva_ann_networks - INFO - Convpool maxpool-u-0
+2016-11-01 08:50:28,869 - minerva_ann_networks - INFO - Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2016-11-01 08:50:28,870 - minerva_ann_networks - INFO - Convpool maxpool-u-1
+2016-11-01 08:50:28,870 - minerva_ann_networks - INFO - Convpool conv-u-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2016-11-01 08:50:28,871 - minerva_ann_networks - INFO - Convpool maxpool-u-2
+2016-11-01 08:50:28,871 - minerva_ann_networks - INFO - Convpool conv-u-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2016-11-01 08:50:28,873 - minerva_ann_networks - INFO - Convpool maxpool-u-3
+2016-11-01 08:50:28,883 - minerva_ann_networks - INFO - Dense dense-u with nhidden = 196, dropout = 0.5
+2016-11-01 08:50:28,883 - minerva_ann_networks - INFO - Convpool conv-v-0 params: {'filter_size': (8, 5), 'pool_size': (2, 1), 'nfilters': 12}
+2016-11-01 08:50:28,884 - minerva_ann_networks - INFO - Convpool maxpool-v-0
+2016-11-01 08:50:28,884 - minerva_ann_networks - INFO - Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2016-11-01 08:50:28,885 - minerva_ann_networks - INFO - Convpool maxpool-v-1
+2016-11-01 08:50:28,885 - minerva_ann_networks - INFO - Convpool conv-v-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2016-11-01 08:50:28,886 - minerva_ann_networks - INFO - Convpool maxpool-v-2
+2016-11-01 08:50:28,886 - minerva_ann_networks - INFO - Convpool conv-v-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2016-11-01 08:50:28,887 - minerva_ann_networks - INFO - Convpool maxpool-v-3
+2016-11-01 08:50:28,897 - minerva_ann_networks - INFO - Dense dense-v with nhidden = 196, dropout = 0.5
+2016-11-01 08:50:28,912 - minerva_ann_networks - INFO - Network: concat columns...
+2016-11-01 08:50:28,933 - minerva_ann_networks - INFO - Dense dense-across with nhidden = 98, dropout = 0.5
+2016-11-01 08:50:28,934 - minerva_ann_networks - INFO - Softmax output prob with n_units = 11
+2016-11-01 08:50:29,066 - minerva_ann_networks - INFO - n-parameters: 1686071
+2016-11-01 08:50:41,474 - minerva_ann_operate_networks - INFO - Starting testing...
+2016-11-01 08:52:08,290 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.816s.
+2016-11-01 09:03:36,434 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 688.143s.
+2016-11-01 09:05:03,758 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.311s.
+2016-11-01 09:16:32,443 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 688.683s.
+2016-11-01 09:17:41,523 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 69.068s.
+2016-11-01 09:29:09,630 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 688.106s.
+2016-11-01 09:30:37,374 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 87.732s.
+2016-11-01 09:42:05,779 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 688.404s.
+2016-11-01 09:43:32,689 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 86.897s.
+2016-11-01 09:55:00,876 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 688.187s.
+2016-11-01 09:55:45,702 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 275964) from /phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5 took 44.812s.
+2016-11-01 10:01:43,257 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 357.555s.
+2016-11-01 10:01:43,363 - minerva_ann_operate_networks - INFO - 
+Final results:
+  test loss:			0.116297
+  test accuracy:		97.32 %
+2016-11-01 10:01:43,363 - minerva_ann_operate_networks - INFO -    target 0 accuracy:			77.151 %
+2016-11-01 10:01:43,363 - minerva_ann_operate_networks - INFO -    target 1 accuracy:			95.171 %
+2016-11-01 10:01:43,363 - minerva_ann_operate_networks - INFO -    target 2 accuracy:			95.086 %
+2016-11-01 10:01:43,363 - minerva_ann_operate_networks - INFO -    target 3 accuracy:			93.411 %
+2016-11-01 10:01:43,363 - minerva_ann_operate_networks - INFO -    target 4 accuracy:			91.407 %
+2016-11-01 10:01:43,363 - minerva_ann_operate_networks - INFO -    target 5 accuracy:			93.797 %
+2016-11-01 10:01:43,363 - minerva_ann_operate_networks - INFO -    target 6 accuracy:			88.424 %
+2016-11-01 10:01:43,364 - minerva_ann_operate_networks - INFO -    target 7 accuracy:			88.023 %
+2016-11-01 10:01:43,364 - minerva_ann_operate_networks - INFO -    target 8 accuracy:			94.589 %
+2016-11-01 10:01:43,364 - minerva_ann_operate_networks - INFO -    target 9 accuracy:			56.878 %
+2016-11-01 10:01:43,364 - minerva_ann_operate_networks - INFO -    target 10 accuracy:			99.653 %
