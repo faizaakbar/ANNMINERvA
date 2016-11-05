@@ -13,7 +13,7 @@
 
 NEPOCHS=12
 NEPOCHS=1
-NEPOCHS=4
+NEPOCHS=8
 LRATE=0.001
 L2REG=0.0001
 
@@ -22,19 +22,20 @@ DATET=`date +%s`
 DOTEST=""
 DOTEST="-t"
 
-TGTIDX=5
-NOUTPUTS=11
+# TGTIDX=5
+# NOUTPUTS=11
 
-# TGTIDX=4
-# NOUTPUTS=67
+TGTIDX=4
+NOUTPUTS=67
 
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
-# SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
-SAVEMODELNAME="./lminerva_spacetime_11_epsilon1478090717.npz"
 PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
 
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
+
+SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
 LOAD_SAVEMODEL=""
-LOAD_SAVEMODEL="--load_params"
+# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1478090717.npz"
+# LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
