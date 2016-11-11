@@ -13,7 +13,7 @@
 
 NEPOCHS=12
 NEPOCHS=1
-NEPOCHS=8
+NEPOCHS=4
 LRATE=0.001
 L2REG=0.0001
 
@@ -22,15 +22,16 @@ DATET=`date +%s`
 DOTEST=""
 DOTEST="-t"
 
-# TGTIDX=5
-# NOUTPUTS=11
+TGTIDX=5
+NOUTPUTS=11
 
-TGTIDX=4
-NOUTPUTS=67
+# TGTIDX=4
+# NOUTPUTS=67
 
 PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
 
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
+# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
 
 SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
 LOAD_SAVEMODEL=""
