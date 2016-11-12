@@ -191,6 +191,10 @@ def categorical_learn_and_validate(
                 del train_set       # hint to garbage collector
                 del train_dstream   # hint to garbage collector
 
+                # Dump the current network weights to file at end of slice
+                np.savez(runopts['save_model_file'],
+                         *lasagne.layers.get_all_param_values(network))
+
         if runopts['do_validation_pass']:
             # And a full pass over the validation data
             t0 = time.time()
@@ -217,11 +221,7 @@ def categorical_learn_and_validate(
             t1 = time.time()
             logger.info("  The validation pass took {:.3f}s.".format(t1 - t0))
 
-        # Dump the current network weights to file at the end of epoch
-        np.savez(runopts['save_model_file'],
-                 *lasagne.layers.get_all_param_values(network))
-
-        # Then we print the results for this epoch:
+        # Print the results for this epoch:
         logger.info(
             "\nEpoch {} of {} took {:.3f}s"
             "\n  training loss:\t\t{:.6f}".format(
