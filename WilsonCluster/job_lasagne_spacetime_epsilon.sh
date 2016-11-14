@@ -33,10 +33,10 @@ PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
 DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
 # DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
 
-SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
-LOAD_SAVEMODEL=""
-# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1478090717.npz"
-# LOAD_SAVEMODEL="--load_params"
+# SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
+# LOAD_SAVEMODEL=""
+SAVEMODELNAME="./lminerva_spacetime_11_epsilon1478993381.npz"
+LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
