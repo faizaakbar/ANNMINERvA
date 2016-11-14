@@ -2,6 +2,7 @@
 import os
 import time
 import logging
+from random import shuffle
 
 from six.moves import range
 
@@ -158,6 +159,9 @@ def categorical_learn_and_validate(
     for epoch in range(hyperpars['num_epochs']):
 
         start_time = time.time()
+        shuffle(train_slices)
+        logger.info("Train slices for epoch %d: %s" % (epoch, train_slices))
+
         train_err = 0
         train_batches = 0
         for i, data_file in enumerate(runopts['data_file_list']):
