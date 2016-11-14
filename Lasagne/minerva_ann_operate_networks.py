@@ -159,7 +159,8 @@ def categorical_learn_and_validate(
     for epoch in range(hyperpars['num_epochs']):
 
         start_time = time.time()
-        shuffle(train_slices)
+        for slicelist in train_slices:
+            shuffle(slicelist)
         logger.info("Train slices for epoch %d: %s" % (epoch, train_slices))
 
         train_err = 0
