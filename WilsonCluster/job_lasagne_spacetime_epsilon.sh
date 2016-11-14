@@ -13,7 +13,7 @@
 
 NEPOCHS=12
 NEPOCHS=1
-NEPOCHS=3
+NEPOCHS=4
 LRATE=0.001
 L2REG=0.0001
 
@@ -28,12 +28,14 @@ NOUTPUTS=11
 # TGTIDX=4
 # NOUTPUTS=67
 
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
-# SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
-SAVEMODELNAME="./lminerva_spacetime_11_epsilon1477582139.npz"
 PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
 
-LOAD_SAVEMODEL=""
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
+# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
+
+# SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
+# LOAD_SAVEMODEL=""
+SAVEMODELNAME="./lminerva_spacetime_11_epsilon1478993381.npz"
 LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
