@@ -48,7 +48,7 @@ def get_tstamp_from_model_name(save_model_file):
     return tstamp
 
 
-def categorical_learn_and_validate(
+def categorical_learn_and_validate_dann(
         build_cnn_fn, hyperpars, imgdat, runopts, networkstr,
         get_list_of_hits_and_targets_fn
 ):
@@ -118,6 +118,17 @@ def categorical_learn_and_validate(
     # Also create an expression for the classification accuracy:
     test_acc = T.mean(T.eq(T.argmax(test_prediction, axis=1), label_source),
                       dtype=theano.config.floatX)
+    # test functions for the domain classifier
+    test_domain_prediction = lasagne.layers.get_output(
+        domain_net, deterministic=True
+    )
+    test_domain_loss = categorical_crossentropy(test_prediction, domain_source)
+    test_domain_loss = test_domain_loss.mean()
+    # Also create an expression for the domain accuracy:
+    test_domain_acc = T.mean(
+        T.eq(T.argmax(test_domain_prediction, axis=1), label_source),
+        dtype=theano.config.floatX
+    )
 
     # Compile a function performing a training step on a mini-batch.
     train_fn = theano.function([input_source, label_source, input_target],
