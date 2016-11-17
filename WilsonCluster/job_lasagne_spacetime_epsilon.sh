@@ -13,7 +13,7 @@
 
 NEPOCHS=12
 NEPOCHS=1
-NEPOCHS=4
+NEPOCHS=6
 LRATE=0.001
 L2REG=0.0001
 
@@ -35,8 +35,8 @@ DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pc
 
 # SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
 # LOAD_SAVEMODEL=""
-# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1478993381.npz"
-SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479157312.npz"
+# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479157312.npz"
+SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479222099.npz"
 LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
