@@ -35,8 +35,8 @@ DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pc
 
 # SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
 # LOAD_SAVEMODEL=""
-# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479222099.npz"
-SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479311306.npz"
+# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479311306.npz"
+SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479398156.npz"
 LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
