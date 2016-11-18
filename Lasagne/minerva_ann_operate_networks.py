@@ -136,9 +136,12 @@ def categorical_learn_and_validate_dann(
                                updates=updates,
                                allow_input_downcast=True)
     # Compile a second function computing the validation loss and accuracy:
-    val_fn = theano.function(inputlist,
+    val_fn = theano.function(input_source,
                              [test_loss, test_acc],
                              allow_input_downcast=True)
+    val_domain_fn = theano.function(input_target,
+                                    [test_domain_loss, test_domain_acc],
+                                    allow_input_downcast=True)
 
     # we will loop over training files, and then for each file we will loop
     # over the set of created slices (event id ranges in the file)

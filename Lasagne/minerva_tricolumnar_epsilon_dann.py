@@ -43,10 +43,11 @@ def get_theano_input_tensors():
     Prepare Theano variables for inputs - must remake these for each graph
     """
     input_var_x = T.tensor4('inputs')
-    input_var_u = T.tensor4('inputs')
-    input_var_v = T.tensor4('inputs')
-    return [input_var_x, input_var_u, input_var_v]
-
+    # just doing x for now
+    # input_var_u = T.tensor4('inputs')
+    # input_var_v = T.tensor4('inputs')
+    # return [input_var_x, input_var_u, input_var_v]
+    return [input_var_x]
 
 def get_hits(data):
     """
@@ -54,9 +55,11 @@ def get_hits(data):
     
     return a list of [hitimes-x, hitimes-u, hitimes-v]
     """
+    # just doing x for now...
     inputu, inputv, inputx = data[1], data[2], data[3]
-    inputs = [inputx, inputu, inputv]
-    return inputs
+    # inputs = [inputx, inputu, inputv]
+    # return inputs
+    return [inputx]
 
 
 def make_get_hits_and_targets(target_idx):
@@ -68,7 +71,9 @@ def make_get_hits_and_targets(target_idx):
         return everything in one list [inputs, targets]
         """
         inputu, inputv, inputx = data[1], data[2], data[3]
-        inputs = [inputx, inputu, inputv, data[target_idx]]
+        # just doing x for now
+        # inputs = [inputx, inputu, inputv, data[target_idx]]
+        inputs = [inputx, data[target_idx]]
         return inputs
     return get_hits_and_targets
 
@@ -78,7 +83,9 @@ def get_evtids_and_hits_tup(data):
     data[0] should be eventids
     """
     eventids, inputu, inputv, inputx = data[0], data[1], data[2], data[3]
-    inputs = [inputx, inputu, inputv]
+    # just doing x for now...
+    # inputs = [inputx, inputu, inputv]
+    inputs = [inputx]
     return eventids, inputs
 
 
@@ -90,7 +97,9 @@ def make_get_eventids_hits_and_targets(target_idx):
         data[5] should be segments
         return a tuple of (eventids, [inputs], targets)
         """
-        inputs = [data[3], data[1], data[2]]
+        # just doing x for now...
+        # inputs = [data[3], data[1], data[2]]
+        inputs = [data[3]]
         return data[0], inputs, data[target_idx]
     return get_eventids_hits_and_targets
 
@@ -101,6 +110,10 @@ if __name__ == '__main__':
     parser = OptionParser(usage=__doc__)
     parser.add_option('-d', '--data_list', dest='dataset',
                       help='Data set list (csv)', metavar='DATASETLIST',
+                      type='string', action='callback',
+                      callback=arg_list_split)
+    parser.add_option('--dann_partner_list', dest='dannp_list',
+                      help='DANN partner list (csv)', metavar='DANNLIST',
                       type='string', action='callback',
                       callback=arg_list_split)
     parser.add_option('-f', '--logfile', dest='logfilename',
@@ -267,6 +280,7 @@ if __name__ == '__main__':
     convpooldictlist_v.append(v_convpool4dict)
     # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
 
+    # not using `u` or `v` yet, but they don't hurt to keep around for now
     convpooldictlist['x'] = convpooldictlist_x
     convpooldictlist['u'] = convpooldictlist_u
     convpooldictlist['v'] = convpooldictlist_v
@@ -279,12 +293,14 @@ if __name__ == '__main__':
     hyperpars['learning_strategy'] = 'adagrad'   # meaningless right now
 
     imgdat = {}
-    imgdat['views'] = 'xuv'
+    imgdat['views'] = 'x'  # 'xuv'
     imgdat['imgw'] = options.imgw
-    imgdat['imgh'] = (options.imgh_x, options.imgh_u, options.imgh_v)
+    # (options.imgh_x, options.imgh_u, options.imgh_v)...
+    imgdat['imgh'] = options.imgh_x
 
     runopts = {}
     runopts['data_file_list'] = options.dataset
+    runopts['dannp_list'] = options.dannp_list
     runopts['save_model_file'] = options.save_model_file
     runopts['start_with_saved_params'] = options.start_with_saved_params
     runopts['do_validation_pass'] = True
@@ -302,6 +318,12 @@ if __name__ == '__main__':
     networkstr['l1_penalty_scale'] = None
     networkstr['l2_penalty_scale'] = options.l2_penalty_scale
 
+    dataset_statsinfo = 0
+    for d in runopts['data_file_list']:
+        dataset_statsinfo += os.stat(d).st_size
+    dannp_statsinfo = 0
+    for d in runopts['dannp_list']:
+        dannp_statsinfo += os.stat(d).st_size
     logger.info(
         " Begin with saved pars? %s" % runopts['start_with_saved_params']
     )
@@ -309,10 +331,9 @@ if __name__ == '__main__':
     logger.info(" Saved parameters file exists? %s" % \
                 os.path.isfile(runopts['save_model_file']))
     logger.info(" Datasets: %s" % runopts['data_file_list'])
-    dataset_statsinfo = 0
-    for d in runopts['data_file_list']:
-        dataset_statsinfo += os.stat(d).st_size
     logger.info(" Dataset size: %s" % dataset_statsinfo)
+    logger.info(" DANN patner set: %s" % runopts['dannp_list'])
+    logger.info(" DANN partner set size: %s" % dannp_statsinfo)
     logger.info(" Planned number of epochs: %s" % hyperpars['num_epochs'])
     logger.info(" Learning rate: %s" % hyperpars['learning_rate'])
     logger.info(" Momentum: %s" % hyperpars['momentum'])
