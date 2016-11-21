@@ -3,9 +3,9 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
-#PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
+# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
 # not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
-# not generic #PBS -l nodes=1:gpu,walltime=24:00:00
+#PBS -l nodes=1:gpu,walltime=24:00:00
 # not short #PBS -l nodes=1:gpu,walltime=6:00:00
 #PBS -A minervaG
 #PBS -q gpu
@@ -35,8 +35,8 @@ DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pc
 
 # SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
 # LOAD_SAVEMODEL=""
-# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479398156.npz"
-SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479479266.npz"
+# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479479266.npz"
+SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479566769.npz"
 LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
