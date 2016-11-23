@@ -1,7 +1,7 @@
 #!/bin/sh
 
 MODEL="models/lminerva_spacetime_11_epsilon1479750354.npz"
-DATAFILE="../HDF5files/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc_000.hdf5"
+DATAFILE="../HDF5files/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
 LOGFILE=spacetime_epsilon_me1Bmc_1479750354_predict.txt
 DBNAME=prediction11_me1Bmc_epsilon1479750354.db
 
