@@ -3,9 +3,9 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
-# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
+#PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
 # not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
-#PBS -l nodes=1:gpu,walltime=24:00:00
+# not generic #PBS -l nodes=1:gpu,walltime=24:00:00
 # not short #PBS -l nodes=1:gpu,walltime=6:00:00
 #PBS -A minervaG
 #PBS -q gpu
@@ -14,8 +14,8 @@
 NEPOCHS=12
 NEPOCHS=1
 NEPOCHS=5
-# LRATE=0.001
-LRATE=0.0005
+# LRATE=0.0005
+LRATE=0.001
 L2REG=0.0001
 
 DATET=`date +%s`
@@ -23,22 +23,21 @@ DATET=`date +%s`
 DOTEST=""
 DOTEST="-t"
 
-TGTIDX=5
-NOUTPUTS=11
+# TGTIDX=5
+# NOUTPUTS=11
 
-# TGTIDX=4
-# NOUTPUTS=67
+TGTIDX=4
+NOUTPUTS=67
 
 PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
 
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
-# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
+# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
+DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
 
-# SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
-# LOAD_SAVEMODEL=""
-# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479479266.npz"
-SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479566769.npz"
-LOAD_SAVEMODEL="--load_params"
+SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
+LOAD_SAVEMODEL=""
+# SAVEMODELNAME="./lminerva_spacetime_11_epsilon1479566769.npz"
+# LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
