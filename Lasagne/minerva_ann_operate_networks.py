@@ -59,7 +59,7 @@ def categorical_learn_and_validate_dann(
     train_sizes, valid_sizes, _ = \
         get_and_print_dataset_subsizes(runopts['data_file_list'])
     train_sizes_dp, valid_sizes_dp, _ = \
-        get_and_print_dataset_subsizes(runopts['dann_partner_file_list'])
+        get_and_print_dataset_subsizes(runopts['dannp_list'])
 
     # Prepare Theano variables for inputs and targets
     label_source = T.ivector('targets')             # source distribition labels

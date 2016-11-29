@@ -788,7 +788,7 @@ def build_dann_xview_epsilon(
 
     # And, finally, the `noutputs`-unit output layer
     net['output_prob'] = DenseLayer(
-        net['dense-across'],
+        net['dense-across-features'],
         num_units=noutputs,
         nonlinearity=lasagne.nonlinearities.softmax
     )
