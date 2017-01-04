@@ -37,6 +37,7 @@ from minerva_ann_operate_networks import categorical_predict
 def arg_list_split(option, opt, value, parser):
     setattr(parser.values, option.dest, value.split(','))
 
+
 def get_theano_input_tensors():
     """
     Prepare Theano variables for inputs - must remake these for each graph
@@ -50,7 +51,7 @@ def get_theano_input_tensors():
 def get_hits(data):
     """
     data[1], [2], [3] should be hitimess-u, -v, -x
-    
+
     return a list of [hitimes-x, hitimes-u, hitimes-v]
     """
     inputu, inputv, inputx = data[1], data[2], data[3]
@@ -59,13 +60,13 @@ def get_hits(data):
 
 
 def make_get_hits_and_targets(target_idx):
+    """
+    data[0] should be eventids
+    data[1], [2], [3] should be hitimes-u, -v, -x
+    data[target_idx] should be segments (the target)
+    return everything in one list [inputs, targets]
+    """
     def get_hits_and_targets(data):
-        """
-        data[0] should be eventids
-        data[1], [2], [3] should be hitimes-u, -v, -x
-        data[target_idx] should be segments (the target)
-        return everything in one list [inputs, targets]
-        """
         inputu, inputv, inputx = data[1], data[2], data[3]
         inputs = [inputx, inputu, inputv, data[target_idx]]
         return inputs
@@ -82,13 +83,13 @@ def get_evtids_and_hits_tup(data):
 
 
 def make_get_eventids_hits_and_targets(target_idx):
+    """
+    data[0] should be eventids
+    data[1], [2], [3] should be hitimes-u, -v, -x
+    data[5] should be segments
+    return a tuple of (eventids, [inputs], targets)
+    """
     def get_eventids_hits_and_targets(data):
-        """
-        data[0] should be eventids
-        data[1], [2], [3] should be hitimes-u, -v, -x
-        data[5] should be segments
-        return a tuple of (eventids, [inputs], targets)
-        """
         inputs = [data[3], data[1], data[2]]
         return data[0], inputs, data[target_idx]
     return get_eventids_hits_and_targets
@@ -166,7 +167,8 @@ if __name__ == '__main__':
         sys.exit(1)
 
     import logging
-    logfilename = options.logfilename or 'minerva_tricolumnar_spacetime_epsilon.log'
+    logfilename = options.logfilename or \
+                  'minerva_tricolumnar_spacetime_epsilon.log'
     logging.basicConfig(
         filename=logfilename, level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -270,7 +272,7 @@ if __name__ == '__main__':
     convpooldictlist['u'] = convpooldictlist_u
     convpooldictlist['v'] = convpooldictlist_v
 
-    hyperpars={}
+    hyperpars = {}
     hyperpars['num_epochs'] = options.n_epochs
     hyperpars['learning_rate'] = options.lrate
     hyperpars['momentum'] = options.momentum
@@ -305,7 +307,7 @@ if __name__ == '__main__':
         " Begin with saved pars? %s" % runopts['start_with_saved_params']
     )
     logger.info(" Saved parameters file: %s" % runopts['save_model_file'])
-    logger.info(" Saved parameters file exists? %s" % \
+    logger.info(" Saved parameters file exists? %s" %
                 os.path.isfile(runopts['save_model_file']))
     logger.info(" Datasets: %s" % runopts['data_file_list'])
     dataset_statsinfo = 0
