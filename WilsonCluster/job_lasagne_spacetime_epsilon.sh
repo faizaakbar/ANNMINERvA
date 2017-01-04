@@ -31,8 +31,9 @@ NOUTPUTS=67
 
 PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
 
-# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
+DATADIR="/data/perdue/minerva/targets"
+# DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
+DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
 
 # SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
 # LOAD_SAVEMODEL=""
