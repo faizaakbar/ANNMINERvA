@@ -12,7 +12,7 @@
 #restore to turn off email #PBS -m n
 
 NEPOCHS=30
-NEPOCHS=12
+NEPOCHS=5
 NEPOCHS=1
 LRATE=0.001
 L2REG=0.0001
@@ -22,10 +22,19 @@ DATET=`date +%s`
 DOTEST=""
 DOTEST="-t"
 
-DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
-# DATAFILENAME="/phihome/perdue/theano/data/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc_0000.hdf5"
-SAVEMODELNAME="./lminervatriamese_epsiloni${DATET}.npz"
+TGTIDX=5
+NOUTPUTS=11
+
+# TGTIDX=4
+# NOUTPUTS=67
+
 PYTHONPROG="minerva_tricolumnar_epsilon.py"
+
+DATADIR="/data/perdue/minerva/targets"
+DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
+
+SAVEMODELNAME="./lminervatriamese_epsiloni${DATET}.npz"
+LOAD_SAVEMODEL=""
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
@@ -62,18 +71,23 @@ python ${PYTHONPROG} -l $DOTEST \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
-  -s $SAVEMODELNAME \
+  -s $SAVEMODELNAME $LOAD_SAVEMODEL \
   -d $DATAFILENAME \
-  -f $LOGFILENAME
+  -f $LOGFILENAME \
+  --target_idx $TGTIDX \
+  --noutputs $NOUTPUTS
 EOF
 export THEANO_FLAGS=device=gpu,floatX=float32
 python ${PYTHONPROG} -l $DOTEST \
   -n $NEPOCHS \
   -r $LRATE \
   -g $L2REG \
-  -s $SAVEMODELNAME \
+  -s $SAVEMODELNAME $LOAD_SAVEMODEL \
   -d $DATAFILENAME \
-  -f $LOGFILENAME
+  -f $LOGFILENAME \
+  --target_idx $TGTIDX \
+  --noutputs $NOUTPUTS
+
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
