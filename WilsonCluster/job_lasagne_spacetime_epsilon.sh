@@ -3,17 +3,17 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
-#PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
+# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
 # not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
-# not generic #PBS -l nodes=1:gpu,walltime=24:00:00
+#PBS -l nodes=1:gpu,walltime=24:00:00
 # not short #PBS -l nodes=1:gpu,walltime=6:00:00
 #PBS -A minervaG
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
 NEPOCHS=12
-NEPOCHS=1
 NEPOCHS=5
+NEPOCHS=1
 # LRATE=0.0005
 LRATE=0.001
 L2REG=0.0001
@@ -32,8 +32,9 @@ NOUTPUTS=67
 PYTHONPROG="minerva_tricolumnar_spacetime_epsilon.py"
 
 DATADIR="/data/perdue/minerva/targets"
+DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_500evt.hdf5"
 # DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
-DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
+# DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
 
 # SAVEMODELNAME="./lminerva_spacetime_${NOUTPUTS}_epsilon${DATET}.npz"
 # LOAD_SAVEMODEL=""

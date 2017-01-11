@@ -3,9 +3,9 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
-#PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
+# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
 # not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
-# not generic #PBS -l nodes=1:gpu,walltime=24:00:00
+#PBS -l nodes=1:gpu,walltime=24:00:00
 # not short #PBS -l nodes=1:gpu,walltime=6:00:00
 #PBS -A minervaG
 #PBS -q gpu
@@ -59,7 +59,7 @@ if [[ $DIRTY != "" ]]; then
   echo ""
   # exit 0
 fi
-LOGFILENAME=minerva_tricolumnar_epsilon_${DATET}_${GIT_VERSION}.log
+LOGFILENAME=minerva_tricolumnar_epsilon_${NOUTPUTS}_${DATET}_${GIT_VERSION}.log
 
 cp /home/perdue/ANNMINERvA/Lasagne/${PYTHONPROG} ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/minerva_ann_*.py ${PBS_O_WORKDIR}
