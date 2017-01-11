@@ -11,9 +11,10 @@
 #PBS -q gpu
 #restore to turn off email #PBS -m n
 
-NEPOCHS=30
+NEPOCHS=12
 NEPOCHS=5
 NEPOCHS=1
+# LRATE=0.0005
 LRATE=0.001
 L2REG=0.0001
 
@@ -22,18 +23,18 @@ DATET=`date +%s`
 DOTEST=""
 DOTEST="-t"
 
-TGTIDX=5
-NOUTPUTS=11
+# TGTIDX=5
+# NOUTPUTS=11
 
-# TGTIDX=4
-# NOUTPUTS=67
+TGTIDX=4
+NOUTPUTS=67
 
 PYTHONPROG="minerva_tricolumnar_epsilon.py"
 
 DATADIR="/data/perdue/minerva/targets"
 DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
 
-SAVEMODELNAME="./lminervatriamese_epsiloni${DATET}.npz"
+SAVEMODELNAME="./lminervatriamese_epsilon${DATET}.npz"
 LOAD_SAVEMODEL=""
 
 # print identifying info for this job
@@ -59,7 +60,7 @@ if [[ $DIRTY != "" ]]; then
   echo ""
   # exit 0
 fi
-LOGFILENAME=minerva_tricolumnar_epsilon_${NOUTPUTS}_${DATET}_${GIT_VERSION}.log
+LOGFILENAME=minerva_tricolumnar_spacetime_epsilon_${NOUTPUTS}_${DATET}_${GIT_VERSION}.log
 
 cp /home/perdue/ANNMINERvA/Lasagne/${PYTHONPROG} ${PBS_O_WORKDIR}
 cp /home/perdue/ANNMINERvA/Lasagne/minerva_ann_*.py ${PBS_O_WORKDIR}
@@ -87,7 +88,6 @@ python ${PYTHONPROG} -l $DOTEST \
   -f $LOGFILENAME \
   --target_idx $TGTIDX \
   --noutputs $NOUTPUTS
-
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
