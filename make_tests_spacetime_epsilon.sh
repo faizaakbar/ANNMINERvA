@@ -1,16 +1,16 @@
 #!/bin/sh
 
-# test using 1A (trained with 1A, so 1A test events are preserved and available)
+# test using 1B (trained with 1B, so 1B test events are preserved and available)
 
-MODEL="models/lminerva_spacetime_11_epsilon1479750354.npz"
-DATAFILE="../HDF5files/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
-LOGFILE=spacetime_epsilon_me1Bmc_1479750354_test.txt
-PERFMAT=perfmat11_me1Bmc_epsilon1479750354.npy
+MODEL="models/lminerva_spacetime_67_epsilon1480703388.npz"
+DATAFILE="../HDF5files/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc.hdf5"
+LOGFILE=spacetime_epsilon_me1Bmc_1480703388_test.txt
+PERFMAT=perfmat67_me1Bmc_epsilon1480703388.npy
 
-TGTIDX=5
-NOUTPUTS=11
-# TGTIDX=4
-# NOUTPUTS=67
+# TGTIDX=5
+# NOUTPUTS=11
+TGTIDX=4
+NOUTPUTS=67
 
 # `-p` == make predictions (db file)
 # `-t` == run test (no db file)
