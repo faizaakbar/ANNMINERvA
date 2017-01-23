@@ -152,6 +152,8 @@ if __name__ == '__main__':
                       help='Image height (z) v', metavar='IMGH_V', type='int')
     parser.add_option('--noutputs', dest='noutputs', default=11,
                       help='number of outputs', metavar='NOUTPUTS', type='int')
+    parser.add_option('--target_idx', dest='target_idx', default=5,
+                      help='target index in hdf5', metavar='TGT_IDX', type='int')
     parser.add_option('--img_depth', dest='img_depth', default=1,
                       help='image depth', metavar='IMG_DEPTH', type='int')
     (options, args) = parser.parse_args()
