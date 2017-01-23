@@ -12,8 +12,8 @@
 #restore to turn off email #PBS -m n
 
 NEPOCHS=12
-NEPOCHS=5
 NEPOCHS=1
+NEPOCHS=5
 # LRATE=0.0005
 LRATE=0.001
 L2REG=0.0001
@@ -33,6 +33,7 @@ PYTHONPROG="minerva_tricolumnar_epsilon.py"
 
 DATADIR="/data/perdue/minerva/targets"
 DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
+# DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc_0000.hdf5"
 
 SAVEMODELNAME="./lminervatriamese_epsilon${DATET}.npz"
 LOAD_SAVEMODEL=""
