@@ -423,12 +423,22 @@ def categorical_predict(
         logger.info("Cannot import sqlalchemy...")
         write_db = False
     if runopts['write_db']:
+        db_tbl_fun = None
+        if networkstr['noutputs'] == 67:
+            db_tbl_fun = predictiondb.get_67segment_prediction_table
+        elif networkstr['noutputs'] == 11:
+            db_tbl_fun = predictiondb.get_11segment_prediction_table
+        else:
+            raise Exception('Invalid number of outputs for DB tables.')
         tstamp = get_tstamp_from_model_name(runopts['save_model_file'])
         metadata = MetaData()
         dbname = 'prediction' + tstamp
         eng = predictiondb.get_engine(dbname)
         con = predictiondb.get_connection(eng)
-        tbl = predictiondb.get_active_table(metadata, eng)
+        tbl = predictiondb.get_active_table(metadata,
+                                            eng,
+                                            get_table_fn=db_tbl_fun
+        )
 
     # Prepare Theano variables for inputs
     inputlist = networkstr['input_list']
@@ -527,23 +537,102 @@ def filldb(dbtable, dbconnection,
     result = None
     if db == 'sqlite-zsegment_prediction':
         run, sub, gate, pevt = decode_eventid(eventid)
-        ins = dbtable.insert().values(
-            run=run,
-            subrun=sub,
-            gate=gate,
-            phys_evt=pevt,
-            segment=pred,
-            prob00=probs[0],
-            prob01=probs[1],
-            prob02=probs[2],
-            prob03=probs[3],
-            prob04=probs[4],
-            prob05=probs[5],
-            prob06=probs[6],
-            prob07=probs[7],
-            prob08=probs[8],
-            prob09=probs[9],
-            prob10=probs[10])
+        if len(probs) == 11:
+            ins = dbtable.insert().values(
+                run=run,
+                subrun=sub,
+                gate=gate,
+                phys_evt=pevt,
+                segment=pred,
+                prob00=probs[0],
+                prob01=probs[1],
+                prob02=probs[2],
+                prob03=probs[3],
+                prob04=probs[4],
+                prob05=probs[5],
+                prob06=probs[6],
+                prob07=probs[7],
+                prob08=probs[8],
+                prob09=probs[9],
+                prob10=probs[10]
+            )
+        elif len(probs) == 67:
+            ins = dbtable.insert().values(
+                run=run,
+                subrun=sub,
+                gate=gate,
+                phys_evt=pevt,
+                segment=pred,
+                prob00=probs[0],
+                prob01=probs[1],
+                prob02=probs[2],
+                prob03=probs[3],
+                prob04=probs[4],
+                prob05=probs[5],
+                prob06=probs[6],
+                prob07=probs[7],
+                prob08=probs[8],
+                prob09=probs[9],
+                prob10=probs[10],
+                prob11=probs[11],
+                prob12=probs[12],
+                prob13=probs[13],
+                prob14=probs[14],
+                prob15=probs[15],
+                prob16=probs[16],
+                prob17=probs[17],
+                prob18=probs[18],
+                prob19=probs[19],
+                prob20=probs[20],
+                prob21=probs[21],
+                prob22=probs[22],
+                prob23=probs[23],
+                prob24=probs[24],
+                prob25=probs[25],
+                prob26=probs[26],
+                prob27=probs[27],
+                prob28=probs[28],
+                prob29=probs[29],
+                prob30=probs[30],
+                prob31=probs[31],
+                prob32=probs[32],
+                prob33=probs[33],
+                prob34=probs[34],
+                prob35=probs[35],
+                prob36=probs[36],
+                prob37=probs[37],
+                prob38=probs[38],
+                prob39=probs[39],
+                prob40=probs[40],
+                prob41=probs[41],
+                prob42=probs[42],
+                prob43=probs[43],
+                prob44=probs[44],
+                prob45=probs[45],
+                prob46=probs[46],
+                prob47=probs[47],
+                prob48=probs[48],
+                prob49=probs[49],
+                prob50=probs[50],
+                prob51=probs[51],
+                prob52=probs[52],
+                prob53=probs[53],
+                prob54=probs[54],
+                prob55=probs[55],
+                prob56=probs[56],
+                prob57=probs[57],
+                prob58=probs[58],
+                prob59=probs[59],
+                prob60=probs[60],
+                prob61=probs[61],
+                prob62=probs[62],
+                prob63=probs[63],
+                prob64=probs[64],
+                prob65=probs[65],
+                prob66=probs[66]
+            )
+        else:
+            raise Exception('Impossible number of outputs for db in filldb!')
         try:
             result = dbconnection.execute(ins)
         except:

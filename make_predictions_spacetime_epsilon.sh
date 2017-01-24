@@ -3,6 +3,7 @@
 # predictions using 1A (trained with 1B, so use all of 1A)
 
 MODEL="models/lminerva_spacetime_67_epsilon1480703388.npz"
+# DATAFILE="../HDF5files/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_500evt.hdf5"
 DATAFILE="../HDF5files/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc.hdf5"
 LOGFILE=spacetime_epsilon_me1Amc_1480703388_predict.txt
 DBNAME=prediction67_me1Amc_epsilon1480703388.db
@@ -16,6 +17,19 @@ NOUTPUTS=67
 # `-t` == run test (no db file)
 # `-v` == run in verbose mode
 # `-a` == use the whole file as if it were the "test" sample
+cat << EOF
+python Lasagne/minerva_tricolumnar_spacetime_epsilon.py \
+  -d $DATAFILE \
+  -p \
+  -v \
+  -a \
+  -s $MODEL \
+  -f $LOGFILE \
+  --target_idx $TGTIDX \
+  --noutputs $NOUTPUTS
+  # -t \
+EOF
+
 python Lasagne/minerva_tricolumnar_spacetime_epsilon.py \
   -d $DATAFILE \
   -p \
@@ -28,3 +42,4 @@ python Lasagne/minerva_tricolumnar_spacetime_epsilon.py \
   # -t \
 
 mv prediction${NOUTPUTS}.db $DBNAME
+
