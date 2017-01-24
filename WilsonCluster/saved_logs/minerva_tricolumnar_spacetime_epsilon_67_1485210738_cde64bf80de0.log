@@ -1,0 +1,952 @@
+2017-01-23 16:32:23,563 - __main__ - INFO - Starting...
+2017-01-23 16:32:23,563 - __main__ - INFO - minerva_tricolumnar_epsilon.py
+2017-01-23 16:32:23,563 - __main__ - INFO -  Begin with saved pars? False
+2017-01-23 16:32:23,563 - __main__ - INFO -  Saved parameters file: ./lminervatriamese_epsilon1485210738.npz
+2017-01-23 16:32:23,564 - __main__ - INFO -  Saved parameters file exists? False
+2017-01-23 16:32:23,564 - __main__ - INFO -  Datasets: ['/data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5']
+2017-01-23 16:32:23,564 - __main__ - INFO -  Dataset size: 4433107041
+2017-01-23 16:32:23,564 - __main__ - INFO -  Planned number of epochs: 5
+2017-01-23 16:32:23,565 - __main__ - INFO -  Learning rate: 0.001
+2017-01-23 16:32:23,565 - __main__ - INFO -  Momentum: 0.9
+2017-01-23 16:32:23,565 - __main__ - INFO -  Batch size: 500
+2017-01-23 16:32:23,565 - __main__ - INFO -  L2 regularization penalty scale: 0.0001
+2017-01-23 16:32:23,565 - minerva_ann_operate_networks - INFO - Loading data...
+2017-01-23 16:32:23,681 - minerva_ann_datasets - INFO -  Learning sample size = 3668292 examples
+2017-01-23 16:32:23,682 - minerva_ann_datasets - INFO -  Validation sample size = 441963 examples
+2017-01-23 16:32:23,682 - minerva_ann_datasets - INFO -  Testing sample size = 309375 examples
+2017-01-23 16:32:23,682 - minerva_ann_networks - INFO - Convpool conv-x-0 params: {'filter_size': (8, 3), 'pool_size': (2, 1), 'nfilters': 12}
+2017-01-23 16:32:23,686 - minerva_ann_networks - INFO - Convpool maxpool-x-0
+2017-01-23 16:32:23,686 - minerva_ann_networks - INFO - Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2017-01-23 16:32:23,687 - minerva_ann_networks - INFO - Convpool maxpool-x-1
+2017-01-23 16:32:23,687 - minerva_ann_networks - INFO - Convpool conv-x-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2017-01-23 16:32:23,688 - minerva_ann_networks - INFO - Convpool maxpool-x-2
+2017-01-23 16:32:23,688 - minerva_ann_networks - INFO - Convpool conv-x-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2017-01-23 16:32:23,690 - minerva_ann_networks - INFO - Convpool maxpool-x-3
+2017-01-23 16:32:23,720 - minerva_ann_networks - INFO - Dense dense-x with nhidden = 196, dropout = 0.5
+2017-01-23 16:32:23,721 - minerva_ann_networks - INFO - Convpool conv-u-0 params: {'filter_size': (8, 5), 'pool_size': (2, 1), 'nfilters': 12}
+2017-01-23 16:32:23,721 - minerva_ann_networks - INFO - Convpool maxpool-u-0
+2017-01-23 16:32:23,722 - minerva_ann_networks - INFO - Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2017-01-23 16:32:23,723 - minerva_ann_networks - INFO - Convpool maxpool-u-1
+2017-01-23 16:32:23,723 - minerva_ann_networks - INFO - Convpool conv-u-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2017-01-23 16:32:23,724 - minerva_ann_networks - INFO - Convpool maxpool-u-2
+2017-01-23 16:32:23,724 - minerva_ann_networks - INFO - Convpool conv-u-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2017-01-23 16:32:23,725 - minerva_ann_networks - INFO - Convpool maxpool-u-3
+2017-01-23 16:32:23,736 - minerva_ann_networks - INFO - Dense dense-u with nhidden = 196, dropout = 0.5
+2017-01-23 16:32:23,737 - minerva_ann_networks - INFO - Convpool conv-v-0 params: {'filter_size': (8, 5), 'pool_size': (2, 1), 'nfilters': 12}
+2017-01-23 16:32:23,737 - minerva_ann_networks - INFO - Convpool maxpool-v-0
+2017-01-23 16:32:23,738 - minerva_ann_networks - INFO - Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2017-01-23 16:32:23,739 - minerva_ann_networks - INFO - Convpool maxpool-v-1
+2017-01-23 16:32:23,739 - minerva_ann_networks - INFO - Convpool conv-v-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2017-01-23 16:32:23,740 - minerva_ann_networks - INFO - Convpool maxpool-v-2
+2017-01-23 16:32:23,740 - minerva_ann_networks - INFO - Convpool conv-v-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2017-01-23 16:32:23,741 - minerva_ann_networks - INFO - Convpool maxpool-v-3
+2017-01-23 16:32:23,751 - minerva_ann_networks - INFO - Dense dense-v with nhidden = 196, dropout = 0.5
+2017-01-23 16:32:23,751 - minerva_ann_networks - INFO - Network: concat columns...
+2017-01-23 16:32:23,754 - minerva_ann_networks - INFO - Dense dense-across with nhidden = 98, dropout = 0.5
+2017-01-23 16:32:23,755 - minerva_ann_networks - INFO - Softmax output prob with n_units = 11
+2017-01-23 16:32:23,763 - minerva_ann_networks - INFO - n-parameters: 1684823
+2017-01-23 16:32:23,764 - minerva_ann_operate_networks - INFO - 
+In -->          Layer    --> Out    Description                                                  
+-------         -----    -------    -----------                                                  
+[]              0        [1]        <lasagne.layers.input.InputLayer object at 0x2b7d9a6fc850>   
+[0]             1        [2]        <lasagne.layers.conv.Conv2DLayer object at 0x2b7d9a6fc1d0>   
+[1]             2        [3]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d9a6fc5d0>
+[2]             3        [4]        <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e30dfd0>   
+[3]             4        [5]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d9a6fc650>
+[4]             5        [6]        <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e31a290>   
+[5]             6        [7]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e30df90>
+[6]             7        [8]        <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e31a550>   
+[7]             8        [9]        <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e31a590>
+[8]             9        [10]       <lasagne.layers.noise.DropoutLayer object at 0x2b7d9a6fc6d0> 
+[9]             10       [33]       <lasagne.layers.dense.DenseLayer object at 0x2b7d8e31a850>   
+[]              11       [12]       <lasagne.layers.input.InputLayer object at 0x2b7d9a6fc7d0>   
+[11]            12       [13]       <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e31af50>   
+[12]            13       [14]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e31ae90>
+[13]            14       [15]       <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e328190>   
+[14]            15       [16]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e31af10>
+[15]            16       [17]       <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e328450>   
+[16]            17       [18]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e328490>
+[17]            18       [19]       <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e328710>   
+[18]            19       [20]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e328750>
+[19]            20       [21]       <lasagne.layers.noise.DropoutLayer object at 0x2b7d8e31a910> 
+[20]            21       [33]       <lasagne.layers.dense.DenseLayer object at 0x2b7d8e328a10>   
+[]              22       [23]       <lasagne.layers.input.InputLayer object at 0x2b7d9a6fc750>   
+[22]            23       [24]       <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e328d90>   
+[23]            24       [25]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e328cd0>
+[24]            25       [26]       <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e328d50>   
+[25]            26       [27]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e328fd0>
+[26]            27       [28]       <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e332290>   
+[27]            28       [29]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e328f90>
+[28]            29       [30]       <lasagne.layers.conv.Conv2DLayer object at 0x2b7d8e332550>   
+[29]            30       [31]       <lasagne.layers.pool.MaxPool2DLayer object at 0x2b7d8e332590>
+[30]            31       [32]       <lasagne.layers.noise.DropoutLayer object at 0x2b7d8e328ad0> 
+[31]            32       [33]       <lasagne.layers.dense.DenseLayer object at 0x2b7d8e332850>   
+[10, 21, 32]    33       [34]       <lasagne.layers.merge.ConcatLayer object at 0x2b7d8e332910>  
+[33]            34       [35]       <lasagne.layers.noise.DropoutLayer object at 0x2b7d8e332b90> 
+[34]            35       [36]       <lasagne.layers.dense.DenseLayer object at 0x2b7d8e332b10>   
+[35]            36       []         <lasagne.layers.dense.DenseLayer object at 0x2b7d8e332b50>   
+2017-01-23 16:32:25,238 - minerva_ann_operate_networks - INFO - 
+        ////
+        Use AdaGrad update schedule for learning rate, see Duchi, Hazan, and
+        Singer (2011) "Adaptive subgradient methods for online learning and
+        stochasitic optimization." JMLR, 12:2121-2159
+        ////
+        
+2017-01-23 16:32:25,803 - minerva_ann_operate_networks - INFO - 
+        ////
+        Apply Nesterov momentum using Lisa Lab's modifications.
+        ////
+        
+2017-01-23 16:32:51,822 - minerva_ann_operate_networks - INFO - Starting training...
+2017-01-23 16:32:51,822 - minerva_ann_operate_networks - INFO - Train slices for epoch 0: [[(2150000, 2200000), (2700000, 2750000), (1250000, 1300000), (350000, 400000), (800000, 850000), (1750000, 1800000), (1950000, 2000000), (1450000, 1500000), (2100000, 2150000), (2600000, 2650000), (1350000, 1400000), (1500000, 1550000), (3050000, 3100000), (2400000, 2450000), (850000, 900000), (3100000, 3150000), (1800000, 1850000), (3600000, 3650000), (550000, 600000), (700000, 750000), (2650000, 2700000), (400000, 450000), (3550000, 3600000), (1200000, 1250000), (2500000, 2550000), (2850000, 2900000), (500000, 550000), (750000, 800000), (2950000, 3000000), (2450000, 2500000), (1100000, 1150000), (1550000, 1600000), (600000, 650000), (3400000, 3450000), (1850000, 1900000), (2750000, 2800000), (2250000, 2300000), (200000, 250000), (3650000, 3668292), (100000, 150000), (1400000, 1450000), (3250000, 3300000), (1050000, 1100000), (0, 50000), (3350000, 3400000), (2200000, 2250000), (50000, 100000), (2050000, 2100000), (3200000, 3250000), (3000000, 3050000), (3300000, 3350000), (3150000, 3200000), (2900000, 2950000), (950000, 1000000), (1150000, 1200000), (1650000, 1700000), (250000, 300000), (1300000, 1350000), (1000000, 1050000), (1600000, 1650000), (2000000, 2050000), (1700000, 1750000), (2350000, 2400000), (3450000, 3500000), (3500000, 3550000), (300000, 350000), (150000, 200000), (450000, 500000), (2550000, 2600000), (2800000, 2850000), (900000, 950000), (2300000, 2350000), (1900000, 1950000), (650000, 700000)]]
+2017-01-23 16:33:13,640 - minerva_ann_operate_networks - INFO -   Loading slice (2150000, 2200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 21.817s.
+2017-01-23 16:34:13,686 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.046s.
+2017-01-23 16:34:31,386 - minerva_ann_operate_networks - INFO -   Loading slice (2700000, 2750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.909s.
+2017-01-23 16:35:31,422 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.035s.
+2017-01-23 16:35:48,934 - minerva_ann_operate_networks - INFO -   Loading slice (1250000, 1300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.673s.
+2017-01-23 16:36:48,978 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.044s.
+2017-01-23 16:37:06,756 - minerva_ann_operate_networks - INFO -   Loading slice (350000, 400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.678s.
+2017-01-23 16:38:06,739 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.982s.
+2017-01-23 16:38:24,465 - minerva_ann_operate_networks - INFO -   Loading slice (800000, 850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.795s.
+2017-01-23 16:39:24,418 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.953s.
+2017-01-23 16:39:42,209 - minerva_ann_operate_networks - INFO -   Loading slice (1750000, 1800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.789s.
+2017-01-23 16:40:42,164 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.954s.
+2017-01-23 16:40:59,741 - minerva_ann_operate_networks - INFO -   Loading slice (1950000, 2000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.740s.
+2017-01-23 16:41:59,616 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.874s.
+2017-01-23 16:42:17,037 - minerva_ann_operate_networks - INFO -   Loading slice (1450000, 1500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.576s.
+2017-01-23 16:43:16,922 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.885s.
+2017-01-23 16:43:34,016 - minerva_ann_operate_networks - INFO -   Loading slice (2100000, 2150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.146s.
+2017-01-23 16:44:33,909 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.893s.
+2017-01-23 16:44:50,968 - minerva_ann_operate_networks - INFO -   Loading slice (2600000, 2650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.201s.
+2017-01-23 16:45:50,864 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.896s.
+2017-01-23 16:46:07,878 - minerva_ann_operate_networks - INFO -   Loading slice (1350000, 1400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.154s.
+2017-01-23 16:47:07,744 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.866s.
+2017-01-23 16:47:25,664 - minerva_ann_operate_networks - INFO -   Loading slice (1500000, 1550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.971s.
+2017-01-23 16:48:25,534 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.869s.
+2017-01-23 16:48:42,746 - minerva_ann_operate_networks - INFO -   Loading slice (3050000, 3100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.330s.
+2017-01-23 16:49:42,608 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.861s.
+2017-01-23 16:49:59,964 - minerva_ann_operate_networks - INFO -   Loading slice (2400000, 2450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.266s.
+2017-01-23 16:50:59,823 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.859s.
+2017-01-23 16:51:17,527 - minerva_ann_operate_networks - INFO -   Loading slice (850000, 900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.904s.
+2017-01-23 16:52:17,403 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.875s.
+2017-01-23 16:52:34,686 - minerva_ann_operate_networks - INFO -   Loading slice (3100000, 3150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.090s.
+2017-01-23 16:53:34,560 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.873s.
+2017-01-23 16:53:51,565 - minerva_ann_operate_networks - INFO -   Loading slice (1800000, 1850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.087s.
+2017-01-23 16:54:51,691 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.125s.
+2017-01-23 16:55:08,789 - minerva_ann_operate_networks - INFO -   Loading slice (3600000, 3650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.260s.
+2017-01-23 16:56:08,652 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.863s.
+2017-01-23 16:56:25,729 - minerva_ann_operate_networks - INFO -   Loading slice (550000, 600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.282s.
+2017-01-23 16:57:25,609 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.880s.
+2017-01-23 16:57:42,579 - minerva_ann_operate_networks - INFO -   Loading slice (700000, 750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.132s.
+2017-01-23 16:58:42,459 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.879s.
+2017-01-23 16:59:00,282 - minerva_ann_operate_networks - INFO -   Loading slice (2650000, 2700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.660s.
+2017-01-23 17:00:00,165 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.883s.
+2017-01-23 17:00:17,216 - minerva_ann_operate_networks - INFO -   Loading slice (400000, 450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.137s.
+2017-01-23 17:01:17,104 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.887s.
+2017-01-23 17:01:34,517 - minerva_ann_operate_networks - INFO -   Loading slice (3550000, 3600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.171s.
+2017-01-23 17:02:34,397 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.879s.
+2017-01-23 17:02:51,512 - minerva_ann_operate_networks - INFO -   Loading slice (1200000, 1250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.280s.
+2017-01-23 17:03:51,377 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.864s.
+2017-01-23 17:04:08,359 - minerva_ann_operate_networks - INFO -   Loading slice (2500000, 2550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.066s.
+2017-01-23 17:05:08,244 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.884s.
+2017-01-23 17:05:25,541 - minerva_ann_operate_networks - INFO -   Loading slice (2850000, 2900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.210s.
+2017-01-23 17:06:25,416 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.874s.
+2017-01-23 17:06:42,386 - minerva_ann_operate_networks - INFO -   Loading slice (500000, 550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.166s.
+2017-01-23 17:07:42,267 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.880s.
+2017-01-23 17:07:59,142 - minerva_ann_operate_networks - INFO -   Loading slice (750000, 800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.031s.
+2017-01-23 17:08:59,030 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.887s.
+2017-01-23 17:09:16,287 - minerva_ann_operate_networks - INFO -   Loading slice (2950000, 3000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.218s.
+2017-01-23 17:10:16,173 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.885s.
+2017-01-23 17:10:33,194 - minerva_ann_operate_networks - INFO -   Loading slice (2450000, 2500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.050s.
+2017-01-23 17:11:33,076 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.882s.
+2017-01-23 17:11:50,596 - minerva_ann_operate_networks - INFO -   Loading slice (1100000, 1150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.311s.
+2017-01-23 17:12:50,474 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.878s.
+2017-01-23 17:13:07,494 - minerva_ann_operate_networks - INFO -   Loading slice (1550000, 1600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.109s.
+2017-01-23 17:14:07,380 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.885s.
+2017-01-23 17:14:24,281 - minerva_ann_operate_networks - INFO -   Loading slice (600000, 650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.070s.
+2017-01-23 17:15:24,168 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.886s.
+2017-01-23 17:15:41,343 - minerva_ann_operate_networks - INFO -   Loading slice (3400000, 3450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.231s.
+2017-01-23 17:16:41,218 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.874s.
+2017-01-23 17:16:58,034 - minerva_ann_operate_networks - INFO -   Loading slice (1850000, 1900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.013s.
+2017-01-23 17:17:57,890 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.855s.
+2017-01-23 17:18:14,876 - minerva_ann_operate_networks - INFO -   Loading slice (2750000, 2800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.055s.
+2017-01-23 17:19:14,741 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.864s.
+2017-01-23 17:19:32,078 - minerva_ann_operate_networks - INFO -   Loading slice (2250000, 2300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.222s.
+2017-01-23 17:20:32,132 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.054s.
+2017-01-23 17:20:49,432 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.367s.
+2017-01-23 17:21:49,317 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.884s.
+2017-01-23 17:21:57,008 - minerva_ann_operate_networks - INFO -   Loading slice (3650000, 3668292) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 6.459s.
+2017-01-23 17:22:19,004 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 21.996s.
+2017-01-23 17:22:36,428 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.233s.
+2017-01-23 17:23:36,290 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.862s.
+2017-01-23 17:23:53,166 - minerva_ann_operate_networks - INFO -   Loading slice (1400000, 1450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.038s.
+2017-01-23 17:24:53,004 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.837s.
+2017-01-23 17:25:10,328 - minerva_ann_operate_networks - INFO -   Loading slice (3250000, 3300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.147s.
+2017-01-23 17:26:10,201 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.873s.
+2017-01-23 17:26:27,249 - minerva_ann_operate_networks - INFO -   Loading slice (1050000, 1100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.235s.
+2017-01-23 17:27:27,104 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.854s.
+2017-01-23 17:27:44,045 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.072s.
+2017-01-23 17:28:43,915 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.869s.
+2017-01-23 17:29:00,923 - minerva_ann_operate_networks - INFO -   Loading slice (3350000, 3400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.067s.
+2017-01-23 17:30:00,782 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.858s.
+2017-01-23 17:30:19,069 - minerva_ann_operate_networks - INFO -   Loading slice (2200000, 2250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 17.420s.
+2017-01-23 17:31:18,917 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.848s.
+2017-01-23 17:31:36,164 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.040s.
+2017-01-23 17:32:36,023 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.858s.
+2017-01-23 17:32:53,259 - minerva_ann_operate_networks - INFO -   Loading slice (2050000, 2100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.091s.
+2017-01-23 17:33:53,113 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.854s.
+2017-01-23 17:34:10,046 - minerva_ann_operate_networks - INFO -   Loading slice (3200000, 3250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.112s.
+2017-01-23 17:35:09,906 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.860s.
+2017-01-23 17:35:26,897 - minerva_ann_operate_networks - INFO -   Loading slice (3000000, 3050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.079s.
+2017-01-23 17:36:26,750 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.853s.
+2017-01-23 17:36:43,719 - minerva_ann_operate_networks - INFO -   Loading slice (3300000, 3350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.003s.
+2017-01-23 17:37:43,580 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.861s.
+2017-01-23 17:38:00,490 - minerva_ann_operate_networks - INFO -   Loading slice (3150000, 3200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.066s.
+2017-01-23 17:39:00,406 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.916s.
+2017-01-23 17:39:17,261 - minerva_ann_operate_networks - INFO -   Loading slice (2900000, 2950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.011s.
+2017-01-23 17:40:17,110 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.849s.
+2017-01-23 17:40:34,422 - minerva_ann_operate_networks - INFO -   Loading slice (950000, 1000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.100s.
+2017-01-23 17:41:34,303 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.881s.
+2017-01-23 17:41:51,255 - minerva_ann_operate_networks - INFO -   Loading slice (1150000, 1200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.039s.
+2017-01-23 17:42:51,116 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.861s.
+2017-01-23 17:43:09,913 - minerva_ann_operate_networks - INFO -   Loading slice (1650000, 1700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 17.871s.
+2017-01-23 17:44:09,768 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.854s.
+2017-01-23 17:44:26,741 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.067s.
+2017-01-23 17:45:26,614 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.873s.
+2017-01-23 17:45:43,962 - minerva_ann_operate_networks - INFO -   Loading slice (1300000, 1350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.012s.
+2017-01-23 17:46:43,826 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.863s.
+2017-01-23 17:47:00,628 - minerva_ann_operate_networks - INFO -   Loading slice (1000000, 1050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.027s.
+2017-01-23 17:48:00,508 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.880s.
+2017-01-23 17:48:17,393 - minerva_ann_operate_networks - INFO -   Loading slice (1600000, 1650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.034s.
+2017-01-23 17:49:17,247 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.853s.
+2017-01-23 17:49:34,220 - minerva_ann_operate_networks - INFO -   Loading slice (2000000, 2050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.010s.
+2017-01-23 17:50:34,528 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.308s.
+2017-01-23 17:50:51,340 - minerva_ann_operate_networks - INFO -   Loading slice (1700000, 1750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.997s.
+2017-01-23 17:51:51,630 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.290s.
+2017-01-23 17:52:08,455 - minerva_ann_operate_networks - INFO -   Loading slice (2350000, 2400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.978s.
+2017-01-23 17:53:08,325 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.869s.
+2017-01-23 17:53:25,160 - minerva_ann_operate_networks - INFO -   Loading slice (3450000, 3500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.000s.
+2017-01-23 17:54:25,032 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.871s.
+2017-01-23 17:54:42,465 - minerva_ann_operate_networks - INFO -   Loading slice (3500000, 3550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.044s.
+2017-01-23 17:55:42,316 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.850s.
+2017-01-23 17:55:59,218 - minerva_ann_operate_networks - INFO -   Loading slice (300000, 350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.056s.
+2017-01-23 17:56:59,090 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.872s.
+2017-01-23 17:57:17,688 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 17.161s.
+2017-01-23 17:58:17,597 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.908s.
+2017-01-23 17:58:34,573 - minerva_ann_operate_networks - INFO -   Loading slice (450000, 500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.039s.
+2017-01-23 17:59:34,463 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.890s.
+2017-01-23 17:59:51,372 - minerva_ann_operate_networks - INFO -   Loading slice (2550000, 2600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.055s.
+2017-01-23 18:00:51,225 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.852s.
+2017-01-23 18:01:13,172 - minerva_ann_operate_networks - INFO -   Loading slice (2800000, 2850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 20.703s.
+2017-01-23 18:02:13,125 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.952s.
+2017-01-23 18:02:30,254 - minerva_ann_operate_networks - INFO -   Loading slice (900000, 950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.018s.
+2017-01-23 18:03:30,117 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.863s.
+2017-01-23 18:03:47,022 - minerva_ann_operate_networks - INFO -   Loading slice (2300000, 2350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.079s.
+2017-01-23 18:04:46,983 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.961s.
+2017-01-23 18:05:04,234 - minerva_ann_operate_networks - INFO -   Loading slice (1900000, 1950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.042s.
+2017-01-23 18:06:04,099 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.865s.
+2017-01-23 18:06:21,031 - minerva_ann_operate_networks - INFO -   Loading slice (650000, 700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.031s.
+2017-01-23 18:07:20,913 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.881s.
+2017-01-23 18:12:14,336 - minerva_ann_operate_networks - INFO -   The validation pass took 292.559s.
+2017-01-23 18:12:14,337 - minerva_ann_operate_networks - INFO - 
+Epoch 1 of 5 took 5962.515s
+  training loss:		19823970770448.964844
+2017-01-23 18:12:14,337 - minerva_ann_operate_networks - INFO - 
+  validation loss:		58612662855003.507812
+  validation accuracy:		0.33 %
+2017-01-23 18:12:14,337 - minerva_ann_operate_networks - INFO - ---
+2017-01-23 18:12:14,338 - minerva_ann_operate_networks - INFO - Train slices for epoch 1: [[(3300000, 3350000), (0, 50000), (1400000, 1450000), (500000, 550000), (2050000, 2100000), (1900000, 1950000), (2150000, 2200000), (150000, 200000), (1950000, 2000000), (2100000, 2150000), (900000, 950000), (2600000, 2650000), (1000000, 1050000), (3500000, 3550000), (550000, 600000), (2200000, 2250000), (600000, 650000), (1700000, 1750000), (1250000, 1300000), (850000, 900000), (1550000, 1600000), (450000, 500000), (2950000, 3000000), (1150000, 1200000), (3050000, 3100000), (3400000, 3450000), (3350000, 3400000), (1800000, 1850000), (750000, 800000), (3550000, 3600000), (3600000, 3650000), (2750000, 2800000), (350000, 400000), (2350000, 2400000), (1450000, 1500000), (2900000, 2950000), (1350000, 1400000), (1750000, 1800000), (2500000, 2550000), (3250000, 3300000), (1600000, 1650000), (1100000, 1150000), (800000, 850000), (3150000, 3200000), (1500000, 1550000), (1050000, 1100000), (2650000, 2700000), (2800000, 2850000), (2400000, 2450000), (1200000, 1250000), (250000, 300000), (950000, 1000000), (2250000, 2300000), (1300000, 1350000), (2450000, 2500000), (650000, 700000), (700000, 750000), (2000000, 2050000), (3450000, 3500000), (1850000, 1900000), (2300000, 2350000), (2550000, 2600000), (50000, 100000), (2700000, 2750000), (3650000, 3668292), (100000, 150000), (3200000, 3250000), (300000, 350000), (3100000, 3150000), (3000000, 3050000), (2850000, 2900000), (1650000, 1700000), (200000, 250000), (400000, 450000)]]
+2017-01-23 18:12:30,402 - minerva_ann_operate_networks - INFO -   Loading slice (3300000, 3350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.065s.
+2017-01-23 18:13:30,284 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.881s.
+2017-01-23 18:13:47,194 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.042s.
+2017-01-23 18:14:47,077 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.883s.
+2017-01-23 18:15:04,393 - minerva_ann_operate_networks - INFO -   Loading slice (1400000, 1450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.061s.
+2017-01-23 18:16:04,242 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.848s.
+2017-01-23 18:16:21,111 - minerva_ann_operate_networks - INFO -   Loading slice (500000, 550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.984s.
+2017-01-23 18:17:20,995 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.884s.
+2017-01-23 18:17:37,882 - minerva_ann_operate_networks - INFO -   Loading slice (2050000, 2100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.031s.
+2017-01-23 18:18:37,757 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.875s.
+2017-01-23 18:18:54,883 - minerva_ann_operate_networks - INFO -   Loading slice (1900000, 1950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.042s.
+2017-01-23 18:19:54,762 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.879s.
+2017-01-23 18:20:11,670 - minerva_ann_operate_networks - INFO -   Loading slice (2150000, 2200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.062s.
+2017-01-23 18:21:11,525 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.855s.
+2017-01-23 18:21:28,520 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.090s.
+2017-01-23 18:22:28,381 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.860s.
+2017-01-23 18:22:45,241 - minerva_ann_operate_networks - INFO -   Loading slice (1950000, 2000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.996s.
+2017-01-23 18:23:45,108 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.866s.
+2017-01-23 18:24:02,039 - minerva_ann_operate_networks - INFO -   Loading slice (2100000, 2150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.003s.
+2017-01-23 18:25:01,912 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.872s.
+2017-01-23 18:25:18,929 - minerva_ann_operate_networks - INFO -   Loading slice (900000, 950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.992s.
+2017-01-23 18:26:18,822 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.893s.
+2017-01-23 18:26:35,703 - minerva_ann_operate_networks - INFO -   Loading slice (2600000, 2650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.052s.
+2017-01-23 18:27:35,574 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.871s.
+2017-01-23 18:27:52,853 - minerva_ann_operate_networks - INFO -   Loading slice (1000000, 1050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.036s.
+2017-01-23 18:28:52,731 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.878s.
+2017-01-23 18:29:09,641 - minerva_ann_operate_networks - INFO -   Loading slice (3500000, 3550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.050s.
+2017-01-23 18:30:09,500 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.859s.
+2017-01-23 18:30:26,504 - minerva_ann_operate_networks - INFO -   Loading slice (550000, 600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.028s.
+2017-01-23 18:31:26,372 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.867s.
+2017-01-23 18:31:43,296 - minerva_ann_operate_networks - INFO -   Loading slice (2200000, 2250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.079s.
+2017-01-23 18:32:43,172 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.875s.
+2017-01-23 18:33:00,098 - minerva_ann_operate_networks - INFO -   Loading slice (600000, 650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.033s.
+2017-01-23 18:33:59,972 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.873s.
+2017-01-23 18:34:17,268 - minerva_ann_operate_networks - INFO -   Loading slice (1700000, 1750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.029s.
+2017-01-23 18:35:17,556 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.287s.
+2017-01-23 18:35:34,456 - minerva_ann_operate_networks - INFO -   Loading slice (1250000, 1300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.047s.
+2017-01-23 18:36:34,746 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.290s.
+2017-01-23 18:36:52,016 - minerva_ann_operate_networks - INFO -   Loading slice (850000, 900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.076s.
+2017-01-23 18:37:51,930 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.914s.
+2017-01-23 18:38:08,837 - minerva_ann_operate_networks - INFO -   Loading slice (1550000, 1600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.016s.
+2017-01-23 18:39:08,699 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.861s.
+2017-01-23 18:39:25,592 - minerva_ann_operate_networks - INFO -   Loading slice (450000, 500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.022s.
+2017-01-23 18:40:25,453 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.860s.
+2017-01-23 18:40:42,600 - minerva_ann_operate_networks - INFO -   Loading slice (2950000, 3000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.096s.
+2017-01-23 18:41:42,472 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.872s.
+2017-01-23 18:41:59,345 - minerva_ann_operate_networks - INFO -   Loading slice (1150000, 1200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.017s.
+2017-01-23 18:42:59,219 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.874s.
+2017-01-23 18:43:16,423 - minerva_ann_operate_networks - INFO -   Loading slice (3050000, 3100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.030s.
+2017-01-23 18:44:16,304 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.880s.
+2017-01-23 18:44:33,211 - minerva_ann_operate_networks - INFO -   Loading slice (3400000, 3450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.035s.
+2017-01-23 18:45:33,298 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.086s.
+2017-01-23 18:45:50,368 - minerva_ann_operate_networks - INFO -   Loading slice (3350000, 3400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.043s.
+2017-01-23 18:46:50,236 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.867s.
+2017-01-23 18:47:07,193 - minerva_ann_operate_networks - INFO -   Loading slice (1800000, 1850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.053s.
+2017-01-23 18:48:07,075 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.882s.
+2017-01-23 18:48:24,012 - minerva_ann_operate_networks - INFO -   Loading slice (750000, 800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.021s.
+2017-01-23 18:49:23,908 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.896s.
+2017-01-23 18:49:40,698 - minerva_ann_operate_networks - INFO -   Loading slice (3550000, 3600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.998s.
+2017-01-23 18:50:40,560 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.862s.
+2017-01-23 18:50:57,350 - minerva_ann_operate_networks - INFO -   Loading slice (3600000, 3650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.987s.
+2017-01-23 18:51:57,319 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.969s.
+2017-01-23 18:52:14,817 - minerva_ann_operate_networks - INFO -   Loading slice (2750000, 2800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.503s.
+2017-01-23 18:53:14,679 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.861s.
+2017-01-23 18:53:31,498 - minerva_ann_operate_networks - INFO -   Loading slice (350000, 400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.010s.
+2017-01-23 18:54:31,371 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.873s.
+2017-01-23 18:54:48,276 - minerva_ann_operate_networks - INFO -   Loading slice (2350000, 2400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.015s.
+2017-01-23 18:55:48,153 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.877s.
+2017-01-23 18:56:05,227 - minerva_ann_operate_networks - INFO -   Loading slice (1450000, 1500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.005s.
+2017-01-23 18:57:05,117 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.890s.
+2017-01-23 18:57:21,956 - minerva_ann_operate_networks - INFO -   Loading slice (2900000, 2950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.003s.
+2017-01-23 18:58:21,895 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.938s.
+2017-01-23 18:58:38,945 - minerva_ann_operate_networks - INFO -   Loading slice (1350000, 1400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.057s.
+2017-01-23 18:59:38,796 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.851s.
+2017-01-23 18:59:55,639 - minerva_ann_operate_networks - INFO -   Loading slice (1750000, 1800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.042s.
+2017-01-23 19:00:55,498 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.859s.
+2017-01-23 19:01:12,359 - minerva_ann_operate_networks - INFO -   Loading slice (2500000, 2550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.009s.
+2017-01-23 19:02:12,242 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.883s.
+2017-01-23 19:02:29,782 - minerva_ann_operate_networks - INFO -   Loading slice (3250000, 3300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.043s.
+2017-01-23 19:03:29,653 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.870s.
+2017-01-23 19:03:46,517 - minerva_ann_operate_networks - INFO -   Loading slice (1600000, 1650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.010s.
+2017-01-23 19:04:46,399 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.882s.
+2017-01-23 19:05:03,368 - minerva_ann_operate_networks - INFO -   Loading slice (1100000, 1150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.140s.
+2017-01-23 19:06:03,310 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.941s.
+2017-01-23 19:06:20,244 - minerva_ann_operate_networks - INFO -   Loading slice (800000, 850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.095s.
+2017-01-23 19:07:20,206 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.961s.
+2017-01-23 19:07:37,314 - minerva_ann_operate_networks - INFO -   Loading slice (3150000, 3200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.024s.
+2017-01-23 19:08:37,197 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.883s.
+2017-01-23 19:08:54,081 - minerva_ann_operate_networks - INFO -   Loading slice (1500000, 1550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.067s.
+2017-01-23 19:09:53,978 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.897s.
+2017-01-23 19:10:10,824 - minerva_ann_operate_networks - INFO -   Loading slice (1050000, 1100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.025s.
+2017-01-23 19:11:10,695 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.871s.
+2017-01-23 19:11:27,593 - minerva_ann_operate_networks - INFO -   Loading slice (2650000, 2700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.034s.
+2017-01-23 19:12:27,553 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.959s.
+2017-01-23 19:12:44,669 - minerva_ann_operate_networks - INFO -   Loading slice (2800000, 2850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.977s.
+2017-01-23 19:13:44,549 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.880s.
+2017-01-23 19:14:01,379 - minerva_ann_operate_networks - INFO -   Loading slice (2400000, 2450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.018s.
+2017-01-23 19:15:01,262 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.882s.
+2017-01-23 19:15:18,116 - minerva_ann_operate_networks - INFO -   Loading slice (1200000, 1250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.053s.
+2017-01-23 19:16:17,962 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.845s.
+2017-01-23 19:16:34,838 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.984s.
+2017-01-23 19:17:34,776 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.938s.
+2017-01-23 19:17:51,665 - minerva_ann_operate_networks - INFO -   Loading slice (950000, 1000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.036s.
+2017-01-23 19:18:51,973 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.307s.
+2017-01-23 19:19:09,164 - minerva_ann_operate_networks - INFO -   Loading slice (2250000, 2300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.984s.
+2017-01-23 19:20:09,503 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.338s.
+2017-01-23 19:20:26,345 - minerva_ann_operate_networks - INFO -   Loading slice (1300000, 1350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.021s.
+2017-01-23 19:21:26,674 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.329s.
+2017-01-23 19:21:43,813 - minerva_ann_operate_networks - INFO -   Loading slice (2450000, 2500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.056s.
+2017-01-23 19:22:44,136 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.322s.
+2017-01-23 19:23:01,018 - minerva_ann_operate_networks - INFO -   Loading slice (650000, 700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.018s.
+2017-01-23 19:24:01,333 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.314s.
+2017-01-23 19:24:18,226 - minerva_ann_operate_networks - INFO -   Loading slice (700000, 750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.031s.
+2017-01-23 19:25:18,934 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.707s.
+2017-01-23 19:25:35,939 - minerva_ann_operate_networks - INFO -   Loading slice (2000000, 2050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.018s.
+2017-01-23 19:26:36,260 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.320s.
+2017-01-23 19:26:53,088 - minerva_ann_operate_networks - INFO -   Loading slice (3450000, 3500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.992s.
+2017-01-23 19:27:53,403 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.315s.
+2017-01-23 19:28:10,267 - minerva_ann_operate_networks - INFO -   Loading slice (1850000, 1900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.012s.
+2017-01-23 19:29:10,940 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.673s.
+2017-01-23 19:29:27,692 - minerva_ann_operate_networks - INFO -   Loading slice (2300000, 2350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.897s.
+2017-01-23 19:30:28,010 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.317s.
+2017-01-23 19:30:45,028 - minerva_ann_operate_networks - INFO -   Loading slice (2550000, 2600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.030s.
+2017-01-23 19:31:45,345 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.317s.
+2017-01-23 19:32:02,291 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.027s.
+2017-01-23 19:33:02,204 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.913s.
+2017-01-23 19:33:19,138 - minerva_ann_operate_networks - INFO -   Loading slice (2700000, 2750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.041s.
+2017-01-23 19:34:19,406 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.267s.
+2017-01-23 19:34:26,249 - minerva_ann_operate_networks - INFO -   Loading slice (3650000, 3668292) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 6.002s.
+2017-01-23 19:34:48,166 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 21.917s.
+2017-01-23 19:35:05,437 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.070s.
+2017-01-23 19:36:05,373 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.935s.
+2017-01-23 19:36:22,236 - minerva_ann_operate_networks - INFO -   Loading slice (3200000, 3250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.006s.
+2017-01-23 19:37:22,083 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.847s.
+2017-01-23 19:37:39,159 - minerva_ann_operate_networks - INFO -   Loading slice (300000, 350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.051s.
+2017-01-23 19:38:39,003 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.843s.
+2017-01-23 19:38:55,906 - minerva_ann_operate_networks - INFO -   Loading slice (3100000, 3150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.032s.
+2017-01-23 19:39:55,743 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.837s.
+2017-01-23 19:40:12,628 - minerva_ann_operate_networks - INFO -   Loading slice (3000000, 3050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.015s.
+2017-01-23 19:41:12,482 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.854s.
+2017-01-23 19:41:29,782 - minerva_ann_operate_networks - INFO -   Loading slice (2850000, 2900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.007s.
+2017-01-23 19:42:29,621 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.839s.
+2017-01-23 19:42:46,986 - minerva_ann_operate_networks - INFO -   Loading slice (1650000, 1700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.047s.
+2017-01-23 19:43:46,837 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.851s.
+2017-01-23 19:44:03,697 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.043s.
+2017-01-23 19:45:03,546 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.849s.
+2017-01-23 19:45:20,406 - minerva_ann_operate_networks - INFO -   Loading slice (400000, 450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.001s.
+2017-01-23 19:46:20,243 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.837s.
+2017-01-23 19:51:15,142 - minerva_ann_operate_networks - INFO -   The validation pass took 293.446s.
+2017-01-23 19:51:15,143 - minerva_ann_operate_networks - INFO - 
+Epoch 2 of 5 took 5940.805s
+  training loss:		206311946833077.562500
+2017-01-23 19:51:15,143 - minerva_ann_operate_networks - INFO - 
+  validation loss:		127905258036395.437500
+  validation accuracy:		4.02 %
+2017-01-23 19:51:15,143 - minerva_ann_operate_networks - INFO - ---
+2017-01-23 19:51:15,143 - minerva_ann_operate_networks - INFO - Train slices for epoch 2: [[(3150000, 3200000), (50000, 100000), (2500000, 2550000), (3200000, 3250000), (2400000, 2450000), (2450000, 2500000), (2350000, 2400000), (2250000, 2300000), (900000, 950000), (700000, 750000), (1500000, 1550000), (600000, 650000), (1200000, 1250000), (0, 50000), (1700000, 1750000), (3450000, 3500000), (100000, 150000), (1900000, 1950000), (950000, 1000000), (3550000, 3600000), (1400000, 1450000), (200000, 250000), (2600000, 2650000), (1100000, 1150000), (1000000, 1050000), (1850000, 1900000), (3350000, 3400000), (2300000, 2350000), (1600000, 1650000), (3250000, 3300000), (3100000, 3150000), (1150000, 1200000), (850000, 900000), (1950000, 2000000), (550000, 600000), (2550000, 2600000), (450000, 500000), (2200000, 2250000), (1300000, 1350000), (1450000, 1500000), (750000, 800000), (300000, 350000), (2750000, 2800000), (150000, 200000), (3400000, 3450000), (650000, 700000), (3300000, 3350000), (3500000, 3550000), (3600000, 3650000), (2850000, 2900000), (2700000, 2750000), (2650000, 2700000), (1550000, 1600000), (1250000, 1300000), (3050000, 3100000), (3650000, 3668292), (2000000, 2050000), (2150000, 2200000), (2100000, 2150000), (350000, 400000), (2050000, 2100000), (1750000, 1800000), (500000, 550000), (3000000, 3050000), (1050000, 1100000), (250000, 300000), (1650000, 1700000), (400000, 450000), (1350000, 1400000), (2950000, 3000000), (2800000, 2850000), (800000, 850000), (1800000, 1850000), (2900000, 2950000)]]
+2017-01-23 19:51:31,160 - minerva_ann_operate_networks - INFO -   Loading slice (3150000, 3200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.016s.
+2017-01-23 19:52:31,015 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.855s.
+2017-01-23 19:52:47,777 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.944s.
+2017-01-23 19:53:47,641 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.863s.
+2017-01-23 19:54:04,908 - minerva_ann_operate_networks - INFO -   Loading slice (2500000, 2550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.986s.
+2017-01-23 19:55:04,824 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.915s.
+2017-01-23 19:55:21,803 - minerva_ann_operate_networks - INFO -   Loading slice (3200000, 3250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.072s.
+2017-01-23 19:56:21,682 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.879s.
+2017-01-23 19:56:38,687 - minerva_ann_operate_networks - INFO -   Loading slice (2400000, 2450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.004s.
+2017-01-23 19:57:38,615 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.927s.
+2017-01-23 19:57:55,442 - minerva_ann_operate_networks - INFO -   Loading slice (2450000, 2500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.022s.
+2017-01-23 19:58:55,269 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.827s.
+2017-01-23 19:59:12,134 - minerva_ann_operate_networks - INFO -   Loading slice (2350000, 2400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.031s.
+2017-01-23 20:00:11,991 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.856s.
+2017-01-23 20:00:28,795 - minerva_ann_operate_networks - INFO -   Loading slice (2250000, 2300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.881s.
+2017-01-23 20:01:28,656 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.861s.
+2017-01-23 20:01:45,915 - minerva_ann_operate_networks - INFO -   Loading slice (900000, 950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.071s.
+2017-01-23 20:02:45,838 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.922s.
+2017-01-23 20:03:02,721 - minerva_ann_operate_networks - INFO -   Loading slice (700000, 750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.036s.
+2017-01-23 20:04:02,583 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.861s.
+2017-01-23 20:04:19,857 - minerva_ann_operate_networks - INFO -   Loading slice (1500000, 1550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.064s.
+2017-01-23 20:05:19,698 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.841s.
+2017-01-23 20:05:36,577 - minerva_ann_operate_networks - INFO -   Loading slice (600000, 650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.041s.
+2017-01-23 20:06:36,437 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.860s.
+2017-01-23 20:06:53,360 - minerva_ann_operate_networks - INFO -   Loading slice (1200000, 1250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.034s.
+2017-01-23 20:07:53,204 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.844s.
+2017-01-23 20:08:10,153 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.036s.
+2017-01-23 20:09:10,012 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.858s.
+2017-01-23 20:09:26,883 - minerva_ann_operate_networks - INFO -   Loading slice (1700000, 1750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.046s.
+2017-01-23 20:10:26,739 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.855s.
+2017-01-23 20:10:43,663 - minerva_ann_operate_networks - INFO -   Loading slice (3450000, 3500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.040s.
+2017-01-23 20:11:43,539 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.875s.
+2017-01-23 20:12:00,616 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.885s.
+2017-01-23 20:13:00,485 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.869s.
+2017-01-23 20:13:17,360 - minerva_ann_operate_networks - INFO -   Loading slice (1900000, 1950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.054s.
+2017-01-23 20:14:17,194 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.834s.
+2017-01-23 20:14:34,092 - minerva_ann_operate_networks - INFO -   Loading slice (950000, 1000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.043s.
+2017-01-23 20:15:33,946 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.854s.
+2017-01-23 20:15:50,816 - minerva_ann_operate_networks - INFO -   Loading slice (3550000, 3600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.035s.
+2017-01-23 20:16:50,686 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.869s.
+2017-01-23 20:17:07,876 - minerva_ann_operate_networks - INFO -   Loading slice (1400000, 1450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.054s.
+2017-01-23 20:18:07,737 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.860s.
+2017-01-23 20:18:25,048 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.068s.
+2017-01-23 20:19:24,903 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.854s.
+2017-01-23 20:19:41,788 - minerva_ann_operate_networks - INFO -   Loading slice (2600000, 2650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.042s.
+2017-01-23 20:20:41,660 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.871s.
+2017-01-23 20:20:58,374 - minerva_ann_operate_networks - INFO -   Loading slice (1100000, 1150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.905s.
+2017-01-23 20:21:58,220 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.845s.
+2017-01-23 20:22:15,034 - minerva_ann_operate_networks - INFO -   Loading slice (1000000, 1050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.021s.
+2017-01-23 20:23:14,877 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.842s.
+2017-01-23 20:23:31,735 - minerva_ann_operate_networks - INFO -   Loading slice (1850000, 1900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.035s.
+2017-01-23 20:24:31,603 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.867s.
+2017-01-23 20:24:48,955 - minerva_ann_operate_networks - INFO -   Loading slice (3350000, 3400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.056s.
+2017-01-23 20:25:48,805 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.850s.
+2017-01-23 20:26:05,565 - minerva_ann_operate_networks - INFO -   Loading slice (2300000, 2350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.909s.
+2017-01-23 20:27:05,396 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.831s.
+2017-01-23 20:27:22,477 - minerva_ann_operate_networks - INFO -   Loading slice (1600000, 1650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.056s.
+2017-01-23 20:28:22,314 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.837s.
+2017-01-23 20:28:39,202 - minerva_ann_operate_networks - INFO -   Loading slice (3250000, 3300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.040s.
+2017-01-23 20:29:39,048 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.846s.
+2017-01-23 20:29:56,054 - minerva_ann_operate_networks - INFO -   Loading slice (3100000, 3150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.017s.
+2017-01-23 20:30:55,963 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.909s.
+2017-01-23 20:31:12,937 - minerva_ann_operate_networks - INFO -   Loading slice (1150000, 1200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.024s.
+2017-01-23 20:32:12,800 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.863s.
+2017-01-23 20:32:29,944 - minerva_ann_operate_networks - INFO -   Loading slice (850000, 900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.099s.
+2017-01-23 20:33:29,787 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.842s.
+2017-01-23 20:33:46,936 - minerva_ann_operate_networks - INFO -   Loading slice (1950000, 2000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.056s.
+2017-01-23 20:34:46,804 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.868s.
+2017-01-23 20:35:03,986 - minerva_ann_operate_networks - INFO -   Loading slice (550000, 600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.124s.
+2017-01-23 20:36:03,908 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.922s.
+2017-01-23 20:36:20,736 - minerva_ann_operate_networks - INFO -   Loading slice (2550000, 2600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.008s.
+2017-01-23 20:37:20,576 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.839s.
+2017-01-23 20:37:37,871 - minerva_ann_operate_networks - INFO -   Loading slice (450000, 500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.035s.
+2017-01-23 20:38:37,742 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.869s.
+2017-01-23 20:38:54,657 - minerva_ann_operate_networks - INFO -   Loading slice (2200000, 2250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.078s.
+2017-01-23 20:39:54,500 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.842s.
+2017-01-23 20:40:11,569 - minerva_ann_operate_networks - INFO -   Loading slice (1300000, 1350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.032s.
+2017-01-23 20:41:11,414 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.845s.
+2017-01-23 20:41:28,262 - minerva_ann_operate_networks - INFO -   Loading slice (1450000, 1500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.030s.
+2017-01-23 20:42:28,106 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.843s.
+2017-01-23 20:42:44,985 - minerva_ann_operate_networks - INFO -   Loading slice (750000, 800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.030s.
+2017-01-23 20:43:44,916 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.931s.
+2017-01-23 20:44:02,214 - minerva_ann_operate_networks - INFO -   Loading slice (300000, 350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.057s.
+2017-01-23 20:45:02,087 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.872s.
+2017-01-23 20:45:18,958 - minerva_ann_operate_networks - INFO -   Loading slice (2750000, 2800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.008s.
+2017-01-23 20:46:18,829 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.871s.
+2017-01-23 20:46:35,761 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.078s.
+2017-01-23 20:47:35,597 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.835s.
+2017-01-23 20:47:52,847 - minerva_ann_operate_networks - INFO -   Loading slice (3400000, 3450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.047s.
+2017-01-23 20:48:52,680 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.833s.
+2017-01-23 20:49:09,585 - minerva_ann_operate_networks - INFO -   Loading slice (650000, 700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.059s.
+2017-01-23 20:50:09,426 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.841s.
+2017-01-23 20:50:26,407 - minerva_ann_operate_networks - INFO -   Loading slice (3300000, 3350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.064s.
+2017-01-23 20:51:26,267 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.860s.
+2017-01-23 20:51:43,297 - minerva_ann_operate_networks - INFO -   Loading slice (3500000, 3550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.054s.
+2017-01-23 20:52:43,160 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.862s.
+2017-01-23 20:52:59,882 - minerva_ann_operate_networks - INFO -   Loading slice (3600000, 3650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.897s.
+2017-01-23 20:53:59,710 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.827s.
+2017-01-23 20:54:16,971 - minerva_ann_operate_networks - INFO -   Loading slice (2850000, 2900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.111s.
+2017-01-23 20:55:16,893 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.922s.
+2017-01-23 20:55:33,755 - minerva_ann_operate_networks - INFO -   Loading slice (2700000, 2750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.045s.
+2017-01-23 20:56:33,593 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.837s.
+2017-01-23 20:56:50,368 - minerva_ann_operate_networks - INFO -   Loading slice (2650000, 2700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.898s.
+2017-01-23 20:57:50,221 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.852s.
+2017-01-23 20:58:07,119 - minerva_ann_operate_networks - INFO -   Loading slice (1550000, 1600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.019s.
+2017-01-23 20:59:06,984 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.864s.
+2017-01-23 20:59:23,976 - minerva_ann_operate_networks - INFO -   Loading slice (1250000, 1300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.084s.
+2017-01-23 21:00:23,868 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.891s.
+2017-01-23 21:00:40,742 - minerva_ann_operate_networks - INFO -   Loading slice (3050000, 3100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.047s.
+2017-01-23 21:01:40,592 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.850s.
+2017-01-23 21:01:47,468 - minerva_ann_operate_networks - INFO -   Loading slice (3650000, 3668292) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 6.011s.
+2017-01-23 21:02:09,389 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 21.920s.
+2017-01-23 21:02:26,324 - minerva_ann_operate_networks - INFO -   Loading slice (2000000, 2050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.057s.
+2017-01-23 21:03:26,211 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.887s.
+2017-01-23 21:03:43,141 - minerva_ann_operate_networks - INFO -   Loading slice (2150000, 2200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.050s.
+2017-01-23 21:04:43,019 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.878s.
+2017-01-23 21:05:00,073 - minerva_ann_operate_networks - INFO -   Loading slice (2100000, 2150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.056s.
+2017-01-23 21:05:59,957 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.883s.
+2017-01-23 21:06:16,874 - minerva_ann_operate_networks - INFO -   Loading slice (350000, 400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.974s.
+2017-01-23 21:07:16,798 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.923s.
+2017-01-23 21:07:33,736 - minerva_ann_operate_networks - INFO -   Loading slice (2050000, 2100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.060s.
+2017-01-23 21:08:34,223 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.486s.
+2017-01-23 21:08:51,140 - minerva_ann_operate_networks - INFO -   Loading slice (1750000, 1800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.048s.
+2017-01-23 21:09:51,468 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.327s.
+2017-01-23 21:10:08,390 - minerva_ann_operate_networks - INFO -   Loading slice (500000, 550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.014s.
+2017-01-23 21:11:08,716 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.326s.
+2017-01-23 21:11:25,730 - minerva_ann_operate_networks - INFO -   Loading slice (3000000, 3050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.018s.
+2017-01-23 21:12:26,043 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.312s.
+2017-01-23 21:12:42,879 - minerva_ann_operate_networks - INFO -   Loading slice (1050000, 1100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.009s.
+2017-01-23 21:13:43,202 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.323s.
+2017-01-23 21:13:59,916 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.880s.
+2017-01-23 21:14:59,781 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.865s.
+2017-01-23 21:15:16,748 - minerva_ann_operate_networks - INFO -   Loading slice (1650000, 1700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.073s.
+2017-01-23 21:16:16,607 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.858s.
+2017-01-23 21:16:33,483 - minerva_ann_operate_networks - INFO -   Loading slice (400000, 450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.028s.
+2017-01-23 21:17:33,425 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.941s.
+2017-01-23 21:17:50,435 - minerva_ann_operate_networks - INFO -   Loading slice (1350000, 1400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.030s.
+2017-01-23 21:18:50,295 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.859s.
+2017-01-23 21:19:07,194 - minerva_ann_operate_networks - INFO -   Loading slice (2950000, 3000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.050s.
+2017-01-23 21:20:07,075 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.880s.
+2017-01-23 21:20:23,799 - minerva_ann_operate_networks - INFO -   Loading slice (2800000, 2850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.963s.
+2017-01-23 21:21:24,121 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.321s.
+2017-01-23 21:21:40,908 - minerva_ann_operate_networks - INFO -   Loading slice (800000, 850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.891s.
+2017-01-23 21:22:41,226 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.317s.
+2017-01-23 21:22:58,145 - minerva_ann_operate_networks - INFO -   Loading slice (1800000, 1850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.044s.
+2017-01-23 21:23:58,455 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.310s.
+2017-01-23 21:24:15,164 - minerva_ann_operate_networks - INFO -   Loading slice (2900000, 2950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.881s.
+2017-01-23 21:25:15,475 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.310s.
+2017-01-23 21:30:07,820 - minerva_ann_operate_networks - INFO -   The validation pass took 291.447s.
+2017-01-23 21:30:07,821 - minerva_ann_operate_networks - INFO - 
+Epoch 3 of 5 took 5932.678s
+  training loss:		429533215775893.750000
+2017-01-23 21:30:07,821 - minerva_ann_operate_networks - INFO - 
+  validation loss:		780320417808828.875000
+  validation accuracy:		4.02 %
+2017-01-23 21:30:07,821 - minerva_ann_operate_networks - INFO - ---
+2017-01-23 21:30:07,821 - minerva_ann_operate_networks - INFO - Train slices for epoch 3: [[(300000, 350000), (1550000, 1600000), (2050000, 2100000), (2200000, 2250000), (1950000, 2000000), (1250000, 1300000), (0, 50000), (50000, 100000), (2500000, 2550000), (1350000, 1400000), (3250000, 3300000), (450000, 500000), (3100000, 3150000), (1500000, 1550000), (600000, 650000), (2700000, 2750000), (3600000, 3650000), (2650000, 2700000), (650000, 700000), (3050000, 3100000), (2000000, 2050000), (3500000, 3550000), (3450000, 3500000), (2750000, 2800000), (1000000, 1050000), (850000, 900000), (1100000, 1150000), (1300000, 1350000), (2350000, 2400000), (800000, 850000), (1050000, 1100000), (950000, 1000000), (3300000, 3350000), (550000, 600000), (3350000, 3400000), (750000, 800000), (3150000, 3200000), (2150000, 2200000), (1650000, 1700000), (2850000, 2900000), (1400000, 1450000), (1750000, 1800000), (2450000, 2500000), (2900000, 2950000), (2800000, 2850000), (3550000, 3600000), (200000, 250000), (1450000, 1500000), (350000, 400000), (150000, 200000), (400000, 450000), (1150000, 1200000), (1850000, 1900000), (3000000, 3050000), (700000, 750000), (1700000, 1750000), (3200000, 3250000), (2600000, 2650000), (2250000, 2300000), (100000, 150000), (1800000, 1850000), (500000, 550000), (2100000, 2150000), (2950000, 3000000), (3650000, 3668292), (2400000, 2450000), (1200000, 1250000), (250000, 300000), (1900000, 1950000), (1600000, 1650000), (2550000, 2600000), (900000, 950000), (3400000, 3450000), (2300000, 2350000)]]
+2017-01-23 21:30:23,868 - minerva_ann_operate_networks - INFO -   Loading slice (300000, 350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.046s.
+2017-01-23 21:31:23,755 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.886s.
+2017-01-23 21:31:40,582 - minerva_ann_operate_networks - INFO -   Loading slice (1550000, 1600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.994s.
+2017-01-23 21:32:40,465 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.883s.
+2017-01-23 21:32:57,358 - minerva_ann_operate_networks - INFO -   Loading slice (2050000, 2100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.019s.
+2017-01-23 21:33:57,232 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.873s.
+2017-01-23 21:34:14,156 - minerva_ann_operate_networks - INFO -   Loading slice (2200000, 2250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.077s.
+2017-01-23 21:35:14,015 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.858s.
+2017-01-23 21:35:30,868 - minerva_ann_operate_networks - INFO -   Loading slice (1950000, 2000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.990s.
+2017-01-23 21:36:30,817 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.949s.
+2017-01-23 21:36:47,560 - minerva_ann_operate_networks - INFO -   Loading slice (1250000, 1300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.910s.
+2017-01-23 21:37:47,429 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.868s.
+2017-01-23 21:38:04,262 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.014s.
+2017-01-23 21:39:04,111 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.848s.
+2017-01-23 21:39:20,897 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.925s.
+2017-01-23 21:40:21,229 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.331s.
+2017-01-23 21:40:38,077 - minerva_ann_operate_networks - INFO -   Loading slice (2500000, 2550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.888s.
+2017-01-23 21:41:38,394 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.316s.
+2017-01-23 21:41:55,284 - minerva_ann_operate_networks - INFO -   Loading slice (1350000, 1400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.047s.
+2017-01-23 21:42:55,605 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.320s.
+2017-01-23 21:43:12,457 - minerva_ann_operate_networks - INFO -   Loading slice (3250000, 3300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.038s.
+2017-01-23 21:44:12,339 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.881s.
+2017-01-23 21:44:29,237 - minerva_ann_operate_networks - INFO -   Loading slice (450000, 500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.032s.
+2017-01-23 21:45:29,095 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.857s.
+2017-01-23 21:45:45,891 - minerva_ann_operate_networks - INFO -   Loading slice (3100000, 3150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.917s.
+2017-01-23 21:46:45,763 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.871s.
+2017-01-23 21:47:02,708 - minerva_ann_operate_networks - INFO -   Loading slice (1500000, 1550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.078s.
+2017-01-23 21:48:02,557 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.849s.
+2017-01-23 21:48:19,438 - minerva_ann_operate_networks - INFO -   Loading slice (600000, 650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.042s.
+2017-01-23 21:49:19,317 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.879s.
+2017-01-23 21:49:36,261 - minerva_ann_operate_networks - INFO -   Loading slice (2700000, 2750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.057s.
+2017-01-23 21:50:36,110 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.849s.
+2017-01-23 21:50:52,835 - minerva_ann_operate_networks - INFO -   Loading slice (3600000, 3650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.907s.
+2017-01-23 21:51:52,711 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.876s.
+2017-01-23 21:52:09,443 - minerva_ann_operate_networks - INFO -   Loading slice (2650000, 2700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.908s.
+2017-01-23 21:53:09,334 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.891s.
+2017-01-23 21:53:26,173 - minerva_ann_operate_networks - INFO -   Loading slice (650000, 700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.015s.
+2017-01-23 21:54:26,035 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.862s.
+2017-01-23 21:54:42,886 - minerva_ann_operate_networks - INFO -   Loading slice (3050000, 3100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.020s.
+2017-01-23 21:55:42,764 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.877s.
+2017-01-23 21:55:59,636 - minerva_ann_operate_networks - INFO -   Loading slice (2000000, 2050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.980s.
+2017-01-23 21:56:59,982 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.345s.
+2017-01-23 21:57:16,917 - minerva_ann_operate_networks - INFO -   Loading slice (3500000, 3550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.054s.
+2017-01-23 21:58:17,252 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.334s.
+2017-01-23 21:58:34,186 - minerva_ann_operate_networks - INFO -   Loading slice (3450000, 3500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.089s.
+2017-01-23 21:59:34,544 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.357s.
+2017-01-23 21:59:51,425 - minerva_ann_operate_networks - INFO -   Loading slice (2750000, 2800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.987s.
+2017-01-23 22:00:51,734 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.308s.
+2017-01-23 22:01:09,182 - minerva_ann_operate_networks - INFO -   Loading slice (1000000, 1050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.137s.
+2017-01-23 22:02:09,540 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.358s.
+2017-01-23 22:02:26,485 - minerva_ann_operate_networks - INFO -   Loading slice (850000, 900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.074s.
+2017-01-23 22:03:26,842 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.356s.
+2017-01-23 22:03:43,632 - minerva_ann_operate_networks - INFO -   Loading slice (1100000, 1150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.897s.
+2017-01-23 22:04:44,008 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.375s.
+2017-01-23 22:05:01,051 - minerva_ann_operate_networks - INFO -   Loading slice (1300000, 1350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.973s.
+2017-01-23 22:06:01,417 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.366s.
+2017-01-23 22:06:18,282 - minerva_ann_operate_networks - INFO -   Loading slice (2350000, 2400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.005s.
+2017-01-23 22:07:18,614 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.332s.
+2017-01-23 22:07:35,659 - minerva_ann_operate_networks - INFO -   Loading slice (800000, 850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.893s.
+2017-01-23 22:08:36,003 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.343s.
+2017-01-23 22:08:52,950 - minerva_ann_operate_networks - INFO -   Loading slice (1050000, 1100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.026s.
+2017-01-23 22:09:53,300 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.349s.
+2017-01-23 22:10:10,215 - minerva_ann_operate_networks - INFO -   Loading slice (950000, 1000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.058s.
+2017-01-23 22:11:10,552 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.337s.
+2017-01-23 22:11:27,493 - minerva_ann_operate_networks - INFO -   Loading slice (3300000, 3350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.121s.
+2017-01-23 22:12:27,853 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.359s.
+2017-01-23 22:12:44,586 - minerva_ann_operate_networks - INFO -   Loading slice (550000, 600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.910s.
+2017-01-23 22:13:44,965 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.379s.
+2017-01-23 22:14:01,909 - minerva_ann_operate_networks - INFO -   Loading slice (3350000, 3400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.022s.
+2017-01-23 22:15:02,523 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.614s.
+2017-01-23 22:15:19,422 - minerva_ann_operate_networks - INFO -   Loading slice (750000, 800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.870s.
+2017-01-23 22:16:19,746 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.323s.
+2017-01-23 22:16:36,631 - minerva_ann_operate_networks - INFO -   Loading slice (3150000, 3200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.022s.
+2017-01-23 22:17:36,998 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.366s.
+2017-01-23 22:17:54,113 - minerva_ann_operate_networks - INFO -   Loading slice (2150000, 2200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.029s.
+2017-01-23 22:18:53,999 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.885s.
+2017-01-23 22:19:10,892 - minerva_ann_operate_networks - INFO -   Loading slice (1650000, 1700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.053s.
+2017-01-23 22:20:11,225 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.333s.
+2017-01-23 22:20:27,904 - minerva_ann_operate_networks - INFO -   Loading slice (2850000, 2900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.912s.
+2017-01-23 22:21:28,448 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.543s.
+2017-01-23 22:21:45,421 - minerva_ann_operate_networks - INFO -   Loading slice (1400000, 1450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.026s.
+2017-01-23 22:22:45,789 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.367s.
+2017-01-23 22:23:02,606 - minerva_ann_operate_networks - INFO -   Loading slice (1750000, 1800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.028s.
+2017-01-23 22:24:02,968 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.361s.
+2017-01-23 22:24:19,887 - minerva_ann_operate_networks - INFO -   Loading slice (2450000, 2500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.059s.
+2017-01-23 22:25:20,233 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.346s.
+2017-01-23 22:25:37,332 - minerva_ann_operate_networks - INFO -   Loading slice (2900000, 2950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.889s.
+2017-01-23 22:26:37,200 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.867s.
+2017-01-23 22:26:54,059 - minerva_ann_operate_networks - INFO -   Loading slice (2800000, 2850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.982s.
+2017-01-23 22:27:53,945 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.885s.
+2017-01-23 22:28:10,808 - minerva_ann_operate_networks - INFO -   Loading slice (3550000, 3600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.010s.
+2017-01-23 22:29:10,710 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.901s.
+2017-01-23 22:29:27,982 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.049s.
+2017-01-23 22:30:27,852 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.869s.
+2017-01-23 22:30:44,712 - minerva_ann_operate_networks - INFO -   Loading slice (1450000, 1500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.006s.
+2017-01-23 22:31:44,608 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.895s.
+2017-01-23 22:32:01,284 - minerva_ann_operate_networks - INFO -   Loading slice (350000, 400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.879s.
+2017-01-23 22:33:01,226 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.941s.
+2017-01-23 22:33:18,436 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.106s.
+2017-01-23 22:34:18,299 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.863s.
+2017-01-23 22:34:35,349 - minerva_ann_operate_networks - INFO -   Loading slice (400000, 450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.904s.
+2017-01-23 22:35:35,665 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.316s.
+2017-01-23 22:35:52,516 - minerva_ann_operate_networks - INFO -   Loading slice (1150000, 1200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.005s.
+2017-01-23 22:36:52,393 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.877s.
+2017-01-23 22:37:09,233 - minerva_ann_operate_networks - INFO -   Loading slice (1850000, 1900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.015s.
+2017-01-23 22:38:09,552 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.318s.
+2017-01-23 22:38:26,737 - minerva_ann_operate_networks - INFO -   Loading slice (3000000, 3050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.035s.
+2017-01-23 22:39:27,077 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.340s.
+2017-01-23 22:39:44,079 - minerva_ann_operate_networks - INFO -   Loading slice (700000, 750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.153s.
+2017-01-23 22:40:44,385 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.306s.
+2017-01-23 22:41:01,243 - minerva_ann_operate_networks - INFO -   Loading slice (1700000, 1750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.014s.
+2017-01-23 22:42:01,576 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.333s.
+2017-01-23 22:42:18,566 - minerva_ann_operate_networks - INFO -   Loading slice (3200000, 3250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.918s.
+2017-01-23 22:43:18,895 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.329s.
+2017-01-23 22:43:35,785 - minerva_ann_operate_networks - INFO -   Loading slice (2600000, 2650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.045s.
+2017-01-23 22:44:36,126 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.340s.
+2017-01-23 22:44:53,242 - minerva_ann_operate_networks - INFO -   Loading slice (2250000, 2300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.892s.
+2017-01-23 22:45:53,132 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.890s.
+2017-01-23 22:46:09,871 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.888s.
+2017-01-23 22:47:10,198 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.327s.
+2017-01-23 22:47:27,310 - minerva_ann_operate_networks - INFO -   Loading slice (1800000, 1850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.070s.
+2017-01-23 22:48:27,647 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.336s.
+2017-01-23 22:48:44,505 - minerva_ann_operate_networks - INFO -   Loading slice (500000, 550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.021s.
+2017-01-23 22:49:44,394 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.889s.
+2017-01-23 22:50:01,488 - minerva_ann_operate_networks - INFO -   Loading slice (2100000, 2150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.046s.
+2017-01-23 22:51:01,353 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.864s.
+2017-01-23 22:51:18,279 - minerva_ann_operate_networks - INFO -   Loading slice (2950000, 3000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.062s.
+2017-01-23 22:52:18,146 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.866s.
+2017-01-23 22:52:25,085 - minerva_ann_operate_networks - INFO -   Loading slice (3650000, 3668292) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 6.006s.
+2017-01-23 22:52:47,031 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 21.946s.
+2017-01-23 22:53:03,797 - minerva_ann_operate_networks - INFO -   Loading slice (2400000, 2450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.883s.
+2017-01-23 22:54:03,658 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.861s.
+2017-01-23 22:54:20,551 - minerva_ann_operate_networks - INFO -   Loading slice (1200000, 1250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.020s.
+2017-01-23 22:55:20,435 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.883s.
+2017-01-23 22:55:37,655 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.930s.
+2017-01-23 22:56:37,600 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.945s.
+2017-01-23 22:56:54,598 - minerva_ann_operate_networks - INFO -   Loading slice (1900000, 1950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.147s.
+2017-01-23 22:57:54,556 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.957s.
+2017-01-23 22:58:11,637 - minerva_ann_operate_networks - INFO -   Loading slice (1600000, 1650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.010s.
+2017-01-23 22:59:11,516 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.879s.
+2017-01-23 22:59:28,368 - minerva_ann_operate_networks - INFO -   Loading slice (2550000, 2600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.018s.
+2017-01-23 23:00:28,257 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.889s.
+2017-01-23 23:00:44,998 - minerva_ann_operate_networks - INFO -   Loading slice (900000, 950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.903s.
+2017-01-23 23:01:44,877 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.879s.
+2017-01-23 23:02:02,281 - minerva_ann_operate_networks - INFO -   Loading slice (3400000, 3450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.048s.
+2017-01-23 23:03:02,166 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.884s.
+2017-01-23 23:03:18,948 - minerva_ann_operate_networks - INFO -   Loading slice (2300000, 2350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.944s.
+2017-01-23 23:04:18,851 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.903s.
+2017-01-23 23:09:07,825 - minerva_ann_operate_networks - INFO -   The validation pass took 288.119s.
+2017-01-23 23:09:07,826 - minerva_ann_operate_networks - INFO - 
+Epoch 4 of 5 took 5940.005s
+  training loss:		1392302977468241.500000
+2017-01-23 23:09:07,826 - minerva_ann_operate_networks - INFO - 
+  validation loss:		1990497135801524.750000
+  validation accuracy:		4.02 %
+2017-01-23 23:09:07,826 - minerva_ann_operate_networks - INFO - ---
+2017-01-23 23:09:07,826 - minerva_ann_operate_networks - INFO - Train slices for epoch 4: [[(2650000, 2700000), (800000, 850000), (2450000, 2500000), (700000, 750000), (500000, 550000), (1000000, 1050000), (2550000, 2600000), (3400000, 3450000), (1500000, 1550000), (850000, 900000), (1300000, 1350000), (50000, 100000), (1800000, 1850000), (2850000, 2900000), (1600000, 1650000), (0, 50000), (2600000, 2650000), (2000000, 2050000), (3650000, 3668292), (100000, 150000), (1200000, 1250000), (2100000, 2150000), (1900000, 1950000), (1700000, 1750000), (300000, 350000), (2700000, 2750000), (3000000, 3050000), (450000, 500000), (3450000, 3500000), (1350000, 1400000), (600000, 650000), (3200000, 3250000), (3150000, 3200000), (1250000, 1300000), (3250000, 3300000), (1750000, 1800000), (2150000, 2200000), (550000, 600000), (1550000, 1600000), (2400000, 2450000), (3600000, 3650000), (1850000, 1900000), (950000, 1000000), (1050000, 1100000), (1100000, 1150000), (2200000, 2250000), (650000, 700000), (3550000, 3600000), (900000, 950000), (150000, 200000), (3050000, 3100000), (750000, 800000), (1650000, 1700000), (2900000, 2950000), (1150000, 1200000), (2250000, 2300000), (1950000, 2000000), (250000, 300000), (2500000, 2550000), (3300000, 3350000), (3350000, 3400000), (2750000, 2800000), (350000, 400000), (1400000, 1450000), (400000, 450000), (2300000, 2350000), (3500000, 3550000), (2350000, 2400000), (2800000, 2850000), (200000, 250000), (3100000, 3150000), (2050000, 2100000), (1450000, 1500000), (2950000, 3000000)]]
+2017-01-23 23:09:23,777 - minerva_ann_operate_networks - INFO -   Loading slice (2650000, 2700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.951s.
+2017-01-23 23:10:23,644 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.866s.
+2017-01-23 23:10:40,427 - minerva_ann_operate_networks - INFO -   Loading slice (800000, 850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.896s.
+2017-01-23 23:11:40,318 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.891s.
+2017-01-23 23:11:57,649 - minerva_ann_operate_networks - INFO -   Loading slice (2450000, 2500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.043s.
+2017-01-23 23:12:57,525 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.876s.
+2017-01-23 23:13:16,182 - minerva_ann_operate_networks - INFO -   Loading slice (700000, 750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 17.669s.
+2017-01-23 23:14:16,069 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.886s.
+2017-01-23 23:14:33,249 - minerva_ann_operate_networks - INFO -   Loading slice (500000, 550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.001s.
+2017-01-23 23:15:33,215 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.966s.
+2017-01-23 23:15:49,972 - minerva_ann_operate_networks - INFO -   Loading slice (1000000, 1050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.891s.
+2017-01-23 23:16:49,844 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.872s.
+2017-01-23 23:17:06,857 - minerva_ann_operate_networks - INFO -   Loading slice (2550000, 2600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.135s.
+2017-01-23 23:18:06,786 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.929s.
+2017-01-23 23:18:24,841 - minerva_ann_operate_networks - INFO -   Loading slice (3400000, 3450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.970s.
+2017-01-23 23:19:24,769 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.927s.
+2017-01-23 23:19:41,750 - minerva_ann_operate_networks - INFO -   Loading slice (1500000, 1550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.071s.
+2017-01-23 23:20:42,064 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.313s.
+2017-01-23 23:20:59,142 - minerva_ann_operate_networks - INFO -   Loading slice (850000, 900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.119s.
+2017-01-23 23:21:59,473 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.330s.
+2017-01-23 23:22:16,312 - minerva_ann_operate_networks - INFO -   Loading slice (1300000, 1350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.897s.
+2017-01-23 23:23:16,688 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.375s.
+2017-01-23 23:23:33,458 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.942s.
+2017-01-23 23:24:33,819 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.360s.
+2017-01-23 23:24:51,153 - minerva_ann_operate_networks - INFO -   Loading slice (1800000, 1850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.572s.
+2017-01-23 23:25:51,494 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.341s.
+2017-01-23 23:26:08,720 - minerva_ann_operate_networks - INFO -   Loading slice (2850000, 2900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.901s.
+2017-01-23 23:27:08,647 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.926s.
+2017-01-23 23:27:25,501 - minerva_ann_operate_networks - INFO -   Loading slice (1600000, 1650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.007s.
+2017-01-23 23:28:25,370 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.868s.
+2017-01-23 23:28:42,313 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.035s.
+2017-01-23 23:29:42,184 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.871s.
+2017-01-23 23:29:58,972 - minerva_ann_operate_networks - INFO -   Loading slice (2600000, 2650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.946s.
+2017-01-23 23:30:58,830 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.857s.
+2017-01-23 23:31:16,218 - minerva_ann_operate_networks - INFO -   Loading slice (2000000, 2050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.991s.
+2017-01-23 23:32:16,101 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.882s.
+2017-01-23 23:32:22,979 - minerva_ann_operate_networks - INFO -   Loading slice (3650000, 3668292) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 6.008s.
+2017-01-23 23:32:44,897 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 21.917s.
+2017-01-23 23:33:01,892 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.917s.
+2017-01-23 23:34:01,783 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.890s.
+2017-01-23 23:34:18,705 - minerva_ann_operate_networks - INFO -   Loading slice (1200000, 1250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.003s.
+2017-01-23 23:35:18,586 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.881s.
+2017-01-23 23:35:35,537 - minerva_ann_operate_networks - INFO -   Loading slice (2100000, 2150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.102s.
+2017-01-23 23:36:35,502 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.964s.
+2017-01-23 23:36:52,308 - minerva_ann_operate_networks - INFO -   Loading slice (1900000, 1950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.950s.
+2017-01-23 23:37:52,211 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.903s.
+2017-01-23 23:38:09,326 - minerva_ann_operate_networks - INFO -   Loading slice (1700000, 1750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.027s.
+2017-01-23 23:39:09,231 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.904s.
+2017-01-23 23:39:26,088 - minerva_ann_operate_networks - INFO -   Loading slice (300000, 350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.023s.
+2017-01-23 23:40:26,044 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.956s.
+2017-01-23 23:40:43,036 - minerva_ann_operate_networks - INFO -   Loading slice (2700000, 2750000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.137s.
+2017-01-23 23:41:43,003 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.967s.
+2017-01-23 23:42:00,194 - minerva_ann_operate_networks - INFO -   Loading slice (3000000, 3050000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.033s.
+2017-01-23 23:43:00,064 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.870s.
+2017-01-23 23:43:16,944 - minerva_ann_operate_networks - INFO -   Loading slice (450000, 500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.031s.
+2017-01-23 23:44:16,839 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.894s.
+2017-01-23 23:44:33,673 - minerva_ann_operate_networks - INFO -   Loading slice (3450000, 3500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.919s.
+2017-01-23 23:45:33,578 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.905s.
+2017-01-23 23:45:51,075 - minerva_ann_operate_networks - INFO -   Loading slice (1350000, 1400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.461s.
+2017-01-23 23:46:50,952 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.877s.
+2017-01-23 23:47:07,977 - minerva_ann_operate_networks - INFO -   Loading slice (600000, 650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.006s.
+2017-01-23 23:48:07,859 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.882s.
+2017-01-23 23:48:25,000 - minerva_ann_operate_networks - INFO -   Loading slice (3200000, 3250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.005s.
+2017-01-23 23:49:24,877 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.876s.
+2017-01-23 23:49:41,719 - minerva_ann_operate_networks - INFO -   Loading slice (3150000, 3200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.974s.
+2017-01-23 23:50:41,621 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.902s.
+2017-01-23 23:50:58,383 - minerva_ann_operate_networks - INFO -   Loading slice (1250000, 1300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.913s.
+2017-01-23 23:51:58,281 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.898s.
+2017-01-23 23:52:15,214 - minerva_ann_operate_networks - INFO -   Loading slice (3250000, 3300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.055s.
+2017-01-23 23:53:15,080 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.866s.
+2017-01-23 23:53:32,049 - minerva_ann_operate_networks - INFO -   Loading slice (1750000, 1800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.058s.
+2017-01-23 23:54:31,932 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.883s.
+2017-01-23 23:54:49,377 - minerva_ann_operate_networks - INFO -   Loading slice (2150000, 2200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.107s.
+2017-01-23 23:55:49,363 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.986s.
+2017-01-23 23:56:06,134 - minerva_ann_operate_networks - INFO -   Loading slice (550000, 600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.948s.
+2017-01-23 23:57:06,023 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.888s.
+2017-01-23 23:57:22,939 - minerva_ann_operate_networks - INFO -   Loading slice (1550000, 1600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.002s.
+2017-01-23 23:58:22,825 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.885s.
+2017-01-23 23:58:39,820 - minerva_ann_operate_networks - INFO -   Loading slice (2400000, 2450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.950s.
+2017-01-23 23:59:39,706 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.885s.
+2017-01-23 23:59:56,570 - minerva_ann_operate_networks - INFO -   Loading slice (3600000, 3650000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.009s.
+2017-01-24 00:00:56,465 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.894s.
+2017-01-24 00:01:13,408 - minerva_ann_operate_networks - INFO -   Loading slice (1850000, 1900000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.003s.
+2017-01-24 00:02:13,301 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.892s.
+2017-01-24 00:02:30,213 - minerva_ann_operate_networks - INFO -   Loading slice (950000, 1000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.045s.
+2017-01-24 00:03:30,080 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.867s.
+2017-01-24 00:03:46,884 - minerva_ann_operate_networks - INFO -   Loading slice (1050000, 1100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.001s.
+2017-01-24 00:04:46,770 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.886s.
+2017-01-24 00:05:03,504 - minerva_ann_operate_networks - INFO -   Loading slice (1100000, 1150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.930s.
+2017-01-24 00:06:03,392 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.888s.
+2017-01-24 00:06:20,707 - minerva_ann_operate_networks - INFO -   Loading slice (2200000, 2250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.067s.
+2017-01-24 00:07:20,603 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.896s.
+2017-01-24 00:07:37,444 - minerva_ann_operate_networks - INFO -   Loading slice (650000, 700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.013s.
+2017-01-24 00:08:37,353 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.909s.
+2017-01-24 00:08:54,362 - minerva_ann_operate_networks - INFO -   Loading slice (3550000, 3600000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.116s.
+2017-01-24 00:09:54,308 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.945s.
+2017-01-24 00:10:11,078 - minerva_ann_operate_networks - INFO -   Loading slice (900000, 950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.923s.
+2017-01-24 00:11:10,970 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.892s.
+2017-01-24 00:11:27,937 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.107s.
+2017-01-24 00:12:28,290 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.353s.
+2017-01-24 00:12:57,096 - minerva_ann_operate_networks - INFO -   Loading slice (3050000, 3100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 27.840s.
+2017-01-24 00:13:57,434 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.337s.
+2017-01-24 00:14:14,486 - minerva_ann_operate_networks - INFO -   Loading slice (750000, 800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.883s.
+2017-01-24 00:15:14,414 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.927s.
+2017-01-24 00:15:31,469 - minerva_ann_operate_networks - INFO -   Loading slice (1650000, 1700000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.049s.
+2017-01-24 00:16:31,385 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.915s.
+2017-01-24 00:16:48,204 - minerva_ann_operate_networks - INFO -   Loading slice (2900000, 2950000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.917s.
+2017-01-24 00:17:48,069 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.864s.
+2017-01-24 00:18:05,328 - minerva_ann_operate_networks - INFO -   Loading slice (1150000, 1200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.481s.
+2017-01-24 00:19:05,623 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 60.295s.
+2017-01-24 00:19:22,474 - minerva_ann_operate_networks - INFO -   Loading slice (2250000, 2300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.955s.
+2017-01-24 00:20:22,359 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.885s.
+2017-01-24 00:20:39,199 - minerva_ann_operate_networks - INFO -   Loading slice (1950000, 2000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.911s.
+2017-01-24 00:21:39,074 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.875s.
+2017-01-24 00:21:55,928 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.974s.
+2017-01-24 00:22:55,886 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.958s.
+2017-01-24 00:23:12,703 - minerva_ann_operate_networks - INFO -   Loading slice (2500000, 2550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.982s.
+2017-01-24 00:24:12,693 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.989s.
+2017-01-24 00:24:29,820 - minerva_ann_operate_networks - INFO -   Loading slice (3300000, 3350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.020s.
+2017-01-24 00:25:29,715 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.894s.
+2017-01-24 00:25:46,502 - minerva_ann_operate_networks - INFO -   Loading slice (3350000, 3400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.000s.
+2017-01-24 00:26:46,373 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.870s.
+2017-01-24 00:27:03,220 - minerva_ann_operate_networks - INFO -   Loading slice (2750000, 2800000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.001s.
+2017-01-24 00:28:03,103 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.882s.
+2017-01-24 00:28:20,241 - minerva_ann_operate_networks - INFO -   Loading slice (350000, 400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.870s.
+2017-01-24 00:29:20,116 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.874s.
+2017-01-24 00:29:36,890 - minerva_ann_operate_networks - INFO -   Loading slice (1400000, 1450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.945s.
+2017-01-24 00:30:36,789 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.898s.
+2017-01-24 00:30:53,822 - minerva_ann_operate_networks - INFO -   Loading slice (400000, 450000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.917s.
+2017-01-24 00:31:53,722 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.900s.
+2017-01-24 00:32:10,533 - minerva_ann_operate_networks - INFO -   Loading slice (2300000, 2350000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.983s.
+2017-01-24 00:33:10,394 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.861s.
+2017-01-24 00:33:27,274 - minerva_ann_operate_networks - INFO -   Loading slice (3500000, 3550000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.019s.
+2017-01-24 00:34:27,146 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.871s.
+2017-01-24 00:34:44,432 - minerva_ann_operate_networks - INFO -   Loading slice (2350000, 2400000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.993s.
+2017-01-24 00:35:44,306 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.874s.
+2017-01-24 00:36:01,158 - minerva_ann_operate_networks - INFO -   Loading slice (2800000, 2850000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.970s.
+2017-01-24 00:37:01,055 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.897s.
+2017-01-24 00:37:18,025 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.040s.
+2017-01-24 00:38:17,989 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.964s.
+2017-01-24 00:38:34,780 - minerva_ann_operate_networks - INFO -   Loading slice (3100000, 3150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 15.941s.
+2017-01-24 00:39:34,674 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.894s.
+2017-01-24 00:39:51,592 - minerva_ann_operate_networks - INFO -   Loading slice (2050000, 2100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.036s.
+2017-01-24 00:40:51,462 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.869s.
+2017-01-24 00:41:08,819 - minerva_ann_operate_networks - INFO -   Loading slice (1450000, 1500000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.018s.
+2017-01-24 00:42:08,729 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.910s.
+2017-01-24 00:42:25,569 - minerva_ann_operate_networks - INFO -   Loading slice (2950000, 3000000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.019s.
+2017-01-24 00:43:25,442 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 59.873s.
+2017-01-24 00:48:14,704 - minerva_ann_operate_networks - INFO -   The validation pass took 288.424s.
+2017-01-24 00:48:14,705 - minerva_ann_operate_networks - INFO - 
+Epoch 5 of 5 took 5946.879s
+  training loss:		2760291636859324.000000
+2017-01-24 00:48:14,705 - minerva_ann_operate_networks - INFO - 
+  validation loss:		3634031083539572.000000
+  validation accuracy:		4.02 %
+2017-01-24 00:48:14,705 - minerva_ann_operate_networks - INFO - ---
+2017-01-24 00:48:14,705 - minerva_ann_operate_networks - INFO - Finished 5 epochs.
+2017-01-24 00:48:14,711 - minerva_ann_operate_networks - INFO - Loading data for testing...
+2017-01-24 00:48:14,775 - minerva_ann_datasets - INFO -  Learning sample size = 3668292 examples
+2017-01-24 00:48:14,775 - minerva_ann_datasets - INFO -  Validation sample size = 441963 examples
+2017-01-24 00:48:14,775 - minerva_ann_datasets - INFO -  Testing sample size = 309375 examples
+2017-01-24 00:48:14,775 - minerva_ann_operate_networks - INFO -  Used testing sample size = 309375 examples
+2017-01-24 00:48:14,776 - minerva_ann_networks - INFO - Convpool conv-x-0 params: {'filter_size': (8, 3), 'pool_size': (2, 1), 'nfilters': 12}
+2017-01-24 00:48:14,777 - minerva_ann_networks - INFO - Convpool maxpool-x-0
+2017-01-24 00:48:14,777 - minerva_ann_networks - INFO - Convpool conv-x-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2017-01-24 00:48:14,778 - minerva_ann_networks - INFO - Convpool maxpool-x-1
+2017-01-24 00:48:14,778 - minerva_ann_networks - INFO - Convpool conv-x-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2017-01-24 00:48:14,779 - minerva_ann_networks - INFO - Convpool maxpool-x-2
+2017-01-24 00:48:14,779 - minerva_ann_networks - INFO - Convpool conv-x-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2017-01-24 00:48:14,781 - minerva_ann_networks - INFO - Convpool maxpool-x-3
+2017-01-24 00:48:14,807 - minerva_ann_networks - INFO - Dense dense-x with nhidden = 196, dropout = 0.5
+2017-01-24 00:48:14,807 - minerva_ann_networks - INFO - Convpool conv-u-0 params: {'filter_size': (8, 5), 'pool_size': (2, 1), 'nfilters': 12}
+2017-01-24 00:48:14,808 - minerva_ann_networks - INFO - Convpool maxpool-u-0
+2017-01-24 00:48:14,808 - minerva_ann_networks - INFO - Convpool conv-u-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2017-01-24 00:48:14,809 - minerva_ann_networks - INFO - Convpool maxpool-u-1
+2017-01-24 00:48:14,809 - minerva_ann_networks - INFO - Convpool conv-u-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2017-01-24 00:48:14,810 - minerva_ann_networks - INFO - Convpool maxpool-u-2
+2017-01-24 00:48:14,810 - minerva_ann_networks - INFO - Convpool conv-u-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2017-01-24 00:48:14,812 - minerva_ann_networks - INFO - Convpool maxpool-u-3
+2017-01-24 00:48:14,821 - minerva_ann_networks - INFO - Dense dense-u with nhidden = 196, dropout = 0.5
+2017-01-24 00:48:14,822 - minerva_ann_networks - INFO - Convpool conv-v-0 params: {'filter_size': (8, 5), 'pool_size': (2, 1), 'nfilters': 12}
+2017-01-24 00:48:14,822 - minerva_ann_networks - INFO - Convpool maxpool-v-0
+2017-01-24 00:48:14,822 - minerva_ann_networks - INFO - Convpool conv-v-1 params: {'filter_size': (7, 3), 'pool_size': (2, 1), 'nfilters': 20}
+2017-01-24 00:48:14,823 - minerva_ann_networks - INFO - Convpool maxpool-v-1
+2017-01-24 00:48:14,823 - minerva_ann_networks - INFO - Convpool conv-v-2 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 28}
+2017-01-24 00:48:14,825 - minerva_ann_networks - INFO - Convpool maxpool-v-2
+2017-01-24 00:48:14,825 - minerva_ann_networks - INFO - Convpool conv-v-3 params: {'filter_size': (6, 3), 'pool_size': (2, 1), 'nfilters': 36}
+2017-01-24 00:48:14,826 - minerva_ann_networks - INFO - Convpool maxpool-v-3
+2017-01-24 00:48:14,835 - minerva_ann_networks - INFO - Dense dense-v with nhidden = 196, dropout = 0.5
+2017-01-24 00:48:14,836 - minerva_ann_networks - INFO - Network: concat columns...
+2017-01-24 00:48:14,838 - minerva_ann_networks - INFO - Dense dense-across with nhidden = 98, dropout = 0.5
+2017-01-24 00:48:14,839 - minerva_ann_networks - INFO - Softmax output prob with n_units = 11
+2017-01-24 00:48:14,845 - minerva_ann_networks - INFO - n-parameters: 1684823
+2017-01-24 00:48:26,139 - minerva_ann_operate_networks - INFO - Starting testing...
+2017-01-24 00:48:42,211 - minerva_ann_operate_networks - INFO -   Loading slice (0, 50000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.072s.
+2017-01-24 00:59:59,092 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 676.880s.
+2017-01-24 01:00:15,231 - minerva_ann_operate_networks - INFO -   Loading slice (50000, 100000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.131s.
+2017-01-24 01:11:32,592 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 677.361s.
+2017-01-24 01:11:51,487 - minerva_ann_operate_networks - INFO -   Loading slice (100000, 150000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 18.887s.
+2017-01-24 01:23:09,175 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 677.688s.
+2017-01-24 01:23:25,251 - minerva_ann_operate_networks - INFO -   Loading slice (150000, 200000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.069s.
+2017-01-24 01:34:49,433 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 684.181s.
+2017-01-24 01:35:05,488 - minerva_ann_operate_networks - INFO -   Loading slice (200000, 250000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.048s.
+2017-01-24 01:46:22,815 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 677.327s.
+2017-01-24 01:46:38,932 - minerva_ann_operate_networks - INFO -   Loading slice (250000, 300000) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 16.111s.
+2017-01-24 01:58:02,375 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 683.442s.
+2017-01-24 01:58:05,594 - minerva_ann_operate_networks - INFO -   Loading slice (300000, 309375) from /data/perdue/minerva/targets/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5 took 3.212s.
+2017-01-24 02:00:12,226 - minerva_ann_operate_networks - INFO -   -Iterating over the slice took 126.631s.
+2017-01-24 02:00:12,293 - minerva_ann_operate_networks - INFO - 
+Final results:
+  test loss:			131909844888275952.000000
+  test accuracy:		0.46 %
+2017-01-24 02:00:12,293 - minerva_ann_operate_networks - INFO -    target 0 accuracy:			0.000 %
+2017-01-24 02:00:12,293 - minerva_ann_operate_networks - INFO -    target 1 accuracy:			0.000 %
+2017-01-24 02:00:12,294 - minerva_ann_operate_networks - INFO -    target 2 accuracy:			0.000 %
+2017-01-24 02:00:12,294 - minerva_ann_operate_networks - INFO -    target 3 accuracy:			0.000 %
+2017-01-24 02:00:12,294 - minerva_ann_operate_networks - INFO -    target 4 accuracy:			0.000 %
+2017-01-24 02:00:12,294 - minerva_ann_operate_networks - INFO -    target 5 accuracy:			0.000 %
+2017-01-24 02:00:12,294 - minerva_ann_operate_networks - INFO -    target 6 accuracy:			0.000 %
+2017-01-24 02:00:12,294 - minerva_ann_operate_networks - INFO -    target 7 accuracy:			0.000 %
+2017-01-24 02:00:12,294 - minerva_ann_operate_networks - INFO -    target 8 accuracy:			0.000 %
+2017-01-24 02:00:12,294 - minerva_ann_operate_networks - INFO -    target 9 accuracy:			100.000 %
+2017-01-24 02:00:12,294 - minerva_ann_operate_networks - INFO -    target 10 accuracy:			0.000 %
