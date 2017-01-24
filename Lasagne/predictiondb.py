@@ -44,6 +44,23 @@ def get_11segment_prediction_table(metadata):
     return table
 
 
+def get_67segment_prediction_table(metadata):
+    table = Table('zsegment_prediction', metadata,
+                  Column('id', Integer(), primary_key=True),
+                  Column('run', Integer()),
+                  Column('subrun', Integer()),
+                  Column('gate', Integer()),
+                  Column('phys_evt', Integer()),
+                  Column('segment', Integer()),
+                  UniqueConstraint('run', 'subrun', 'gate', 'phys_evt')
+                  )
+    for i in range(67):
+        name = 'prob%02d' % i
+        col = Column(name, Float())
+        table.append_column(col)
+    return table
+
+
 def get_active_table(metadata, engine,
                      get_table_fn=get_11segment_prediction_table):
     table = get_table_fn(metadata)

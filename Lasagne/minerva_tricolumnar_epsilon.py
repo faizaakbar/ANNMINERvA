@@ -296,7 +296,7 @@ if __name__ == '__main__':
     networkstr['topology'] = convpooldictlist
     networkstr['nhidden'] = 196
     networkstr['dropoutp'] = 0.5
-    networkstr['noutputs'] = 11
+    networkstr['noutputs'] = options.noutputs
     networkstr['img_depth'] = options.img_depth
     networkstr['l1_penalty_scale'] = None
     networkstr['l2_penalty_scale'] = options.l2_penalty_scale
@@ -319,6 +319,9 @@ if __name__ == '__main__':
     logger.info(
         " L2 regularization penalty scale: %s" % networkstr['l2_penalty_scale']
     )
+    logger.info(" Target index: %s" % options.target_idx)
+    logger.info(" Number of categories in target variable: %s" %
+                networkstr['noutputs'])
 
     if options.do_learn:
         networkstr['input_list'] = get_theano_input_tensors()
