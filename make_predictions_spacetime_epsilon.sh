@@ -18,16 +18,15 @@ NOUTPUTS=67
 # `-v` == run in verbose mode
 # `-a` == use the whole file as if it were the "test" sample
 cat << EOF
-python Lasagne/minerva_tricolumnar_spacetime_epsilon.py \
-  -d $DATAFILE \
-  -p \
-  -v \
-  -a \
-  -s $MODEL \
-  -f $LOGFILE \
-  --target_idx $TGTIDX \
-  --noutputs $NOUTPUTS
-  # -t \
+    python Lasagne/minerva_tricolumnar_spacetime_epsilon.py \
+      -d $DATAFILE \
+      -p \
+      -v \
+      -a \
+      -s $MODEL \
+      -f $LOGFILE \
+      --target_idx $TGTIDX \
+      --noutputs $NOUTPUTS
 EOF
 
 python Lasagne/minerva_tricolumnar_spacetime_epsilon.py \
@@ -42,4 +41,3 @@ python Lasagne/minerva_tricolumnar_spacetime_epsilon.py \
   # -t \
 
 mv prediction${NOUTPUTS}.db $DBNAME
-
