@@ -90,7 +90,7 @@ def make_get_eventids_hits_and_targets(target_idx):
     """
     def get_eventids_hits_and_targets(data):
         inputs = [data[3], data[1], data[2]]
-        return data[0], inputs, data[5]
+        return data[0], inputs, data[target_idx]
     return get_eventids_hits_and_targets
 
 
