@@ -35,8 +35,10 @@ DATADIR="/data/perdue/minerva/targets"
 DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
 # DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc_0000.hdf5"
 
-SAVEMODELNAME="./lminervatriamese_epsilon${DATET}.npz"
-LOAD_SAVEMODEL=""
+# SAVEMODELNAME="./lminervatriamese_${NOUTPUT}_epsilon${DATET}.npz"
+# LOAD_SAVEMODEL=""
+SAVEMODELNAME="./lminervatriamese_epsilon1485544916.npz"
+LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
