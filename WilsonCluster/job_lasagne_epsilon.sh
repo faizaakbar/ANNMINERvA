@@ -37,7 +37,7 @@ DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_m
 
 # SAVEMODELNAME="./lminervatriamese_${NOUTPUT}_epsilon${DATET}.npz"
 # LOAD_SAVEMODEL=""
-SAVEMODELNAME="./lminervatriamese_epsilon1485966837.npz"
+SAVEMODELNAME="./lminervatriamese_epsilon1486074030.npz"
 LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
