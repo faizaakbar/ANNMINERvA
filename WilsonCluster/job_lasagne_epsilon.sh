@@ -14,8 +14,8 @@
 NEPOCHS=12
 NEPOCHS=1
 NEPOCHS=5
-# LRATE=0.0005
-LRATE=0.001
+# LRATE=0.001
+LRATE=0.0001
 L2REG=0.0001
 
 DATET=`date +%s`
@@ -37,7 +37,7 @@ DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_m
 
 # SAVEMODELNAME="./lminervatriamese_${NOUTPUT}_epsilon${DATET}.npz"
 # LOAD_SAVEMODEL=""
-SAVEMODELNAME="./lminervatriamese_epsilon1486662973.npz"
+SAVEMODELNAME="./lminervatriamese_epsilon1487012400.npz"
 LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
