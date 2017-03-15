@@ -5,9 +5,9 @@ from sqlalchemy import MetaData
 from sqlalchemy import select
 
 
-def test1():
+def test1(dbname):
     metadata = MetaData()
-    eng = predictiondb.get_engine('prediction')
+    eng = predictiondb.get_engine(dbname)
     con = predictiondb.get_connection(eng)
     tbl = predictiondb.get_active_table(metadata, eng)
     ins = tbl.insert().values(
@@ -31,9 +31,9 @@ def test1():
     return result
 
 
-def test2():
+def test2(dbname):
     metadata = MetaData()
-    eng = predictiondb.get_engine('prediction')
+    eng = predictiondb.get_engine(dbname)
     con = predictiondb.get_connection(eng)
     tbl = predictiondb.get_active_table(metadata, eng)
     s = select([tbl])
@@ -145,3 +145,9 @@ def test3():
     )
     result = con.execute(ins)
     return result
+
+
+if __name__ == '__main__':
+    test1('testdb')
+    test2('testdb')
+    test_make_file_of_unique_runs_and_subs('testdb')
