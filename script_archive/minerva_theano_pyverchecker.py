@@ -15,7 +15,9 @@ def test_module_version(module_name):
     except Exception as e:
         print(e)
 
-modules = ['numpy', 'theano', 'lasagne', 'fuel', 'six', 'logging', 'sqlalchemy']
+modules = [
+    'numpy', 'theano', 'lasagne', 'fuel', 'six', 'logging', 'sqlalchemy', 'h5py'
+]
 
 for mod in modules:
     test_module_version(mod)
