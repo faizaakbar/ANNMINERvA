@@ -36,8 +36,8 @@ echo "PBS_O_WORKDIR is `pwd`"
 # to the file server before exiting your script. The /scratch area on the
 # workers is wiped clean between jobs.
 
-LMDBDIR=/phihome/perdue/caffe/examples/mnist
-NETWORKDIR=/phihome/perdue/caffe/examples/mnist
+LMDBDIR=/data/perdue/mnist
+NETWORKDIR=/data/perdue/mnist
 
 echo " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& "
 echo "                     Train                             "
