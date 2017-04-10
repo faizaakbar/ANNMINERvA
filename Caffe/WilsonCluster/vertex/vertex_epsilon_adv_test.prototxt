@@ -15,7 +15,7 @@ layer {
     phase: TRAIN
   }
   hdf5_data_param {
-    source: "/phihome/perdue/caffe/data/minerva/lists/vertex_epsilon_adv_source.trainlist"
+    source: "/data/perdue/minerva/caffe/lists/vertex_epsilon_adv_source.trainlist"
     batch_size: 50
   }
   top: "hits-x-MEMC"
@@ -53,7 +53,7 @@ layer {
     phase: TRAIN
   }
   hdf5_data_param {
-    source: "/phihome/perdue/caffe/data/minerva/lists/vertex_epsilon_adv_target.trainlist"
+    source: "/data/perdue/minerva/caffe/lists/vertex_epsilon_adv_target.trainlist"
     batch_size: 50
   }
   top: "hits-x-LEMC"
@@ -81,6 +81,12 @@ layer {
 # ----------------- Source or Target -------------------------
 # Validation 
 
+# to test low energy, use
+# source: "/data/perdue/minerva/caffe/lists/vertex_epsilon_adv_target.testlist"
+# top: "hits-x-LEMC"
+# top: "hits-u-LEMC"
+# top: "hits-v-LEMC"
+
 layer {
   name: "target_data"  # what is the right name? - source_data?
   type: "HDF5Data"
@@ -88,12 +94,12 @@ layer {
     phase: TEST
   }
   hdf5_data_param {
-    source: "/phihome/perdue/caffe/data/minerva/lists/vertex_epsilon_adv_source.testlist"
+    source: "/data/perdue/minerva/caffe/lists/vertex_epsilon_adv_source.testlist"
     batch_size: 50
   }
-  top: "hits-x"
-  top: "hits-u"
-  top: "hits-v"
+  top: "hits-x-MEMC"
+  top: "hits-u-MEMC"
+  top: "hits-v-MEMC"
   top: "segments"
 }
 

@@ -18,9 +18,10 @@ source caffe_setup.sh
 cd ${PBS_O_WORKDIR}
 echo "PBS_O_WORKDIR is `pwd`"
 
-SOLVERDIR=/phihome/perdue/caffe/solvers
-PROTODIR=/phihome/perdue/caffe/proto
-SNAPSHOTDIR=/phihome/perdue/caffe/snapshots
+CAFFEMINERVA=/data/perdue/minerva/caffe
+SOLVERDIR=$CAFFEMINERVA/solvers
+PROTODIR=$CAFFEMINERVA/proto
+SNAPSHOTDIR=$CAFFEMINERVA/snapshots
 
 # iters are defined in the solver
 SOLVER=$SOLVERDIR/vertex_epsilon_adv.solver

@@ -434,6 +434,43 @@ def get_muon_data_from_file(filename):
     return storedat
 
 
+def get_kine_data_from_file(filename):
+    print("...loading data")
+    eventids = []
+    current_arr = []
+    int_type_arr = []
+    W_arr = []
+    Q2_arr = []
+    targZ_arr = []
+    # format:
+    # 0   1   2   3   4       5        6 7  8
+    # run sub gt  slc current int_type W Q2 targZ
+
+    with gzip.open(filename, 'r') as f:
+        for line in f.readlines():
+            if line[0] == '#':
+                continue
+            elems = line.split()
+            eventid = elems[0] + elems[1].zfill(4) + elems[2].zfill(4) \
+                + elems[3].zfill(2)
+            eventids.append(eventid)
+            current_arr.append(elems[4])
+            int_type_arr.append(elems[5])
+            W_arr.append(elems[6])
+            Q2_arr.append(elems[7])
+            targZ_arr.append(elems[8])
+    eventids = np.asarray(eventids, dtype=np.uint64)
+    current_arr = np.asarray(current_arr, dtype=np.uint8)
+    int_type_arr = np.asarray(int_type_arr, dtype=np.uint8)
+    W_arr = np.asarray(W_arr, dtype=np.float32)
+    Q2_arr = np.asarray(Q2_arr, dtype=np.float32)
+    targZ_arr = np.asarray(targZ_arr, dtype=np.uint8)
+    storedat = (current_arr, int_type_arr, W_arr, Q2_arr, targZ_arr,
+                eventids)
+    print("...finished loading")
+    return storedat
+
+
 def filter_hadmult_data_for_singlepi0(dsetvals):
     """"
     we want to insert the 0/1 bkg/signal flag in as an array just before
@@ -774,7 +811,7 @@ def build_hadronic_exclusive_state_dset_description():
 
 def build_muon_data_dset_description():
     """
-    muon_data = [vtx_reco_x, vtx_reco_y, vtx_reco_z, 
+    muon_data = [vtx_reco_x, vtx_reco_y, vtx_reco_z,
                  muon_orig_x, muon_orig_y, muon_orig_z,
                  vtx_n_tracks_prim, vtx_fit_converged,
                  vtx_fit_chi2, vtx_used_short_track]
@@ -783,6 +820,21 @@ def build_muon_data_dset_description():
     """
     dset_description = OrderedDict(
         (('muon_data', (NUM_MUONDAT_VARS, 1)),
+         ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
+    )
+    return dset_description
+
+
+def build_kine_data_dset_description():
+    """
+    storedat = (current, int_type, W, Q2, targZ, eventids)
+    """
+    dset_description = OrderedDict(
+        (('current', ('uint8', 'current')),
+         ('int_type', ('uint8', 'int_type')),
+         ('W', ('float32', 'W')),
+         ('Q2', ('float32', 'Q2')),
+         ('targZ', ('uint8', 'targZ')),
          ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
     )
     return dset_description
@@ -1015,6 +1067,33 @@ def make_muondat_hdf5_file(filebase, hdf5file):
     for fname in files:
         print("Iterating over file:", fname)
         dset_vals = get_muon_data_from_file(fname)
+        total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
+
+    add_split_dict(f, dset_names, total_examples)
+
+    f.close()
+
+
+def make_kinedat_hdf5_file(filebase, hdf5file):
+    """
+    note that filebase is a pattern - if multiple files match
+    the pattern, then multiple files will be included in the
+    single output file
+    """
+    print('Making hdf5 file for muon data')
+    files = make_file_list(filebase)
+    f = prepare_hdf5_file(hdf5file)
+
+    dset_description = build_kine_data_dset_description()
+    print(dset_description)
+    prep_datasets_using_dset_descrip_only(f, dset_description)
+    dset_names = dset_description.keys()
+
+    total_examples = 0
+
+    for fname in files:
+        print("Iterating over file:", fname)
+        dset_vals = get_kine_data_from_file(fname)
         total_examples = add_data_to_hdf5file(f, dset_names, dset_vals)
 
     add_split_dict(f, dset_names, total_examples)
@@ -1263,3 +1342,5 @@ if __name__ == '__main__':
                                  options.had_mult_overflow)
     elif options.skim == 'muon_dat':
         make_muondat_hdf5_file(filebase, hdf5file)
+    elif options.skim == 'kine_dat':
+        make_kinedat_hdf5_file(filebase, hdf5file)

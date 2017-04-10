@@ -1,5 +1,8 @@
 #!/bin/bash
 
+BASED=/data/perdue/minerva/caffe/data
+DESTD=/data/perdue/minerva/caffe/lists
+
 # vertex adv trainlist based on ME 1B MC (source domain)
 TRAINMIN=0
 TRAINMAX=75
@@ -7,7 +10,6 @@ VALIDMIN=76
 VALIDMAX=81
 TESTMIN=82
 TESTMAX=88
-BASED=/phihome/perdue/caffe/data/minerva/vertex
 FILEROOT=minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc
 OUTROOT=vertex_epsilon_adv_source
 rm -f $OUTROOT.trainlist
@@ -21,14 +23,13 @@ done
 for i in `seq $VALIDMIN 1 $VALIDMAX`
 do
   filenum=`echo $i | perl -ne 'printf "%03d",$_;'`
-  ls -1 ${BASED}/unrenamed/${FILEROOT}_${filenum}.hdf5 >> $OUTROOT.validlist
+  ls -1 ${BASED}/${FILEROOT}_${filenum}.hdf5 >> $OUTROOT.validlist
 done
 for i in `seq $TESTMIN 1 $TESTMAX`
 do
   filenum=`echo $i | perl -ne 'printf "%03d",$_;'`
-  ls -1 ${BASED}/unrenamed/${FILEROOT}_${filenum}.hdf5 >> $OUTROOT.testlist
+  ls -1 ${BASED}/${FILEROOT}_${filenum}.hdf5 >> $OUTROOT.testlist
 done
-DESTD=/phihome/perdue/caffe/data/minerva/lists
 mv $OUTROOT.trainlist $DESTD
 mv $OUTROOT.validlist $DESTD
 mv $OUTROOT.testlist $DESTD
@@ -39,7 +40,6 @@ TRAINMIN=0
 TRAINMAX=40
 TESTMIN=41
 TESTMAX=44
-BASED=/phihome/perdue/caffe/data/minerva/vertex
 FILEROOT=minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_minerva1mc
 OUTROOT=vertex_epsilon_adv_target
 rm -f $OUTROOT.trainlist
@@ -70,6 +70,5 @@ do
   filenum=`echo $i | perl -ne 'printf "%03d",$_;'`
   ls -1 ${BASED}/${FILEROOT}_${filenum}.hdf5 >> $OUTROOT.testlist
 done
-DESTD=/phihome/perdue/caffe/data/minerva/lists
 mv $OUTROOT.trainlist $DESTD
 mv $OUTROOT.testlist $DESTD

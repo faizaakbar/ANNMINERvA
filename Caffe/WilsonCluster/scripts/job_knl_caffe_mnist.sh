@@ -2,10 +2,10 @@
 #PBS -S /bin/bash
 #PBS -N caffe-mnist-test
 #PBS -j oe
-#PBS -o ./out_job_caffe_mnist.txt
-#PBS -l nodes=1:gpu,walltime=24:00:00
+#PBS -o ./out_job_knl_caffe_mnist.txt
+#PBS -l nodes=1:knl
 #PBS -A minervaG
-#PBS -q gpu
+#PBS -q knl
 #restore to turn off email #PBS -m n
 
 # print identifying info for this job
@@ -19,7 +19,7 @@ echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${P
 cat ${PBS_NODEFILE}
 
 cd $HOME
-source caffe_setup.sh
+source knl_caffe_setup.sh
 
 cd ${PBS_O_WORKDIR}
 echo "PBS_O_WORKDIR is `pwd`"
@@ -36,8 +36,8 @@ echo "PBS_O_WORKDIR is `pwd`"
 # to the file server before exiting your script. The /scratch area on the
 # workers is wiped clean between jobs.
 
-LMDBDIR=/phihome/perdue/caffe/examples/mnist
-NETWORKDIR=/phihome/perdue/caffe/examples/mnist
+LMDBDIR=/data/perdue/mnist
+NETWORKDIR=/data/perdue/mnist
 
 echo " &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& "
 echo "                     Train                             "

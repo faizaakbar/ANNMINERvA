@@ -3,9 +3,9 @@
 #PBS -N lasagne-conv-mnv
 #PBS -j oe
 #PBS -o ./lasagne_conv_out_job.txt
+#PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
 # not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
-# not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
-#PBS -l nodes=1:gpu,walltime=24:00:00
+# not generic #PBS -l nodes=1:gpu,walltime=24:00:00
 # not short #PBS -l nodes=1:gpu,walltime=6:00:00
 #PBS -A minervaG
 #PBS -q gpu
@@ -13,9 +13,8 @@
 
 NEPOCHS=12
 NEPOCHS=1
-NEPOCHS=5
-# LRATE=0.001
-LRATE=0.0001
+# NEPOCHS=5
+LRATE=0.001
 L2REG=0.0001
 
 DATET=`date +%s`
@@ -32,13 +31,13 @@ NOUTPUTS=67
 PYTHONPROG="minerva_tricolumnar_epsilon.py"
 
 DATADIR="/data/perdue/minerva/targets"
-DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
-# DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc_0000.hdf5"
+# DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc.hdf5"
+DATAFILENAME="$DATADIR/minosmatch_nukecczdefs_genallz_pcodecap66_127x50x25_xuv_me1Bmc_0000.hdf5"
 
-# SAVEMODELNAME="./lminervatriamese_${NOUTPUT}_epsilon${DATET}.npz"
-# LOAD_SAVEMODEL=""
-SAVEMODELNAME="./lminervatriamese_epsilon1487611077.npz"
-LOAD_SAVEMODEL="--load_params"
+SAVEMODELNAME="./lminervatriamese_${NOUTPUT}_epsilon${DATET}.npz"
+LOAD_SAVEMODEL=""
+# SAVEMODELNAME="./lminervatriamese_epsilon1487611077.npz"
+# LOAD_SAVEMODEL="--load_params"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"

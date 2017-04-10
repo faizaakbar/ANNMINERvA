@@ -15,7 +15,7 @@ layer {
     phase: TRAIN
   }
   hdf5_data_param {
-    source: "/phihome/perdue/caffe/data/minerva/lists/vertex_epsilon_adv_source.trainlist"
+    source: "/data/perdue/minerva/caffe/lists/vertex_epsilon_adv_source.trainlist"
     batch_size: 50
   }
   top: "hits-x-MEMC"
@@ -53,7 +53,7 @@ layer {
     phase: TRAIN
   }
   hdf5_data_param {
-    source: "/phihome/perdue/caffe/data/minerva/lists/vertex_epsilon_adv_target.trainlist"
+    source: "/data/perdue/minerva/caffe/lists/vertex_epsilon_adv_target.trainlist"
     batch_size: 50
   }
   top: "hits-x-LEMC"
@@ -88,12 +88,12 @@ layer {
     phase: TEST
   }
   hdf5_data_param {
-    source: "/phihome/perdue/caffe/data/minerva/lists/vertex_epsilon_adv_source.validlist"
+    source: "/data/perdue/minerva/caffe/lists/vertex_epsilon_adv_source.validlist"
     batch_size: 50
   }
-  top: "hits-x"
-  top: "hits-u"
-  top: "hits-v"
+  top: "hits-x-MEMC"
+  top: "hits-u-MEMC"
+  top: "hits-v-MEMC"
   top: "segments"
 }
 

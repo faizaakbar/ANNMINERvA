@@ -13,25 +13,14 @@ fi
 echo "Grabbing runs $START to $STOP..."
 
 fileroots="minosmatch_nukecczdefs_fullz_tproc_127x94_minerva1nofsimc_"
+fileroots="minosmatch_nukecczdefs_fullzwitht_127x94_minerva1nofsimc_"
+fileroots="minosmatch_kinematics_me1Bmc_"
 
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/muon_skims/cvs_rev1_3/redundant"
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/muon_skims/cvs_rev1_3/with_t_prod"
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/nukeccskimmer_minosmatch_127x94_nukecczdefs/with_t_processing"
-
-for file in $fileroots
-do
-  for i in `seq ${START} 1 ${STOP}`
-  do
-    filenum=`echo $i | perl -ne 'printf "%04d",$_;'`
-    filename=${file}${filenum}.dat.gz
-    echo $filename
-    scp perdue@minervagpvm02.fnal.gov:${REMOTE_DIR}/$filename .
-  done
-done
-
-fileroots="minosmatch_nukecczdefs_fullzwitht_127x94_minerva1nofsimc_"
-
 REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/nukeccskimmer_minosmatch_127x94_nukecczdefs_withtime/"
+REMOTE_DIR="/minerva/data/users/perdue/mlmpr/raw_dat/kine_skims"
 
 for file in $fileroots
 do
@@ -43,6 +32,8 @@ do
     scp perdue@minervagpvm02.fnal.gov:${REMOTE_DIR}/$filename .
   done
 done
+
+
 
 # say we've finished
 echo -e "\a"
