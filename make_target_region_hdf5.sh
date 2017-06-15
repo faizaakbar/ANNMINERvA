@@ -11,18 +11,18 @@ elif [[ $# > 1 ]]; then
   STOP=$2
 fi
 
-DOENGY="yes"
+DOENGY="no"
 DOTIME="yes"
 
-SAMPLE=minerva1nofsimc
+SAMPLE=me1Adata
 
 
 # energy lattice images
-INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}
+INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_me1Adata
 OUTBASE=minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_${SAMPLE}
 
 # time-lattice images
-INBASET=minosmatch_nukecczdefs_fullzwitht_127x94_${SAMPLE}
+INBASET=minosmatch_nukecczdefs_fullz_tproc_127x94_me1Adata
 OUTBASET=minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_txtutv_${SAMPLE}
 
 for i in `seq ${START} 1 ${STOP}`
