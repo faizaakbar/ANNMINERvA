@@ -589,10 +589,10 @@ def get_time_data_from_file(filename, imgw, imgh, trims,
             if line[0] == '#':
                 continue
             elems = line.split()
-            eventid = elems[0] + elems[1].zfill(4) + elems[2].zfill(4) \
-                + elems[3].zfill(2)
+            eventid = elems[3] + elems[4].zfill(4) + elems[5].zfill(4) \
+                + elems[6].zfill(2)
             eventids.append(eventid)
-            rowdat = elems[4:]
+            rowdat = elems[7:]
             hitsX, hitsU, hitsV = unpack_xuv_skim_data(
                 rowdat, imgw, imgh, add_target_padding,
                 trims, insert_x_padding_into_uv)
