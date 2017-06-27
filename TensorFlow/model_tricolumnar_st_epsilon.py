@@ -4,7 +4,7 @@ MINERvA Tri-columnar "spacetime" (energy+time tensors) epsilon network
 import tensorflow as tf
 
 
-def default_convpooldict(data_format='NHWC'):
+def make_default_convpooldict(img_depth=1, data_format='NHWC'):
     """
     return the default network structure dictionary
 
@@ -31,7 +31,7 @@ def default_convpooldict(data_format='NHWC'):
     convpooldict_x['conv2'] = {}
     convpooldict_x['conv3'] = {}
     convpooldict_x['conv4'] = {}
-    convpooldict_x['conv1']['kernels'] = [8, 3, 1, 12]
+    convpooldict_x['conv1']['kernels'] = [8, 3, img_depth, 12]
     convpooldict_x['conv1']['biases'] = [12]
     # after 8x3 filters -> 120x(N-2) image, then maxpool -> 60x(N-2)
     convpooldict_x['conv2']['kernels'] = [7, 3, 12, 20]
@@ -51,7 +51,7 @@ def default_convpooldict(data_format='NHWC'):
     convpooldict_u['conv2'] = {}
     convpooldict_u['conv3'] = {}
     convpooldict_u['conv4'] = {}
-    convpooldict_u['conv1']['kernels'] = [8, 5, 1, 12]
+    convpooldict_u['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_u['conv1']['biases'] = [12]
     # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
     convpooldict_u['conv2']['kernels'] = [7, 3, 12, 20]
@@ -71,7 +71,7 @@ def default_convpooldict(data_format='NHWC'):
     convpooldict_v['conv2'] = {}
     convpooldict_v['conv3'] = {}
     convpooldict_v['conv4'] = {}
-    convpooldict_v['conv1']['kernels'] = [8, 5, 1, 12]
+    convpooldict_v['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_v['conv1']['biases'] = [12]
     # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
     convpooldict_v['conv2']['kernels'] = [7, 3, 12, 20]
@@ -85,14 +85,22 @@ def default_convpooldict(data_format='NHWC'):
     # after 6x3 filters -> 6x(N-10) image, then maxpool -> 3x(N-10)
     convpooldict['v'] = convpooldict_v
 
+    convpooldict['nfeat_dense_tower'] = 196
+    convpooldict['nfeat_concat_dense'] = 196
+
     return convpooldict
 
 
 class TriColSTEpsilon:
+    """
+    Tri-Columnar SpaceTime Epsilon
+    """
     def __init__(self, n_classes, params=dict()):
         self.learning_rate = params.get('LEARNING_RATE', 0.001)
         self.batch_size = params.get('BATCH_SIZE', 128)
-        self.dropout = tf.placeholder(tf.float32, name='dropout')
+        self.dropout_keep_prob = tf.placeholder(
+            tf.float32, name='dropout_keep_prob'
+        )
         self.n_classes = n_classes
         self.global_step = tf.Variable(
             0, dtype=tf.int32, trainable=False, name='global_step'
@@ -143,74 +151,112 @@ class TriColSTEpsilon:
                 name=name
             )
 
-        def make_convolutional_tower(view, input_layer, kbd):
+        def make_convolutional_tower(view, input_layer, kbd, n_layers=4):
             """
             input_layer == e.g., self.X_img, etc. corresponding to 'view'
             """
             inp_lyr = None
             out_lyr = None
-            for layer in ['1', '2', '3', '4']:
-                if layer == '1':
-                    inp_lyr = input_layer
-                else:
-                    inp_lyr = out_lyr
 
-                # need to fix scope name!
-                scope_name = 'conv' + layer
-                with tf.variable_scope(scope_name) as scope:
-                    self.weights_biases[scope.name] = {}
-                    self.weights_biases[scope.name]['kernels'] = make_kernels(
-                        'kernels', kbd[view][scope.name]['kernels'],
-                    )
-                    self.weights_biases[scope.name]['biases'] = make_biases(
-                        'biases', kbd[view][scope.name]['biases'],
-                    )
-                    conv = make_active_conv(
-                        inp_lyr,
-                        self.weights_biases[scope.name]['kernels'],
-                        self.weights_biases[scope.name]['biases'],
-                        scope.name
-                    )
+            # scope the tower
+            twr = view + '_tower'
+            with tf.variable_scope(twr):
 
-                # need to fix scope name!
-                scope_name = 'pool' + layer
-                with tf.variable_scope(scope_name) as scope:
-                    out_lyr = make_pool(conv, scope.name)
+                self.weights_biases[twr] = {}
+
+                for i in range(n_layers):
+                    layer = str(i + 1)
+                    if layer == '1':
+                        inp_lyr = input_layer
+                    else:
+                        inp_lyr = out_lyr
+
+                    # scope the convolutional layer
+                    nm = 'conv' + layer
+                    with tf.variable_scope(nm) as scope:
+                        self.weights_biases[twr][nm] = {}
+                        self.weights_biases[twr][nm]['kernels'] = make_kernels(
+                            'kernels', kbd[view][nm]['kernels'],
+                        )
+                        self.weights_biases[twr][nm]['biases'] = make_biases(
+                            'biases', kbd[view][nm]['biases'],
+                        )
+                        conv = make_active_conv(
+                            inp_lyr,
+                            self.weights_biases[twr][nm]['kernels'],
+                            self.weights_biases[twr][nm]['biases'],
+                            scope.name
+                        )
+
+                    # scope the pooling layer
+                    scope_name = 'pool' + layer
+                    with tf.variable_scope(scope_name) as scope:
+                        out_lyr = make_pool(conv, scope.name)
+
+                # reshape pool/out_lyr to 2 dimensional
+                out_lyr_shp = out_lyr.shape.as_list()
+                nfeat_tower = out_lyr_shp[1] * out_lyr_shp[2] * out_lyr_shp[3]
+                out_lyr = tf.reshape(out_lyr, [-1, nfeat_tower])
+                
+                # final dense layer parameters
+                self.weights_biases[twr]['dense_weights'] = tf.get_variable(
+                    'dense_weights',
+                    [nfeat_tower, kbd['nfeat_dense_tower']],
+                    initializer=tf.random_normal_initializer()
+                )
+                self.weights_biases[twr]['dense_biases'] = tf.get_variable(
+                    'dense_biases',
+                    [kbd['nfeat_dense_tower']],
+                    initializer=tf.random_normal_initializer()
+                )
+                # apply relu on matmul of pool2/out_lyr and w + b
+                self.fc = tf.nn.relu(
+                    tf.matmul(
+                        out_lyr, self.weights_biases[twr]['dense_weights']
+                    ) + self.weights_biases[twr]['dense_biases']
+                )
+                # apply dropout
+                self.fc = tf.nn.dropout(
+                    self.fc, self.dropout_keep_prob, name='relu_dropout'
+                )
 
             return out_lyr
         
         out_x = make_convolutional_tower('x', self.X_img, kbd)
-        out_u = make_convolutional_tower('u', self.X_img, kbd)
-        out_v = make_convolutional_tower('v', self.X_img, kbd)
+        out_u = make_convolutional_tower('u', self.U_img, kbd)
+        out_v = make_convolutional_tower('v', self.V_img, kbd)
 
         # next, concat, then fc...
-        #
-        with tf.variable_scope('fc') as scope:
-            # use weight of dimension 7 * 7 * 64 x 1024
-            input_features = 7 * 7 * 64
+        with tf.variable_scope('fully_connected') as scope:
+            tower_joined = tf.concat(
+                [out_x, out_u, out_v], axis=1, name=scope.name + '_concat'
+            )
+
+            joined_shp = tower_joined.shape.as_list()
+            nfeatures_joined = joined_shp[1]
             self.weights_fc = tf.get_variable(
                 'weights',
-                [input_features, 1024],
+                [nfeatures_joined, kbd['nfeat_concat_dense']],
                 initializer=tf.random_normal_initializer()
             )
             self.biases_fc = tf.get_variable(
                 'biases',
-                [1024],
+                [kbd['nfeat_concat_dense']],
                 initializer=tf.random_normal_initializer()
             )
-            # reshape pool2/out_lyr to 2 dimensional
-            out_lyr = tf.reshape(out_lyr, [-1, input_features])
-            # apply relu on matmul of pool2/out_lyr and w + b
+            # apply relu on matmul of joined and w + b
             self.fc = tf.nn.relu(
-                tf.matmul(out_lyr, self.weights_fc) + self.biases_fc
+                tf.matmul(tower_joined, self.weights_fc) + self.biases_fc
             )
             # apply dropout
-            self.fc = tf.nn.dropout(self.fc, self.dropout, name='relu_dropout')
+            self.fc = tf.nn.dropout(
+                self.fc, self.dropout_keep_prob, name='relu_dropout'
+            )
 
-        with tf.variable_scope('softmax_linear') as scope:
+        with tf.variable_scope('softmax_linear'):
             self.weights_softmax = tf.get_variable(
                 'weights',
-                [1024, self.n_classes],
+                [kbd['nfeat_concat_dense'], self.n_classes],
                 initializer=tf.random_normal_initializer()
             )
             self.biases_softmax = tf.get_variable(
@@ -250,11 +296,28 @@ class TriColSTEpsilon:
             tf.summary.histogram('histogram_loss', self.loss)
             self.summary_op = tf.summary.merge_all()
 
-    def prepare_for_inference(self, features):
-        self._build_network(features)
+    def prepare_for_inference(self, features, kbd):
+        """ kbd == kernels_biases_dict (convpooldict) """
+        self._build_network(features, kbd)
 
     def prepare_for_training(self, targets):
         self._set_targets(targets)
         self._define_loss()
         self._define_train_op()
         self._create_summaries()
+
+
+def test():
+    tf.reset_default_graph()
+    img_depth = 2
+    X = tf.placeholder(tf.float32, shape=[None, 127, 50, img_depth], name='X')
+    U = tf.placeholder(tf.float32, shape=[None, 127, 25, img_depth], name='U')
+    V = tf.placeholder(tf.float32, shape=[None, 127, 25, img_depth], name='V')
+    f = [X, U, V]
+    d = make_default_convpooldict(img_depth=img_depth)
+    t = TriColSTEpsilon(11)
+    t.prepare_for_inference(f, d)
+
+
+if __name__ == '__main__':
+    test()
