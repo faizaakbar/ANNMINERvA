@@ -73,7 +73,7 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
     convpooldict_v['conv4'] = {}
     convpooldict_v['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_v['conv1']['biases'] = [12]
-    # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
+   # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
     convpooldict_v['conv2']['kernels'] = [7, 3, 12, 20]
     convpooldict_v['conv2']['biases'] = [20]
     # after 7x3 filters -> 54x(N-6) image, then maxpool -> 27x(N-6)
@@ -173,7 +173,7 @@ class TriColSTEpsilon:
 
                     # scope the convolutional layer
                     nm = 'conv' + layer
-                    with tf.variable_scope(nm) as scope:
+                    with tf.variable_scope(nm):
                         self.weights_biases[twr][nm] = {}
                         self.weights_biases[twr][nm]['kernels'] = make_kernels(
                             'kernels', kbd[view][nm]['kernels'],
@@ -185,13 +185,13 @@ class TriColSTEpsilon:
                             inp_lyr,
                             self.weights_biases[twr][nm]['kernels'],
                             self.weights_biases[twr][nm]['biases'],
-                            scope.name
+                            nm + '_conv'
                         )
 
                     # scope the pooling layer
                     scope_name = 'pool' + layer
-                    with tf.variable_scope(scope_name) as scope:
-                        out_lyr = make_pool(conv, scope.name)
+                    with tf.variable_scope(scope_name):
+                        out_lyr = make_pool(conv, scope_name + '_pool')
 
                 # reshape pool/out_lyr to 2 dimensional
                 out_lyr_shp = out_lyr.shape.as_list()
@@ -210,17 +210,25 @@ class TriColSTEpsilon:
                     initializer=tf.random_normal_initializer()
                 )
                 # apply relu on matmul of pool2/out_lyr and w + b
-                self.fc = tf.nn.relu(
-                    tf.matmul(
-                        out_lyr, self.weights_biases[twr]['dense_weights']
-                    ) + self.weights_biases[twr]['dense_biases']
+                fc = tf.nn.relu(
+                    tf.nn.bias_add(
+                        tf.matmul(
+                            out_lyr,
+                            self.weights_biases[twr]['dense_weights'],
+                            name='matmul'
+                        ), 
+                        self.weights_biases[twr]['dense_biases'],
+                        data_format=self.data_format,
+                        name='bias_add'
+                    ),
+                    name='reul_activation'
                 )
                 # apply dropout
-                self.fc = tf.nn.dropout(
-                    self.fc, self.dropout_keep_prob, name='relu_dropout'
+                fc = tf.nn.dropout(
+                    fc, self.dropout_keep_prob, name='relu_dropout'
                 )
 
-            return out_lyr
+            return fc
         
         out_x = make_convolutional_tower('x', self.X_img, kbd)
         out_u = make_convolutional_tower('u', self.U_img, kbd)
@@ -313,10 +321,12 @@ def test():
     X = tf.placeholder(tf.float32, shape=[None, 127, 50, img_depth], name='X')
     U = tf.placeholder(tf.float32, shape=[None, 127, 25, img_depth], name='U')
     V = tf.placeholder(tf.float32, shape=[None, 127, 25, img_depth], name='V')
+    targ = tf.placeholder(tf.float32, shape=[None, 11], name='targ')
     f = [X, U, V]
     d = make_default_convpooldict(img_depth=img_depth)
     t = TriColSTEpsilon(11)
     t.prepare_for_inference(f, d)
+    t.prepare_for_training(targ)
 
 
 if __name__ == '__main__':
