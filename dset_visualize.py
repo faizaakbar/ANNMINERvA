@@ -21,6 +21,7 @@ to look at the dsets.)
 import pylab
 import sys
 import h5py
+import tensorflow as tf
 
 max_evts = 10
 evt_plotted = 0
@@ -35,6 +36,84 @@ if len(sys.argv) > 1:
 if len(sys.argv) > 2:
     max_evts = int(sys.argv[2])
 
+
+class MnvDataReader:
+    def __init__(self, filename, n_events=10, views=['x', 'u', 'v']):
+        self.filename = filename
+        self.n_events = n_events
+        self.views = views
+        self.filetype = filename.split('.')[-1]
+
+        self.hdf5_extensions = ['hdf5', 'h5']
+        self.tfr_extensions = ['tfrecord']
+        self.all_extensions = self.hdf5_extensions + self.tfr_extensions
+
+        if self.filetype not in self.all_extensions:
+            msg = 'Invalid file type extension! '
+            msg += 'Valid extensions: ' + ','.join(self.all_extensions)
+            raise ValueError(msg)
+        self._f = None
+
+        self.times_names = ['times-x', 'times-u', 'times-v']
+        self.energies_names = ['hits-x', 'hits-u', 'hits-v']
+        self.energiestimes_names = ['hitimes-x', 'hitimes-u', 'hitimes-v']
+    
+    def _read_hdf5(self):
+        """
+        possibilities: energy tensors, time tensors, energy+time tensors
+        (2-deep). get everything there into a dictionary keyed by type,
+        and then by view.
+        """
+        def extract_data(dset_name, data_dict, tensor_type):
+            view = dset_name[-1]
+            try:
+                shp = pylab.shape(self._f[dset_name])
+            except KeyError:
+                print("'{}' does not exist.".format(dset_name))
+                shp = None
+            if shp is not None:
+                if len(shp) == 4:
+                    shp = (self.n_events, shp[1], shp[2], shp[3])
+                    data_dict[tensor_type][view] = pylab.zeros(shp, dtype='f')
+                    data_dict[tensor_type][view] = \
+                        self._f[dset_name][:self.n_events]
+                else:
+                    raise ValueError('Data shape has a bad length!')
+            
+        data_dict = {}
+        data_dict['energies+times'] = {}
+        data_dict['energies'] = {}
+        data_dict['times'] = {}
+        
+        for dset_name in self.energiestimes_names:
+            extract_data(dset_name, data_dict, 'energies+times')
+        for dset_name in self.energies_names:
+            extract_data(dset_name, data_dict, 'energies')
+        for dset_name in self.times_names:
+            extract_data(dset_name, data_dict, 'times')
+
+        return data_dict
+
+    def _read_tfr(self):
+        data_dict = {}
+        data_dict['energies+times'] = {}
+        data_dict['energies'] = {}
+        data_dict['times'] = {}
+
+        return data_dict
+
+    def read_data(self):
+        """
+        return a dictionary of ndarrays, keyed by 'x', 'u', and 'v',
+        each with shape (N, C, H, W) - could be anywhere from 1 to 3 views.
+        """
+        if self.filetype in self.hdf5_extensions:
+            return self._read_hdf5()
+        elif self.filetype in self.tfr_extensions:
+            return self._read_tfr()
+        else:
+            raise ValueError('Invalid file type extension!')
+    
 
 def decode_eventid(eventid):
     """
