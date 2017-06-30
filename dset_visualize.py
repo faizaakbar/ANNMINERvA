@@ -199,59 +199,107 @@ def decode_eventid(eventid):
 #     labels_shp = None
 
 
-def make_plots(data_dict):
+def make_plots(data_dict, max_events):
     """
     cases:
     * 'energies+times',
     * 'energies' and 'times' separately,
     * or 'energies' or 'times'
+    If 2-deep tensor, assume energy is index 0, time is index 1
     """
+    pkeys = []
+    for k in data_dict.keys():
+        if data_dict[k]:
+            pkeys.append(k)
+    print('Data dictionary present keys: {}'.format(pkeys))
+
+    def combine_et(e_tensor, t_tensor):
+        base_shape = e_tensor.shape
+        base_shape[1] = 2
+        new_tensor = pylab.zeros(base_shape)
+        new_tensor[:, 0, :, :] = e_tensor[:, 0, :, :]
+        new_tensor[:, 1, :, :] = t_tensor[:, 1, :, :]
+        return new_tensor
+
+    types = ['energy', 'time']
+    views = ['x', 'u', 'v']   # TODO? build dynamically?
+
     plotting_two_tensors = False
     if data_dict['energies+times']:
         plotting_two_tensors = True
     elif data_dict['energies'] or data_dict['times']:
         if data_dict['energies'] and data_dict['times']:
             plotting_two_tensors = True
+            for view in views:
+                data_dict['energies+times'][view] = combine_et(
+                    data_dict['energies'][view], data_dict['times'][view]
+                )
+            data_dict['energies'] = {}
+            data_dict['times'] = {}
+        else:
+            data_dict['oned'] = {}
+            data_dict['oned']['type'] = None
+            if data_dict['energies']:
+                data_dict['oned']['type'] = 'energies'
+            else:
+                data_dict['oned']['type'] = 'times'
+            for view in views:
+                if data_dict['energies']:
+                    data_dict['oned'][view] = data_dict['energies'][view]
+                elif data_dict['times']:
+                    data_dict['oned'][view] = data_dict['times'][view]
+                else:
+                    raise ValueError('Mal-formed values tensor!')
 
-    pkeys = []
-    for k in data_dict.keys():
-        if data_dict[k]:
-            pkeys.append(k)
-    print('Data dictionary present keys: {}'.format(pkeys))
     print('  Plotting 2D tensors? {}'.format(plotting_two_tensors))
-# colorbar_tile = 'scaled energy'
-# if have_times:
-#     colorbar_tile = 'scaled times'
 
-# for counter, evtid in enumerate(evtids):
-#     if evt_plotted > max_evts:
-#         break
-#     run, subrun, gate, phys_evt = decode_eventid(evtid)
-#     if labels_shp is not None:
-#         targ = labels[counter]
-#         pcode = pcodes[counter]
-#         zz = zs[counter]
-#         pstring = '{} - {} - {} - {}: tgt: {:02d}; plncd {:03d}; z {}'.format(
-#             run, subrun, gate, phys_evt, targ, pcode, zz)
-#     else:
-#         pstring = '{} - {} - {} - {}'.format(
-#             run, subrun, gate, phys_evt)
-#     print(pstring)
-#     evt = []
-#     titles = []
-#     if data_x is not None:
-#         evt.append(data_x[counter])
-#         titles.append('x view')
-#     if data_u is not None:
-#         evt.append(data_u[counter])
-#         titles.append('u view')
-#     if data_v is not None:
-#         evt.append(data_v[counter])
-#         titles.append('v view')
-#     fig = pylab.figure(figsize=(9, 3))
-#     gs = pylab.GridSpec(1, len(evt))
-#     # print np.where(evt == np.max(evt))
-#     # print np.max(evt)
+    evt_plotted = 0
+    for counter in range(max_events):
+        if evt_plotted > max_events:
+            break
+        print('Plotting entry {}'.format(counter))
+
+        # run, subrun, gate, phys_evt = decode_eventid(evtid)
+        fig_wid = 9
+        fig_height = 6 if plotting_two_tensors else 3
+        grid_height = 2 if plotting_two_tensors else 1
+        fig = pylab.figure(figsize=(fig_wid, fig_height))
+        gs = pylab.GridSpec(grid_height, 3)
+
+        if plotting_two_tensors:
+            for i, t in enumerate(types):
+                for j, view in enumerate(views):
+                    gs_pos = i * 3 + j
+                    ax = pylab.subplot(gs[gs_pos])
+                    ax.axis('on')
+                    ax.xaxis.set_major_locator(pylab.NullLocator())
+                    ax.yaxis.set_major_locator(pylab.NullLocator())
+                    minv = 0 if t == 'energy' else -1
+                    cmap = 'jet' if t == 'energy' else 'bwr'
+                    cbt = 'scaled energy' if i == 0 else 'scaled times'
+                    im = ax.imshow(
+                        data_dict['energies+times'][view][counter, i, :, :],
+                        cmap=pylab.get_cmap(cmap),
+                        interpolation='nearest',
+                        vmin=minv, vmax=1
+                    )
+                    cbar = pylab.colorbar(im, fraction=0.04)
+                    cbar.set_label(cbt, size=9)
+                    cbar.ax.tick_params(labelsize=6)
+                    pylab.title(t + ' - ' + view, fontsize=12)
+                    pylab.xlabel('plane', fontsize=10)
+                    pylab.ylabel('strip', fontsize=10)
+            figname = 'evt_%d.pdf' % (counter)
+            pylab.savefig(figname)
+            pylab.close()
+            evt_plotted += 1
+        else:
+            if data_dict['oned']['type'] == 'energies':
+                colorbar_tile = 'scaled energy'
+            else:
+                colorbar_tile = 'scaled times'
+
+        
 #     for i in range(len(evt)):
 #         ax = pylab.subplot(gs[i])
 #         ax.axis('on')
@@ -307,6 +355,4 @@ if __name__ == '__main__':
     )
     dd = reader.read_data()
 
-    make_plots(dd)
-# evt_plotted = 0
-
+    make_plots(dd, options.n_events)
