@@ -1,40 +1,12 @@
 #!/usr/bin/env python
 """
 Usage:
-    python dset_visualize.py [file name] [opt: max # of evts, def==10]
-
-The default file name is: "./nukecc_fuel.hdf5".
-
-Note, one can, if one wants, when working with `Fuel`d data sets, do:
-
-    from fuel.datasets import H5PYDataset
-    train_set = H5PYDataset('./mydat_fuel.hdf5', which_sets=('train',))
-    handle = train_set.open()
-    nexamp = train_set.num_examples
-    data = train_set.get_data(handle, slice(0, nexamp))
-    # ...work with the data
-    train_set.close(handle)
-
-...but we don't do that here. (Just use h5py to cut any requirement of Fuel
-to look at the dsets.)
+    python dset_visualize.py -f [file name] -n [optional: # of evts, def==10]
 """
 import pylab
 import sys
 import h5py
 import tensorflow as tf
-
-# max_evts = 10
-# evt_plotted = 0
-
-# if '-h' in sys.argv or '--help' in sys.argv:
-#     print(__doc__)
-#     sys.exit(1)
-
-# filename = './minerva_fuel.hdf5'
-# if len(sys.argv) > 1:
-#     filename = sys.argv[1]
-# if len(sys.argv) > 2:
-#     max_evts = int(sys.argv[2])
 
 
 class MnvDataReader:
@@ -227,11 +199,26 @@ def decode_eventid(eventid):
 #     labels_shp = None
 
 
-# reader = MnvDataReader(filename=filename)
-# data_dict = reader.read_data()
+def make_plots(data_dict):
+    """
+    cases:
+    * 'energies+times',
+    * 'energies' and 'times' separately,
+    * or 'energies' or 'times'
+    """
+    plotting_two_tensors = False
+    if data_dict['energies+times']:
+        plotting_two_tensors = True
+    elif data_dict['energies'] or data_dict['times']:
+        if data_dict['energies'] and data_dict['times']:
+            plotting_two_tensors = True
 
-
-
+    pkeys = []
+    for k in data_dict.keys():
+        if data_dict[k]:
+            pkeys.append(k)
+    print('Data dictionary present keys: {}'.format(pkeys))
+    print('  Plotting 2D tensors? {}'.format(plotting_two_tensors))
 # colorbar_tile = 'scaled energy'
 # if have_times:
 #     colorbar_tile = 'scaled times'
@@ -295,3 +282,31 @@ def decode_eventid(eventid):
 #     pylab.savefig(figname)
 #     pylab.close()
 #     evt_plotted += 1
+
+
+if __name__ == '__main__':
+
+    from optparse import OptionParser
+    parser = OptionParser(usage=__doc__)
+    parser.add_option('-f', '--file', dest='filename',
+                      help='Dset file name', metavar='FILENAME',
+                      default=None, type='string')
+    parser.add_option('-n', '--nevents', dest='n_events', default=10,
+                      help='Number of events', metavar='N_EVENTS',
+                      type='int')
+
+    (options, args) = parser.parse_args()
+
+    if not options.filename:
+        print("\nSpecify file (-f):\n\n")
+        print(__doc__)
+        sys.exit(1)
+
+    reader = MnvDataReader(
+        filename=options.filename, n_events=options.n_events
+    )
+    dd = reader.read_data()
+
+    make_plots(dd)
+# evt_plotted = 0
+
