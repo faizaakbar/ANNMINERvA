@@ -23,18 +23,18 @@ import sys
 import h5py
 import tensorflow as tf
 
-max_evts = 10
-evt_plotted = 0
+# max_evts = 10
+# evt_plotted = 0
 
-if '-h' in sys.argv or '--help' in sys.argv:
-    print(__doc__)
-    sys.exit(1)
+# if '-h' in sys.argv or '--help' in sys.argv:
+#     print(__doc__)
+#     sys.exit(1)
 
-filename = './minerva_fuel.hdf5'
-if len(sys.argv) > 1:
-    filename = sys.argv[1]
-if len(sys.argv) > 2:
-    max_evts = int(sys.argv[2])
+# filename = './minerva_fuel.hdf5'
+# if len(sys.argv) > 1:
+#     filename = sys.argv[1]
+# if len(sys.argv) > 2:
+#     max_evts = int(sys.argv[2])
 
 
 class MnvDataReader:
@@ -57,7 +57,95 @@ class MnvDataReader:
         self.times_names = ['times-x', 'times-u', 'times-v']
         self.energies_names = ['hits-x', 'hits-u', 'hits-v']
         self.energiestimes_names = ['hitimes-x', 'hitimes-u', 'hitimes-v']
+
+    def _tfrecord_to_graph_ops_et(self):
+        """
+        TODO - handle cases with just energy or time tensors; this is a bit
+        tricky - TFRecords are not super-flexible about missing dsets the way
+        hdf5 files are. Options are to carefully build the TFRrecod reader to
+        be robust against missing values (not sure how to do this yet), or
+        use an argument key to pick which values are expected. For now,
+        specialize at the function name level ('_et' for 'engy+tm')
+        """
+        def proces_hitimes(inp, shape):
+            """ Keep (N, C, H, W) structure """
+            return tf.reshape(tf.decode_raw(inp, tf.float32), shape)
+
+        file_queue = tf.train.string_input_producer(
+            [self.filename], name='file_queue'
+        )
+        reader = tf.TFRecordReader()
+        _, tfrecord = reader.read(file_queue)
+
+        tfrecord_features = tf.parse_single_example(
+            tfrecord,
+            features={
+                'eventids': tf.FixedLenFeature([], tf.string),
+                'hitimes-x': tf.FixedLenFeature([], tf.string),
+                'hitimes-u': tf.FixedLenFeature([], tf.string),
+                'hitimes-v': tf.FixedLenFeature([], tf.string),
+                'planecodes': tf.FixedLenFeature([], tf.string),
+            },
+            name='data'
+        )
+        evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
+        hitimesx = proces_hitimes(
+            tfrecord_features['hitimes-x'], [-1, 2, 127, 50]
+        )
+        hitimesu = proces_hitimes(
+            tfrecord_features['hitimes-u'], [-1, 2, 127, 25]
+        )
+        hitimesv = proces_hitimes(
+            tfrecord_features['hitimes-v'], [-1, 2, 127, 25]
+        )
+        pcodes = tf.decode_raw(tfrecord_features['planecodes'], tf.int16)
+        pcodes = tf.cast(pcodes, tf.int32)
+        pcodes = tf.one_hot(indices=pcodes, depth=67, on_value=1, off_value=0)
+        return evtids, hitimesx, hitimesu, hitimesv, pcodes
+
+    def _batch_generator_et(self):
+        es, hx, hu, hv, ps = self._tfrecord_to_graph_ops_et()
+        capacity = 2 * self.n_events
+        es_b, hx_b, hu_b, hv_b, ps_b = tf.train.batch(
+            [es, hx, hu, hv, ps],
+            batch_size=self.n_events,
+            capacity=capacity,
+            enqueue_many=True
+        )
+        return es_b, hx_b, hu_b, hv_b, ps_b
     
+    def _read_tfr(self):
+        data_dict = {}
+        data_dict['energies+times'] = {}
+        data_dict['energies'] = {}
+        data_dict['times'] = {}
+
+        es_b, hx_b, hu_b, hv_b, ps_b = self._batch_generator_et()
+        with tf.Session() as sess:
+            # have to run local variable init for `string_input_producer`
+            sess.run(tf.local_variables_initializer())
+            coord = tf.train.Coordinator()
+            threads = tf.train.start_queue_runners(coord=coord)
+            try:
+                # TODO - also get and return evtids, pcodes
+                _, hx, hu, hv, _ = sess.run(
+                    [es_b, hx_b, hu_b, hv_b, ps_b]
+                )
+                data_dict['energies+times']['x'] = hx
+                data_dict['energies+times']['u'] = hu
+                data_dict['energies+times']['v'] = hv
+            # specifically catch `tf.errors.OutOfRangeError` or we won't handle
+            # the exception correctly.
+            except tf.errors.OutOfRangeError:
+                print('Training stopped - queue is empty.')
+            except Exception as e:
+                print(e)
+            finally:
+                coord.request_stop()
+                coord.join(threads)
+
+        return data_dict
+
     def _read_hdf5(self):
         """
         possibilities: energy tensors, time tensors, energy+time tensors
@@ -79,7 +167,10 @@ class MnvDataReader:
                         self._f[dset_name][:self.n_events]
                 else:
                     raise ValueError('Data shape has a bad length!')
-            
+
+        self._f = h5py.File(self.filename, 'r')
+        
+        # TDOD - get planecodes, eventids, etc. also
         data_dict = {}
         data_dict['energies+times'] = {}
         data_dict['energies'] = {}
@@ -92,14 +183,8 @@ class MnvDataReader:
         for dset_name in self.times_names:
             extract_data(dset_name, data_dict, 'times')
 
-        return data_dict
-
-    def _read_tfr(self):
-        data_dict = {}
-        data_dict['energies+times'] = {}
-        data_dict['energies'] = {}
-        data_dict['times'] = {}
-
+        self._f.close()
+        
         return data_dict
 
     def read_data(self):
@@ -129,148 +214,84 @@ def decode_eventid(eventid):
     run = eventid
     return (run, subrun, gate, phys_evt)
 
-f = h5py.File(filename, 'r')
+# labels_shp = (max_evts,)
+# evtids_shp = (max_evts,)
+# labels = pylab.zeros(labels_shp, dtype='f')
+# evtids = pylab.zeros(evtids_shp, dtype='uint64')
+# evtids = f['eventids'][:max_evts]
+# try:
+#     labels = f['segments'][:max_evts]
+#     pcodes = f['planecodes'][:max_evts]
+#     zs = f['zs'][:max_evts]
+# except KeyError:
+#     labels_shp = None
 
-have_times = False
-# look for x, u, v data hits
-try:
-    data_x_shp = pylab.shape(f['hits-x'])
-    xname = 'hits-x'
-except KeyError:
-    print("'hits-x' does not exist.")
-    data_x_shp = None
-try:
-    data_u_shp = pylab.shape(f['hits-u'])
-    uname = 'hits-u'
-except KeyError:
-    print("'hits-u' does not exist.")
-    data_u_shp = None
-try:
-    data_v_shp = pylab.shape(f['hits-v'])
-    vname = 'hits-v'
-except KeyError:
-    print("'hits-v' does not exist.")
-    data_v_shp = None
-# maybe we have times instead...
-if data_x_shp is None:
-    try:
-        data_x_shp = pylab.shape(f['times-x'])
-        have_times = True
-        xname = 'times-x'
-    except KeyError:
-        print("'times-x' does not exist.")
-        data_x_shp = None
-if data_u_shp is None:
-    try:
-        data_u_shp = pylab.shape(f['times-u'])
-        have_times = True
-        uname = 'times-u'
-    except KeyError:
-        print("'times-u' does not exist.")
-        data_u_shp = None
-if data_v_shp is None:
-    try:
-        data_v_shp = pylab.shape(f['times-v'])
-        have_times = True
-        vname = 'times-v'
-    except KeyError:
-        print("'times-v' does not exist.")
-        data_v_shp = None
 
-# if we have hits, get them, else set those containers to None
-if data_x_shp is not None:
-    data_x_shp = (max_evts, data_x_shp[1], data_x_shp[2], data_x_shp[3])
-    data_x = pylab.zeros(data_x_shp, dtype='f')
-    data_x = f[xname][:max_evts]
-else:
-    data_x = None
-if data_u_shp is not None:
-    data_u_shp = (max_evts, data_u_shp[1], data_u_shp[2], data_u_shp[3])
-    data_u = pylab.zeros(data_u_shp, dtype='f')
-    data_u = f[uname][:max_evts]
-else:
-    data_u = None
-if data_v_shp is not None:
-    data_v_shp = (max_evts, data_v_shp[1], data_v_shp[2], data_v_shp[3])
-    data_v = pylab.zeros(data_v_shp, dtype='f')
-    data_v = f[vname][:max_evts]
-else:
-    data_v = None
+# reader = MnvDataReader(filename=filename)
+# data_dict = reader.read_data()
 
-labels_shp = (max_evts,)
-evtids_shp = (max_evts,)
-labels = pylab.zeros(labels_shp, dtype='f')
-evtids = pylab.zeros(evtids_shp, dtype='uint64')
-evtids = f['eventids'][:max_evts]
-try:
-    labels = f['segments'][:max_evts]
-    pcodes = f['planecodes'][:max_evts]
-    zs = f['zs'][:max_evts]
-except KeyError:
-    labels_shp = None
 
-f.close()
 
-colorbar_tile = 'scaled energy'
-if have_times:
-    colorbar_tile = 'scaled times'
+# colorbar_tile = 'scaled energy'
+# if have_times:
+#     colorbar_tile = 'scaled times'
 
-for counter, evtid in enumerate(evtids):
-    if evt_plotted > max_evts:
-        break
-    run, subrun, gate, phys_evt = decode_eventid(evtid)
-    if labels_shp is not None:
-        targ = labels[counter]
-        pcode = pcodes[counter]
-        zz = zs[counter]
-        pstring = '{} - {} - {} - {}: tgt: {:02d}; plncd {:03d}; z {}'.format(
-            run, subrun, gate, phys_evt, targ, pcode, zz)
-    else:
-        pstring = '{} - {} - {} - {}'.format(
-            run, subrun, gate, phys_evt)
-    print(pstring)
-    evt = []
-    titles = []
-    if data_x is not None:
-        evt.append(data_x[counter])
-        titles.append('x view')
-    if data_u is not None:
-        evt.append(data_u[counter])
-        titles.append('u view')
-    if data_v is not None:
-        evt.append(data_v[counter])
-        titles.append('v view')
-    fig = pylab.figure(figsize=(9, 3))
-    gs = pylab.GridSpec(1, len(evt))
-    # print np.where(evt == np.max(evt))
-    # print np.max(evt)
-    for i in range(len(evt)):
-        ax = pylab.subplot(gs[i])
-        ax.axis('on')
-        ax.xaxis.set_major_locator(pylab.NullLocator())
-        ax.yaxis.set_major_locator(pylab.NullLocator())
-        # images are normalized such the max e-dep has val 1, independent
-        # of view, so set vmin, vmax here to keep matplotlib from
-        # normalizing each view on its own
-        minv = 0
-        cmap = 'jet'
-        if have_times:
-            minv = -1
-            cmap = 'bwr'
-        im = ax.imshow(evt[i][0], cmap=pylab.get_cmap(cmap),
-                       interpolation='nearest', vmin=minv, vmax=1)
-        cbar = pylab.colorbar(im, fraction=0.04)
-        cbar.set_label(colorbar_tile, size=9)
-        cbar.ax.tick_params(labelsize=6)
-        pylab.title(titles[i], fontsize=12)
-        pylab.xlabel("plane", fontsize=10)
-        pylab.ylabel("strip", fontsize=10)
-    if labels_shp is not None:
-        figname = 'evt_%s_%s_%s_%s_targ_%d_pcode_%d.pdf' % \
-                  (run, subrun, gate, phys_evt, targ, pcode)
-    else:
-        figname = 'evt_%s_%s_%s_%s.pdf' % \
-                  (run, subrun, gate, phys_evt)
-    pylab.savefig(figname)
-    pylab.close()
-    evt_plotted += 1
+# for counter, evtid in enumerate(evtids):
+#     if evt_plotted > max_evts:
+#         break
+#     run, subrun, gate, phys_evt = decode_eventid(evtid)
+#     if labels_shp is not None:
+#         targ = labels[counter]
+#         pcode = pcodes[counter]
+#         zz = zs[counter]
+#         pstring = '{} - {} - {} - {}: tgt: {:02d}; plncd {:03d}; z {}'.format(
+#             run, subrun, gate, phys_evt, targ, pcode, zz)
+#     else:
+#         pstring = '{} - {} - {} - {}'.format(
+#             run, subrun, gate, phys_evt)
+#     print(pstring)
+#     evt = []
+#     titles = []
+#     if data_x is not None:
+#         evt.append(data_x[counter])
+#         titles.append('x view')
+#     if data_u is not None:
+#         evt.append(data_u[counter])
+#         titles.append('u view')
+#     if data_v is not None:
+#         evt.append(data_v[counter])
+#         titles.append('v view')
+#     fig = pylab.figure(figsize=(9, 3))
+#     gs = pylab.GridSpec(1, len(evt))
+#     # print np.where(evt == np.max(evt))
+#     # print np.max(evt)
+#     for i in range(len(evt)):
+#         ax = pylab.subplot(gs[i])
+#         ax.axis('on')
+#         ax.xaxis.set_major_locator(pylab.NullLocator())
+#         ax.yaxis.set_major_locator(pylab.NullLocator())
+#         # images are normalized such the max e-dep has val 1, independent
+#         # of view, so set vmin, vmax here to keep matplotlib from
+#         # normalizing each view on its own
+#         minv = 0
+#         cmap = 'jet'
+#         if have_times:
+#             minv = -1
+#             cmap = 'bwr'
+#         im = ax.imshow(evt[i][0], cmap=pylab.get_cmap(cmap),
+#                        interpolation='nearest', vmin=minv, vmax=1)
+#         cbar = pylab.colorbar(im, fraction=0.04)
+#         cbar.set_label(colorbar_tile, size=9)
+#         cbar.ax.tick_params(labelsize=6)
+#         pylab.title(titles[i], fontsize=12)
+#         pylab.xlabel("plane", fontsize=10)
+#         pylab.ylabel("strip", fontsize=10)
+#     if labels_shp is not None:
+#         figname = 'evt_%s_%s_%s_%s_targ_%d_pcode_%d.pdf' % \
+#                   (run, subrun, gate, phys_evt, targ, pcode)
+#     else:
+#         figname = 'evt_%s_%s_%s_%s.pdf' % \
+#                   (run, subrun, gate, phys_evt)
+#     pylab.savefig(figname)
+#     pylab.close()
+#     evt_plotted += 1
