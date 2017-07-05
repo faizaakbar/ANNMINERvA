@@ -9,6 +9,33 @@ import h5py
 import tensorflow as tf
 
 
+def decode_eventid(eventid):
+    """
+    assume encoding from fuel_up_nukecc.py, etc.
+    """
+    eventid = str(eventid)
+    phys_evt = eventid[-2:]
+    eventid = eventid[:-2]
+    gate = eventid[-4:]
+    eventid = eventid[:-4]
+    subrun = eventid[-4:]
+    eventid = eventid[:-4]
+    run = eventid
+    return (run, subrun, gate, phys_evt)
+
+
+def make_mnv_vertex_finder_data_dict():
+    data_dict = {}
+    data_dict['energies+times'] = {}
+    data_dict['energies'] = {}
+    data_dict['times'] = {}
+    data_dict['eventids'] = {}
+    data_dict['planecodes'] = {}
+    data_dict['segments'] = {}
+    data_dict['zs'] = {}
+    return data_dict
+
+
 class MnvDataReader:
     def __init__(self, filename, n_events=10, views=['x', 'u', 'v']):
         self.filename = filename
@@ -57,6 +84,8 @@ class MnvDataReader:
                 'hitimes-u': tf.FixedLenFeature([], tf.string),
                 'hitimes-v': tf.FixedLenFeature([], tf.string),
                 'planecodes': tf.FixedLenFeature([], tf.string),
+                'segments': tf.FixedLenFeature([], tf.string),
+                'zs': tf.FixedLenFeature([], tf.string),
             },
             name='data'
         )
@@ -73,18 +102,20 @@ class MnvDataReader:
         pcodes = tf.decode_raw(tfrecord_features['planecodes'], tf.int16)
         pcodes = tf.cast(pcodes, tf.int32)
         pcodes = tf.one_hot(indices=pcodes, depth=67, on_value=1, off_value=0)
-        return evtids, hitimesx, hitimesu, hitimesv, pcodes
+        segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
+        zs = tf.decode_raw(tfrecord_features['zs'], tf.float32)
+        return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
 
     def _batch_generator_et(self):
-        es, hx, hu, hv, ps = self._tfrecord_to_graph_ops_et()
+        es, hx, hu, hv, ps, sg, zs = self._tfrecord_to_graph_ops_et()
         capacity = 2 * self.n_events
-        es_b, hx_b, hu_b, hv_b, ps_b = tf.train.batch(
-            [es, hx, hu, hv, ps],
+        es_b, hx_b, hu_b, hv_b, ps_b, sg_b, zs_b = tf.train.batch(
+            [es, hx, hu, hv, ps, sg, zs],
             batch_size=self.n_events,
             capacity=capacity,
             enqueue_many=True
         )
-        return es_b, hx_b, hu_b, hv_b, ps_b
+        return es_b, hx_b, hu_b, hv_b, ps_b, sg_b, zs_b
     
     def _read_tfr(self):
         data_dict = {}
@@ -92,7 +123,7 @@ class MnvDataReader:
         data_dict['energies'] = {}
         data_dict['times'] = {}
 
-        es_b, hx_b, hu_b, hv_b, ps_b = self._batch_generator_et()
+        es_b, hx_b, hu_b, hv_b, ps_b, sg_b, zs_b = self._batch_generator_et()
         with tf.Session() as sess:
             # have to run local variable init for `string_input_producer`
             sess.run(tf.local_variables_initializer())
@@ -100,12 +131,16 @@ class MnvDataReader:
             threads = tf.train.start_queue_runners(coord=coord)
             try:
                 # TODO - also get and return evtids, pcodes
-                _, hx, hu, hv, _ = sess.run(
-                    [es_b, hx_b, hu_b, hv_b, ps_b]
+                evts, hx, hu, hv, pcds, segs, zs = sess.run(
+                    [es_b, hx_b, hu_b, hv_b, ps_b, sg_b, zs_b]
                 )
                 data_dict['energies+times']['x'] = hx
                 data_dict['energies+times']['u'] = hu
                 data_dict['energies+times']['v'] = hv
+                data_dict['eventids'] = evts
+                data_dict['planecodes'] = pcds
+                data_dict['segments'] = segs
+                data_dict['zs'] = zs
             # specifically catch `tf.errors.OutOfRangeError` or we won't handle
             # the exception correctly.
             except tf.errors.OutOfRangeError:
@@ -124,7 +159,7 @@ class MnvDataReader:
         (2-deep). get everything there into a dictionary keyed by type,
         and then by view.
         """
-        def extract_data(dset_name, data_dict, tensor_type):
+        def extract_data(dset_name, data_dict, tensor_type, dtype='f'):
             view = dset_name[-1]
             try:
                 shp = pylab.shape(self._f[dset_name])
@@ -134,26 +169,38 @@ class MnvDataReader:
             if shp is not None:
                 if len(shp) == 4:
                     shp = (self.n_events, shp[1], shp[2], shp[3])
-                    data_dict[tensor_type][view] = pylab.zeros(shp, dtype='f')
+                    data_dict[tensor_type][view] = \
+                        pylab.zeros(shp, dtype=dtype)
                     data_dict[tensor_type][view] = \
                         self._f[dset_name][:self.n_events]
+                elif len(shp) == 1:
+                    shp = (self.n_events,)
+                    data_dict[dset_name] = pylab.zeros(shp, dtype=dtype)
+                    data_dict[dset_name] = self._f[dset_name][:self.n_events]
                 else:
                     raise ValueError('Data shape has a bad length!')
 
         self._f = h5py.File(self.filename, 'r')
         
-        # TDOD - get planecodes, eventids, etc. also
-        data_dict = {}
-        data_dict['energies+times'] = {}
-        data_dict['energies'] = {}
-        data_dict['times'] = {}
-        
-        for dset_name in self.energiestimes_names:
-            extract_data(dset_name, data_dict, 'energies+times')
-        for dset_name in self.energies_names:
-            extract_data(dset_name, data_dict, 'energies')
-        for dset_name in self.times_names:
-            extract_data(dset_name, data_dict, 'times')
+        data_dict = make_mnv_vertex_finder_data_dict()
+
+        if 'energies+times' in data_dict.keys():
+            for dset_name in self.energiestimes_names:
+                extract_data(dset_name, data_dict, 'energies+times')
+        if 'energies' in data_dict.keys():
+            for dset_name in self.energies_names:
+                extract_data(dset_name, data_dict, 'energies')
+        if 'times' in data_dict.keys():
+            for dset_name in self.times_names:
+                extract_data(dset_name, data_dict, 'times')
+        if 'eventids' in data_dict.keys():
+            extract_data('eventids', data_dict, None, 'uint64')
+        if 'planecodes' in data_dict.keys():
+            extract_data('planecodes', data_dict, None, 'uint16')
+        if 'segments' in data_dict.keys():
+            extract_data('segments', data_dict, None, 'uint8')
+        if 'zs' in data_dict.keys():
+            extract_data('zs', data_dict, None)
 
         self._f.close()
         
@@ -171,21 +218,6 @@ class MnvDataReader:
         else:
             raise ValueError('Invalid file type extension!')
     
-
-def decode_eventid(eventid):
-    """
-    assume encoding from fuel_up_nukecc.py, etc.
-    """
-    eventid = str(eventid)
-    phys_evt = eventid[-2:]
-    eventid = eventid[:-2]
-    gate = eventid[-4:]
-    eventid = eventid[:-4]
-    subrun = eventid[-4:]
-    eventid = eventid[:-4]
-    run = eventid
-    return (run, subrun, gate, phys_evt)
-
 # labels_shp = (max_evts,)
 # evtids_shp = (max_evts,)
 # labels = pylab.zeros(labels_shp, dtype='f')
@@ -209,7 +241,7 @@ def make_plots(data_dict, max_events):
     """
     pkeys = []
     for k in data_dict.keys():
-        if data_dict[k]:
+        if len(data_dict[k]) > 0:
             pkeys.append(k)
     print('Data dictionary present keys: {}'.format(pkeys))
 
@@ -255,9 +287,13 @@ def make_plots(data_dict, max_events):
 
     evt_plotted = 0
     for counter in range(max_events):
+        evtid = data_dict['eventids'][counter]
+        (run, subrun, gate, phys_evt) = decode_eventid(evtid)
         if evt_plotted > max_events:
             break
-        print('Plotting entry {}'.format(counter))
+        print('Plotting entry {}: {}: {} - {} - {}- {}'.format(
+            counter, evtid, run, subrun, gate, phys_evt
+        ))
 
         # run, subrun, gate, phys_evt = decode_eventid(evtid)
         fig_wid = 9
