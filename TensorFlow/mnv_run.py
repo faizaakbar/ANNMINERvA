@@ -8,8 +8,8 @@ import numpy as np
 
 from model_tricolumnar_st_epsilon import TriColSTEpsilon
 from model_tricolumnar_st_epsilon import make_default_convpooldict
-# from tfrecord_manager import batch_generator
-# from tfrecord_manager import DATA_PATH
+
+from MnvDataReaders import MnvDataReaderVertexST
 
 import os
 import time

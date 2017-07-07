@@ -10,6 +10,8 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
 
     conv kernel shape is [filt_h, filt_w, in_nch, out_nch]
     pool kernel shape is [N, H, W, C] for 'NHWC', etc.
+
+    TODO - update PADDING to look like Theano version
     """
     convpooldict = {}
 
