@@ -80,11 +80,11 @@ class MnvDataReaderVertexST:
         capacity = 10 * self.batch_size
         es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b = tf.train.batch(
             [es, x, u, v, ps, sg, zs],
-            batch_size=self.n_events,
+            batch_size=self.batch_size,
             capacity=capacity,
             enqueue_many=True
         )
-        return self._make_mnv_vertex_finder_data_dict(
+        return self._make_mnv_vertex_finder_batch_dict(
             es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b
         )
 
@@ -99,6 +99,6 @@ class MnvDataReaderVertexST:
             min_after_dequeue=min_after_dequeue,
             enqueue_many=True
         )
-        return self._make_mnv_vertex_finder_data_dict(
+        return self._make_mnv_vertex_finder_batch_dict(
             es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b
         )
