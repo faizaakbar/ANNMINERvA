@@ -6,7 +6,7 @@ class MnvDataReaderVertexST:
     """
     Minerva Data Reader for (target) vertex-finder "SpaceTime" data
     """
-    def __init__(self, filenames_list, batch_size=100):
+    def __init__(self, filenames_list, batch_size=100, data_format='NHWC'):
         self.filenames_list = filenames_list
         self.batch_size = batch_size
         imgdat_names = {}
@@ -14,7 +14,7 @@ class MnvDataReaderVertexST:
         imgdat_names['u'] = 'hitimes-u'
         imgdat_names['v'] = 'hitimes-v'
         self.imgdat_names = imgdat_names
-        self._f = None
+        self.data_format = data_format
 
     def _make_mnv_vertex_finder_batch_dict(
             self, eventids_batch,
@@ -36,8 +36,14 @@ class MnvDataReaderVertexST:
         specialize at the function name level ('_et' for 'engy+tm')
         """
         def proces_hitimes(inp, shape):
-            """ Keep (N, C, H, W) structure """
-            return tf.reshape(tf.decode_raw(inp, tf.float32), shape)
+            """ Start with a (N, C, H, W) structure, -> (N, H, W, C)? """
+            tnsr = tf.reshape(tf.decode_raw(inp, tf.float32), shape)
+            if self.data_format == 'NCHW':
+                return tnsr
+            elif self.data_format == 'NHWC':
+                return tf.transpose(tnsr, [0, 2, 3, 1])
+            else:
+                raise ValueError('Invalid data format in data reader!')
 
         file_queue = tf.train.string_input_producer(
             self.filenames_list, name='file_queue', num_epochs=num_epochs
@@ -72,6 +78,8 @@ class MnvDataReaderVertexST:
         pcodes = tf.cast(pcodes, tf.int32)
         pcodes = tf.one_hot(indices=pcodes, depth=67, on_value=1, off_value=0)
         segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
+        segs = tf.cast(segs, tf.int32)
+        segs = tf.one_hot(indices=segs, depth=11, on_value=1, off_value=0)
         zs = tf.decode_raw(tfrecord_features['zs'], tf.float32)
         return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
 
