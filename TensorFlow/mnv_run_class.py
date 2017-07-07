@@ -1,5 +1,5 @@
 """
-mnist!
+minerva test
 """
 from __future__ import print_function
 
@@ -16,7 +16,7 @@ import time
 
 hparams_dict = dict()
 hparams_dict['LEARNING_RATE'] = 0.001
-hparams_dict['BATCH_SIZE'] = 128
+hparams_dict['BATCH_SIZE'] = 4
 hparams_dict['DROPOUT_KEEP_PROB'] = 0.75
 
 SKIP_STEP = 20  # how many iters before checkpointing
@@ -92,33 +92,34 @@ def train(
             
             # NOTE: specifically catch `tf.errors.OutOfRangeError` or we won't
             # handle the exception correctly.
-            # try:
-            #     for b_num in range(initial_step, initial_step + n_steps):
-            #         _, loss_batch, summary = sess.run(
-            #             [model.optimizer, model.loss, model.summary_op],
-            #             feed_dict={
-            #                 model.dropout: hparams_dict['DROPOUT_KEEP_PROB']
-            #             }
-            #         )
-            #         writer.add_summary(summary, global_step=b_num)
-            #         average_loss += loss_batch
-            #         if (b_num + 1) % skip_step == 0:
-            #             print('  Average loss at step {}: {:5.1f}'.format(
-            #                 b_num + 1, average_loss / skip_step
-            #             ))
-            #             print('   Elapsed time = {}'.format(
-            #                 time.time() - start_time
-            #             ))
-            #             average_loss = 0.0
-            #             saver.save(sess, ckpt_dir, b_num)
-            #             print('     saved at iter %d' % b_num)
-            # except tf.errors.OutOfRangeError:
-            #     print('Training stopped - queue is empty.')
-            # except Exception as e:
-            #     print(e)
-            # finally:
-            #     coord.request_stop()
-            #     coord.join(threads)
+            try:
+                for b_num in range(initial_step, initial_step + n_steps):
+                    _, loss_batch, summary = sess.run(
+                        [model.optimizer, model.loss, model.summary_op],
+                        feed_dict={
+                            model.dropout_keep_prob:
+                            hparams_dict['DROPOUT_KEEP_PROB']
+                        }
+                    )
+                    writer.add_summary(summary, global_step=b_num)
+                    average_loss += loss_batch
+                    if (b_num + 1) % skip_step == 0:
+                        print('  Average loss at step {}: {:5.1f}'.format(
+                            b_num + 1, average_loss / skip_step
+                        ))
+                        print('   Elapsed time = {}'.format(
+                            time.time() - start_time
+                        ))
+                        average_loss = 0.0
+                        saver.save(sess, ckpt_dir, b_num)
+                        print('     saved at iter %d' % b_num)
+            except tf.errors.OutOfRangeError:
+                print('Training stopped - queue is empty.')
+            except Exception as e:
+                print(e)
+            finally:
+                coord.request_stop()
+                coord.join(threads)
 
         writer.close()
 
