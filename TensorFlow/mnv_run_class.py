@@ -22,10 +22,10 @@ hparams_dict['DROPOUT_KEEP_PROB'] = 0.75
 SKIP_STEP = 20  # how many iters before checkpointing
 N_EPOCHS = 25
 
-TBOARD_DIR = '/tmp/minerva/st_epsilon' + \
-             '/%06d' % np.random.randint(999999)
+# TBOARD_DIR = '/tmp/minerva/st_epsilon' + \
+#              '/%06d' % np.random.randint(999999)
 # TBOARD_DIR = './622446'
-# TBOARD_DIR = '/tmp/minerva/st_epsilon/622446'
+TBOARD_DIR = '/tmp/minerva/st_epsilon/219008'
 
 
 def train(
@@ -43,6 +43,7 @@ def train(
 
     with tf.Graph().as_default() as g:
 
+        # TODO - modify things so we can run validation also!
         img_depth = 2
         filenames_list = ['./minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_train.tfrecord']
         data_reader = MnvDataReaderVertexST(
@@ -60,7 +61,7 @@ def train(
         model = TriColSTEpsilon(n_classes=11, params=hparams_dict)
         model.prepare_for_inference(f, d)
         model.prepare_for_training(targ)
-        
+
         writer = tf.summary.FileWriter(run_dest_dir)
         saver = tf.train.Saver()
 
@@ -89,7 +90,7 @@ def train(
 
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(coord=coord)
-            
+
             # NOTE: specifically catch `tf.errors.OutOfRangeError` or we won't
             # handle the exception correctly.
             try:
@@ -140,35 +141,29 @@ def test(
     with tf.Graph().as_default() as g:
 
         img_depth = 2
-        X = tf.placeholder(
-            tf.float32, shape=[None, 127, 50, img_depth], name='X'
+        filenames_list = ['./minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_test.tfrecord']
+        data_reader = MnvDataReaderVertexST(
+            filenames_list=filenames_list,
+            batch_size=hparams_dict['BATCH_SIZE']
         )
-        U = tf.placeholder(
-            tf.float32, shape=[None, 127, 25, img_depth], name='U'
-        )
-        V = tf.placeholder(
-            tf.float32, shape=[None, 127, 25, img_depth], name='V'
-        )
-        targ = tf.placeholder(tf.float32, shape=[None, 11], name='targ')
+        batch_dict = data_reader.batch_generator()
+        batch_size=hparams_dict['BATCH_SIZE']
+        X = batch_dict['hitimes-x']
+        U = batch_dict['hitimes-u']
+        V = batch_dict['hitimes-v']
+        targ = batch_dict['segments']
         f = [X, U, V]
         d = make_default_convpooldict(img_depth=img_depth)
 
         model = TriColSTEpsilon(n_classes=11, params=hparams_dict)
         model.prepare_for_inference(f, d)
+        # TODO - this needs restructuring, shouldn't need to call a fn called
+        # `prepare_for_training` - here use it to compute loss
         model.prepare_for_training(targ)
-
-        # test_file = DATA_PATH + 'mnist_test.tfrecord'
-        # batch_size = 5 if short else hparams_dict['BATCH_SIZE']
-        # features_batch, targets_batch = batch_generator(
-        #     [test_file], batch_size=batch_size, num_epochs=1
-        # )
-
-        # model.prepare_for_inference(features_batch)
-        # model.prepare_for_training(targets_batch)
 
         saver = tf.train.Saver()
 
-        n_batches = 5 if short else 10000
+        n_batches = 2 if short else 10000
         init = tf.global_variables_initializer()
         print(' Processing {} batches...'.format(n_batches))
 
@@ -191,60 +186,60 @@ def test(
 
             final_step = model.global_step.eval()
             print('evaluation after {} steps.'.format(final_step))
-            # average_loss = 0.0
-            # total_correct_preds = 0
+            average_loss = 0.0
+            total_correct_preds = 0
 
-            # coord = tf.train.Coordinator()
-            # threads = tf.train.start_queue_runners(coord=coord)
+            coord = tf.train.Coordinator()
+            threads = tf.train.start_queue_runners(coord=coord)
 
             # NOTE: specifically catch `tf.errors.OutOfRangeError` or we won't
             # handle the exception correctly.
-            # n_processed = 0
-            # try:
-            #     for i in range(n_batches):
-            #         loss_batch, logits_batch, Y_batch = sess.run(
-            #             [model.loss, model.logits, targets_batch],
-            #             feed_dict={
-            #                 model.dropout: 1.0
-            #             }
-            #         )
-            #         n_processed += batch_size
-            #         average_loss += loss_batch
-            #         preds = tf.nn.softmax(logits_batch)
-            #         correct_preds = tf.equal(
-            #             tf.argmax(preds, 1), tf.argmax(Y_batch, 1)
-            #         )
-            #         if verbose:
-            #             print('   preds   = \n{}'.format(
-            #                 tf.argmax(preds, 1).eval()
-            #             ))
-            #             print('   Y_batch = \n{}'.format(
-            #                 np.argmax(Y_batch, 1)
-            #             ))
-            #         accuracy = tf.reduce_sum(
-            #             tf.cast(correct_preds, tf.float32)
-            #         )
-            #         total_correct_preds += sess.run(accuracy)
-            #         if verbose:
-            #             print('  batch {} loss = {} for nproc {}'.format(
-            #                 i, loss_batch, n_processed
-            #             ))
+            n_processed = 0
+            try:
+                for i in range(n_batches):
+                    loss_batch, logits_batch, Y_batch = sess.run(
+                        [model.loss, model.logits, targ],
+                        feed_dict={
+                            model.dropout_keep_prob: 1.0
+                        }
+                    )
+                    n_processed += batch_size
+                    average_loss += loss_batch
+                    preds = tf.nn.softmax(logits_batch)
+                    correct_preds = tf.equal(
+                        tf.argmax(preds, 1), tf.argmax(Y_batch, 1)
+                    )
+                    if verbose:
+                        print('   preds   = \n{}'.format(
+                            tf.argmax(preds, 1).eval()
+                        ))
+                        print('   Y_batch = \n{}'.format(
+                            np.argmax(Y_batch, 1)
+                        ))
+                    accuracy = tf.reduce_sum(
+                        tf.cast(correct_preds, tf.float32)
+                    )
+                    total_correct_preds += sess.run(accuracy)
+                    if verbose:
+                        print('  batch {} loss = {} for nproc {}'.format(
+                            i, loss_batch, n_processed
+                        ))
 
-            #         print("  total_correct_preds =", total_correct_preds)
-            #         print("  n_processed =", n_processed)
-            #         print(" Accuracy {0}".format(
-            #             total_correct_preds / n_processed
-            #         ))
-            #         print(' Average loss: {:5.1f}'.format(
-            #             average_loss / n_batches
-            #         ))
-            # except tf.errors.OutOfRangeError:
-            #     print('Testing stopped - queue is empty.')
-            # except Exception as e:
-            #     print(e)
-            # finally:
-            #     coord.request_stop()
-            #     coord.join(threads)
+                    print("  total_correct_preds =", total_correct_preds)
+                    print("  n_processed =", n_processed)
+                    print(" Accuracy {0}".format(
+                        total_correct_preds / n_processed
+                    ))
+                    print(' Average loss: {:5.1f}'.format(
+                        average_loss / n_batches
+                    ))
+            except tf.errors.OutOfRangeError:
+                print('Testing stopped - queue is empty.')
+            except Exception as e:
+                print(e)
+            finally:
+                coord.request_stop()
+                coord.join(threads)
 
         print('  Elapsed time = {}'.format(time.time() - start_time))
 
@@ -312,4 +307,4 @@ def model_check(
 if __name__ == '__main__':
 
     train(hparams_dict, TBOARD_DIR, short=True)
-    # test(hparams_dict, TBOARD_DIR, verbose=False, short=True)
+    test(hparams_dict, TBOARD_DIR, verbose=False, short=True)
