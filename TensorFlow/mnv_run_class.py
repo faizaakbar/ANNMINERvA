@@ -27,6 +27,14 @@ N_EPOCHS = 25
 # TBOARD_DIR = './622446'
 TBOARD_DIR = '/tmp/minerva/st_epsilon/219008'
 
+BASE_FILEPAT = 'minosmatch_nukecczdefs_genallzwitht_pcodecap66_'
+FILE_SHPTYP = '127x50x25_xtxutuvtv_'
+DSAMP = 'me1Amc_'
+PATH = './'
+TRAINF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + '%04d' + '_train.tfrecord'
+VALIDF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + '%04d' + '_valid.tfrecord'
+TESTF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + '%04d' + '_test.tfrecord'
+
 
 def train(
         hparams_dict,
@@ -45,22 +53,40 @@ def train(
 
         # TODO - modify things so we can run validation also!
         img_depth = 2
-        filenames_list = ['./minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_train.tfrecord']
-        data_reader = MnvDataReaderVertexST(
-            filenames_list=filenames_list,
-            batch_size=hparams_dict['BATCH_SIZE']
+        train_list = [TRAINF % i for i in range(1)]
+        valid_list = [VALIDF % i for i in range(1)]
+        # train_list = [
+        #     TRAINBASE + ('%04d' % i) + '_train.tfrecord' for
+        #     i in range(1)
+        # ]
+        train_reader = MnvDataReaderVertexST(
+            filenames_list=train_list,
+            batch_size=hparams_dict['BATCH_SIZE'],
+            name='train'
         )
-        batch_dict = data_reader.batch_generator()
-        X = batch_dict['hitimes-x']
-        U = batch_dict['hitimes-u']
-        V = batch_dict['hitimes-v']
-        targ = batch_dict['segments']
-        f = [X, U, V]
-        d = make_default_convpooldict(img_depth=img_depth)
+        batch_dict_train = train_reader.shuffle_batch_generator()
+        X_train = batch_dict_train['hitimes-x']
+        U_train = batch_dict_train['hitimes-u']
+        V_train = batch_dict_train['hitimes-v']
+        targ_train = batch_dict_train['segments']
+        f_train = [X_train, U_train, V_train]
 
+        valid_reader = MnvDataReaderVertexST(
+            filenames_list=valid_list,
+            batch_size=hparams_dict['BATCH_SIZE'],
+            name='valid'
+        )
+        batch_dict_valid = valid_reader.batch_generator(num_epochs=100)
+        X_valid = batch_dict_valid['hitimes-x']
+        U_valid = batch_dict_valid['hitimes-u']
+        V_valid = batch_dict_valid['hitimes-v']
+        targ_valid = batch_dict_valid['segments']
+        f_valid = [X_valid, U_valid, V_valid]
+
+        d = make_default_convpooldict(img_depth=img_depth)
         model = TriColSTEpsilon(n_classes=11, params=hparams_dict)
-        model.prepare_for_inference(f, d)
-        model.prepare_for_training(targ)
+        model.prepare_for_inference(f_train, d)
+        model.prepare_for_training(targ_train)
 
         writer = tf.summary.FileWriter(run_dest_dir)
         saver = tf.train.Saver()
@@ -96,7 +122,9 @@ def train(
             try:
                 for b_num in range(initial_step, initial_step + n_steps):
                     _, loss_batch, summary = sess.run(
-                        [model.optimizer, model.loss, model.summary_op],
+                        [model.optimizer,
+                         model.loss,
+                         model.train_summary_op],
                         feed_dict={
                             model.dropout_keep_prob:
                             hparams_dict['DROPOUT_KEEP_PROB']
@@ -105,7 +133,7 @@ def train(
                     writer.add_summary(summary, global_step=b_num)
                     average_loss += loss_batch
                     if (b_num + 1) % skip_step == 0:
-                        print('  Average loss at step {}: {:5.1f}'.format(
+                        print('  Avg training loss at step {}: {:5.1f}'.format(
                             b_num + 1, average_loss / skip_step
                         ))
                         print('   Elapsed time = {}'.format(
@@ -114,6 +142,21 @@ def train(
                         average_loss = 0.0
                         saver.save(sess, ckpt_dir, b_num)
                         print('     saved at iter %d' % b_num)
+                        # try validation
+                        model.reassign_features(f_valid)
+                        model.reassign_targets(targ_valid)
+                        loss_valid, summary = sess.run(
+                            [model.loss,
+                             model.valid_summary_op],
+                            feed_dict={
+                                model.dropout_keep_prob: 1.0
+                            }
+                        )
+                        writer.add_summary(summary, global_step=b_num)
+                        print('   Valid loss =', loss_valid)
+                        # reset for training
+                        model.reassign_features(f_train)
+                        model.reassign_targets(targ_train)
             except tf.errors.OutOfRangeError:
                 print('Training stopped - queue is empty.')
             except Exception as e:
@@ -306,5 +349,6 @@ def model_check(
 
 if __name__ == '__main__':
 
-    train(hparams_dict, TBOARD_DIR, short=True)
-    test(hparams_dict, TBOARD_DIR, verbose=False, short=True)
+    short = False
+    train(hparams_dict, TBOARD_DIR, short=short)
+    test(hparams_dict, TBOARD_DIR, verbose=False, short=short)
