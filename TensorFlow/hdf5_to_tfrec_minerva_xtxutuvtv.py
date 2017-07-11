@@ -148,9 +148,13 @@ def write_all(hdf5_file, train_file, valid_file, test_file):
     m = minerva_hdf5_reader(hdf5_file)
     m.open()
     data_dict = make_mnv_data_dict()
-    write_tfrecord(m, data_dict,  0, 50, train_file)
-    write_tfrecord(m, data_dict, 50, 60, valid_file)
-    write_tfrecord(m, data_dict, 60, 70, test_file)
+    # events included are [start, stop)
+    # write_tfrecord(m, data_dict,    0, 1000, train_file)
+    # write_tfrecord(m, data_dict, 1000, 1050, valid_file)
+    # write_tfrecord(m, data_dict, 1050, 1100, test_file)
+    write_tfrecord(m, data_dict,   0, 500, train_file)
+    write_tfrecord(m, data_dict, 500, 550, valid_file)
+    write_tfrecord(m, data_dict, 550, 600, test_file)
     m.close()
 
 
