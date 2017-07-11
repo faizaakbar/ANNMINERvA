@@ -282,13 +282,13 @@ class TriColSTEpsilon:
 
     def _set_targets(self, targets):
         with tf.name_scope('targets'):
-            self.Y = tf.cast(targets, tf.float32)
+            self.targets = tf.cast(targets, tf.float32)
 
     def _define_loss(self):
         with tf.name_scope('loss'):
             self.loss = tf.reduce_mean(
                 tf.nn.softmax_cross_entropy_with_logits(
-                    logits=self.logits, labels=self.Y
+                    logits=self.logits, labels=self.targets
                 ),
                 axis=0,
                 name='loss'
@@ -301,10 +301,25 @@ class TriColSTEpsilon:
             ).minimize(self.loss, global_step=self.global_step)
 
     def _create_summaries(self):
-        with tf.name_scope('summaries'):
+        with tf.name_scope('summaries/train'):
             tf.summary.scalar('loss', self.loss)
             tf.summary.histogram('histogram_loss', self.loss)
-            self.summary_op = tf.summary.merge_all()
+            self.train_summary_op = tf.summary.merge_all()
+        with tf.name_scope('summaries/valid'):
+            tf.summary.scalar('loss', self.loss)
+            tf.summary.histogram('histogram_loss', self.loss)
+            self.valid_summary_op = tf.summary.merge_all()
+
+    def reassign_features(self, features_list):
+        """ features_list[0] == X, [1] == U, [2] == V; """
+        with tf.name_scope('input_images'):
+            self.X_img = tf.cast(features_list[0], tf.float32)
+            self.U_img = tf.cast(features_list[1], tf.float32)
+            self.V_img = tf.cast(features_list[2], tf.float32)
+
+    def reassign_targets(self, targets):
+        with tf.name_scope('targets'):
+            self.targets = tf.cast(targets, tf.float32)
 
     def prepare_for_inference(self, features, kbd):
         """ kbd == kernels_biases_dict (convpooldict) """
@@ -320,15 +335,26 @@ class TriColSTEpsilon:
 def test():
     tf.reset_default_graph()
     img_depth = 2
-    X = tf.placeholder(tf.float32, shape=[None, 127, 50, img_depth], name='X')
-    U = tf.placeholder(tf.float32, shape=[None, 127, 25, img_depth], name='U')
-    V = tf.placeholder(tf.float32, shape=[None, 127, 25, img_depth], name='V')
+    Xshp = [None, 127, 50, img_depth]
+    UVshp = [None, 127, 25, img_depth]
+    X = tf.placeholder(tf.float32, shape=Xshp, name='X')
+    U = tf.placeholder(tf.float32, shape=UVshp, name='U')
+    V = tf.placeholder(tf.float32, shape=UVshp, name='V')
     targ = tf.placeholder(tf.float32, shape=[None, 11], name='targ')
     f = [X, U, V]
     d = make_default_convpooldict(img_depth=img_depth)
     t = TriColSTEpsilon(11)
     t.prepare_for_inference(f, d)
     t.prepare_for_training(targ)
+
+    # test reassignment
+    Xp = tf.placeholder(tf.float32, shape=Xshp, name='Xp')
+    Up = tf.placeholder(tf.float32, shape=UVshp, name='Up')
+    Vp = tf.placeholder(tf.float32, shape=UVshp, name='Vp')
+    targp = tf.placeholder(tf.float32, shape=[None, 11], name='targp')
+    fp = [Xp, Up, Vp]
+    t.reassign_features(fp)
+    t.reassign_targets(targp)
 
 
 if __name__ == '__main__':
