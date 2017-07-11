@@ -6,9 +6,13 @@ class MnvDataReaderVertexST:
     """
     Minerva Data Reader for (target) vertex-finder "SpaceTime" data
     """
-    def __init__(self, filenames_list, batch_size=100, data_format='NHWC'):
+    def __init__(
+            self, filenames_list, batch_size=100,
+            name='reader', data_format='NHWC'
+    ):
         self.filenames_list = filenames_list
         self.batch_size = batch_size
+        self.name = name
         imgdat_names = {}
         imgdat_names['x'] = 'hitimes-x'
         imgdat_names['u'] = 'hitimes-u'
@@ -46,7 +50,9 @@ class MnvDataReaderVertexST:
                 raise ValueError('Invalid data format in data reader!')
 
         file_queue = tf.train.string_input_producer(
-            self.filenames_list, name='file_queue', num_epochs=num_epochs
+            self.filenames_list,
+            name=self.name+'_file_queue',
+            num_epochs=num_epochs
         )
         reader = tf.TFRecordReader()
         _, tfrecord = reader.read(file_queue)
@@ -62,7 +68,7 @@ class MnvDataReaderVertexST:
                 'segments': tf.FixedLenFeature([], tf.string),
                 'zs': tf.FixedLenFeature([], tf.string),
             },
-            name='data'
+            name=self.name+'_data'
         )
         evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
         hitimesx = proces_hitimes(
@@ -90,7 +96,8 @@ class MnvDataReaderVertexST:
             [es, x, u, v, ps, sg, zs],
             batch_size=self.batch_size,
             capacity=capacity,
-            enqueue_many=True
+            enqueue_many=True,
+            name=self.name+'_batch'
         )
         return self._make_mnv_vertex_finder_batch_dict(
             es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b
@@ -105,7 +112,8 @@ class MnvDataReaderVertexST:
             batch_size=self.batch_size,
             capacity=capacity,
             min_after_dequeue=min_after_dequeue,
-            enqueue_many=True
+            enqueue_many=True,
+            name=self.name+'_shuffle_batch'
         )
         return self._make_mnv_vertex_finder_batch_dict(
             es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b
