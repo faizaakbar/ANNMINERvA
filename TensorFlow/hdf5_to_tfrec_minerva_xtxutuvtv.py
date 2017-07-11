@@ -149,18 +149,22 @@ def write_all(hdf5_file, train_file, valid_file, test_file):
     m.open()
     data_dict = make_mnv_data_dict()
     # events included are [start, stop)
-    # write_tfrecord(m, data_dict,    0, 1000, train_file)
-    # write_tfrecord(m, data_dict, 1000, 1050, valid_file)
-    # write_tfrecord(m, data_dict, 1050, 1100, test_file)
-    write_tfrecord(m, data_dict,   0, 500, train_file)
-    write_tfrecord(m, data_dict, 500, 550, valid_file)
-    write_tfrecord(m, data_dict, 550, 600, test_file)
+    print('creating train file...')
+    write_tfrecord(m, data_dict, 600, 1100, train_file)
+    print('creating valid file...')
+    write_tfrecord(m, data_dict, 1100, 1200, valid_file)
+    print('creating test file...')
+    # this is too big, corrupts the file, sigh
+    write_tfrecord(m, data_dict, 1200, 2200, test_file)
     m.close()
 
 
 def read_all(train_file, valid_file, test_file):
+    print('reading train file...')
     test_read_tfrecord(train_file)
+    print('reading valid file...')
     test_read_tfrecord(valid_file)
+    print('reading test file...')
     test_read_tfrecord(test_file)
 
 
