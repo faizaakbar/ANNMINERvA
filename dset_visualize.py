@@ -71,7 +71,7 @@ class MnvDataReader:
             return tf.reshape(tf.decode_raw(inp, tf.float32), shape)
 
         file_queue = tf.train.string_input_producer(
-            [self.filename], name='file_queue'
+            [self.filename], name='file_queue', num_epochs=1
         )
         reader = tf.TFRecordReader()
         _, tfrecord = reader.read(file_queue)
@@ -113,6 +113,7 @@ class MnvDataReader:
             [es, hx, hu, hv, ps, sg, zs],
             batch_size=self.n_events,
             capacity=capacity,
+            allow_smaller_final_batch=True,
             enqueue_many=True
         )
         return es_b, hx_b, hu_b, hv_b, ps_b, sg_b, zs_b
@@ -286,7 +287,7 @@ def make_plots(data_dict, max_events):
     print('  Plotting 2D tensors? {}'.format(plotting_two_tensors))
 
     evt_plotted = 0
-    for counter in range(max_events):
+    for counter in range(len(data_dict['eventids'])):
         evtid = data_dict['eventids'][counter]
         (run, subrun, gate, phys_evt) = decode_eventid(evtid)
         if evt_plotted > max_events:
