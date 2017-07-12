@@ -55,6 +55,21 @@ def make_mnv_data_dict():
     return mnv_data
 
 
+def make_mnv_vertex_finder_batch_dict(
+        eventids_batch, hitimesx_batch, hitimesu_batch, hitimesv_batch,
+        planecodes_batch, segments_batch, zs_batch
+):
+    batch_dict = {}
+    batch_dict['eventids'] = eventids_batch
+    batch_dict['hitimes-x'] = hitimesx_batch
+    batch_dict['hitimes-u'] = hitimesu_batch
+    batch_dict['hitimes-v'] = hitimesv_batch
+    batch_dict['planecodes'] = planecodes_batch
+    batch_dict['segments'] = segments_batch
+    batch_dict['zs'] = zs_batch
+    return batch_dict
+
+
 def get_binary_data(reader, name, start_idx, stop_idx):
     """
     * reader - hdf5_reader
@@ -100,7 +115,7 @@ def tfrecord_to_graph_ops_xtxutuvtv(filenames):
         return hitimes
 
     file_queue = tf.train.string_input_producer(
-        filenames, name='file_queue'
+        filenames, name='file_queue', num_epochs=1
     )
     reader = tf.TFRecordReader()
     _, tfrecord = reader.read(file_queue)
@@ -135,51 +150,71 @@ def tfrecord_to_graph_ops_xtxutuvtv(filenames):
     segs = tf.cast(segs, tf.int32)
     segs = tf.one_hot(indices=segs, depth=11, on_value=1, off_value=0)
     zs = tf.decode_raw(tfrecord_features['zs'], tf.float32)
-    return_dict = {}
-    return_dict['eventids'] = evtids
-    return_dict['hitimes-x'] = hitimesx
-    return_dict['hitimes-u'] = hitimesu
-    return_dict['hitimes-v'] = hitimesv
-    return_dict['planecodes'] = pcodes
-    return_dict['segments'] = segs
-    return_dict['zs'] = zs
-    return return_dict
+    return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
+
+
+def batch_generator(tfrecord_filelist, num_epochs=1):
+    es, x, u, v, ps, sg, zs = tfrecord_to_graph_ops_xtxutuvtv(
+        tfrecord_filelist
+    )
+    capacity = 10 * 100
+    es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b = tf.train.batch(
+        [es, x, u, v, ps, sg, zs],
+        batch_size=100,
+        capacity=capacity,
+        enqueue_many=True,
+        allow_smaller_final_batch=True,
+        name='generator_batch'
+    )
+    return make_mnv_vertex_finder_batch_dict(
+        es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b
+    )
 
 
 def test_read_tfrecord(tfrecord_file):
-    data_dict = tfrecord_to_graph_ops_xtxutuvtv([tfrecord_file])
+    batch_dict = batch_generator([tfrecord_file])
     with tf.Session() as sess:
+        # have to run local variable init for `string_input_producer`
+        sess.run(tf.local_variables_initializer())
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
-        evtids, hitsx, hitsu, hitsv, pcodes, segs, zs = sess.run([
-            data_dict['eventids'],
-            data_dict['hitimes-x'],
-            data_dict['hitimes-u'],
-            data_dict['hitimes-v'],
-            data_dict['planecodes'],
-            data_dict['segments'],
-            data_dict['zs'],
-        ])
-        print('evtids shape =', evtids.shape)
-        print('hitimes x shape =', hitsx.shape)
-        print('hitimes u shape =', hitsu.shape)
-        print('hitimes v shape =', hitsv.shape)
-        print('planecodes shape =', pcodes.shape)
-        print('  planecodes =', np.argmax(pcodes, axis=1))
-        print('segments shape =', segs.shape)
-        print('  segments =', np.argmax(segs, axis=1))
-        print('zs shape =', zs.shape)
-        coord.request_stop()
-        coord.join(threads)
+        try:
+            for batch_num in range(10000):
+                evtids, hitsx, hitsu, hitsv, pcodes, segs, zs = sess.run([
+                    batch_dict['eventids'],
+                    batch_dict['hitimes-x'],
+                    batch_dict['hitimes-u'],
+                    batch_dict['hitimes-v'],
+                    batch_dict['planecodes'],
+                    batch_dict['segments'],
+                    batch_dict['zs'],
+                ])
+                print('batch =', batch_num)
+                print('evtids shape =', evtids.shape)
+                print('hitimes x shape =', hitsx.shape)
+                print('hitimes u shape =', hitsu.shape)
+                print('hitimes v shape =', hitsv.shape)
+                print('planecodes shape =', pcodes.shape)
+                print('  planecodes =', np.argmax(pcodes, axis=1))
+                print('segments shape =', segs.shape)
+                print('  segments =', np.argmax(segs, axis=1))
+                print('zs shape =', zs.shape)
+        except tf.errors.OutOfRangeError:
+            print('Reading stopped - queue is empty.')
+        except Exception as e:
+            print(e)
+        finally:
+            coord.request_stop()
+            coord.join(threads)
 
 
 def write_all(hdf5_file, train_file, valid_file, test_file):
     m = minerva_hdf5_reader(hdf5_file)
     m.open()
     n_total = m.get_nevents()
-    n_total = 100
-    n_train = int(n_total * 0.88)
-    n_valid = int(n_total * 0.07)
+    # n_total = 24000
+    n_train = int(n_total * 0.83)
+    n_valid = int(n_total * 0.09)
     n_test = n_total - n_train - n_valid
     print("{} total events".format(n_total))
     print("{} train events".format(n_train))
