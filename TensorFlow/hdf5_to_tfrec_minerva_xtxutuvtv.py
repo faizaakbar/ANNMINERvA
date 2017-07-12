@@ -28,6 +28,12 @@ class minerva_hdf5_reader:
     def get_data(self, name, start_idx, stop_idx):
         return self._f[name][start_idx: stop_idx]
 
+    def get_nevents(self):
+        sizes = [self._f[d].shape[0] for d in self._f]
+        if min(sizes) != max(sizes):
+            raise ValueError("All dsets must have the same size!")
+        return sizes[0]
+
 
 def make_mnv_data_dict():
     # eventids are really uint64, planecodes are really uint16
@@ -107,6 +113,8 @@ def tfrecord_to_graph_ops_xtxutuvtv(filenames):
             'hitimes-u': tf.FixedLenFeature([], tf.string),
             'hitimes-v': tf.FixedLenFeature([], tf.string),
             'planecodes': tf.FixedLenFeature([], tf.string),
+            'segments': tf.FixedLenFeature([], tf.string),
+            'zs': tf.FixedLenFeature([], tf.string),
         },
         name='data'
     )
@@ -123,23 +131,44 @@ def tfrecord_to_graph_ops_xtxutuvtv(filenames):
     pcodes = tf.decode_raw(tfrecord_features['planecodes'], tf.int16)
     pcodes = tf.cast(pcodes, tf.int32)
     pcodes = tf.one_hot(indices=pcodes, depth=67, on_value=1, off_value=0)
-    return evtids, [hitimesx, hitimesu, hitimesv], pcodes
+    segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
+    segs = tf.cast(segs, tf.int32)
+    segs = tf.one_hot(indices=segs, depth=11, on_value=1, off_value=0)
+    zs = tf.decode_raw(tfrecord_features['zs'], tf.float32)
+    return_dict = {}
+    return_dict['eventids'] = evtids
+    return_dict['hitimes-x'] = hitimesx
+    return_dict['hitimes-u'] = hitimesu
+    return_dict['hitimes-v'] = hitimesv
+    return_dict['planecodes'] = pcodes
+    return_dict['segments'] = segs
+    return_dict['zs'] = zs
+    return return_dict
 
 
 def test_read_tfrecord(tfrecord_file):
-    evtids, hitslist, pcodes = tfrecord_to_graph_ops_xtxutuvtv([tfrecord_file])
+    data_dict = tfrecord_to_graph_ops_xtxutuvtv([tfrecord_file])
     with tf.Session() as sess:
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
-        eventids, hits_list, planecodes = sess.run([
-            evtids, hitslist, pcodes
+        evtids, hitsx, hitsu, hitsv, pcodes, segs, zs = sess.run([
+            data_dict['eventids'],
+            data_dict['hitimes-x'],
+            data_dict['hitimes-u'],
+            data_dict['hitimes-v'],
+            data_dict['planecodes'],
+            data_dict['segments'],
+            data_dict['zs'],
         ])
-        print('evtids shape =', eventids.shape)
-        print('hitimes x shape =', hits_list[0].shape)
-        print('hitimes u shape =', hits_list[1].shape)
-        print('hitimes v shape =', hits_list[2].shape)
-        print('planecodes shape =', planecodes.shape)
-        print('  planecodes =', np.argmax(planecodes, axis=1))
+        print('evtids shape =', evtids.shape)
+        print('hitimes x shape =', hitsx.shape)
+        print('hitimes u shape =', hitsu.shape)
+        print('hitimes v shape =', hitsv.shape)
+        print('planecodes shape =', pcodes.shape)
+        print('  planecodes =', np.argmax(pcodes, axis=1))
+        print('segments shape =', segs.shape)
+        print('  segments =', np.argmax(segs, axis=1))
+        print('zs shape =', zs.shape)
         coord.request_stop()
         coord.join(threads)
 
@@ -147,15 +176,23 @@ def test_read_tfrecord(tfrecord_file):
 def write_all(hdf5_file, train_file, valid_file, test_file):
     m = minerva_hdf5_reader(hdf5_file)
     m.open()
+    n_total = m.get_nevents()
+    n_total = 100
+    n_train = int(n_total * 0.88)
+    n_valid = int(n_total * 0.07)
+    n_test = n_total - n_train - n_valid
+    print("{} total events".format(n_total))
+    print("{} train events".format(n_train))
+    print("{} valid events".format(n_valid))
+    print("{} test events".format(n_test))
     data_dict = make_mnv_data_dict()
     # events included are [start, stop)
     print('creating train file...')
-    write_tfrecord(m, data_dict, 600, 1100, train_file)
+    write_tfrecord(m, data_dict, 0, n_train, train_file)
     print('creating valid file...')
-    write_tfrecord(m, data_dict, 1100, 1200, valid_file)
+    write_tfrecord(m, data_dict, n_train, n_train + n_valid, valid_file)
     print('creating test file...')
-    # this is too big, corrupts the file, sigh
-    write_tfrecord(m, data_dict, 1200, 2200, test_file)
+    write_tfrecord(m, data_dict, n_train + n_valid, n_total, test_file)
     m.close()
 
 
