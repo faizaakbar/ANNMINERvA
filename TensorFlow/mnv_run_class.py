@@ -197,7 +197,7 @@ def test(
             compression=COMPRESSION
         )
         batch_dict = data_reader.batch_generator()
-        batch_size=hparams_dict['BATCH_SIZE']
+        batch_size = hparams_dict['BATCH_SIZE']
         X = batch_dict['hitimes-x']
         U = batch_dict['hitimes-u']
         V = batch_dict['hitimes-v']
@@ -209,7 +209,7 @@ def test(
         model.prepare_for_inference(f, d)
         # TODO - this needs restructuring, shouldn't need to call a fn called
         # `prepare_for_training` - here use it to compute loss
-        model.prepare_for_training(targ)
+        model.prepare_for_loss_computation(targ)
 
         saver = tf.train.Saver()
 
@@ -298,12 +298,17 @@ def test(
 
 def model_check(
         hparams_dict,
-        tboard_dest_dir='/tmp/StanfordCS20si/mnist',
+        tboard_dest_dir='/tmp/minerva/st_epsilon',
         short=False
 ):
+    """ inspect model weights """
     tf.reset_default_graph()
+    print('Starting model check...')
+
     ckpt_dir = tboard_dest_dir + '/checkpoints'
 
+    # note - don't need input data here, we just want to load the saved
+    # model to inspect the weights
     img_depth = 2
     X = tf.placeholder(
         tf.float32, shape=[None, 127, 50, img_depth], name='X'
@@ -320,16 +325,7 @@ def model_check(
 
     model = TriColSTEpsilon(n_classes=11, params=hparams_dict)
     model.prepare_for_inference(f, d)
-    model.prepare_for_training(targ)
-
-    # model = MNISTConvNet(params=hparams_dict)
-    # test_file = DATA_PATH + 'mnist_test.tfrecord'
-    # batch_size = 5 if short else hparams_dict['BATCH_SIZE']
-    # features_batch, targets_batch = batch_generator(
-    #     [test_file], batch_size=batch_size, num_epochs=1
-    # )
-    # model.prepare_for_inference(features_batch)
-    # model.prepare_for_training(targets_batch)
+    model.prepare_for_loss_computation(targ)
 
     saver = tf.train.Saver()
     init = tf.global_variables_initializer()
@@ -351,11 +347,27 @@ def model_check(
         print(k.shape)
         print(k[0, 0, 0, :])
 
+        # https://stackoverflow.com/questions/38160940/ ...
+        total_parameters = 0
+        for variable in tf.trainable_variables():
+            # shape is an array of tf.Dimension
+            shape = variable.get_shape()
+            name = variable.name
+            variable_parameters = 1
+            for dim in shape:
+                variable_parameters *= dim.value
+            print('name = {}, shape = {}, n_params = {}'.format(
+                name, shape, variable_parameters
+            ))
+            total_parameters += variable_parameters
+        print('Total parameters =', total_parameters)
+
     return model
 
 
 if __name__ == '__main__':
 
     short = True
-    train(hparams_dict, TBOARD_DIR, short=short)
-    test(hparams_dict, TBOARD_DIR, verbose=False, short=short)
+    # train(hparams_dict, TBOARD_DIR, short=short)
+    # test(hparams_dict, TBOARD_DIR, verbose=False, short=short)
+    model_check(hparams_dict, TBOARD_DIR, short=short)
