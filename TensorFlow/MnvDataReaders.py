@@ -8,7 +8,7 @@ class MnvDataReaderVertexST:
     """
     def __init__(
             self, filenames_list, batch_size=100,
-            name='reader', data_format='NHWC'
+            name='reader', data_format='NHWC', compression=None
     ):
         self.filenames_list = filenames_list
         self.batch_size = batch_size
@@ -19,6 +19,9 @@ class MnvDataReaderVertexST:
         imgdat_names['v'] = 'hitimes-v'
         self.imgdat_names = imgdat_names
         self.data_format = data_format
+        self.compression = tf.python_io.TFRecordCompressionType.NONE
+        if compression:
+            self.compression = compression
 
     def _make_mnv_vertex_finder_batch_dict(
             self, eventids_batch,
@@ -54,7 +57,11 @@ class MnvDataReaderVertexST:
             name=self.name+'_file_queue',
             num_epochs=num_epochs
         )
-        reader = tf.TFRecordReader()
+        reader = tf.TFRecordReader(
+            options=tf.python_io.TFRecordOptions(
+                compression_type=self.compression
+            )
+        )
         _, tfrecord = reader.read(file_queue)
 
         tfrecord_features = tf.parse_single_example(
