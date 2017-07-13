@@ -33,12 +33,13 @@ DSAMP = 'me1Amc_'
 PATH = './'
 # use zlib compression for TFrecords?
 TRAINF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
-         '%04d' + '_train.tfrecord'
+         '%04d' + '_train.tfrecord.zz'
 VALIDF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
-         '%04d' + '_valid.tfrecord'
+         '%04d' + '_valid.tfrecord.zz'
 TESTF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
-        '%04d' + '_test.tfrecord'
+        '%04d' + '_test.tfrecord.zz'
 
+COMPRESSION=tf.python_io.TFRecordCompressionType.ZLIB
 
 def train(
         hparams_dict,
@@ -66,7 +67,8 @@ def train(
         train_reader = MnvDataReaderVertexST(
             filenames_list=train_list,
             batch_size=hparams_dict['BATCH_SIZE'],
-            name='train'
+            name='train',
+            compression=COMPRESSION
         )
         batch_dict_train = train_reader.shuffle_batch_generator()
         X_train = batch_dict_train['hitimes-x']
@@ -78,7 +80,8 @@ def train(
         valid_reader = MnvDataReaderVertexST(
             filenames_list=valid_list,
             batch_size=hparams_dict['BATCH_SIZE'],
-            name='valid'
+            name='valid',
+            compression=COMPRESSION
         )
         batch_dict_valid = valid_reader.batch_generator(num_epochs=100)
         X_valid = batch_dict_valid['hitimes-x']
@@ -188,10 +191,11 @@ def test(
     with tf.Graph().as_default() as g:
 
         img_depth = 2
-        filenames_list = ['./minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_test.tfrecord']
+        filenames_list = ['./minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_test.tfrecord.zz']
         data_reader = MnvDataReaderVertexST(
             filenames_list=filenames_list,
-            batch_size=hparams_dict['BATCH_SIZE']
+            batch_size=hparams_dict['BATCH_SIZE'],
+            compression=COMPRESSION
         )
         batch_dict = data_reader.batch_generator()
         batch_size=hparams_dict['BATCH_SIZE']
