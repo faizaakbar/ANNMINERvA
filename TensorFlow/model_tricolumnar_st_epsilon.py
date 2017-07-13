@@ -75,7 +75,7 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
     convpooldict_v['conv4'] = {}
     convpooldict_v['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_v['conv1']['biases'] = [12]
-   # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
+    # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
     convpooldict_v['conv2']['kernels'] = [7, 3, 12, 20]
     convpooldict_v['conv2']['biases'] = [20]
     # after 7x3 filters -> 54x(N-6) image, then maxpool -> 27x(N-6)
@@ -88,7 +88,7 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
     convpooldict['v'] = convpooldict_v
 
     convpooldict['nfeat_dense_tower'] = 196
-    convpooldict['nfeat_concat_dense'] = 196
+    convpooldict['nfeat_concat_dense'] = 98
 
     return convpooldict
 
@@ -106,8 +106,9 @@ class TriColSTEpsilon:
         self.global_step = tf.Variable(
             0, dtype=tf.int32, trainable=False, name='global_step'
         )
+        self.padding = 'VALID'
         # note, 'NCHW' is only supported on GPUs
-        self.data_format = "NHWC"
+        self.data_format = 'NHWC'
 
     def _build_network(self, features_list, kbd):
         """
@@ -136,7 +137,7 @@ class TriColSTEpsilon:
         ):
             conv = tf.nn.conv2d(
                 input_lyr, kernels, strides=[1, 1, 1, 1],
-                padding='SAME', data_format=self.data_format
+                padding=self.padding, data_format=self.data_format
             )
             return act(tf.nn.bias_add(
                 conv, biases, data_format=self.data_format, name=name
@@ -148,7 +149,7 @@ class TriColSTEpsilon:
         ):
             return tf.nn.max_pool(
                 input_lyr, ksize=ksize, strides=strides,
-                padding='SAME', data_format=self.data_format,
+                padding=self.padding, data_format=self.data_format,
                 name=name
             )
 
@@ -235,7 +236,7 @@ class TriColSTEpsilon:
         out_u = make_convolutional_tower('u', self.U_img, kbd)
         out_v = make_convolutional_tower('v', self.V_img, kbd)
 
-        # next, concat, then fc...
+        # next, concat, then 'final' fc...
         with tf.variable_scope('fully_connected') as scope:
             tower_joined = tf.concat(
                 [out_x, out_u, out_v], axis=1, name=scope.name + '_concat'
