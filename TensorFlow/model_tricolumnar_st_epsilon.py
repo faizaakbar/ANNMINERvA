@@ -99,7 +99,6 @@ class TriColSTEpsilon:
     """
     def __init__(self, n_classes, params=dict()):
         self.learning_rate = params.get('LEARNING_RATE', 0.001)
-        self.batch_size = params.get('BATCH_SIZE', 128)
         self.dropout_keep_prob = tf.placeholder(
             tf.float32, name='dropout_keep_prob'
         )
@@ -311,13 +310,22 @@ class TriColSTEpsilon:
             self.valid_summary_op = tf.summary.merge_all()
 
     def reassign_features(self, features_list):
-        """ features_list[0] == X, [1] == U, [2] == V; """
+        """
+        features_list[0] == X, [1] == U, [2] == V;
+
+        use `reassign_features` to, for example, swap inputs for the
+        current network from the training set to the validation set.
+        """
         with tf.name_scope('input_images'):
             self.X_img = tf.cast(features_list[0], tf.float32)
             self.U_img = tf.cast(features_list[1], tf.float32)
             self.V_img = tf.cast(features_list[2], tf.float32)
 
     def reassign_targets(self, targets):
+        """
+        use `reassign_targets` to, for example, swap targets for the
+        current network from the training set to the validation set.
+        """
         with tf.name_scope('targets'):
             self.targets = tf.cast(targets, tf.float32)
 
@@ -326,9 +334,16 @@ class TriColSTEpsilon:
         self._build_network(features, kbd)
 
     def prepare_for_training(self, targets):
+        """ prep the train op and compute loss, plus summaries """
         self._set_targets(targets)
         self._define_loss()
         self._define_train_op()
+        self._create_summaries()
+
+    def prepare_for_loss_computation(self, targets):
+        """ compute the loss and prepare summaries (good for testing) """
+        self._set_targets(targets)
+        self._define_loss()
         self._create_summaries()
 
 
