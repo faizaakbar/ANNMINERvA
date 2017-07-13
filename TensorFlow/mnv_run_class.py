@@ -31,16 +31,23 @@ BASE_FILEPAT = 'minosmatch_nukecczdefs_genallzwitht_pcodecap66_'
 FILE_SHPTYP = '127x50x25_xtxutuvtv_'
 DSAMP = 'me1Amc_'
 PATH = './'
+
+COMPRESSION = tf.python_io.TFRecordCompressionType.GZIP
+COMPRESSION = tf.python_io.TFRecordCompressionType.ZLIB
+
+COMP_EXT = ''
+if COMPRESSION == tf.python_io.TFRecordCompressionType.ZLIB:
+    COMP_EXT = '.zz'
+elif COMPRESSION == tf.python_io.TFRecordCompressionType.GZIP:
+    COMP_EXT = '.gz'
+
 # use zlib compression for TFrecords?
 TRAINF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
-         '%04d' + '_train.tfrecord.gz'
+         '%04d' + '_train.tfrecord' + COMP_EXT
 VALIDF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
-         '%04d' + '_valid.tfrecord.gz'
+         '%04d' + '_valid.tfrecord' + COMP_EXT
 TESTF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
-        '%04d' + '_test.tfrecord.gz'
-
-COMPRESSION = tf.python_io.TFRecordCompressionType.ZLIB
-COMPRESSION = tf.python_io.TFRecordCompressionType.GZIP
+        '%04d' + '_test.tfrecord' + COMP_EXT
 
 
 def train(
@@ -344,10 +351,11 @@ def model_check(
         print('model after {} steps.'.format(final_step))
 
         k = model.weights_biases['x_tower']['conv1']['kernels'].eval()
-        print(k.shape)
-        print(k[0, 0, 0, :])
+        print('first x-tower convolutional kernel shape = ', k.shape)
+        print('  k[0, 0, 0, :] =', k[0, 0, 0, :])
 
         # https://stackoverflow.com/questions/38160940/ ...
+        print('now compute total number of trainable params...')
         total_parameters = 0
         for variable in tf.trainable_variables():
             # shape is an array of tf.Dimension
@@ -368,6 +376,6 @@ def model_check(
 if __name__ == '__main__':
 
     short = True
-    # train(hparams_dict, TBOARD_DIR, short=short)
-    # test(hparams_dict, TBOARD_DIR, verbose=False, short=short)
+    train(hparams_dict, TBOARD_DIR, short=short)
+    test(hparams_dict, TBOARD_DIR, verbose=False, short=short)
     model_check(hparams_dict, TBOARD_DIR, short=short)
