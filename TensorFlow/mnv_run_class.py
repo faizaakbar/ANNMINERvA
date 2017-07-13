@@ -33,13 +33,15 @@ DSAMP = 'me1Amc_'
 PATH = './'
 # use zlib compression for TFrecords?
 TRAINF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
-         '%04d' + '_train.tfrecord.zz'
+         '%04d' + '_train.tfrecord.gz'
 VALIDF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
-         '%04d' + '_valid.tfrecord.zz'
+         '%04d' + '_valid.tfrecord.gz'
 TESTF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
-        '%04d' + '_test.tfrecord.zz'
+        '%04d' + '_test.tfrecord.gz'
 
-COMPRESSION=tf.python_io.TFRecordCompressionType.ZLIB
+COMPRESSION = tf.python_io.TFRecordCompressionType.ZLIB
+COMPRESSION = tf.python_io.TFRecordCompressionType.GZIP
+
 
 def train(
         hparams_dict,
@@ -60,10 +62,6 @@ def train(
         img_depth = 2
         train_list = [TRAINF % i for i in range(1)]
         valid_list = [VALIDF % i for i in range(1)]
-        # train_list = [
-        #     TRAINBASE + ('%04d' % i) + '_train.tfrecord' for
-        #     i in range(1)
-        # ]
         train_reader = MnvDataReaderVertexST(
             filenames_list=train_list,
             batch_size=hparams_dict['BATCH_SIZE'],
@@ -191,10 +189,11 @@ def test(
     with tf.Graph().as_default() as g:
 
         img_depth = 2
-        filenames_list = ['./minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_test.tfrecord.zz']
+        test_list = [TESTF % i for i in range(1)]
         data_reader = MnvDataReaderVertexST(
-            filenames_list=filenames_list,
+            filenames_list=test_list,
             batch_size=hparams_dict['BATCH_SIZE'],
+            name='train',
             compression=COMPRESSION
         )
         batch_dict = data_reader.batch_generator()
