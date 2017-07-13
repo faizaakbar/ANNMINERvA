@@ -31,9 +31,13 @@ BASE_FILEPAT = 'minosmatch_nukecczdefs_genallzwitht_pcodecap66_'
 FILE_SHPTYP = '127x50x25_xtxutuvtv_'
 DSAMP = 'me1Amc_'
 PATH = './'
-TRAINF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + '%04d' + '_train.tfrecord'
-VALIDF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + '%04d' + '_valid.tfrecord'
-TESTF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + '%04d' + '_test.tfrecord'
+# use zlib compression for TFrecords?
+TRAINF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
+         '%04d' + '_train.tfrecord'
+VALIDF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
+         '%04d' + '_valid.tfrecord'
+TESTF = PATH + BASE_FILEPAT + FILE_SHPTYP + DSAMP + \
+        '%04d' + '_test.tfrecord'
 
 
 def train(
@@ -349,6 +353,6 @@ def model_check(
 
 if __name__ == '__main__':
 
-    short = False
+    short = True
     train(hparams_dict, TBOARD_DIR, short=short)
     test(hparams_dict, TBOARD_DIR, verbose=False, short=short)
