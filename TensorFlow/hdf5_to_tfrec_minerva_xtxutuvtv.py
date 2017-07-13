@@ -1,10 +1,17 @@
 """
-convert the hdf5 mnist file to tfrecords
+convert an hdf5 file to tfrecords (train, valid, test) - assumes the two-deep
+minerva "spacetime" hdf5 file format.
+
+Usage:
+    python hdf5_to_tfrec_minerva_xtxutuvtv.py -f hdf5_file -n n_events [-t]
 """
 from __future__ import print_function
+from six.moves import range
 import h5py
 import tensorflow as tf
 import numpy as np
+import sys
+import os
 
 
 class minerva_hdf5_reader:
@@ -179,7 +186,7 @@ def test_read_tfrecord(tfrecord_file):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
         try:
-            for batch_num in range(10000):
+            for batch_num in range(1000000):
                 evtids, hitsx, hitsu, hitsv, pcodes, segs, zs = sess.run([
                     batch_dict['eventids'],
                     batch_dict['hitimes-x'],
@@ -208,11 +215,13 @@ def test_read_tfrecord(tfrecord_file):
             coord.join(threads)
 
 
-def write_all(hdf5_file, train_file, valid_file, test_file):
+def write_all(n_events, hdf5_file, train_file, valid_file, test_file):
     m = minerva_hdf5_reader(hdf5_file)
     m.open()
-    n_total = m.get_nevents()
-    # n_total = 24000
+    if n_events <= 0:
+        n_total = m.get_nevents()
+    else:
+        n_total = n_events
     n_train = int(n_total * 0.83)
     n_valid = int(n_total * 0.09)
     n_test = n_total - n_train - n_valid
@@ -241,14 +250,38 @@ def read_all(train_file, valid_file, test_file):
 
 
 if __name__ == '__main__':
-    base_name = 'minosmatch_nukecczdefs_genallzwitht_pcodecap66'
-    data_spec = '_127x50x25_xtxutuvtv_me1Amc_'
-    subrun = '0000'
-    
-    hdf5_file = base_name + data_spec + subrun + '.hdf5'
-    train_file = base_name + data_spec + subrun + '_train.tfrecord'
-    valid_file = base_name + data_spec + subrun + '_valid.tfrecord'
-    test_file = base_name + data_spec + subrun + '_test.tfrecord'
 
-    write_all(hdf5_file, train_file, valid_file, test_file)
-    read_all(train_file, valid_file, test_file)
+    from optparse import OptionParser
+    parser = OptionParser(usage=__doc__)
+    parser.add_option('-f', '--file', dest='filename',
+                      help='Dset file name', metavar='FILENAME',
+                      default=None, type='string')
+    parser.add_option('-n', '--nevents', dest='n_events', default=0,
+                      help='Number of events', metavar='N_EVENTS',
+                      type='int')
+    parser.add_option('-t', '--test_read', dest='do_test', default=False,
+                      help='Test read', metavar='DO_TEST',
+                      action='store_true')
+
+    (options, args) = parser.parse_args()
+
+    if not options.filename:
+        print("\nSpecify file (-f):\n\n")
+        print(__doc__)
+        sys.exit(1)
+
+    hdf5_file = options.filename
+    base_name = hdf5_file.split('.')[0]
+    train_file = base_name + '_train.tfrecord'
+    valid_file = base_name + '_valid.tfrecord'
+    test_file = base_name + '_test.tfrecord'
+    for filename in [train_file, valid_file, test_file]:
+        if os.path.isfile(filename):
+            print('found existing tfrecord file {}, removing...'.format(
+                filename
+            ))
+            os.remove(filename)
+
+    write_all(options.n_events, hdf5_file, train_file, valid_file, test_file)
+    if options.do_test:
+        read_all(train_file, valid_file, test_file)
