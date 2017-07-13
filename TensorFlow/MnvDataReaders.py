@@ -5,6 +5,12 @@ import tensorflow as tf
 class MnvDataReaderVertexST:
     """
     Minerva Data Reader for (target) vertex-finder "SpaceTime" data
+
+    name values are usually, e.g., 'train' or 'validation', etc.
+
+    allowed compression values:
+    * `tf.python_io.TFRecordCompressionType.ZLIB`
+    * `tf.python_io.TFRecordCompressionType.GZIP`
     """
     def __init__(
             self, filenames_list, batch_size=100,
