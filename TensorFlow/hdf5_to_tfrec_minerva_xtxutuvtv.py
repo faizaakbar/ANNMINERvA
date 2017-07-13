@@ -3,7 +3,8 @@ convert an hdf5 file to tfrecords (train, valid, test) - assumes the two-deep
 minerva "spacetime" hdf5 file format.
 
 Usage:
-    python hdf5_to_tfrec_minerva_xtxutuvtv.py -f hdf5_file -n n_events [-t]
+    python hdf5_to_tfrec_minerva_xtxutuvtv.py -f hdf5_file -n n_events \
+         [-t train fraction (0.83)] [-v valid fraction (0.08)] [-r]
 """
 from __future__ import print_function
 from six.moves import range
@@ -215,28 +216,36 @@ def test_read_tfrecord(tfrecord_file):
             coord.join(threads)
 
 
-def write_all(n_events, hdf5_file, train_file, valid_file, test_file):
+def write_all(
+        n_events, hdf5_file, train_file, valid_file, test_file,
+        train_fraction, valid_fraction
+):
     m = minerva_hdf5_reader(hdf5_file)
     m.open()
     if n_events <= 0:
         n_total = m.get_nevents()
     else:
         n_total = n_events
-    n_train = int(n_total * 0.83)
-    n_valid = int(n_total * 0.09)
+    n_train = int(n_total * train_fraction)
+    n_valid = int(n_total * valid_fraction)
     n_test = n_total - n_train - n_valid
     print("{} total events".format(n_total))
     print("{} train events".format(n_train))
     print("{} valid events".format(n_valid))
     print("{} test events".format(n_test))
+
     data_dict = make_mnv_data_dict()
     # events included are [start, stop)
-    print('creating train file...')
-    write_tfrecord(m, data_dict, 0, n_train, train_file)
-    print('creating valid file...')
-    write_tfrecord(m, data_dict, n_train, n_train + n_valid, valid_file)
-    print('creating test file...')
-    write_tfrecord(m, data_dict, n_train + n_valid, n_total, test_file)
+    if n_train > 0:
+        print('creating train file...')
+        write_tfrecord(m, data_dict, 0, n_train, train_file)
+    if n_valid > 0:
+        print('creating valid file...')
+        write_tfrecord(m, data_dict, n_train, n_train + n_valid, valid_file)
+    if n_test > 0:
+        print('creating test file...')
+        write_tfrecord(m, data_dict, n_train + n_valid, n_total, test_file)
+
     m.close()
 
 
@@ -259,14 +268,25 @@ if __name__ == '__main__':
     parser.add_option('-n', '--nevents', dest='n_events', default=0,
                       help='Number of events', metavar='N_EVENTS',
                       type='int')
-    parser.add_option('-t', '--test_read', dest='do_test', default=False,
+    parser.add_option('-r', '--test_read', dest='do_test', default=False,
                       help='Test read', metavar='DO_TEST',
                       action='store_true')
+    parser.add_option('-t', '--train_fraction', dest='train_fraction',
+                      default=0.88, help='Train fraction',
+                      metavar='TRAIN_FRAC', type='float')
+    parser.add_option('-v', '--valid_fraction', dest='valid_fraction',
+                      default=0.09, help='Valid fraction',
+                      metavar='VALID_FRAC', type='float')
 
     (options, args) = parser.parse_args()
 
     if not options.filename:
         print("\nSpecify file (-f):\n\n")
+        print(__doc__)
+        sys.exit(1)
+
+    if (options.train_fraction + options.valid_fraction) > 1.001:
+        print("\nTraining and validation fractions sum > 1!")
         print(__doc__)
         sys.exit(1)
 
@@ -282,6 +302,10 @@ if __name__ == '__main__':
             ))
             os.remove(filename)
 
-    write_all(options.n_events, hdf5_file, train_file, valid_file, test_file)
+    write_all(
+        options.n_events,
+        hdf5_file, train_file, valid_file, test_file,
+        options.train_fraction, options.valid_fraction
+    )
     if options.do_test:
         read_all(train_file, valid_file, test_file)
