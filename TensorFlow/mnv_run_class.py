@@ -96,7 +96,7 @@ def train(
         f_valid = [X_valid, U_valid, V_valid]
 
         d = make_default_convpooldict(img_depth=img_depth)
-        model = TriColSTEpsilon(n_classes=11, params=hparams_dict)
+        model = TriColSTEpsilon(learning_rate=0.001, n_classes=11)
         model.prepare_for_inference(f_train, d)
         model.prepare_for_training(targ_train)
 
@@ -212,7 +212,7 @@ def test(
         f = [X, U, V]
         d = make_default_convpooldict(img_depth=img_depth)
 
-        model = TriColSTEpsilon(n_classes=11, params=hparams_dict)
+        model = TriColSTEpsilon(learning_rate=0.001, n_classes=11)
         model.prepare_for_inference(f, d)
         # TODO - this needs restructuring, shouldn't need to call a fn called
         # `prepare_for_training` - here use it to compute loss
@@ -330,7 +330,7 @@ def model_check(
     f = [X, U, V]
     d = make_default_convpooldict(img_depth=img_depth)
 
-    model = TriColSTEpsilon(n_classes=11, params=hparams_dict)
+    model = TriColSTEpsilon(learning_rate=0.001, n_classes=11)
     model.prepare_for_inference(f, d)
     model.prepare_for_loss_computation(targ)
 
