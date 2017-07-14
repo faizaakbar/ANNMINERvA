@@ -97,8 +97,8 @@ class TriColSTEpsilon:
     """
     Tri-Columnar SpaceTime Epsilon
     """
-    def __init__(self, n_classes, params=dict()):
-        self.learning_rate = params.get('LEARNING_RATE', 0.001)
+    def __init__(self, learning_rate, n_classes):
+        self.learning_rate = learning_rate
         self.dropout_keep_prob = tf.placeholder(
             tf.float32, name='dropout_keep_prob'
         )
