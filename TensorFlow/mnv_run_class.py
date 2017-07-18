@@ -6,8 +6,8 @@ from __future__ import print_function
 import tensorflow as tf
 import numpy as np
 
-from model_tricolumnar_st_epsilon import TriColSTEpsilon
-from model_tricolumnar_st_epsilon import make_default_convpooldict
+from MnvModelsTricolumnar import TriColSTEpsilon
+from MnvModelsTricolumnar import make_default_convpooldict
 
 from MnvDataReaders import MnvDataReaderVertexST
 

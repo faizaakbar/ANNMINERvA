@@ -9,8 +9,9 @@ import logging
 
 import tensorflow as tf
 
-from model_tricolumnar_st_epsilon import TriColSTEpsilon
-from model_tricolumnar_st_epsilon import make_default_convpooldict
+# TODO - shouldn't need to import models here... pass them in
+from MnvModelsTricolumnar import TriColSTEpsilon
+from MnvModelsTricolumnar import make_default_convpooldict
 from MnvDataReaders import MnvDataReaderVertexST
 
 logger = logging.getLogger(__name__)
