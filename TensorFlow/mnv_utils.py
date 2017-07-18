@@ -2,6 +2,8 @@
 import tensorflow as tf
 
 BATCH_SIZE = 128
+ZLIB_COMP = tf.python_io.TFRecordCompressionType.ZLIB
+GZIP_COMP = tf.python_io.TFRecordCompressionType.GZIP
 
 
 def make_default_run_params_dict(mnv_type='st_epsilon'):
@@ -16,6 +18,12 @@ def make_default_run_params_dict(mnv_type='st_epsilon'):
     run_params_dict['DEBUG_PRINT'] = True
     run_params_dict['BE_VERBOSE'] = False
     run_params_dict['WRITE_DB'] = True
+    
+    if run_params_dict['COMPRESSION'] == ZLIB_COMP:
+        run_params_dict['COMP_EXT'] = '.zz'
+    elif run_params_dict['COMPRESSION'] == GZIP_COMP:
+        run_params_dict['COMP_EXT'] = '.gz'
+
     return run_params_dict
 
 
@@ -37,6 +45,7 @@ def make_default_train_params_dict(mnv_type='st_epsilon'):
     train_params_dict['NUM_EPOCHS'] = 1
     train_params_dict['MOMENTUM'] = 0.9
     train_params_dict['STRATEGY'] = tf.train.AdamOptimizer
+    train_params_dict['DROPOUT_KEEP_PROB'] = 0.75
     return train_params_dict
 
 
