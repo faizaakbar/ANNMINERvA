@@ -18,12 +18,6 @@ def make_default_run_params_dict(mnv_type='st_epsilon'):
     run_params_dict['DEBUG_PRINT'] = True
     run_params_dict['BE_VERBOSE'] = False
     run_params_dict['WRITE_DB'] = True
-    
-    if run_params_dict['COMPRESSION'] == ZLIB_COMP:
-        run_params_dict['COMP_EXT'] = '.zz'
-    elif run_params_dict['COMPRESSION'] == GZIP_COMP:
-        run_params_dict['COMP_EXT'] = '.gz'
-
     return run_params_dict
 
 
@@ -34,7 +28,9 @@ def make_default_feature_targ_dict(mnv_type='st_epsilon'):
         feature_targ_dict['FEATURE_STR_DICT']['x'] = 'hitimes-x'
         feature_targ_dict['FEATURE_STR_DICT']['u'] = 'hitimes-u'
         feature_targ_dict['FEATURE_STR_DICT']['v'] = 'hitimes-v'
-        feature_targ_dict['TARGETS_LABEL'] = 'segments'
+        feature_targ_dict['TARGETS_LABEL'] = None
+        feature_targ_dict['IMG_DEPTH'] = 2
+        feature_targ_dict['BUILD_KBD_FUNCTION'] = None
     return feature_targ_dict
 
 

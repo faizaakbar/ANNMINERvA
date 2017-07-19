@@ -24,6 +24,7 @@ class MnvTFRunnerCategorical:
     """
     def __init__(
             self,
+            model,
             run_params_dict,
             feature_targ_dict=dict(),
             train_params_dict=dict(),
@@ -63,8 +64,8 @@ class MnvTFRunnerCategorical:
             'STRATEGY', tf.train.AdamOptimizer
         )
 
+        self.model = model
         self.img_depth = img_params_dict.get('IMG_DEPTH', 2)
-
         self.views = ['x', 'u', 'v']
 
     # TODO - careful about separating target_label and the number of classes

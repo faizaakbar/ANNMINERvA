@@ -97,8 +97,7 @@ class TriColSTEpsilon:
     """
     Tri-Columnar SpaceTime Epsilon
     """
-    def __init__(self, learning_rate, n_classes):
-        self.learning_rate = learning_rate
+    def __init__(self, n_classes):
         self.dropout_keep_prob = tf.placeholder(
             tf.float32, name='dropout_keep_prob'
         )
@@ -294,10 +293,10 @@ class TriColSTEpsilon:
                 name='loss'
             )
 
-    def _define_train_op(self):
+    def _define_train_op(self, learning_rate):
         with tf.name_scope('training'):
             self.optimizer = tf.train.AdamOptimizer(
-                learning_rate=self.learning_rate
+                learning_rate=learning_rate
             ).minimize(self.loss, global_step=self.global_step)
 
     def _create_summaries(self):
@@ -334,11 +333,11 @@ class TriColSTEpsilon:
         """ kbd == kernels_biases_dict (convpooldict) """
         self._build_network(features, kbd)
 
-    def prepare_for_training(self, targets):
+    def prepare_for_training(self, targets, learning_rate=0.001):
         """ prep the train op and compute loss, plus summaries """
         self._set_targets(targets)
         self._define_loss()
-        self._define_train_op()
+        self._define_train_op(learning_rate)
         self._create_summaries()
 
     def prepare_for_loss_computation(self, targets):
