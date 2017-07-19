@@ -9,9 +9,6 @@ import logging
 
 import tensorflow as tf
 
-# TODO - shouldn't need to import models here... pass them in
-from MnvModelsTricolumnar import TriColSTEpsilon
-from MnvModelsTricolumnar import make_default_convpooldict
 from MnvDataReaders import MnvDataReaderVertexST
 
 logger = logging.getLogger(__name__)
@@ -54,12 +51,18 @@ class MnvTFRunnerCategorical:
         self.targets_label = feature_targ_dict.get(
             'TARGETS_LABEL', 'segments'
         )
+        try:
+            self.build_kbd_function = feature_targ_dict['BUILD_KBD_FUNCTION']
+        except KeyError as e:
+            print(e)
 
         self.learning_rate = train_params_dict.get('LEARNING_RATE', 0.001)
         self.batch_size = train_params_dict.get('BATCH_SIZE', 128)
         self.num_epochs = train_params_dict.get('NUM_EPOCHS', 1)
         self.momentum = train_params_dict.get('MOMENTUM', 0.9)
-        self.dropout_keep_prob = train_params_dict('DROPOUT_KEEP_PROB', 0.75)
+        self.dropout_keep_prob = train_params_dict.get(
+            'DROPOUT_KEEP_PROB', 0.75
+        )
         self.strategy = train_params_dict.get(
             'STRATEGY', tf.train.AdamOptimizer
         )
@@ -68,9 +71,8 @@ class MnvTFRunnerCategorical:
         self.img_depth = img_params_dict.get('IMG_DEPTH', 2)
         self.views = ['x', 'u', 'v']
 
-    # TODO - careful about separating target_label and the number of classes
     def run_training(
-            self, target_label='segments', do_validation=False, short=False
+            self, do_validation=False, short=False
     ):
         """
         run training (TRAIN file list) and optionally run a validation pass
@@ -87,7 +89,6 @@ class MnvTFRunnerCategorical:
         ))
 
         with tf.Graph().as_default() as g:
-            img_depth = self.img_depth
             train_reader = MnvDataReaderVertexST(
                 filenames_list=self.train_file_list,
                 batch_size=self.batch_size,
@@ -116,13 +117,9 @@ class MnvTFRunnerCategorical:
             targ_valid = batch_dict_valid[self.targets_label]
             f_valid = [X_valid, U_valid, V_valid]
 
-            d = make_default_convpooldict(img_depth=img_depth)
-            model = TriColSTEpsilon(
-                learning_rate=self.learning_rate,
-                n_classes=11
-            )
-            model.prepare_for_inference(f_train, d)
-            model.prepare_for_training(targ_train)
+            d = self.build_kbd_function(img_depth=self.img_depth)
+            self.model.prepare_for_inference(f_train, d)
+            self.model.prepare_for_training(targ_train)
 
             writer = tf.summary.FileWriter(run_dest_dir)
             saver = tf.train.Saver()
@@ -146,7 +143,7 @@ class MnvTFRunnerCategorical:
                     logger.info('Restored session from {}'.format(ckpt_dir))
 
                 writer.add_graph(sess.graph)
-                initial_step = model.global_step.eval()
+                initial_step = self.model.global_step.eval()
                 logger.info('initial step =', initial_step)
                 average_loss = 0.0
 
@@ -158,11 +155,11 @@ class MnvTFRunnerCategorical:
                 try:
                     for b_num in range(initial_step, initial_step + n_steps):
                         _, loss_batch, summary = sess.run(
-                            [model.optimizer,
-                             model.loss,
-                             model.train_summary_op],
+                            [self.model.optimizer,
+                             self.model.loss,
+                             self.model.train_summary_op],
                             feed_dict={
-                                model.dropout_keep_prob:
+                                self.model.dropout_keep_prob:
                                 self.dropout_keep_prob
                             }
                         )
@@ -181,20 +178,20 @@ class MnvTFRunnerCategorical:
                             saver.save(sess, ckpt_dir, b_num)
                             logger.info('     saved at iter %d' % b_num)
                             # try validation
-                            model.reassign_features(f_valid)
-                            model.reassign_targets(targ_valid)
+                            self.model.reassign_features(f_valid)
+                            self.model.reassign_targets(targ_valid)
                             loss_valid, summary = sess.run(
-                                [model.loss,
-                                 model.valid_summary_op],
+                                [self.model.loss,
+                                 self.model.valid_summary_op],
                                 feed_dict={
-                                    model.dropout_keep_prob: 1.0
+                                    self.model.dropout_keep_prob: 1.0
                                 }
                             )
                             writer.add_summary(summary, global_step=b_num)
                             logger.info('   Valid loss =', loss_valid)
                             # reset for training
-                            model.reassign_features(f_train)
-                            model.reassign_targets(targ_train)
+                            self.model.reassign_features(f_train)
+                            self.model.reassign_targets(targ_train)
                 except tf.errors.OutOfRangeError:
                     logger.info('Training stopped - queue is empty.')
                 except Exception as e:
@@ -216,7 +213,6 @@ class MnvTFRunnerCategorical:
         ckpt_dir = self.save_model_directory + '/checkpoints'
 
         with tf.Graph().as_default() as g:
-            img_depth = self.img_depth
             data_reader = MnvDataReaderVertexST(
                 filenames_list=self.test_file_list,
                 batch_size=self.batch_size,
@@ -230,13 +226,9 @@ class MnvTFRunnerCategorical:
             targ = batch_dict[self.targets_label]
             f = [X, U, V]
 
-            d = make_default_convpooldict(img_depth=img_depth)
-            model = TriColSTEpsilon(
-                learning_rate=self.learning_rate,
-                n_classes=self.n_classes
-            )
-            model.prepare_for_inference(f, d)
-            model.prepare_for_loss_computation(targ)
+            d = self.build_kbd_function(img_depth=self.img_depth)
+            self.model.prepare_for_inference(f, d)
+            self.model.prepare_for_loss_computation(targ)
 
             saver = tf.train.Saver()
 
@@ -261,7 +253,7 @@ class MnvTFRunnerCategorical:
                              tf.get_default_graph().get_operations()]
                         )
 
-                final_step = model.global_step.eval()
+                final_step = self.model.global_step.eval()
                 logger.info('evaluation after {} steps.'.format(final_step))
                 average_loss = 0.0
                 total_correct_preds = 0
@@ -276,9 +268,9 @@ class MnvTFRunnerCategorical:
                 try:
                     for i in range(n_batches):
                         loss_batch, logits_batch, Y_batch = sess.run(
-                            [model.loss, model.logits, targ],
+                            [self.model.loss, self.model.logits, targ],
                             feed_dict={
-                                model.dropout_keep_prob: 1.0
+                                self.model.dropout_keep_prob: 1.0
                             }
                         )
                         n_processed += self.batch_size

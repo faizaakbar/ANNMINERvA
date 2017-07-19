@@ -36,7 +36,7 @@ tf.app.flags.DEFINE_boolean('do_validation', True,
                             """Perform validation ops.""")
 tf.app.flags.DEFINE_boolean('do_testing', True,
                             """Perform testing ops.""")
-# TODO - do_prediction
+# TODO - do_prediction flag
 
 
 def main(argv=None):
@@ -75,9 +75,11 @@ def main(argv=None):
                            '*_valid.tfrecord' + comp_ext)
     test_list = glob.glob(FLAGS.data_dir + '/' + FLAGS.file_root +
                           '*_test.tfrecord' + comp_ext)
-    logger.info('training file list =', train_list)
-    logger.info('validation file list =', valid_list)
-    logger.info('testing file list =', test_list)
+    for t, l in zip(['training', 'validation', 'test'],
+                    [train_list, valid_list, test_list]):
+        logger.info('{} file list ='.format(t))
+        for filename in l:
+            logger.info('  {}'.format(filename))
     if len(train_list) == 0 and len(valid_list) == 0 and len(test_list) == 0:
         logger.error('No files found at specified path!')
         sys.exit(1)
@@ -88,7 +90,7 @@ def main(argv=None):
     # set up features parameters
     feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)
     feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
-    feature_targ_dict['TARGETS_LABEL'] = FLAGS.target_label
+    feature_targ_dict['TARGETS_LABEL'] = FLAGS.targets_label
     model = TriColSTEpsilon(n_classes=FLAGS.n_classes)
 
     # set up training parameters
@@ -96,6 +98,11 @@ def main(argv=None):
 
     # set up image parameters
     img_params_dict = mnv_utils.make_default_img_params_dict(MNV_TYPE)
+
+    short = True
+    if short:
+        run_params_dict['SAVE_EVRY_N_EVTS'] = 1
+        train_params_dict['BATCH_SIZE'] = 1
 
     runner = MnvTFRunnerCategorical(
         model,
@@ -105,9 +112,9 @@ def main(argv=None):
         img_params_dict=img_params_dict
     )
     if FLAGS.do_training:
-        runner.run_training(do_validation=FLAGS.do_validation, short=True)
+        runner.run_training(do_validation=FLAGS.do_validation, short=short)
     if FLAGS.do_testing:
-        runner.run_testing(short=True)
+        runner.run_testing(short=short)
 
 
 if __name__ == '__main__':
