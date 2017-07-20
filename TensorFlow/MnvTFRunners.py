@@ -144,7 +144,7 @@ class MnvTFRunnerCategorical:
 
                 writer.add_graph(sess.graph)
                 initial_step = self.model.global_step.eval()
-                logger.info('initial step =', initial_step)
+                logger.info('initial step = %d' % initial_step)
                 average_loss = 0.0
 
                 coord = tf.train.Coordinator()
@@ -188,7 +188,7 @@ class MnvTFRunnerCategorical:
                                 }
                             )
                             writer.add_summary(summary, global_step=b_num)
-                            logger.info('   Valid loss =', loss_valid)
+                            logger.info('   Valid loss = %f' % loss_valid)
                             # reset for training
                             self.model.reassign_features(f_train)
                             self.model.reassign_targets(targ_train)
@@ -298,9 +298,9 @@ class MnvTFRunnerCategorical:
                             )
 
                         logger.info(
-                            "  total_correct_preds =", total_correct_preds
+                            "  total_correct_preds = %d" % total_correct_preds
                         )
-                        logger.info("  n_processed =", n_processed)
+                        logger.info("  n_processed = %d" % n_processed)
                         logger.info(" Accuracy {0}".format(
                             total_correct_preds / n_processed
                         ))
