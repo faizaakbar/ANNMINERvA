@@ -10,8 +10,9 @@ import logging
 import tensorflow as tf
 
 from MnvDataReaders import MnvDataReaderVertexST
+import mnv_utils
 
-logger = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class MnvTFRunnerCategorical:
@@ -78,13 +79,13 @@ class MnvTFRunnerCategorical:
         run training (TRAIN file list) and optionally run a validation pass
         (on the VALID file list)
         """
-        logger.info('staring run_training...')
+        LOGGER.info('staring run_training...')
         tf.reset_default_graph()
         initial_step = 0
         ckpt_dir = self.save_model_directory + '/checkpoints'
         run_dest_dir = self.save_model_directory + '/%d' % time.time()
-        logger.info('tensorboard command:')
-        logger.info('\ttensorboard --logdir {}'.format(
+        LOGGER.info('tensorboard command:')
+        LOGGER.info('\ttensorboard --logdir {}'.format(
             self.save_model_directory
         ))
 
@@ -120,6 +121,8 @@ class MnvTFRunnerCategorical:
             d = self.build_kbd_function(img_depth=self.img_depth)
             self.model.prepare_for_inference(f_train, d)
             self.model.prepare_for_training(targ_train)
+            LOGGER.info('Preparing to train model with %d parameters' %
+                        mnv_utils.get_number_of_trainable_parameters())
 
             writer = tf.summary.FileWriter(run_dest_dir)
             saver = tf.train.Saver()
@@ -127,7 +130,7 @@ class MnvTFRunnerCategorical:
             # n_steps: control this with num_epochs
             n_steps = 5 if short else 1e9
             skip_step = 1 if short else self.save_freq
-            logger.info(' Processing {} steps...'.format(n_steps))
+            LOGGER.info(' Processing {} steps...'.format(n_steps))
 
             init = tf.global_variables_initializer()
 
@@ -140,11 +143,11 @@ class MnvTFRunnerCategorical:
                 ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
-                    logger.info('Restored session from {}'.format(ckpt_dir))
+                    LOGGER.info('Restored session from {}'.format(ckpt_dir))
 
                 writer.add_graph(sess.graph)
                 initial_step = self.model.global_step.eval()
-                logger.info('initial step = %d' % initial_step)
+                LOGGER.info('initial step = %d' % initial_step)
                 average_loss = 0.0
 
                 coord = tf.train.Coordinator()
@@ -166,17 +169,17 @@ class MnvTFRunnerCategorical:
                         writer.add_summary(summary, global_step=b_num)
                         average_loss += loss_batch
                         if (b_num + 1) % skip_step == 0:
-                            logger.info(
+                            LOGGER.info(
                                 '  Avg train loss at step {}: {:5.1f}'.format(
                                     b_num + 1, average_loss / skip_step
                                 )
                             )
-                            logger.info('   Elapsed time = {}'.format(
+                            LOGGER.info('   Elapsed time = {}'.format(
                                 time.time() - start_time
                             ))
                             average_loss = 0.0
                             saver.save(sess, ckpt_dir, b_num)
-                            logger.info('     saved at iter %d' % b_num)
+                            LOGGER.info('     saved at iter %d' % b_num)
                             # try validation
                             self.model.reassign_features(f_valid)
                             self.model.reassign_targets(targ_valid)
@@ -188,27 +191,27 @@ class MnvTFRunnerCategorical:
                                 }
                             )
                             writer.add_summary(summary, global_step=b_num)
-                            logger.info('   Valid loss = %f' % loss_valid)
+                            LOGGER.info('   Valid loss = %f' % loss_valid)
                             # reset for training
                             self.model.reassign_features(f_train)
                             self.model.reassign_targets(targ_train)
                 except tf.errors.OutOfRangeError:
-                    logger.info('Training stopped - queue is empty.')
+                    LOGGER.info('Training stopped - queue is empty.')
                 except Exception as e:
-                    logger.error(e)
+                    LOGGER.error(e)
                 finally:
                     coord.request_stop()
                     coord.join(threads)
 
             writer.close()
 
-        logger.info('Finished training...')
+        LOGGER.info('Finished training...')
 
     def run_testing(self, short=False):
         """
         run a test pass (not "validation"!), based on the TEST file list.
         """
-        logger.info('Starting testing...')
+        LOGGER.info('Starting testing...')
         tf.reset_default_graph()
         ckpt_dir = self.save_model_directory + '/checkpoints'
 
@@ -229,12 +232,14 @@ class MnvTFRunnerCategorical:
             d = self.build_kbd_function(img_depth=self.img_depth)
             self.model.prepare_for_inference(f, d)
             self.model.prepare_for_loss_computation(targ)
+            LOGGER.info('Preparing to test model with %d parameters' %
+                        mnv_utils.get_number_of_trainable_parameters())
 
             saver = tf.train.Saver()
 
             n_batches = 2 if short else 10000
             init = tf.global_variables_initializer()
-            logger.info(' Processing {} batches...'.format(n_batches))
+            LOGGER.info(' Processing {} batches...'.format(n_batches))
 
             start_time = time.time()
 
@@ -246,15 +251,15 @@ class MnvTFRunnerCategorical:
                 ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
-                    logger.info('Restored session from {}'.format(ckpt_dir))
+                    LOGGER.info('Restored session from {}'.format(ckpt_dir))
                     if self.be_verbose:
-                        logger.debug(
+                        LOGGER.debug(
                             [op.name for op in
                              tf.get_default_graph().get_operations()]
                         )
 
                 final_step = self.model.global_step.eval()
-                logger.info('evaluation after {} steps.'.format(final_step))
+                LOGGER.info('evaluation after {} steps.'.format(final_step))
                 average_loss = 0.0
                 total_correct_preds = 0
 
@@ -280,10 +285,10 @@ class MnvTFRunnerCategorical:
                             tf.argmax(preds, 1), tf.argmax(Y_batch, 1)
                         )
                         if self.be_verbose:
-                            logger.debug('   preds   = \n{}'.format(
+                            LOGGER.debug('   preds   = \n{}'.format(
                                 tf.argmax(preds, 1).eval()
                             ))
-                            logger.debug('   Y_batch = \n{}'.format(
+                            LOGGER.debug('   Y_batch = \n{}'.format(
                                 tf.argmax(Y_batch, 1).eval()
                             ))
                         accuracy = tf.reduce_sum(
@@ -291,33 +296,33 @@ class MnvTFRunnerCategorical:
                         )
                         total_correct_preds += sess.run(accuracy)
                         if self.be_verbose:
-                            logger.debug(
+                            LOGGER.debug(
                                 '  batch {} loss = {} for nproc {}'.format(
                                     i, loss_batch, n_processed
                                 )
                             )
 
-                        logger.info(
+                        LOGGER.info(
                             "  total_correct_preds = %d" % total_correct_preds
                         )
-                        logger.info("  n_processed = %d" % n_processed)
-                        logger.info(" Accuracy {0}".format(
+                        LOGGER.info("  n_processed = %d" % n_processed)
+                        LOGGER.info(" Accuracy {0}".format(
                             total_correct_preds / n_processed
                         ))
-                        logger.info(' Average loss: {:5.1f}'.format(
+                        LOGGER.info(' Average loss: {:5.1f}'.format(
                             average_loss / n_batches
                         ))
                 except tf.errors.OutOfRangeError:
-                    logger.info('Testing stopped - queue is empty.')
+                    LOGGER.info('Testing stopped - queue is empty.')
                 except Exception as e:
-                    logger.error(e)
+                    LOGGER.error(e)
                 finally:
                     coord.request_stop()
                     coord.join(threads)
 
-            logger.info('  Elapsed time = {}'.format(time.time() - start_time))
+            LOGGER.info('  Elapsed time = {}'.format(time.time() - start_time))
 
-        logger.info('Finished testing...')
+        LOGGER.info('Finished testing...')
 
     def run_prediction(self):
         """

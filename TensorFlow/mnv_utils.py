@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 import tensorflow as tf
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 BATCH_SIZE = 128
 ZLIB_COMP = tf.python_io.TFRecordCompressionType.ZLIB
@@ -49,3 +52,63 @@ def make_default_img_params_dict(mnv_type='st_epsilon'):
     img_params_dict = {}
     img_params_dict['IMG_DEPTH'] = 2
     return img_params_dict
+
+
+def get_logging_level(log_level):
+    logging_level = logging.INFO
+    if log_level == 'DEBUG':
+        logging_level = logging.DEBUG
+    elif log_level == 'INFO':
+        logging_level = logging.INFO
+    elif log_level == 'WARNING':
+        logging_level = logging.WARNING
+    elif log_level == 'ERROR':
+        logging_level = logging.ERROR
+    elif log_level == 'CRITICAL':
+        logging_level = logging.CRITICAL
+    else:
+        print('Unknown or unset logging level. Using INFO')
+
+    return logging_level
+
+
+def get_file_lists(data_dir, file_root, comp_ext):
+    import glob
+    import sys
+    train_list = glob.glob(data_dir + '/' + file_root +
+                           '*_train.tfrecord' + comp_ext)
+    valid_list = glob.glob(data_dir + '/' + file_root +
+                           '*_valid.tfrecord' + comp_ext)
+    test_list = glob.glob(data_dir + '/' + file_root +
+                          '*_test.tfrecord' + comp_ext)
+    for t, l in zip(['training', 'validation', 'test'],
+                    [train_list, valid_list, test_list]):
+        LOGGER.info('{} file list ='.format(t))
+        for filename in l:
+            LOGGER.info('  {}'.format(filename))
+    if len(train_list) == 0 and \
+       len(valid_list) == 0 and \
+       len(test_list) == 0:
+        LOGGER.error('No files found at specified path!')
+        sys.exit(1)
+    return train_list, valid_list, test_list
+
+
+def get_number_of_trainable_parameters():
+    """ use default graph """
+    # https://stackoverflow.com/questions/38160940/ ...
+    LOGGER.debug('Now compute total number of trainable params...')
+    total_parameters = 0
+    for variable in tf.trainable_variables():
+        # shape is an array of tf.Dimension
+        shape = variable.get_shape()
+        name = variable.name
+        variable_parameters = 1
+        for dim in shape:
+            variable_parameters *= dim.value
+        LOGGER.debug(' layer name = {}, shape = {}, n_params = {}'.format(
+            name, shape, variable_parameters
+        ))
+        total_parameters += variable_parameters
+    LOGGER.debug('Total parameters = %d' % total_parameters)
+    return total_parameters

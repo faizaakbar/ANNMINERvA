@@ -2,8 +2,6 @@
 minerva test
 """
 from __future__ import print_function
-import glob
-import sys
 
 import tensorflow as tf
 
@@ -18,6 +16,8 @@ FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string('data_dir', '/tmp/data',
                            """Directory where data is stored.""")
+tf.app.flags.DEFINE_string('model_dir', '/tmp/minerva/models',
+                           """Directory where models are stored.""")
 tf.app.flags.DEFINE_string('file_root', 'mnv_data_',
                            """File basename.""")
 tf.app.flags.DEFINE_string('compression', '',
@@ -43,14 +43,7 @@ def main(argv=None):
     # set up logger
     import logging
     logfilename = FLAGS.log_name
-    if FLAGS.log_level == 'DEBUG':
-        logging_level = logging.DEBUG
-    elif FLAGS.log_level == 'INFO':
-        logging_level = logging.INFO
-    else:
-        print('Only accepting "DEBUG" and "INFO" log levels right now.')
-        logging_level = logging.INFO
-
+    logging_level = mnv_utils.get_logging_level(FLAGS.log_level)
     logging.basicConfig(
         filename=logfilename, level=logging_level,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -69,23 +62,13 @@ def main(argv=None):
     elif FLAGS.compression == 'gz':
         comp_ext = '.gz'
         run_params_dict['COMPRESSION'] = mnv_utils.GZIP_COMP
-    train_list = glob.glob(FLAGS.data_dir + '/' + FLAGS.file_root +
-                           '*_train.tfrecord' + comp_ext)
-    valid_list = glob.glob(FLAGS.data_dir + '/' + FLAGS.file_root +
-                           '*_valid.tfrecord' + comp_ext)
-    test_list = glob.glob(FLAGS.data_dir + '/' + FLAGS.file_root +
-                          '*_test.tfrecord' + comp_ext)
-    for t, l in zip(['training', 'validation', 'test'],
-                    [train_list, valid_list, test_list]):
-        logger.info('{} file list ='.format(t))
-        for filename in l:
-            logger.info('  {}'.format(filename))
-    if len(train_list) == 0 and len(valid_list) == 0 and len(test_list) == 0:
-        logger.error('No files found at specified path!')
-        sys.exit(1)
+    train_list, valid_list, test_list = mnv_utils.get_file_lists(
+        FLAGS.data_dir, FLAGS.file_root, comp_ext
+    )
     run_params_dict['TRAIN_FILE_LIST'] = train_list
     run_params_dict['VALID_FILE_LIST'] = valid_list
     run_params_dict['TEST_FILE_LIST'] = test_list
+    run_params_dict['MODEL_DIR'] = FLAGS.model_dir
 
     # set up features parameters
     feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)

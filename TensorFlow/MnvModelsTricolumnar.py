@@ -2,6 +2,9 @@
 MINERvA Tri-columnar "spacetime" (energy+time tensors) epsilon network
 """
 import tensorflow as tf
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 
 def make_default_convpooldict(img_depth=1, data_format='NHWC'):
@@ -114,6 +117,7 @@ class TriColSTEpsilon:
         features_list[0] == X, [1] == U, [2] == V;
         kbd = kernels-biases-dict (convpooldict)
         """
+        LOGGER.info('Building network from structure: %s' % str(kbd))
         self.dropout_keep_prob = tf.placeholder(
             tf.float32, name='dropout_keep_prob'
         )
@@ -300,6 +304,8 @@ class TriColSTEpsilon:
             )
 
     def _define_train_op(self, learning_rate):
+        LOGGER.info('Building train op with learning_rate = %f' %
+                    learning_rate)
         with tf.name_scope('training'):
             self.optimizer = tf.train.AdamOptimizer(
                 learning_rate=learning_rate
