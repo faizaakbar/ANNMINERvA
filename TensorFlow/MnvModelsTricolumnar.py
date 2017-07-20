@@ -98,22 +98,28 @@ class TriColSTEpsilon:
     Tri-Columnar SpaceTime Epsilon
     """
     def __init__(self, n_classes):
-        self.dropout_keep_prob = tf.placeholder(
-            tf.float32, name='dropout_keep_prob'
-        )
         self.n_classes = n_classes
-        self.global_step = tf.Variable(
-            0, dtype=tf.int32, trainable=False, name='global_step'
-        )
+        self.dropout_keep_prob = None
+        self.global_step = None
         self.padding = 'VALID'
         # note, 'NCHW' is only supported on GPUs
         self.data_format = 'NHWC'
 
     def _build_network(self, features_list, kbd):
         """
+        _build_network does a bit more than just build the network; it also
+        handles some initialization that is tricky in the init function in
+        terms of belonging to the same graph as what is actually used.
+
         features_list[0] == X, [1] == U, [2] == V;
         kbd = kernels-biases-dict (convpooldict)
         """
+        self.dropout_keep_prob = tf.placeholder(
+            tf.float32, name='dropout_keep_prob'
+        )
+        self.global_step = tf.Variable(
+            0, dtype=tf.int32, trainable=False, name='global_step'
+        )
         self.weights_biases = {}
 
         with tf.name_scope('input_images'):
