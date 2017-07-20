@@ -36,7 +36,8 @@ tf.app.flags.DEFINE_boolean('do_validation', True,
                             """Perform validation ops.""")
 tf.app.flags.DEFINE_boolean('do_testing', True,
                             """Perform testing ops.""")
-# TODO - do_prediction flag
+tf.app.flags.DEFINE_boolean('do_prediction', False,
+                            """Perform prediction ops.""")
 
 
 def main(argv=None):
@@ -98,6 +99,8 @@ def main(argv=None):
         runner.run_training(do_validation=FLAGS.do_validation, short=short)
     if FLAGS.do_testing:
         runner.run_testing(short=short)
+    if FLAGS.do_prediction:
+        runner.run_prediction(short=short)
 
 
 if __name__ == '__main__':

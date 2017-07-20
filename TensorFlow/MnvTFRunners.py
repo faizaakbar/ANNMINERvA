@@ -324,8 +324,29 @@ class MnvTFRunnerCategorical:
 
         LOGGER.info('Finished testing...')
 
-    def run_prediction(self):
+    def run_prediction(self, short=False):
         """
         make predictions based on the TEST file list
+
+        TODO - look for sqlalchemy and put the predictions into a sqlite db.
+        If sqlalchemy is not available, look for h5py and store the predictions
+        in an HDF5 file. If neither is available, store predictions in plain
+        text.
         """
-        pass
+        have_sqlalchemy = False
+        have_h5py = False
+        try:
+            import sqlalchemy
+            have_sqlalchemy = True
+        except ImportError as e:
+            print('Cannot store predictions in sqlite: {}'.format(e))
+            LOGGER.error('Cannot store prediction in sqlite: {}'.format(e))
+        try:
+            import h5py
+            have_h5py = True
+        except ImportError as e:
+            print('Cannot store predictions in HDF5: {}'.format(e))
+            LOGGER.error('Cannot store prediction in HDF5: {}'.format(e))
+
+        LOGGER.info("Starting prediction...")
+        LOGGER.info("Finished prediction...")
