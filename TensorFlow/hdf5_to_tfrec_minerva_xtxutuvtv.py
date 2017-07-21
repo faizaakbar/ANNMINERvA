@@ -1,10 +1,15 @@
 """
-convert an hdf5 file to tfrecords (train, valid, test) - assumes the two-deep
-minerva "spacetime" hdf5 file format.
+convert a list of hdf5s file to a list of tfrecords files of the basic types
+(train, valid, test) - assumes the two-deep minerva "spacetime" hdf5 file
+format.
 
 Usage:
-    python hdf5_to_tfrec_minerva_xtxutuvtv.py -f hdf5_file -n n_events \
-         [-t train fraction (0.83)] [-v valid fraction (0.08)] [-r]
+    python hdf5_to_tfrec_minerva_xtxutuvtv.py -l hdf5_file_list \
+         -n n_events_per_tfrecord_triplet \
+         -m max_number_of_tfrecord_triplets \
+         [-t train fraction (0.83)] [-v valid fraction (0.08)] \
+         [-r (do a test read - default is False)] \
+         [-g logfilename]
 """
 from __future__ import print_function
 from six.moves import range
@@ -13,6 +18,7 @@ import tensorflow as tf
 import numpy as np
 import sys
 import os
+import logging
 
 
 class minerva_hdf5_reader:
@@ -220,6 +226,9 @@ def write_all(
         n_events, hdf5_file, train_file, valid_file, test_file,
         train_fraction, valid_fraction
 ):
+    # todo, make this a while loop that keeps making tf record files
+    # until we run out of events in the hdf5, then pass back the
+    # file number we stopped on
     m = minerva_hdf5_reader(hdf5_file)
     m.open()
     if n_events <= 0:
@@ -260,13 +269,20 @@ def read_all(train_file, valid_file, test_file):
 
 if __name__ == '__main__':
 
+    def arg_list_split(option, opt, value, parser):
+        setattr(parser.values, option.dest, value.split(','))
+
     from optparse import OptionParser
     parser = OptionParser(usage=__doc__)
-    parser.add_option('-f', '--file', dest='filename',
-                      help='Dset file name', metavar='FILENAME',
-                      default=None, type='string')
+    parser.add_option('-l', '--file_list', dest='file_list',
+                      help='HDF5 file list (csv)', metavar='FILELIST',
+                      type='string', action='callback',
+                      callback=arg_list_split)
     parser.add_option('-n', '--nevents', dest='n_events', default=0,
-                      help='Number of events', metavar='N_EVENTS',
+                      help='Number of events per file', metavar='N_EVENTS',
+                      type='int')
+    parser.add_option('-m', '--max_files', dest='max_files', default=1,
+                      help='Max number of each file type', metavar='MAX_FILES',
                       type='int')
     parser.add_option('-r', '--test_read', dest='do_test', default=False,
                       help='Test read', metavar='DO_TEST',
@@ -277,6 +293,9 @@ if __name__ == '__main__':
     parser.add_option('-v', '--valid_fraction', dest='valid_fraction',
                       default=0.09, help='Valid fraction',
                       metavar='VALID_FRAC', type='float')
+    parser.add_option('-g', '--logfile', dest='logfilename',
+                      help='Log file name', metavar='LOGFILENAME',
+                      default=None, type='string')
 
     (options, args) = parser.parse_args()
 
@@ -290,22 +309,46 @@ if __name__ == '__main__':
         print(__doc__)
         sys.exit(1)
 
-    hdf5_file = options.filename
-    base_name = hdf5_file.split('.')[0]
-    train_file = base_name + '_train.tfrecord'
-    valid_file = base_name + '_valid.tfrecord'
-    test_file = base_name + '_test.tfrecord'
-    for filename in [train_file, valid_file, test_file]:
-        if os.path.isfile(filename):
-            print('found existing tfrecord file {}, removing...'.format(
-                filename
-            ))
-            os.remove(filename)
-
-    write_all(
-        options.n_events,
-        hdf5_file, train_file, valid_file, test_file,
-        options.train_fraction, options.valid_fraction
+    logfilename = options.logfilename or 'hdf5_to_tfrec_minerva_xtxutuvtv.log'
+    logging.basicConfig(
+        filename=logfilename, level=logging.INFO,
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
-    if options.do_test:
-        read_all(train_file, valid_file, test_file)
+    logger = logging.getLogger(__name__)
+    logger.info("Starting...")
+    logger.info(__file__)
+
+    logger.info("Datasets:")
+    dataset_statsinfo = 0
+    for hdf5_file in options.file_list:
+        fsize = os.stat(hdf5_file).st_size
+        dataset_statsinfo += os.stat(hdf5_file).st_size
+        logger.info(" {}, size = {}".format(hdf5_file, fsize))
+    logger.info("Total dataset size: {}".format(dataset_statsinfo))
+
+    # todo - do we need the enumerate here?
+    for i, hdf5_file in enumerate(options.file_list):
+        base_name = hdf5_file.split('.')[0]
+        # todo - make these file patterns
+        train_file = base_name + '_train.tfrecord'
+        valid_file = base_name + '_valid.tfrecord'
+        test_file = base_name + '_test.tfrecord'
+        tfrecord_num = 0
+        # todo - replace number in hdf5 base name with tfrecord num
+        for filename in [train_file, valid_file, test_file]:
+            if os.path.isfile(filename):
+                print('found existing tfrecord file {}, removing...'.format(
+                    filename
+                ))
+                os.remove(filename)
+
+        # todo, pass in tfrecord_num as starting point in numbered list
+        # todo, get back the final tfrecord_num, and increment it for the
+        # next hdf5 file
+        write_all(
+            options.n_events,
+            hdf5_file, train_file, valid_file, test_file,
+            options.train_fraction, options.valid_fraction
+        )
+        if options.do_test:
+            read_all(train_file, valid_file, test_file)
