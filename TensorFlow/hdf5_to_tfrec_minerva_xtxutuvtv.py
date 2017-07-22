@@ -229,6 +229,8 @@ def write_all(
     # todo, make this a while loop that keeps making tf record files
     # until we run out of events in the hdf5, then pass back the
     # file number we stopped on
+    #
+    # todo - we're passing in file patterns now, handle this
     m = minerva_hdf5_reader(hdf5_file)
     m.open()
     if n_events <= 0:
@@ -242,6 +244,14 @@ def write_all(
     print("{} train events".format(n_train))
     print("{} valid events".format(n_valid))
     print("{} test events".format(n_test))
+
+    # todo - do this for the file name once we've put the number in
+    for filename in [train_file, valid_file, test_file]:
+        if os.path.isfile(filename):
+            print('found existing tfrecord file {}, removing...'.format(
+                filename
+            ))
+            os.remove(filename)
 
     data_dict = make_mnv_data_dict()
     # events included are [start, stop)
@@ -259,6 +269,7 @@ def write_all(
 
 
 def read_all(train_file, valid_file, test_file):
+    # todo - we're passing in file patterns now, handle this
     print('reading train file...')
     test_read_tfrecord(train_file)
     print('reading valid file...')
@@ -326,29 +337,24 @@ if __name__ == '__main__':
         logger.info(" {}, size = {}".format(hdf5_file, fsize))
     logger.info("Total dataset size: {}".format(dataset_statsinfo))
 
+    # loop over list of hdf5 files (glob for patterns?), for each file, create
+    # tfrecord files of specified size, putting remainders in new files.
     # todo - do we need the enumerate here?
     for i, hdf5_file in enumerate(options.file_list):
         base_name = hdf5_file.split('.')[0]
-        # todo - make these file patterns
-        train_file = base_name + '_train.tfrecord'
-        valid_file = base_name + '_valid.tfrecord'
-        test_file = base_name + '_test.tfrecord'
+        # create file patterns to fill tfrecord files by number
+        train_file_pat = base_name + '%06d' + '_train.tfrecord'
+        valid_file_pat = base_name + '%06d' + '_valid.tfrecord'
+        test_file_pat = base_name + '%06d' + '_test.tfrecord'
         tfrecord_num = 0
-        # todo - replace number in hdf5 base name with tfrecord num
-        for filename in [train_file, valid_file, test_file]:
-            if os.path.isfile(filename):
-                print('found existing tfrecord file {}, removing...'.format(
-                    filename
-                ))
-                os.remove(filename)
 
         # todo, pass in tfrecord_num as starting point in numbered list
         # todo, get back the final tfrecord_num, and increment it for the
         # next hdf5 file
         write_all(
             options.n_events,
-            hdf5_file, train_file, valid_file, test_file,
+            hdf5_file, train_file_pat, valid_file_pat, test_file_pat,
             options.train_fraction, options.valid_fraction
         )
         if options.do_test:
-            read_all(train_file, valid_file, test_file)
+            read_all(train_file_pat, valid_file_pat, test_file_pat)
