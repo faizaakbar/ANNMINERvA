@@ -10,6 +10,8 @@ Usage:
          [-t train fraction (0.83)] [-v valid fraction (0.08)] \
          [-r (do a test read - default is False)] \
          [-g logfilename]
+         [-d dry_run_for_write (default is False)]
+         [-c compress_to_gz (default is False)]
 """
 from __future__ import print_function
 from six.moves import range
@@ -19,6 +21,9 @@ import numpy as np
 import sys
 import os
 import logging
+import gzip
+import shutil
+import glob
 
 
 class minerva_hdf5_reader:
@@ -47,6 +52,30 @@ class minerva_hdf5_reader:
         if min(sizes) != max(sizes):
             raise ValueError("All dsets must have the same size!")
         return sizes[0]
+
+
+def slices_maker(n, slice_size=100000):
+    """
+    make "slices" of size `slice_size` from a file of `n` events
+    (so, [0, slice_size), [slice_size, 2 * slice_size), etc.)
+    """
+    if n < slice_size:
+        return [(0, n)]
+
+    remainder = n % slice_size
+    n = n - remainder
+    nblocks = n // slice_size
+    counter = 0
+    slices = []
+    for i in range(nblocks):
+        end = counter + slice_size
+        slices.append((counter, end))
+        counter += slice_size
+
+    if remainder != 0:
+        slices.append((counter, counter + remainder))
+
+    return slices
 
 
 def make_mnv_data_dict():
@@ -95,7 +124,13 @@ def get_binary_data(reader, name, start_idx, stop_idx):
     return dta.tobytes()
 
 
-def write_to_tfrecord(data_dict, tfrecord_file):
+def gz_compress(infile):
+    outfile = infile + '.gz'
+    with open(infile, 'rb') as f_in, gzip.open(outfile, 'wb') as f_out:
+        shutil.copyfileobj(f_in, f_out)
+
+
+def write_to_tfrecord(data_dict, tfrecord_file, compress_to_gz):
     writer = tf.python_io.TFRecordWriter(tfrecord_file)
     features_dict = {}
     for k in data_dict.keys():
@@ -108,13 +143,18 @@ def write_to_tfrecord(data_dict, tfrecord_file):
     writer.write(example.SerializeToString())
     writer.close()
 
+    if compress_to_gz:
+        gz_compress(tfrecord_file)
 
-def write_tfrecord(reader, data_dict, start_idx, stop_idx, tfrecord_file):
+
+def write_tfrecord(
+        reader, data_dict, start_idx, stop_idx, tfrecord_file, compress_to_gz
+):
     for k in data_dict:
         data_dict[k]['byte_data'] = get_binary_data(
             reader, k, start_idx, stop_idx
         )
-    write_to_tfrecord(data_dict, tfrecord_file)
+    write_to_tfrecord(data_dict, tfrecord_file, compress_to_gz)
 
 
 def tfrecord_to_graph_ops_xtxutuvtv(filenames):
@@ -223,58 +263,84 @@ def test_read_tfrecord(tfrecord_file):
 
 
 def write_all(
-        n_events, hdf5_file, train_file, valid_file, test_file,
-        train_fraction, valid_fraction
+        n_events_per_tfrecord_triplet, max_triplets, file_num_start,
+        hdf5_file, train_file_pat, valid_file_pat, test_file_pat,
+        train_fraction, valid_fraction, dry_run, compress_to_gz
 ):
     # todo, make this a while loop that keeps making tf record files
     # until we run out of events in the hdf5, then pass back the
     # file number we stopped on
-    #
-    # todo - we're passing in file patterns now, handle this
     m = minerva_hdf5_reader(hdf5_file)
     m.open()
-    if n_events <= 0:
-        n_total = m.get_nevents()
-    else:
-        n_total = n_events
-    n_train = int(n_total * train_fraction)
-    n_valid = int(n_total * valid_fraction)
-    n_test = n_total - n_train - n_valid
-    print("{} total events".format(n_total))
-    print("{} train events".format(n_train))
-    print("{} valid events".format(n_valid))
-    print("{} test events".format(n_test))
+    n_total = m.get_nevents()
+    slcs = slices_maker(n_total, n_events_per_tfrecord_triplet)
+    n_processed = 0
+    for i, slc in enumerate(slcs):
+        file_num = i + file_num_start
+        if (max_triplets > 0) and ((file_num + 1) > max_triplets):
+            break
+        n_slc = slc[-1] - slc[0]
+        n_train = int(n_slc * train_fraction)
+        n_valid = int(n_slc * valid_fraction)
+        n_test = n_slc - n_train - n_valid
+        train_file = train_file_pat % file_num
+        valid_file = valid_file_pat % file_num
+        test_file = test_file_pat % file_num
+        logger.info("slice {}, {} total events".format(i, n_slc))
+        logger.info(
+            "slice {}, {} train events: {}".format(i, n_train, train_file)
+        )
+        logger.info(
+            "slice {}, {} valid events: {}".format(i, n_valid, valid_file)
+        )
+        logger.info(
+            "slice {}, {} test events: {}".format(i, n_test, test_file)
+        )
 
-    # todo - do this for the file name once we've put the number in
-    for filename in [train_file, valid_file, test_file]:
-        if os.path.isfile(filename):
-            print('found existing tfrecord file {}, removing...'.format(
-                filename
-            ))
-            os.remove(filename)
+        for filename in [train_file, valid_file, test_file]:
+            if os.path.isfile(filename):
+                logger.info(
+                    'found existing tfrecord file {}, removing...'.format(
+                        filename
+                    )
+                )
+                os.remove(filename)
 
-    data_dict = make_mnv_data_dict()
-    # events included are [start, stop)
-    if n_train > 0:
-        print('creating train file...')
-        write_tfrecord(m, data_dict, 0, n_train, train_file)
-    if n_valid > 0:
-        print('creating valid file...')
-        write_tfrecord(m, data_dict, n_train, n_train + n_valid, valid_file)
-    if n_test > 0:
-        print('creating test file...')
-        write_tfrecord(m, data_dict, n_train + n_valid, n_total, test_file)
+        if not dry_run:
+            data_dict = make_mnv_data_dict()
+            # events included are [start, stop)
+            if n_train > 0:
+                logger.info('creating train file...')
+                write_tfrecord(
+                    m, data_dict, 0, n_train,
+                    train_file, compress_to_gz
+                )                    
+            if n_valid > 0:
+                logger.info('creating valid file...')
+                write_tfrecord(
+                    m, data_dict, n_train, n_train + n_valid,
+                    valid_file, compress_to_gz
+                )
+            if n_test > 0:
+                logger.info('creating test file...')
+                write_tfrecord(
+                    m, data_dict, n_train + n_valid, n_total,
+                    test_file, compress_to_gz
+                )
+        n_processed += n_slc
 
+    logger.info("Processed {} events".format(n_processed))
     m.close()
+    return file_num
 
 
 def read_all(train_file, valid_file, test_file):
     # todo - we're passing in file patterns now, handle this
-    print('reading train file...')
+    logger.info('reading train file...')
     test_read_tfrecord(train_file)
-    print('reading valid file...')
+    logger.info('reading valid file...')
     test_read_tfrecord(valid_file)
-    print('reading test file...')
+    logger.info('reading test file...')
     test_read_tfrecord(test_file)
 
 
@@ -289,15 +355,24 @@ if __name__ == '__main__':
                       help='HDF5 file list (csv)', metavar='FILELIST',
                       type='string', action='callback',
                       callback=arg_list_split)
+    parser.add_option('-p', '--file_pattern', dest='file_pattern',
+                      help='File pattern', metavar='FILEPATTERN',
+                      default=None, type='string')
     parser.add_option('-n', '--nevents', dest='n_events', default=0,
                       help='Number of events per file', metavar='N_EVENTS',
                       type='int')
-    parser.add_option('-m', '--max_files', dest='max_files', default=1,
-                      help='Max number of each file type', metavar='MAX_FILES',
-                      type='int')
+    parser.add_option('-m', '--max_triplets', dest='max_triplets', default=0,
+                      help='Max number of each file type',
+                      metavar='MAX_TRIPLETS', type='int')
     parser.add_option('-r', '--test_read', dest='do_test', default=False,
                       help='Test read', metavar='DO_TEST',
                       action='store_true')
+    parser.add_option('-d', '--dry_run', dest='dry_run', default=False,
+                      help='Dry run for write', metavar='DRY_RUN',
+                      action='store_true')
+    parser.add_option('-c', '--compress_to_gz', dest='compress_to_gz',
+                      default=False, help='Gzip compression',
+                      metavar='COMPRESS_TO_GZ', action='store_true')
     parser.add_option('-t', '--train_fraction', dest='train_fraction',
                       default=0.88, help='Train fraction',
                       metavar='TRAIN_FRAC', type='float')
@@ -310,8 +385,9 @@ if __name__ == '__main__':
 
     (options, args) = parser.parse_args()
 
-    if not options.filename:
-        print("\nSpecify file (-f):\n\n")
+    # TODO - add `file_pattern` option (make it work)
+    if (not options.file_list) and (not options.file_pattern):
+        print("\nSpecify file list or file pattern:\n\n")
         print(__doc__)
         sys.exit(1)
 
@@ -329,9 +405,17 @@ if __name__ == '__main__':
     logger.info("Starting...")
     logger.info(__file__)
 
+    files = options.file_list or []
+    extra_files = glob.glob(options.file_pattern + '*.hdf5')
+    files.extend(extra_files)
+    extra_files = glob.glob(options.file_pattern + '*.h5')
+    files.extend(extra_files)
+    # kill any repeats
+    files = list(set(files))
+
     logger.info("Datasets:")
     dataset_statsinfo = 0
-    for hdf5_file in options.file_list:
+    for hdf5_file in files:
         fsize = os.stat(hdf5_file).st_size
         dataset_statsinfo += os.stat(hdf5_file).st_size
         logger.info(" {}, size = {}".format(hdf5_file, fsize))
@@ -339,22 +423,20 @@ if __name__ == '__main__':
 
     # loop over list of hdf5 files (glob for patterns?), for each file, create
     # tfrecord files of specified size, putting remainders in new files.
-    # todo - do we need the enumerate here?
-    for i, hdf5_file in enumerate(options.file_list):
+    file_num = 0
+    for i, hdf5_file in enumerate(files):
         base_name = hdf5_file.split('.')[0]
         # create file patterns to fill tfrecord files by number
-        train_file_pat = base_name + '%06d' + '_train.tfrecord'
-        valid_file_pat = base_name + '%06d' + '_valid.tfrecord'
-        test_file_pat = base_name + '%06d' + '_test.tfrecord'
-        tfrecord_num = 0
+        train_file_pat = base_name + '_%06d' + '_train.tfrecord'
+        valid_file_pat = base_name + '_%06d' + '_valid.tfrecord'
+        test_file_pat = base_name + '_%06d' + '_test.tfrecord'
 
-        # todo, pass in tfrecord_num as starting point in numbered list
-        # todo, get back the final tfrecord_num, and increment it for the
-        # next hdf5 file
-        write_all(
-            options.n_events,
+        out_num = write_all(
+            options.n_events, options.max_triplets, file_num,
             hdf5_file, train_file_pat, valid_file_pat, test_file_pat,
-            options.train_fraction, options.valid_fraction
+            options.train_fraction, options.valid_fraction, options.dry_run,
+            options.compress_to_gz
         )
+        file_num = out_num
         if options.do_test:
             read_all(train_file_pat, valid_file_pat, test_file_pat)
