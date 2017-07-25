@@ -128,6 +128,10 @@ def gz_compress(infile):
     outfile = infile + '.gz'
     with open(infile, 'rb') as f_in, gzip.open(outfile, 'wb') as f_out:
         shutil.copyfileobj(f_in, f_out)
+    if os.path.isfile(outfile) and (os.stat(outfile).st_size > 0):
+        os.remove(infile)
+    else:
+        raise IOError('Compressed file not produced!')
 
 
 def write_to_tfrecord(data_dict, tfrecord_file, compress_to_gz):
@@ -157,7 +161,7 @@ def write_tfrecord(
     write_to_tfrecord(data_dict, tfrecord_file, compress_to_gz)
 
 
-def tfrecord_to_graph_ops_xtxutuvtv(filenames):
+def tfrecord_to_graph_ops_xtxutuvtv(filenames, compressed):
     def proces_hitimes(inp, shape):
         """
         *Note* - Minerva HDF5's are packed (N, C, H, W), so we must transpose
@@ -171,7 +175,15 @@ def tfrecord_to_graph_ops_xtxutuvtv(filenames):
     file_queue = tf.train.string_input_producer(
         filenames, name='file_queue', num_epochs=1
     )
-    reader = tf.TFRecordReader()
+    if compressed:
+        compression_type = tf.python_io.TFRecordCompressionType.GZIP
+    else:
+        compression_type = tf.python_io.TFRecordCompressionType.NONE
+    reader = tf.TFRecordReader(
+        options=tf.python_io.TFRecordOptions(
+            compression_type=compression_type
+        )
+    )
     _, tfrecord = reader.read(file_queue)
 
     tfrecord_features = tf.parse_single_example(
@@ -207,9 +219,9 @@ def tfrecord_to_graph_ops_xtxutuvtv(filenames):
     return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
 
 
-def batch_generator(tfrecord_filelist, num_epochs=1):
+def batch_generator(tfrecord_filelist, compressed, num_epochs=1):
     es, x, u, v, ps, sg, zs = tfrecord_to_graph_ops_xtxutuvtv(
-        tfrecord_filelist
+        tfrecord_filelist, compressed
     )
     capacity = 10 * 100
     es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b = tf.train.batch(
@@ -225,8 +237,9 @@ def batch_generator(tfrecord_filelist, num_epochs=1):
     )
 
 
-def test_read_tfrecord(tfrecord_file):
-    batch_dict = batch_generator([tfrecord_file])
+def test_read_tfrecord(tfrecord_file, compressed):
+    logger.info('opening {} for reading'.format(tfrecord_file))
+    batch_dict = batch_generator([tfrecord_file], compressed)
     with tf.Session() as sess:
         # have to run local variable init for `string_input_producer`
         sess.run(tf.local_variables_initializer())
@@ -243,20 +256,24 @@ def test_read_tfrecord(tfrecord_file):
                     batch_dict['segments'],
                     batch_dict['zs'],
                 ])
-                print('batch =', batch_num)
-                print('evtids shape =', evtids.shape)
-                print('hitimes x shape =', hitsx.shape)
-                print('hitimes u shape =', hitsu.shape)
-                print('hitimes v shape =', hitsv.shape)
-                print('planecodes shape =', pcodes.shape)
-                print('  planecodes =', np.argmax(pcodes, axis=1))
-                print('segments shape =', segs.shape)
-                print('  segments =', np.argmax(segs, axis=1))
-                print('zs shape =', zs.shape)
+                logger.info('batch = {}'.format(batch_num))
+                logger.info('evtids shape = {}'.format(evtids.shape))
+                logger.info('hitimes x shape = {}'.format(hitsx.shape))
+                logger.info('hitimes u shape = {}'.format(hitsu.shape))
+                logger.info('hitimes v shape = {}'.format(hitsv.shape))
+                logger.info('planecodes shape = {}'.format(pcodes.shape))
+                logger.info('  planecodes = {}'.format(
+                    np.argmax(pcodes, axis=1)
+                ))
+                logger.info('segments shape = {}'.format(segs.shape))
+                logger.info('  segments = {}'.format(
+                    np.argmax(segs, axis=1)
+                ))
+                logger.info('zs shape = {}'.format(zs.shape))
         except tf.errors.OutOfRangeError:
-            print('Reading stopped - queue is empty.')
+            logger.info('Reading stopped - queue is empty.')
         except Exception as e:
-            print(e)
+            logger.info(e)
         finally:
             coord.request_stop()
             coord.join(threads)
@@ -270,11 +287,16 @@ def write_all(
     # todo, make this a while loop that keeps making tf record files
     # until we run out of events in the hdf5, then pass back the
     # file number we stopped on
+    logger.info('opening hdf5 file {} for file start number {}'.format(
+        hdf5_file, file_num_start
+    ))
     m = minerva_hdf5_reader(hdf5_file)
     m.open()
     n_total = m.get_nevents()
     slcs = slices_maker(n_total, n_events_per_tfrecord_triplet)
     n_processed = 0
+    new_files = []
+
     for i, slc in enumerate(slcs):
         file_num = i + file_num_start
         if (max_triplets > 0) and ((file_num + 1) > max_triplets):
@@ -283,18 +305,24 @@ def write_all(
         n_train = int(n_slc * train_fraction)
         n_valid = int(n_slc * valid_fraction)
         n_test = n_slc - n_train - n_valid
+        train_start, train_stop = n_processed, n_processed + n_train
+        valid_start, valid_stop = train_stop, train_stop + n_valid
+        test_start, test_stop = valid_stop, valid_stop + n_test
         train_file = train_file_pat % file_num
         valid_file = valid_file_pat % file_num
         test_file = test_file_pat % file_num
         logger.info("slice {}, {} total events".format(i, n_slc))
         logger.info(
-            "slice {}, {} train events: {}".format(i, n_train, train_file)
+            "slice {}, {} train events, [{}-{}): {}".format(
+                i, n_train, train_start, train_stop, train_file)
         )
         logger.info(
-            "slice {}, {} valid events: {}".format(i, n_valid, valid_file)
+            "slice {}, {} valid events, [{}-{}): {}".format(
+                i, n_valid, valid_start, valid_stop, valid_file)
         )
         logger.info(
-            "slice {}, {} test events: {}".format(i, n_test, test_file)
+            "slice {}, {} test events, [{}-{}): {}".format(
+                i, n_test, test_start, test_stop, test_file)
         )
 
         for filename in [train_file, valid_file, test_file]:
@@ -312,36 +340,51 @@ def write_all(
             if n_train > 0:
                 logger.info('creating train file...')
                 write_tfrecord(
-                    m, data_dict, 0, n_train,
+                    m, data_dict, train_start, train_stop,
                     train_file, compress_to_gz
-                )                    
+                )
+                new_files.append(
+                    train_file + '.gz' if compress_to_gz else train_file
+                )
             if n_valid > 0:
                 logger.info('creating valid file...')
                 write_tfrecord(
-                    m, data_dict, n_train, n_train + n_valid,
+                    m, data_dict, valid_start, valid_stop,
                     valid_file, compress_to_gz
+                )
+                new_files.append(
+                    valid_file + '.gz' if compress_to_gz else valid_file
                 )
             if n_test > 0:
                 logger.info('creating test file...')
                 write_tfrecord(
-                    m, data_dict, n_train + n_valid, n_total,
+                    m, data_dict, test_start, test_stop,
                     test_file, compress_to_gz
+                )
+                new_files.append(
+                    test_file + '.gz' if compress_to_gz else test_file
                 )
         n_processed += n_slc
 
-    logger.info("Processed {} events".format(n_processed))
+    logger.info("Processed {} events, finished with file number {}".format(
+        n_processed, (file_num - 1)
+    ))
     m.close()
-    return file_num
+    return file_num, new_files
 
 
-def read_all(train_file, valid_file, test_file):
-    # todo - we're passing in file patterns now, handle this
-    logger.info('reading train file...')
-    test_read_tfrecord(train_file)
-    logger.info('reading valid file...')
-    test_read_tfrecord(valid_file)
-    logger.info('reading test file...')
-    test_read_tfrecord(test_file)
+def read_all(files_written, dry_run, compressed):
+    logger.info('reading files...')
+        
+    for filename in files_written:
+        if os.path.isfile(filename):
+            logger.info(
+                'found existing tfrecord file {} with size {}...'.format(
+                    filename, os.stat(filename).st_size
+                )
+            )
+            if not dry_run:
+                test_read_tfrecord(filename, compressed)
 
 
 if __name__ == '__main__':
@@ -412,6 +455,7 @@ if __name__ == '__main__':
     files.extend(extra_files)
     # kill any repeats
     files = list(set(files))
+    files.sort()
 
     logger.info("Datasets:")
     dataset_statsinfo = 0
@@ -424,6 +468,7 @@ if __name__ == '__main__':
     # loop over list of hdf5 files (glob for patterns?), for each file, create
     # tfrecord files of specified size, putting remainders in new files.
     file_num = 0
+    files_written = []
     for i, hdf5_file in enumerate(files):
         base_name = hdf5_file.split('.')[0]
         # create file patterns to fill tfrecord files by number
@@ -431,12 +476,17 @@ if __name__ == '__main__':
         valid_file_pat = base_name + '_%06d' + '_valid.tfrecord'
         test_file_pat = base_name + '_%06d' + '_test.tfrecord'
 
-        out_num = write_all(
-            options.n_events, options.max_triplets, file_num,
-            hdf5_file, train_file_pat, valid_file_pat, test_file_pat,
-            options.train_fraction, options.valid_fraction, options.dry_run,
-            options.compress_to_gz
+        out_num, new_files = write_all(
+            n_events_per_tfrecord_triplet=options.n_events,
+            max_triplets=options.max_triplets, file_num_start=file_num,
+            hdf5_file=hdf5_file, train_file_pat=train_file_pat,
+            valid_file_pat=valid_file_pat, test_file_pat=test_file_pat,
+            train_fraction=options.train_fraction,
+            valid_fraction=options.valid_fraction,
+            dry_run=options.dry_run, compress_to_gz=options.compress_to_gz
         )
         file_num = out_num
+        files_written.extend(new_files)
+
         if options.do_test:
-            read_all(train_file_pat, valid_file_pat, test_file_pat)
+            read_all(files_written, options.dry_run, options.compress_to_gz)
