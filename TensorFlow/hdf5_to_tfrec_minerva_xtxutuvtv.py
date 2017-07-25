@@ -468,7 +468,6 @@ if __name__ == '__main__':
     # loop over list of hdf5 files (glob for patterns?), for each file, create
     # tfrecord files of specified size, putting remainders in new files.
     file_num = 0
-    files_written = []
     for i, hdf5_file in enumerate(files):
         base_name = hdf5_file.split('.')[0]
         # create file patterns to fill tfrecord files by number
@@ -476,7 +475,7 @@ if __name__ == '__main__':
         valid_file_pat = base_name + '_%06d' + '_valid.tfrecord'
         test_file_pat = base_name + '_%06d' + '_test.tfrecord'
 
-        out_num, new_files = write_all(
+        out_num, files_written = write_all(
             n_events_per_tfrecord_triplet=options.n_events,
             max_triplets=options.max_triplets, file_num_start=file_num,
             hdf5_file=hdf5_file, train_file_pat=train_file_pat,
@@ -486,7 +485,6 @@ if __name__ == '__main__':
             dry_run=options.dry_run, compress_to_gz=options.compress_to_gz
         )
         file_num = out_num
-        files_written.extend(new_files)
 
         if options.do_test:
             read_all(files_written, options.dry_run, options.compress_to_gz)
