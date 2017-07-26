@@ -8,6 +8,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, Float
 from sqlalchemy import UniqueConstraint
 from sqlalchemy import MetaData
+from sqlalchemy import select
 
 import mnv_utils
 
@@ -26,6 +27,13 @@ class MnvCategoricalSQLiteRecorder:
     def write_data(self, eventid, pred, probs):
         return self._filldb(eventid, pred, probs)
 
+    def read_data(self):
+        """ test reader - careful calling this on anything but tiny dbs! """
+        s = select([self.table])
+        rp = self.connection.execute(s)
+        results = rp.fetchall()
+        return results
+
     def _setup_prediction_table(self):
         self.table = Table('zsegment_prediction', self.metadata,
                            Column('id', Integer(), primary_key=True),
@@ -42,7 +50,7 @@ class MnvCategoricalSQLiteRecorder:
             col = Column(name, Float())
             self.table.append_column(col)
 
-    def _configure_db(self, db_tbl_fun):
+    def _configure_db(self):
         db = 'sqlite:///' + self.db_name
         self.metadata = MetaData()
         self.engine = create_engine(db)
