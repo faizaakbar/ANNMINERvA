@@ -20,7 +20,7 @@ def make_default_run_params_dict(mnv_type='st_epsilon'):
     run_params_dict['SAVE_EVRY_N_EVTS'] = BATCH_SIZE * 5
     run_params_dict['DEBUG_PRINT'] = True
     run_params_dict['BE_VERBOSE'] = False
-    run_params_dict['WRITE_DB'] = True
+    run_params_dict['PREDICTION_STORE_NAME'] = 'preds'
     return run_params_dict
 
 
@@ -112,3 +112,18 @@ def get_number_of_trainable_parameters():
         total_parameters += variable_parameters
     LOGGER.debug('Total parameters = %d' % total_parameters)
     return total_parameters
+
+
+def decode_eventid(eventid):
+    """
+    assume "standard" encoding
+    """
+    evtid = str(eventid)
+    phys_evt = evtid[-2:]
+    evtid = evtid[:-2]
+    gate = evtid[-4:]
+    evtid = evtid[:-4]
+    subrun = evtid[-4:]
+    evtid = evtid[:-4]
+    run = evtid
+    return (run, subrun, gate, phys_evt)
