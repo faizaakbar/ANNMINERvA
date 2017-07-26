@@ -79,7 +79,6 @@ class MnvTFRunnerCategorical:
                 self.model.n_classes, self.pred_store_name
             )
         except ImportError as e:
-            print('Cannot store predictions in sqlite: {}'.format(e))
             LOGGER.error('Cannot store prediction in sqlite: {}'.format(e))
             from MnvRecorderText import MnvCategoricalTextRecorder
             self.data_recorder = MnvCategoricalTextRecorder(
