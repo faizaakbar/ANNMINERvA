@@ -39,7 +39,7 @@ class MnvTFRunnerCategorical:
             # TODO - debug print and verbose should control logger levels
             self.debug_print = run_params_dict['DEBUG_PRINT']
             self.be_verbose = run_params_dict['BE_VERBOSE']
-            self.write_db = run_params_dict['WRITE_DB']
+            self.pred_store_name = run_params_dict['PREDICTION_STORE_NAME']
         except KeyError as e:
             print(e)
 
@@ -71,6 +71,20 @@ class MnvTFRunnerCategorical:
         self.model = model
         self.img_depth = img_params_dict.get('IMG_DEPTH', 2)
         self.views = ['x', 'u', 'v']
+
+        self.data_recorder = None
+        try:
+            from MnvRecorderSQLite import MnvCategoricalSQLiteRecorder
+            self.data_recorder = MnvCategoricalSQLiteRecorder(
+                self.model.n_classes, self.pred_store_name
+            )
+        except ImportError as e:
+            print('Cannot store predictions in sqlite: {}'.format(e))
+            LOGGER.error('Cannot store prediction in sqlite: {}'.format(e))
+            from MnvRecorderText import MnvCategoricalTextRecorder
+            self.data_recorder = MnvCategoricalTextRecorder(
+                self.pred_store_name
+            )
 
     def run_training(
             self, do_validation=False, short=False
@@ -253,6 +267,7 @@ class MnvTFRunnerCategorical:
                     saver.restore(sess, ckpt.model_checkpoint_path)
                     LOGGER.info('Restored session from {}'.format(ckpt_dir))
                     if self.be_verbose:
+                        # TODO - will this work? need `str()`?
                         LOGGER.debug(
                             [op.name for op in
                              tf.get_default_graph().get_operations()]
@@ -333,20 +348,91 @@ class MnvTFRunnerCategorical:
         in an HDF5 file. If neither is available, store predictions in plain
         text.
         """
-        have_sqlalchemy = False
-        have_h5py = False
-        try:
-            import sqlalchemy
-            have_sqlalchemy = True
-        except ImportError as e:
-            print('Cannot store predictions in sqlite: {}'.format(e))
-            LOGGER.error('Cannot store prediction in sqlite: {}'.format(e))
-        try:
-            import h5py
-            have_h5py = True
-        except ImportError as e:
-            print('Cannot store predictions in HDF5: {}'.format(e))
-            LOGGER.error('Cannot store prediction in HDF5: {}'.format(e))
-
         LOGGER.info("Starting prediction...")
+        tf.reset_default_graph()
+        ckpt_dir = self.save_model_directory + '/checkpoints'
+
+        with tf.Graph().as_default() as g:
+            data_reader = MnvDataReaderVertexST(
+                filenames_list=self.test_file_list,
+                batch_size=self.batch_size,
+                name='test',
+                compression=self.file_compression
+            )
+            batch_dict = data_reader.batch_generator()
+            X = batch_dict[self.features['x']]
+            U = batch_dict[self.features['u']]
+            V = batch_dict[self.features['v']]
+            evtids = batch_dict['eventids']
+            f = [X, U, V]
+
+            d = self.build_kbd_function(img_depth=self.img_depth)
+            self.model.prepare_for_inference(f, d)
+            LOGGER.info('Predictions with model with %d parameters' %
+                        mnv_utils.get_number_of_trainable_parameters())
+
+            saver = tf.train.Saver()
+
+            n_batches = 2 if short else 10000
+            init = tf.global_variables_initializer()
+            LOGGER.info(' Processing {} batches...'.format(n_batches))
+
+            start_time = time.time()
+
+            with tf.Session(graph=g) as sess:
+                sess.run(init)
+                # have to run local variable init for `string_input_producer`
+                sess.run(tf.local_variables_initializer())
+
+                ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+                if ckpt and ckpt.model_checkpoint_path:
+                    saver.restore(sess, ckpt.model_checkpoint_path)
+                    LOGGER.info('Restored session from {}'.format(ckpt_dir))
+                    if self.be_verbose:
+                        # TODO - will this work? need `str()`?
+                        LOGGER.debug(
+                            [op.name for op in
+                             tf.get_default_graph().get_operations()]
+                        )
+
+                final_step = self.model.global_step.eval()
+                LOGGER.info('evaluation after {} steps.'.format(final_step))
+
+                coord = tf.train.Coordinator()
+                threads = tf.train.start_queue_runners(coord=coord)
+
+                # NOTE: specifically catch `tf.errors.OutOfRangeError` or we
+                # won't handle the exception correctly.
+                n_processed = 0
+
+                try:
+                    for i in range(n_batches):
+                        logits_batch, eventids = sess.run(
+                            [self.model.logits, evtids],
+                            feed_dict={
+                                self.model.dropout_keep_prob: 1.0
+                            }
+                        )
+                        n_processed += self.batch_size
+                        probs = tf.nn.softmax(logits_batch).eval()
+                        preds = tf.nn.argmax(probs, 1).eval()
+                        if self.be_verbose:
+                            LOGGER.debug('   preds   = \n{}'.format(
+                                preds
+                            ))
+                        LOGGER.info("  n_processed = %d" % n_processed)
+                        for i, evtid in enumerate(eventids.eval()):
+                            self.data_recorder.write_data(
+                                evtid, preds[i], probs[i]
+                            )
+                except tf.errors.OutOfRangeError:
+                    LOGGER.info('Testing stopped - queue is empty.')
+                except Exception as e:
+                    LOGGER.error(e)
+                finally:
+                    coord.request_stop()
+                    coord.join(threads)
+
+            LOGGER.info('  Elapsed time = {}'.format(time.time() - start_time))
+
         LOGGER.info("Finished prediction...")
