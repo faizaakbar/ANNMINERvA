@@ -26,6 +26,8 @@ tf.app.flags.DEFINE_string('log_name', 'temp_log.txt',
                            """Logfile name.""")
 tf.app.flags.DEFINE_string('log_level', 'INFO',
                            """Logging level (INFO/DEBUG/etc.).""")
+tf.app.flags.DEFINE_string('pred_store_name', 'temp_store',
+                           """Predictions store name.""")
 tf.app.flags.DEFINE_string('targets_label', 'segments',
                            """Name of targets tensor.""")
 tf.app.flags.DEFINE_integer('n_classes', 11,
@@ -70,6 +72,7 @@ def main(argv=None):
     run_params_dict['VALID_FILE_LIST'] = valid_list
     run_params_dict['TEST_FILE_LIST'] = test_list
     run_params_dict['MODEL_DIR'] = FLAGS.model_dir
+    run_params_dict['PREDICTION_STORE_NAME'] = FLAGS.pred_store_name
 
     # set up features parameters
     feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)
