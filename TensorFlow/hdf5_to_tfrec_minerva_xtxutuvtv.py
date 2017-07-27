@@ -467,14 +467,12 @@ if __name__ == '__main__':
     # tfrecord files of specified size, putting remainders in new files.
     file_num = 0
     for i, hdf5_file in enumerate(files):
+        # NOTE - this includes the path, so don't put '.' or '..' in the dirs!
         base_name = hdf5_file.split('.')[0]
         # create file patterns to fill tfrecord files by number
-        train_file_pat = options.out_dir + '/' + \
-                base_name + '_%06d_train.tfrecord'
-        valid_file_pat = options.out_dir + '/' + \
-                base_name + '_%06d_valid.tfrecord'
-        test_file_pat = options.out_dir + '/' + \
-                base_name + '_%06d_test.tfrecord'
+        train_file_pat = base_name + '_%06d_train.tfrecord'
+        valid_file_pat = base_name + '_%06d_valid.tfrecord'
+        test_file_pat = base_name + '_%06d_test.tfrecord'
 
         out_num, files_written = write_all(
             n_events_per_tfrecord_triplet=options.n_events,
