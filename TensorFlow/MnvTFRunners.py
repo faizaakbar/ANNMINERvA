@@ -420,7 +420,7 @@ class MnvTFRunnerCategorical:
                                 preds
                             ))
                         LOGGER.info("  n_processed = %d" % n_processed)
-                        for i, evtid in enumerate(eventids.eval()):
+                        for i, evtid in enumerate(eventids):
                             self.data_recorder.write_data(
                                 evtid, preds[i], probs[i]
                             )
