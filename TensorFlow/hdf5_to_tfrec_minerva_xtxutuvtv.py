@@ -1,17 +1,7 @@
 """
-convert a list of hdf5s file to a list of tfrecords files of the basic types
+Convert a list of hdf5s file to a list of tfrecords files of the basic types
 (train, valid, test) - assumes the two-deep minerva "spacetime" hdf5 file
 format.
-
-Usage:
-    python hdf5_to_tfrec_minerva_xtxutuvtv.py -l hdf5_file_list \
-         -n n_events_per_tfrecord_triplet \
-         -m max_number_of_tfrecord_triplets \
-         [-t train fraction (0.83)] [-v valid fraction (0.08)] \
-         [-r (do a test read - default is False)] \
-         [-g logfilename]
-         [-d dry_run_for_write (default is False)]
-         [-c compress_to_gz (default is False)]
 """
 from __future__ import print_function
 from six.moves import range
@@ -94,7 +84,7 @@ def make_mnv_data_dict():
         mnv_data[datum[0]] = {}
         mnv_data[datum[0]]['dtype'] = datum[1]
         mnv_data[datum[0]]['byte_data'] = None
-    
+
     return mnv_data
 
 
@@ -375,7 +365,7 @@ def write_all(
 
 def read_all(files_written, dry_run, compressed):
     logger.info('reading files...')
-        
+
     for filename in files_written:
         if os.path.isfile(filename):
             logger.info(
@@ -395,12 +385,18 @@ if __name__ == '__main__':
     from optparse import OptionParser
     parser = OptionParser(usage=__doc__)
     parser.add_option('-l', '--file_list', dest='file_list',
-                      help='HDF5 file list (csv)', metavar='FILELIST',
-                      type='string', action='callback',
+                      help='HDF5 file list (csv, full paths)',
+                      metavar='FILELIST', type='string', action='callback',
                       callback=arg_list_split)
     parser.add_option('-p', '--file_pattern', dest='file_pattern',
                       help='File pattern', metavar='FILEPATTERN',
                       default=None, type='string')
+    parser.add_option('-i', '--in_dir', dest='in_dir',
+                      help='In directory (for file patterns)',
+                      metavar='IN_DIR', default=None, type='string')
+    parser.add_option('-o', '--out_dir', dest='out_dir',
+                      help='Out directory', metavar='OUT_DIR', default=None,
+                      type='string')
     parser.add_option('-n', '--nevents', dest='n_events', default=0,
                       help='Number of events per file', metavar='N_EVENTS',
                       type='int')
@@ -450,10 +446,11 @@ if __name__ == '__main__':
     logger.info(__file__)
 
     files = options.file_list or []
-    extra_files = glob.glob(options.file_pattern + '*.hdf5')
-    files.extend(extra_files)
-    extra_files = glob.glob(options.file_pattern + '*.h5')
-    files.extend(extra_files)
+    for ext in ['*.hdf5', '*.h5']:
+        extra_files = glob.glob(
+                options.in_dir + '/' + options.file_pattern + ext 
+        )
+        files.extend(extra_files)
     # kill any repeats
     files = list(set(files))
     files.sort()
@@ -472,9 +469,12 @@ if __name__ == '__main__':
     for i, hdf5_file in enumerate(files):
         base_name = hdf5_file.split('.')[0]
         # create file patterns to fill tfrecord files by number
-        train_file_pat = base_name + '_%06d' + '_train.tfrecord'
-        valid_file_pat = base_name + '_%06d' + '_valid.tfrecord'
-        test_file_pat = base_name + '_%06d' + '_test.tfrecord'
+        train_file_pat = options.out_dir + '/' + \
+                base_name + '_%06d_train.tfrecord'
+        valid_file_pat = options.out_dir + '/' + \
+                base_name + '_%06d_valid.tfrecord'
+        test_file_pat = options.out_dir + '/' + \
+                base_name + '_%06d_test.tfrecord'
 
         out_num, files_written = write_all(
             n_events_per_tfrecord_triplet=options.n_events,
