@@ -414,7 +414,7 @@ class MnvTFRunnerCategorical:
                         )
                         n_processed += self.batch_size
                         probs = tf.nn.softmax(logits_batch).eval()
-                        preds = tf.nn.argmax(probs, 1).eval()
+                        preds = tf.argmax(probs, 1).eval()
                         if self.be_verbose:
                             LOGGER.debug('   preds   = \n{}'.format(
                                 preds
