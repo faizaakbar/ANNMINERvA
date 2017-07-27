@@ -435,3 +435,50 @@ class MnvTFRunnerCategorical:
             LOGGER.info('  Elapsed time = {}'.format(time.time() - start_time))
 
         LOGGER.info("Finished prediction...")
+
+    def get_weights_and_biases_values(self):
+        """ inspect model weights """
+        LOGGER.info('Starting weights and biases retrieval...')
+        tf.reset_default_graph()
+        ckpt_dir = self.save_model_directory + '/checkpoints'
+
+        # note - don't need input data here, we just want to load the saved
+        # model to inspect the weights
+        X = tf.placeholder(
+            tf.float32, shape=[None, 127, 50, self.img_depth], name='X'
+        )
+        U = tf.placeholder(
+            tf.float32, shape=[None, 127, 25, self.img_depth], name='U'
+        )
+        V = tf.placeholder(
+            tf.float32, shape=[None, 127, 25, self.img_depth], name='V'
+        )
+        targ = tf.placeholder(
+            tf.float32, shape=[None, self.model.n_classes], name='targ'
+        )
+        f = [X, U, V]
+        d = self.build_kbd_function(img_depth=self.img_depth)
+        self.model.prepare_for_inference(f, d)
+        self.model.prepare_for_loss_computation(targ)
+        LOGGER.info('Preparing to check model with %d parameters' %
+                    mnv_utils.get_number_of_trainable_parameters())
+
+        saver = tf.train.Saver()
+        init = tf.global_variables_initializer()
+
+        with tf.Session() as sess:
+            sess.run(init)
+            # have to run local variable init for `string_input_producer`
+            sess.run(tf.local_variables_initializer())
+
+            ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+            if ckpt and ckpt.model_checkpoint_path:
+                saver.restore(sess, ckpt.model_checkpoint_path)
+                print('Restored session from {}'.format(ckpt_dir))
+
+            final_step = self.model.global_step.eval()
+            LOGGER.info('model after {} steps.'.format(final_step))
+
+            k = self.model.weights_biases['x_tower']['conv1']['kernels'].eval()
+            LOGGER.info('first x-tower convolutional kernel shape = ', k.shape)
+            LOGGER.info('  k[0, 0, 0, :] =', k[0, 0, 0, :])
