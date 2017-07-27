@@ -439,7 +439,8 @@ if __name__ == '__main__':
         print(__doc__)
         sys.exit(1)
 
-    logfilename = options.logfilename or 'hdf5_to_tfrec_minerva_xtxutuvtv.log'
+    logfilename = options.logfilename or \
+        'log_hdf5_to_tfrec_minerva_xtxutuvtv.txt'
     logging.basicConfig(
         filename=logfilename, level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
