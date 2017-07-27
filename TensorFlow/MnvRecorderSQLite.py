@@ -2,6 +2,7 @@
 """
 Do persistence
 """
+import os
 import logging
 
 from sqlalchemy import create_engine
@@ -51,6 +52,12 @@ class MnvCategoricalSQLiteRecorder:
             self.table.append_column(col)
 
     def _configure_db(self):
+        if os.path.isfile(self.db_name):
+            LOGGER.info('found existing record file {}, removing'.format(
+                self.db_name
+            ))
+            os.remove(self.db_name)
+        LOGGER.info('using record file {}'.format(self.db_name))
         db = 'sqlite:///' + self.db_name
         self.metadata = MetaData()
         self.engine = create_engine(db)

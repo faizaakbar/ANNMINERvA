@@ -2,7 +2,7 @@
 """
 Do persistence
 """
-from __future__ import print_function
+import os
 import logging
 
 import mnv_utils
@@ -16,6 +16,12 @@ class MnvCategoricalTextRecorder:
     """
     def __init__(self, db_base_name):
         self.db_name = db_base_name + '.txt'
+        if os.path.isfile(self.db_name):
+            LOGGER.info('found existing record file {}, removing'.format(
+                self.db_name
+            ))
+            os.remove(self.db_name)
+        LOGGER.info('using record file {}'.format(self.db_name))
 
     def write_data(self, eventid, pred, probs):
         with open(self.db_name, 'a+') as f:

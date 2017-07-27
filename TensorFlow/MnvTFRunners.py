@@ -480,5 +480,7 @@ class MnvTFRunnerCategorical:
             LOGGER.info('model after {} steps.'.format(final_step))
 
             k = self.model.weights_biases['x_tower']['conv1']['kernels'].eval()
-            LOGGER.info('first x-tower convolutional kernel shape = ', k.shape)
-            LOGGER.info('  k[0, 0, 0, :] =', k[0, 0, 0, :])
+            LOGGER.info(
+                'first x-tower convolutional kernel shape = {}'.format(k.shape)
+            )
+            LOGGER.info('  k[0, 0, 0, :] = {}'.format(k[0, 0, 0, :]))
