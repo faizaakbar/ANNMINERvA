@@ -32,7 +32,7 @@ class minerva_hdf5_reader:
         self._f = h5py.File(self.file, 'r')
         for name in self._f:
             LOGGER.info('{:>12}: {:>8}: shape = {}'.format(
-                name, np.dtype(f[name]), np.shape(f[name])
+                name, np.dtype(self._f[name]), np.shape(self._f[name])
             ))
 
     def close(self):
