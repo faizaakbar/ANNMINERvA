@@ -15,6 +15,8 @@ import gzip
 import shutil
 import glob
 
+LOGGER = logging.getLOGGER(__name__)
+
 
 class minerva_hdf5_reader:
     """
@@ -26,13 +28,18 @@ class minerva_hdf5_reader:
         self._f = None
 
     def open(self):
+        LOGGER.info("Opening hdf5 file {}".format(self.file))
         self._f = h5py.File(self.file, 'r')
+        for name in self._f:
+            LOGGER.info('{:>12}: {:>8}: shape = {}'.format(
+                name, np.dtype(f[name]), np.shape(f[name])
+            ))
 
     def close(self):
         try:
             self._f.close()
         except AttributeError:
-            print('hdf5 file is not open yet.')
+            LOGGER.info('hdf5 file is not open yet.')
 
     def get_data(self, name, start_idx, stop_idx):
         return self._f[name][start_idx: stop_idx]
@@ -40,7 +47,9 @@ class minerva_hdf5_reader:
     def get_nevents(self):
         sizes = [self._f[d].shape[0] for d in self._f]
         if min(sizes) != max(sizes):
-            raise ValueError("All dsets must have the same size!")
+            msg = "All dsets must have the same size!"
+            LOGGER.error(msg)
+            raise ValueError(msg)
         return sizes[0]
 
 
@@ -228,7 +237,7 @@ def batch_generator(tfrecord_filelist, compressed, num_epochs=1):
 
 
 def test_read_tfrecord(tfrecord_file, compressed):
-    logger.info('opening {} for reading'.format(tfrecord_file))
+    LOGGER.info('opening {} for reading'.format(tfrecord_file))
     batch_dict = batch_generator([tfrecord_file], compressed)
     with tf.Session() as sess:
         # have to run local variable init for `string_input_producer`
@@ -246,24 +255,24 @@ def test_read_tfrecord(tfrecord_file, compressed):
                     batch_dict['segments'],
                     batch_dict['zs'],
                 ])
-                logger.info('batch = {}'.format(batch_num))
-                logger.info('evtids shape = {}'.format(evtids.shape))
-                logger.info('hitimes x shape = {}'.format(hitsx.shape))
-                logger.info('hitimes u shape = {}'.format(hitsu.shape))
-                logger.info('hitimes v shape = {}'.format(hitsv.shape))
-                logger.info('planecodes shape = {}'.format(pcodes.shape))
-                logger.info('  planecodes = {}'.format(
+                LOGGER.info('batch = {}'.format(batch_num))
+                LOGGER.info('evtids shape = {}'.format(evtids.shape))
+                LOGGER.info('hitimes x shape = {}'.format(hitsx.shape))
+                LOGGER.info('hitimes u shape = {}'.format(hitsu.shape))
+                LOGGER.info('hitimes v shape = {}'.format(hitsv.shape))
+                LOGGER.info('planecodes shape = {}'.format(pcodes.shape))
+                LOGGER.info('  planecodes = {}'.format(
                     np.argmax(pcodes, axis=1)
                 ))
-                logger.info('segments shape = {}'.format(segs.shape))
-                logger.info('  segments = {}'.format(
+                LOGGER.info('segments shape = {}'.format(segs.shape))
+                LOGGER.info('  segments = {}'.format(
                     np.argmax(segs, axis=1)
                 ))
-                logger.info('zs shape = {}'.format(zs.shape))
+                LOGGER.info('zs shape = {}'.format(zs.shape))
         except tf.errors.OutOfRangeError:
-            logger.info('Reading stopped - queue is empty.')
+            LOGGER.info('Reading stopped - queue is empty.')
         except Exception as e:
-            logger.info(e)
+            LOGGER.info(e)
         finally:
             coord.request_stop()
             coord.join(threads)
@@ -277,7 +286,7 @@ def write_all(
     # todo, make this a while loop that keeps making tf record files
     # until we run out of events in the hdf5, then pass back the
     # file number we stopped on
-    logger.info('opening hdf5 file {} for file start number {}'.format(
+    LOGGER.info('opening hdf5 file {} for file start number {}'.format(
         hdf5_file, file_num_start
     ))
     m = minerva_hdf5_reader(hdf5_file)
@@ -301,23 +310,23 @@ def write_all(
         train_file = train_file_pat % file_num
         valid_file = valid_file_pat % file_num
         test_file = test_file_pat % file_num
-        logger.info("slice {}, {} total events".format(i, n_slc))
-        logger.info(
+        LOGGER.info("slice {}, {} total events".format(i, n_slc))
+        LOGGER.info(
             "slice {}, {} train events, [{}-{}): {}".format(
                 i, n_train, train_start, train_stop, train_file)
         )
-        logger.info(
+        LOGGER.info(
             "slice {}, {} valid events, [{}-{}): {}".format(
                 i, n_valid, valid_start, valid_stop, valid_file)
         )
-        logger.info(
+        LOGGER.info(
             "slice {}, {} test events, [{}-{}): {}".format(
                 i, n_test, test_start, test_stop, test_file)
         )
 
         for filename in [train_file, valid_file, test_file]:
             if os.path.isfile(filename):
-                logger.info(
+                LOGGER.info(
                     'found existing tfrecord file {}, removing...'.format(
                         filename
                     )
@@ -328,7 +337,7 @@ def write_all(
             data_dict = make_mnv_data_dict()
             # events included are [start, stop)
             if n_train > 0:
-                logger.info('creating train file...')
+                LOGGER.info('creating train file...')
                 write_tfrecord(
                     m, data_dict, train_start, train_stop,
                     train_file, compress_to_gz
@@ -337,7 +346,7 @@ def write_all(
                     train_file + '.gz' if compress_to_gz else train_file
                 )
             if n_valid > 0:
-                logger.info('creating valid file...')
+                LOGGER.info('creating valid file...')
                 write_tfrecord(
                     m, data_dict, valid_start, valid_stop,
                     valid_file, compress_to_gz
@@ -346,7 +355,7 @@ def write_all(
                     valid_file + '.gz' if compress_to_gz else valid_file
                 )
             if n_test > 0:
-                logger.info('creating test file...')
+                LOGGER.info('creating test file...')
                 write_tfrecord(
                     m, data_dict, test_start, test_stop,
                     test_file, compress_to_gz
@@ -356,7 +365,7 @@ def write_all(
                 )
         n_processed += n_slc
 
-    logger.info("Processed {} events, finished with file number {}".format(
+    LOGGER.info("Processed {} events, finished with file number {}".format(
         n_processed, (file_num - 1)
     ))
     m.close()
@@ -364,11 +373,11 @@ def write_all(
 
 
 def read_all(files_written, dry_run, compressed):
-    logger.info('reading files...')
+    LOGGER.info('reading files...')
 
     for filename in files_written:
         if os.path.isfile(filename):
-            logger.info(
+            LOGGER.info(
                 'found existing tfrecord file {} with size {}...'.format(
                     filename, os.stat(filename).st_size
                 )
@@ -441,9 +450,8 @@ if __name__ == '__main__':
         filename=logfilename, level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
-    logger = logging.getLogger(__name__)
-    logger.info("Starting...")
-    logger.info(__file__)
+    LOGGER.info("Starting...")
+    LOGGER.info(__file__)
 
     files = options.file_list or []
     for ext in ['*.hdf5', '*.h5']:
@@ -455,13 +463,13 @@ if __name__ == '__main__':
     files = list(set(files))
     files.sort()
 
-    logger.info("Datasets:")
+    LOGGER.info("Datasets:")
     dataset_statsinfo = 0
     for hdf5_file in files:
         fsize = os.stat(hdf5_file).st_size
         dataset_statsinfo += os.stat(hdf5_file).st_size
-        logger.info(" {}, size = {}".format(hdf5_file, fsize))
-    logger.info("Total dataset size: {}".format(dataset_statsinfo))
+        LOGGER.info(" {}, size = {}".format(hdf5_file, fsize))
+    LOGGER.info("Total dataset size: {}".format(dataset_statsinfo))
 
     # loop over list of hdf5 files (glob for patterns?), for each file, create
     # tfrecord files of specified size, putting remainders in new files.
