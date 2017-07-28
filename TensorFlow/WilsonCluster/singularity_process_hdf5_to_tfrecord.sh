@@ -14,7 +14,7 @@
 
 # file creation parameters
 NEVTS=20000
-MAXTRIPS=2
+MAXTRIPS=1000
 TRAINFRAC=0.88
 VALIDFRAC=0.06
 TESTREAD="--test_read"
@@ -77,6 +77,9 @@ singularity exec $SNGLRTY python hdf5_to_tfrec_minerva_xtxutuvtv.py \
   --valid_fraction $VALIDFRAC \
   --logfile $LOGFILE \
   --compress_to_gz $TESTREAD
+
+rm -f ${PBS_O_WORKDIR}/hdf5_to_tfrec_minerva_xtxutuvtv.py
+rm -f ${PBS_O_WORKDIR}/hdf5_to_tfrec_minerva_xtxutuvtv.pyc
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
