@@ -448,7 +448,7 @@ if __name__ == '__main__':
     files = options.file_list or []
     for ext in ['*.hdf5', '*.h5']:
         extra_files = glob.glob(
-                options.in_dir + '/' + options.file_pattern + ext 
+                options.in_dir + '/' + options.file_pattern + ext
         )
         files.extend(extra_files)
     # kill any repeats
@@ -468,7 +468,8 @@ if __name__ == '__main__':
     file_num = 0
     for i, hdf5_file in enumerate(files):
         # NOTE - this includes the path, so don't put '.' or '..' in the dirs!
-        base_name = hdf5_file.split('.')[0]
+        base_name = hdf5_file.split('/')[-1]
+        base_name = options.out_dir + '/' + base_name.split('.')[0]
         # create file patterns to fill tfrecord files by number
         train_file_pat = base_name + '_%06d_train.tfrecord'
         valid_file_pat = base_name + '_%06d_valid.tfrecord'
