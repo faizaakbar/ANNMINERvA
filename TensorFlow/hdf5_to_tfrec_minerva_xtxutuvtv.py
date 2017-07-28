@@ -15,7 +15,7 @@ import gzip
 import shutil
 import glob
 
-LOGGER = logging.getLOGGER(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 class minerva_hdf5_reader:
