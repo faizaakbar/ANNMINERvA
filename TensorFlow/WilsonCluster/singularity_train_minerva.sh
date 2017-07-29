@@ -23,6 +23,7 @@ NCLASS=11
 TARGETS="--n_classes $NCLASS --targets_label segments"
 
 TRAINING="--do_training"
+TRAINING="--nodo_training"
 VALIDATION="--do_validaton"
 
 TESTING="--nodo_testing"
@@ -34,6 +35,7 @@ PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
 # data, log, and model logistics
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc_000000"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc_00000"
 DATADIR="/data/perdue/minerva/tensorflow/data"
 LOGDIR="/data/perdue/minerva/tensorflow/logs"
