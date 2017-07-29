@@ -37,6 +37,10 @@ class MnvCategoricalSQLiteRecorder:
         results = rp.fetchall()
         return results
 
+    def close(self):
+        """ for uniform api """
+        pass
+
     def _setup_prediction_table(self):
         self.table = Table('zsegment_prediction', self.metadata,
                            Column('id', Integer(), primary_key=True),
