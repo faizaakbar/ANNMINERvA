@@ -185,8 +185,7 @@ class MnvTFRunnerCategorical:
                         )
                         writer.add_summary(summary, global_step=b_num)
                         average_loss += loss_batch
-                        if ((b_num + 1) % save_every_n_batch == 0) or \
-                           (b_num == initial_batch + n_batches - 1):
+                        if (b_num + 1) % save_every_n_batch == 0:
                             LOGGER.info(
                                 '  Avg train loss at step {}: {:5.1f}'.format(
                                     b_num + 1, average_loss / save_every_n_batch
@@ -215,6 +214,8 @@ class MnvTFRunnerCategorical:
                             self.model.reassign_targets(targ_train)
                 except tf.errors.OutOfRangeError:
                     LOGGER.info('Training stopped - queue is empty.')
+                    LOGGER.info('Executing final save at batch {}'.format(b_num))
+                    saver.save(sess, ckpt_dir, b_num)
                 except Exception as e:
                     LOGGER.error(e)
                 finally:
