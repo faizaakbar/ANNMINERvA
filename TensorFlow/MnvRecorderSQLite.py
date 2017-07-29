@@ -5,6 +5,8 @@ Do persistence
 import os
 import logging
 
+from six.moves import range
+
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, Float
 from sqlalchemy import UniqueConstraint

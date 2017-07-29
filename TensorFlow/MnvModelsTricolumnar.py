@@ -4,6 +4,8 @@ MINERvA Tri-columnar "spacetime" (energy+time tensors) epsilon network
 import tensorflow as tf
 import logging
 
+from six.moves import range
+
 LOGGER = logging.getLogger(__name__)
 
 

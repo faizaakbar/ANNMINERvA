@@ -8,6 +8,7 @@ import time
 import logging
 
 import tensorflow as tf
+from six.moves import range
 
 from MnvDataReaders import MnvDataReaderVertexST
 import mnv_utils
@@ -141,7 +142,7 @@ class MnvTFRunnerCategorical:
             saver = tf.train.Saver()
 
             # n_steps: control this with num_epochs
-            n_steps = 5 if short else 1e9
+            n_steps = 5 if short else int(1e9)
             skip_step = 1 if short else self.save_freq
             LOGGER.info(' Processing {} steps...'.format(n_steps))
 
@@ -250,7 +251,7 @@ class MnvTFRunnerCategorical:
 
             saver = tf.train.Saver()
 
-            n_batches = 2 if short else 10000
+            n_batches = 2 if short else int(1e9)
             init = tf.global_variables_initializer()
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
@@ -372,7 +373,7 @@ class MnvTFRunnerCategorical:
 
             saver = tf.train.Saver()
 
-            n_batches = 2 if short else 10000
+            n_batches = 2 if short else int(1e9)
             init = tf.global_variables_initializer()
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
