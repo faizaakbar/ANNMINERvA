@@ -271,12 +271,6 @@ class MnvTFRunnerCategorical:
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
                     LOGGER.info('Restored session from {}'.format(ckpt_dir))
-                    if self.be_verbose:
-                        # TODO - will this work? need `str()`?
-                        LOGGER.debug(
-                            [op.name for op in
-                             tf.get_default_graph().get_operations()]
-                        )
 
                 final_step = self.model.global_step.eval()
                 LOGGER.info('evaluation after {} steps.'.format(final_step))
@@ -322,21 +316,24 @@ class MnvTFRunnerCategorical:
                                 )
                             )
 
-                        LOGGER.info(
-                            "  total_correct_preds = %d" % total_correct_preds
-                        )
-                        LOGGER.info("  n_processed = %d" % n_processed)
-                        LOGGER.info(" Accuracy {0}".format(
-                            total_correct_preds / n_processed
-                        ))
-                        LOGGER.info(' Average loss: {:5.1f}'.format(
-                            average_loss / n_batches
-                        ))
                 except tf.errors.OutOfRangeError:
                     LOGGER.info('Testing stopped - queue is empty.')
                 except Exception as e:
                     LOGGER.error(e)
                 finally:
+                    if n_processed > 0:
+                        LOGGER.info("n_processed = {}".format(n_processed))
+                        LOGGER.info(
+                            " Total correct preds = {}".format(
+                                total_correct_preds
+                            )
+                        )
+                        LOGGER.info("  Accuracy {}".format(
+                            total_correct_preds / n_processed
+                        ))
+                        LOGGER.info('  Average loss: {}'.format(
+                            average_loss / n_batches
+                        ))
                     coord.request_stop()
                     coord.join(threads)
 
@@ -393,12 +390,6 @@ class MnvTFRunnerCategorical:
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
                     LOGGER.info('Restored session from {}'.format(ckpt_dir))
-                    if self.be_verbose:
-                        # TODO - will this work? need `str()`?
-                        LOGGER.debug(
-                            [op.name for op in
-                             tf.get_default_graph().get_operations()]
-                        )
 
                 final_step = self.model.global_step.eval()
                 LOGGER.info('evaluation after {} steps.'.format(final_step))
@@ -412,6 +403,7 @@ class MnvTFRunnerCategorical:
 
                 try:
                     for i in range(n_batches):
+                        LOGGER.debug('batch {}'.format(i))
                         logits_batch, eventids = sess.run(
                             [self.model.logits, evtids],
                             feed_dict={
@@ -421,12 +413,14 @@ class MnvTFRunnerCategorical:
                         n_processed += self.batch_size
                         probs = tf.nn.softmax(logits_batch).eval()
                         preds = tf.argmax(probs, 1).eval()
-                        if self.be_verbose:
-                            LOGGER.debug('   preds   = \n{}'.format(
-                                preds
-                            ))
+                        LOGGER.debug('   preds   = \n{}'.format(
+                            preds
+                        ))
                         LOGGER.info("  n_processed = %d" % n_processed)
                         for i, evtid in enumerate(eventids):
+                            LOGGER.debug(' {} = {}, pred = {}'.format(
+                                i, evtid, preds[i]
+                            ))
                             self.data_recorder.write_data(
                                 evtid, preds[i], probs[i]
                             )
@@ -435,6 +429,7 @@ class MnvTFRunnerCategorical:
                 except Exception as e:
                     LOGGER.error(e)
                 finally:
+                    self.data_recorder.close()
                     coord.request_stop()
                     coord.join(threads)
 
