@@ -92,6 +92,10 @@ def main(argv=None):
         run_params_dict['SAVE_EVRY_N_EVTS'] = 1
         train_params_dict['BATCH_SIZE'] = 1
 
+    logger.info(' run_params_dict = {}'.format(repr(run_params_dict)))
+    logger.info(' feature_targ_dict = {}'.format(repr(feature_targ_dict)))
+    logger.info(' train_params_dict = {}'.format(repr(train_params_dict)))
+    logger.info(' img_params_dict = {}'.format(repr(img_params_dict)))
     runner = MnvTFRunnerCategorical(
         model,
         run_params_dict=run_params_dict,

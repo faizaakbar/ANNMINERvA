@@ -95,7 +95,7 @@ class MnvTFRunnerCategorical:
         """
         LOGGER.info('staring run_training...')
         tf.reset_default_graph()
-        initial_step = 0
+        initial_batch = 0
         ckpt_dir = self.save_model_directory + '/checkpoints'
         run_dest_dir = self.save_model_directory + '/%d' % time.time()
         LOGGER.info('tensorboard command:')
@@ -141,10 +141,12 @@ class MnvTFRunnerCategorical:
             writer = tf.summary.FileWriter(run_dest_dir)
             saver = tf.train.Saver()
 
-            # n_steps: control this with num_epochs
-            n_steps = 5 if short else int(1e9)
-            skip_step = 1 if short else self.save_freq
-            LOGGER.info(' Processing {} steps...'.format(n_steps))
+            # n_batches: control this with num_epochs
+            n_batches = 5 if short else int(1e9)
+            save_every_n_batch = 1 if short else self.save_freq
+            LOGGER.info(' Processing {} batches, saving every {}...'.format(
+                n_batches, save_every_n_batch
+            ))
 
             init = tf.global_variables_initializer()
 
@@ -160,8 +162,8 @@ class MnvTFRunnerCategorical:
                     LOGGER.info('Restored session from {}'.format(ckpt_dir))
 
                 writer.add_graph(sess.graph)
-                initial_step = self.model.global_step.eval()
-                LOGGER.info('initial step = %d' % initial_step)
+                initial_batch = self.model.global_step.eval()
+                LOGGER.info('initial step = %d' % initial_batch)
                 average_loss = 0.0
 
                 coord = tf.train.Coordinator()
@@ -170,7 +172,8 @@ class MnvTFRunnerCategorical:
                 # NOTE: specifically catch `tf.errors.OutOfRangeError` or we
                 # won't handle the exception correctly.
                 try:
-                    for b_num in range(initial_step, initial_step + n_steps):
+                    for b_num in range(initial_batch, initial_batch + n_batches):
+                        LOGGER.debug('  processing batch {}'.format(b_num))
                         _, loss_batch, summary = sess.run(
                             [self.model.optimizer,
                              self.model.loss,
@@ -182,10 +185,10 @@ class MnvTFRunnerCategorical:
                         )
                         writer.add_summary(summary, global_step=b_num)
                         average_loss += loss_batch
-                        if (b_num + 1) % skip_step == 0:
+                        if (b_num + 1) % save_every_n_batch == 0:
                             LOGGER.info(
                                 '  Avg train loss at step {}: {:5.1f}'.format(
-                                    b_num + 1, average_loss / skip_step
+                                    b_num + 1, average_loss / save_every_n_batch
                                 )
                             )
                             LOGGER.info('   Elapsed time = {}'.format(

@@ -38,6 +38,8 @@ FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1B
 DATADIR="/data/perdue/minerva/tensorflow/data"
 LOGDIR="/data/perdue/minerva/tensorflow/logs"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
+LOGLEVEL="--log_level INFO"
+LOGLEVEL="--log_level DEBUG"
 MODELDIR="/data/perdue/minerva/tensorflow/models/${NCLASS}/${MODEL_CODE}"
 
 
@@ -79,7 +81,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --data_dir $DATADIR \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
-  --log_name $LOGFILE \
+  --log_name $LOGFILE $LOGLEVEL \
   $TRAINING $VALIDATION $TESTING $PREDICTIONS
 EOF
 
@@ -88,7 +90,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --data_dir $DATADIR \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
-  --log_name $LOGFILE \
+  --log_name $LOGFILE $LOGLEVEL \
   $TRAINING $VALIDATION $TESTING $PREDICTIONS
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
