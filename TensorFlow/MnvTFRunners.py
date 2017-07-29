@@ -185,7 +185,8 @@ class MnvTFRunnerCategorical:
                         )
                         writer.add_summary(summary, global_step=b_num)
                         average_loss += loss_batch
-                        if (b_num + 1) % save_every_n_batch == 0:
+                        if ((b_num + 1) % save_every_n_batch == 0) or \
+                           (b_num == initial_batch + n_batches - 1):
                             LOGGER.info(
                                 '  Avg train loss at step {}: {:5.1f}'.format(
                                     b_num + 1, average_loss / save_every_n_batch
