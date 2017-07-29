@@ -80,13 +80,14 @@ def main(argv=None):
     feature_targ_dict['TARGETS_LABEL'] = FLAGS.targets_label
     model = TriColSTEpsilon(n_classes=FLAGS.n_classes)
 
+    # TODO - pass some training params in on the command line
     # set up training parameters
     train_params_dict = mnv_utils.make_default_train_params_dict(MNV_TYPE)
 
     # set up image parameters
     img_params_dict = mnv_utils.make_default_img_params_dict(MNV_TYPE)
 
-    short = True
+    short = False
     if short:
         run_params_dict['SAVE_EVRY_N_EVTS'] = 1
         train_params_dict['BATCH_SIZE'] = 1
