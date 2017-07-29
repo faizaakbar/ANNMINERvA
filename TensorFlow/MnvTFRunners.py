@@ -36,7 +36,7 @@ class MnvTFRunnerCategorical:
             self.file_compression = run_params_dict['COMPRESSION']
             self.save_model_directory = run_params_dict['MODEL_DIR']
             self.load_saved_model = run_params_dict['LOAD_SAVED_MODEL']
-            self.save_freq = run_params_dict['SAVE_EVRY_N_EVTS']
+            self.save_freq = run_params_dict['SAVE_EVRY_N_BATCHES']
             # TODO - debug print and verbose should control logger levels
             self.debug_print = run_params_dict['DEBUG_PRINT']
             self.be_verbose = run_params_dict['BE_VERBOSE']

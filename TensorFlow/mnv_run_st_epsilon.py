@@ -89,7 +89,7 @@ def main(argv=None):
 
     short = False
     if short:
-        run_params_dict['SAVE_EVRY_N_EVTS'] = 1
+        run_params_dict['SAVE_EVRY_N_BATCHES'] = 1
         train_params_dict['BATCH_SIZE'] = 1
 
     logger.info(' run_params_dict = {}'.format(repr(run_params_dict)))
