@@ -110,6 +110,7 @@ class MnvDataReaderVertexST:
             batch_size=self.batch_size,
             capacity=capacity,
             enqueue_many=True,
+            allow_smaller_final_batch=True,
             name=self.name+'_batch'
         )
         return self._make_mnv_vertex_finder_batch_dict(
@@ -126,6 +127,7 @@ class MnvDataReaderVertexST:
             capacity=capacity,
             min_after_dequeue=min_after_dequeue,
             enqueue_many=True,
+            allow_smaller_final_batch=True,
             name=self.name+'_shuffle_batch'
         )
         return self._make_mnv_vertex_finder_batch_dict(
