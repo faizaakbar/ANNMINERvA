@@ -13,7 +13,7 @@
 #restore to turn off email - doesn't work #PBS -m n
 
 DAT=`date +%s`
-MODEL_CODE="20170729"
+MODEL_CODE="20170731"
 
 # which singularity image
 SNGLRTY="/data/perdue/singularity/simone/ubuntu16-cuda-ml.img"
@@ -22,8 +22,8 @@ SNGLRTY="/data/perdue/singularity/simone/ubuntu16-cuda-ml.img"
 NCLASS=11
 TARGETS="--n_classes $NCLASS --targets_label segments"
 
-TRAINING="--do_training"
 TRAINING="--nodo_training"
+TRAINING="--do_training"
 VALIDATION="--do_validaton"
 
 TESTING="--nodo_testing"
