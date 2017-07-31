@@ -3,6 +3,7 @@
 Do persistence
 """
 import os
+import shutil
 import logging
 
 from six.moves import range
@@ -38,8 +39,13 @@ class MnvCategoricalSQLiteRecorder:
         return results
 
     def close(self):
-        """ for uniform api """
-        pass
+        gzfile = self.db_name + '.gz'
+        with open(self.db_name, 'rb') as f_in, gzip.open(gzfile, 'wb') as f_out:
+            shutil.copyfileobj(f_in, f_out)
+        if os.path.isfile(gzfile) and (os.stat(gzfile).st_size > 0):
+            os.remove(self.db_name)
+        else:
+            raise IOError('Compressed file not produced!')
 
     def _setup_prediction_table(self):
         self.table = Table('zsegment_prediction', self.metadata,
