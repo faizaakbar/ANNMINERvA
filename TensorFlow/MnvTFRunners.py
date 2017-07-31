@@ -37,8 +37,6 @@ class MnvTFRunnerCategorical:
             self.save_model_directory = run_params_dict['MODEL_DIR']
             self.load_saved_model = run_params_dict['LOAD_SAVED_MODEL']
             self.save_freq = run_params_dict['SAVE_EVRY_N_BATCHES']
-            # TODO - debug print and verbose should control logger levels
-            self.debug_print = run_params_dict['DEBUG_PRINT']
             self.be_verbose = run_params_dict['BE_VERBOSE']
             self.pred_store_name = run_params_dict['PREDICTION_STORE_NAME']
         except KeyError as e:
@@ -134,7 +132,9 @@ class MnvTFRunnerCategorical:
 
             d = self.build_kbd_function(img_depth=self.img_depth)
             self.model.prepare_for_inference(f_train, d)
-            self.model.prepare_for_training(targ_train)
+            self.model.prepare_for_training(
+                targ_train, learning_rate=self.learning_rate
+            )
             LOGGER.info('Preparing to train model with %d parameters' %
                         mnv_utils.get_number_of_trainable_parameters())
 
@@ -164,7 +164,6 @@ class MnvTFRunnerCategorical:
                 writer.add_graph(sess.graph)
                 initial_batch = self.model.global_step.eval()
                 LOGGER.info('initial step = %d' % initial_batch)
-                average_loss = 0.0
 
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(coord=coord)
@@ -172,7 +171,11 @@ class MnvTFRunnerCategorical:
                 # NOTE: specifically catch `tf.errors.OutOfRangeError` or we
                 # won't handle the exception correctly.
                 try:
-                    for b_num in range(initial_batch, initial_batch + n_batches):
+                    # TODO - also grab eventids (for a while) to test and
+                    # be sure we're seeing different events appropriately
+                    for b_num in range(
+                            initial_batch, initial_batch + n_batches
+                    ):
                         LOGGER.debug('  processing batch {}'.format(b_num))
                         _, loss_batch, summary = sess.run(
                             [self.model.optimizer,
@@ -184,37 +187,38 @@ class MnvTFRunnerCategorical:
                             }
                         )
                         writer.add_summary(summary, global_step=b_num)
-                        average_loss += loss_batch
                         if (b_num + 1) % save_every_n_batch == 0:
                             LOGGER.info(
-                                '  Avg train loss at step {}: {:5.1f}'.format(
-                                    b_num + 1, average_loss / save_every_n_batch
+                                '  Loss at batch+1 {}: {:5.1f}'.format(
+                                    b_num + 1, loss_batch
                                 )
                             )
                             LOGGER.info('   Elapsed time = {}'.format(
                                 time.time() - start_time
                             ))
-                            average_loss = 0.0
                             saver.save(sess, ckpt_dir, b_num)
                             LOGGER.info('     saved at iter %d' % b_num)
-                            # try validation
-                            self.model.reassign_features(f_valid)
-                            self.model.reassign_targets(targ_valid)
-                            loss_valid, summary = sess.run(
-                                [self.model.loss,
-                                 self.model.valid_summary_op],
-                                feed_dict={
-                                    self.model.dropout_keep_prob: 1.0
-                                }
-                            )
-                            writer.add_summary(summary, global_step=b_num)
-                            LOGGER.info('   Valid loss = %f' % loss_valid)
-                            # reset for training
-                            self.model.reassign_features(f_train)
-                            self.model.reassign_targets(targ_train)
+                            if do_validation:
+                                # try validation
+                                self.model.reassign_features(f_valid)
+                                self.model.reassign_targets(targ_valid)
+                                loss_valid, summary = sess.run(
+                                    [self.model.loss,
+                                     self.model.valid_summary_op],
+                                    feed_dict={
+                                        self.model.dropout_keep_prob: 1.0
+                                    }
+                                )
+                                writer.add_summary(summary, global_step=b_num)
+                                LOGGER.info('   Valid loss = %f' % loss_valid)
+                                # reset for training
+                                self.model.reassign_features(f_train)
+                                self.model.reassign_targets(targ_train)
                 except tf.errors.OutOfRangeError:
                     LOGGER.info('Training stopped - queue is empty.')
-                    LOGGER.info('Executing final save at batch {}'.format(b_num))
+                    LOGGER.info(
+                        'Executing final save at batch {}'.format(b_num)
+                    )
                     saver.save(sess, ckpt_dir, b_num)
                 except Exception as e:
                     LOGGER.error(e)
@@ -283,7 +287,6 @@ class MnvTFRunnerCategorical:
                 # NOTE: specifically catch `tf.errors.OutOfRangeError` or we
                 # won't handle the exception correctly.
                 n_processed = 0
-
                 try:
                     for i in range(n_batches):
                         loss_batch, logits_batch, Y_batch = sess.run(
@@ -292,7 +295,8 @@ class MnvTFRunnerCategorical:
                                 self.model.dropout_keep_prob: 1.0
                             }
                         )
-                        n_processed += self.batch_size
+                        batch_sz = logits_batch.shape[0]
+                        n_processed += batch_sz
                         average_loss += loss_batch
                         preds = tf.nn.softmax(logits_batch)
                         correct_preds = tf.equal(
@@ -311,8 +315,8 @@ class MnvTFRunnerCategorical:
                         total_correct_preds += sess.run(accuracy)
                         if self.be_verbose:
                             LOGGER.debug(
-                                '  batch {} loss = {} for nproc {}'.format(
-                                    i, loss_batch, n_processed
+                                '  batch {} loss = {} for size = {}'.format(
+                                    i, loss_batch, batch_sz
                                 )
                             )
 
@@ -328,11 +332,11 @@ class MnvTFRunnerCategorical:
                                 total_correct_preds
                             )
                         )
-                        LOGGER.info("  Accuracy {}".format(
+                        LOGGER.info("  Accuracy: {}".format(
                             total_correct_preds / n_processed
                         ))
                         LOGGER.info('  Average loss: {}'.format(
-                            average_loss / n_batches
+                            average_loss / n_processed
                         ))
                     coord.request_stop()
                     coord.join(threads)
@@ -358,7 +362,7 @@ class MnvTFRunnerCategorical:
             data_reader = MnvDataReaderVertexST(
                 filenames_list=self.test_file_list,
                 batch_size=self.batch_size,
-                name='test',
+                name='prediction',
                 compression=self.file_compression
             )
             batch_dict = data_reader.batch_generator()
@@ -410,22 +414,27 @@ class MnvTFRunnerCategorical:
                                 self.model.dropout_keep_prob: 1.0
                             }
                         )
-                        n_processed += self.batch_size
+                        batch_sz = logits_batch.shape[0]
+                        n_processed += batch_sz
                         probs = tf.nn.softmax(logits_batch).eval()
                         preds = tf.argmax(probs, 1).eval()
                         LOGGER.debug('   preds   = \n{}'.format(
                             preds
                         ))
-                        LOGGER.info("  n_processed = %d" % n_processed)
+                        LOGGER.info("  batch size = %d" % batch_sz)
+                        LOGGER.info("  tot processed = %d" % n_processed)
                         for i, evtid in enumerate(eventids):
                             LOGGER.debug(' {} = {}, pred = {}'.format(
                                 i, evtid, preds[i]
+                            ))
+                            LOGGER.debug('          probs = {}'.format(
+                                probs[i]
                             ))
                             self.data_recorder.write_data(
                                 evtid, preds[i], probs[i]
                             )
                 except tf.errors.OutOfRangeError:
-                    LOGGER.info('Testing stopped - queue is empty.')
+                    LOGGER.info('Predictions stopped - queue is empty.')
                 except Exception as e:
                     LOGGER.error(e)
                 finally:
