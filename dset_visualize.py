@@ -7,6 +7,7 @@ import pylab
 import sys
 import h5py
 import tensorflow as tf
+import gzip
 
 
 def decode_eventid(eventid):
@@ -38,10 +39,22 @@ def make_mnv_vertex_finder_data_dict():
 
 class MnvDataReader:
     def __init__(self, filename, n_events=10, views=['x', 'u', 'v']):
+        """
+        currently, only work with compressed tfrecord files; assume compression
+        for hdf5 is inside, etc.
+        """
         self.filename = filename
         self.n_events = n_events
         self.views = views
         self.filetype = filename.split('.')[-1]
+
+        self.compression = tf.python_io.TFRecordCompressionType.NONE
+        if self.filetype == 'gz':
+            self.compression = tf.python_io.TFRecordCompressionType.GZIP
+            self.filetype = filename.split('.')[-2]
+        elif self.filetype == 'zz':
+            self.compression = tf.python_io.TFRecordCompressionType.ZLIB
+            self.filetype = filename.split('.')[-2]
 
         self.hdf5_extensions = ['hdf5', 'h5']
         self.tfr_extensions = ['tfrecord']
@@ -73,7 +86,11 @@ class MnvDataReader:
         file_queue = tf.train.string_input_producer(
             [self.filename], name='file_queue', num_epochs=1
         )
-        reader = tf.TFRecordReader()
+        reader = tf.TFRecordReader(
+            options=tf.python_io.TFRecordOptions(
+                compression_type=self.compression
+            )
+        )
         _, tfrecord = reader.read(file_queue)
 
         tfrecord_features = tf.parse_single_example(
