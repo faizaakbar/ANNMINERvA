@@ -177,10 +177,11 @@ class MnvTFRunnerCategorical:
                             initial_batch, initial_batch + n_batches
                     ):
                         LOGGER.debug('  processing batch {}'.format(b_num))
-                        _, loss_batch, summary = sess.run(
+                        _, loss_batch, summary, X_batch = sess.run(
                             [self.model.optimizer,
                              self.model.loss,
-                             self.model.train_summary_op],
+                             self.model.train_summary_op,
+                             X_train],
                             feed_dict={
                                 self.model.dropout_keep_prob:
                                 self.dropout_keep_prob
@@ -289,8 +290,8 @@ class MnvTFRunnerCategorical:
                 n_processed = 0
                 try:
                     for i in range(n_batches):
-                        loss_batch, logits_batch, Y_batch = sess.run(
-                            [self.model.loss, self.model.logits, targ],
+                        loss_batch, logits_batch, Y_batch, X_batch = sess.run(
+                            [self.model.loss, self.model.logits, targ, X],
                             feed_dict={
                                 self.model.dropout_keep_prob: 1.0
                             }
@@ -408,8 +409,8 @@ class MnvTFRunnerCategorical:
                 try:
                     for i in range(n_batches):
                         LOGGER.debug('batch {}'.format(i))
-                        logits_batch, eventids = sess.run(
-                            [self.model.logits, evtids],
+                        logits_batch, eventids, X_batch = sess.run(
+                            [self.model.logits, evtids, X],
                             feed_dict={
                                 self.model.dropout_keep_prob: 1.0
                             }
