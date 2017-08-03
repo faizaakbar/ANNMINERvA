@@ -95,6 +95,10 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
     convpooldict['nfeat_dense_tower'] = 196
     convpooldict['nfeat_concat_dense'] = 98
 
+    convpooldict['regularizer'] = tf.contrib.layers.l2_regularizer(
+        scale=0.0001
+    )
+
     return convpooldict
 
 
@@ -137,11 +141,15 @@ class TriColSTEpsilon:
                 name, shp_list, init=tf.truncated_normal_initializer()
         ):
             return tf.get_variable(
-                name, shp_list, initializer=init
+                name, shp_list, initializer=init,
+                regularizer=kbd['regularizer']
             )
         
         def make_biases(name, shp_list, init=tf.random_normal_initializer()):
-            return tf.get_variable(name, shp_list, initializer=init)
+            return tf.get_variable(
+                name, shp_list, initializer=init,
+                regularizer=kbd['regularizer']
+            )
 
         def make_active_conv(
                 input_lyr, kernels, biases, name, act=tf.nn.relu
@@ -215,12 +223,14 @@ class TriColSTEpsilon:
                 self.weights_biases[twr]['dense_weights'] = tf.get_variable(
                     'dense_weights',
                     [nfeat_tower, kbd['nfeat_dense_tower']],
-                    initializer=tf.random_normal_initializer()
+                    initializer=tf.random_normal_initializer(),
+                    regularizer=kbd['regularizer']
                 )
                 self.weights_biases[twr]['dense_biases'] = tf.get_variable(
                     'dense_biases',
                     [kbd['nfeat_dense_tower']],
-                    initializer=tf.random_normal_initializer()
+                    initializer=tf.random_normal_initializer(),
+                    regularizer=kbd['regularizer']
                 )
                 # apply relu on matmul of pool2/out_lyr and w + b
                 fc = tf.nn.relu(
@@ -258,12 +268,14 @@ class TriColSTEpsilon:
             self.weights_fc = tf.get_variable(
                 'weights',
                 [nfeatures_joined, kbd['nfeat_concat_dense']],
-                initializer=tf.random_normal_initializer()
+                initializer=tf.random_normal_initializer(),
+                regularizer=kbd['regularizer']
             )
             self.biases_fc = tf.get_variable(
                 'biases',
                 [kbd['nfeat_concat_dense']],
-                initializer=tf.random_normal_initializer()
+                initializer=tf.random_normal_initializer(),
+                regularizer=kbd['regularizer']
             )
             # apply relu on matmul of joined and w + b
             self.fc = tf.nn.relu(
@@ -278,12 +290,14 @@ class TriColSTEpsilon:
             self.weights_softmax = tf.get_variable(
                 'weights',
                 [kbd['nfeat_concat_dense'], self.n_classes],
-                initializer=tf.random_normal_initializer()
+                initializer=tf.random_normal_initializer(),
+                regularizer=kbd['regularizer']
             )
             self.biases_softmax = tf.get_variable(
                 'biases',
                 [self.n_classes],
-                initializer=tf.random_normal_initializer()
+                initializer=tf.random_normal_initializer(),
+                regularizer=kbd['regularizer']
             )
             self.logits = tf.add(
                 tf.matmul(self.fc, self.weights_softmax),
@@ -297,13 +311,16 @@ class TriColSTEpsilon:
 
     def _define_loss(self):
         with tf.name_scope('loss'):
+            regularization_losses = tf.get_collection(
+                tf.GraphKeys.REGULARIZATION_LOSSES
+            )
             self.loss = tf.reduce_mean(
                 tf.nn.softmax_cross_entropy_with_logits(
                     logits=self.logits, labels=self.targets
                 ),
                 axis=0,
                 name='loss'
-            )
+            ) + sum(regularization_losses)
 
     def _define_train_op(self, learning_rate):
         LOGGER.info('Building train op with learning_rate = %f' %
