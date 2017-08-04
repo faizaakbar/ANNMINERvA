@@ -2,6 +2,7 @@
 
 DAT=`date +%s`
 MODEL_CODE="20170731"
+MODEL_CODE="20170803"
 
 # targets
 NCLASS=11

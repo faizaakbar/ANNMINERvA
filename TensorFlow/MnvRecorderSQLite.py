@@ -5,6 +5,7 @@ Do persistence
 import os
 import shutil
 import logging
+import gzip
 
 from six.moves import range
 
