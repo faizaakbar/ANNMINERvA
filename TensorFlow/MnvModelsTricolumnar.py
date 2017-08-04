@@ -377,6 +377,10 @@ class TriColSTEpsilon:
         self._define_loss()
         self._create_summaries()
 
+    def get_output_nodes(self):
+        """ list of output nodes for graph freezing """
+        return ["softmax_linear/logits"]
+
 
 def test():
     tf.reset_default_graph()
