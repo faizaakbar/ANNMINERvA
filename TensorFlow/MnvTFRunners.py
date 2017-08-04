@@ -177,9 +177,10 @@ class MnvTFRunnerCategorical:
                             initial_batch, initial_batch + n_batches
                     ):
                         LOGGER.debug('  processing batch {}'.format(b_num))
-                        _, loss_batch, summary, X_batch = sess.run(
+                        _, loss_batch, logits_batch, summary, X_batch = sess.run(
                             [self.model.optimizer,
                              self.model.loss,
+                             self.model.logits,
                              self.model.train_summary_op,
                              X_train],
                             feed_dict={
@@ -203,8 +204,9 @@ class MnvTFRunnerCategorical:
                                 # try validation
                                 self.model.reassign_features(f_valid)
                                 self.model.reassign_targets(targ_valid)
-                                loss_valid, summary = sess.run(
+                                loss_valid, logits_valid, summary = sess.run(
                                     [self.model.loss,
+                                     self.model.logits,
                                      self.model.valid_summary_op],
                                     feed_dict={
                                         self.model.dropout_keep_prob: 1.0
