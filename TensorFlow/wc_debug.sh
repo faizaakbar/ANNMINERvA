@@ -9,6 +9,6 @@ singularity exec /data/perdue/singularity/simone/ubuntu16-cuda-ml.img python -m 
   --log_name /data/perdue/minerva/tensorflow/logs/log_mnv_st_epsilon_11_${MODELCODE}_${DAT}.txt \
   --log_level DEBUG  \
   --do_training \
-  --do_validaton \
-  --do_testing \
-  --do_prediction --pred_store_name /data/perdue/minerva/tensorflow/predictions//predictions_mnv_st_epsilon_11_${MODELCODE}
+  --nodo_validaton \
+  --nodo_testing \
+  --nodo_prediction --pred_store_name /data/perdue/minerva/tensorflow/predictions//predictions_mnv_st_epsilon_11_${MODELCODE}
