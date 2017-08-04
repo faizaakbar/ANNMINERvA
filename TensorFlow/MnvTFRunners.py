@@ -228,6 +228,10 @@ class MnvTFRunnerCategorical:
 
             writer.close()
 
+        out_graph = mnv_utils.freeze_graph(
+            self.save_model_directory, self.model.get_output_nodes()
+        )
+        LOGGER.info(' Saved graph {}'.format(out_graph))
         LOGGER.info('Finished training...')
 
     def run_testing(self, short=False):
@@ -401,13 +405,16 @@ class MnvTFRunnerCategorical:
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(coord=coord)
 
+                log_freq = 10  # every N batches
+
                 # NOTE: specifically catch `tf.errors.OutOfRangeError` or we
                 # won't handle the exception correctly.
                 n_processed = 0
-
                 try:
                     for i in range(n_batches):
-                        LOGGER.debug('batch {}'.format(i))
+                        printlog = True if (i + 1) % log_freq == 0 else False
+                        if printlog:
+                            LOGGER.debug('batch {}'.format(i))
                         logits_batch, eventids = sess.run(
                             [self.model.logits, evtids],
                             feed_dict={
@@ -418,18 +425,20 @@ class MnvTFRunnerCategorical:
                         n_processed += batch_sz
                         probs = tf.nn.softmax(logits_batch).eval()
                         preds = tf.argmax(probs, 1).eval()
-                        LOGGER.debug('   preds   = \n{}'.format(
-                            preds
-                        ))
-                        LOGGER.info("  batch size = %d" % batch_sz)
-                        LOGGER.info("  tot processed = %d" % n_processed)
+                        if printlog:
+                            LOGGER.debug('   preds   = \n{}'.format(
+                                preds
+                            ))
+                            LOGGER.info("  batch size = %d" % batch_sz)
+                            LOGGER.info("  tot processed = %d" % n_processed)
                         for i, evtid in enumerate(eventids):
-                            LOGGER.debug(' {} = {}, pred = {}'.format(
-                                i, evtid, preds[i]
-                            ))
-                            LOGGER.debug('          probs = {}'.format(
-                                probs[i]
-                            ))
+                            if printlog:
+                                LOGGER.debug(' {} = {}, pred = {}'.format(
+                                    i, evtid, preds[i]
+                                ))
+                                LOGGER.debug('          probs = {}'.format(
+                                    probs[i]
+                                ))
                             self.data_recorder.write_data(
                                 evtid, preds[i], probs[i]
                             )
