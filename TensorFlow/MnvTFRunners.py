@@ -91,6 +91,7 @@ class MnvTFRunnerCategorical:
         run training (TRAIN file list) and optionally run a validation pass
         (on the VALID file list)
         """
+        import numpy as np
         LOGGER.info('staring run_training...')
         tf.reset_default_graph()
         initial_batch = 0
@@ -111,10 +112,16 @@ class MnvTFRunnerCategorical:
             batch_dict_train = train_reader.shuffle_batch_generator(
                 num_epochs=self.num_epochs
             )
-            X_train = batch_dict_train[self.features['x']]
-            U_train = batch_dict_train[self.features['u']]
-            V_train = batch_dict_train[self.features['v']]
-            targ_train = batch_dict_train[self.targets_label]
+            # X_train = batch_dict_train[self.features['x']]
+            # U_train = batch_dict_train[self.features['u']]
+            # V_train = batch_dict_train[self.features['v']]
+            # targ_train = batch_dict_train[self.targets_label]
+            Xshp = [128, 127, 50, 2]
+            UVshp = [128, 127, 25, 2]
+            X_train = tf.placeholder(tf.float32, shape=Xshp, name='X')
+            U_train = tf.placeholder(tf.float32, shape=UVshp, name='U')
+            V_train = tf.placeholder(tf.float32, shape=UVshp, name='V')
+            targ_train = tf.placeholder(tf.float32, shape=[None, 11], name='targ')
             f_train = [X_train, U_train, V_train]
 
             valid_reader = MnvDataReaderVertexST(
@@ -150,7 +157,10 @@ class MnvTFRunnerCategorical:
 
             init = tf.global_variables_initializer()
 
-            with tf.Session(graph=g) as sess:
+            with tf.Session(
+                    graph=g,
+                    config=tf.ConfigProto(log_device_placement=True)
+                ) as sess:
                 start_time = time.time()
                 sess.run(init)
                 # have to run local variable init for `string_input_producer`
@@ -185,7 +195,11 @@ class MnvTFRunnerCategorical:
                              X_train],
                             feed_dict={
                                 self.model.dropout_keep_prob:
-                                self.dropout_keep_prob
+                                self.dropout_keep_prob,
+                                X: np.random.randn(128, 127, 50, 2),
+                                U: np.random.randn(128, 127, 25, 2),
+                                V: np.random.randn(128, 127, 25, 2),
+                                targ_train: np.array(128 * [1,0,0,0,0,0,0,0,0,0,0]).reshape(128, 11)
                             }
                         )
                         writer.add_summary(summary, global_step=b_num)
