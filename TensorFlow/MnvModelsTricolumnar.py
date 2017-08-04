@@ -144,7 +144,7 @@ class TriColSTEpsilon:
                 name, shp_list, initializer=init,
                 regularizer=kbd['regularizer']
             )
-        
+
         def make_biases(name, shp_list, init=tf.random_normal_initializer()):
             return tf.get_variable(
                 name, shp_list, initializer=init,
@@ -218,7 +218,7 @@ class TriColSTEpsilon:
                 out_lyr_shp = out_lyr.shape.as_list()
                 nfeat_tower = out_lyr_shp[1] * out_lyr_shp[2] * out_lyr_shp[3]
                 out_lyr = tf.reshape(out_lyr, [-1, nfeat_tower])
-                
+
                 # final dense layer parameters
                 self.weights_biases[twr]['dense_weights'] = tf.get_variable(
                     'dense_weights',
@@ -252,7 +252,7 @@ class TriColSTEpsilon:
                 )
 
             return fc
-        
+
         out_x = make_convolutional_tower('x', self.X_img, kbd)
         out_u = make_convolutional_tower('u', self.U_img, kbd)
         out_v = make_convolutional_tower('v', self.V_img, kbd)
