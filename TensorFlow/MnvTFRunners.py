@@ -102,44 +102,6 @@ class MnvTFRunnerCategorical:
         ))
 
         with tf.Graph().as_default() as g:
-            train_reader = MnvDataReaderVertexST(
-                filenames_list=self.train_file_list,
-                batch_size=self.batch_size,
-                name='train',
-                compression=self.file_compression
-            )
-            batch_dict_train = train_reader.shuffle_batch_generator(
-                num_epochs=self.num_epochs
-            )
-            X_train = batch_dict_train[self.features['x']]
-            U_train = batch_dict_train[self.features['u']]
-            V_train = batch_dict_train[self.features['v']]
-            targ_train = batch_dict_train[self.targets_label]
-            f_train = [X_train, U_train, V_train]
-
-            valid_reader = MnvDataReaderVertexST(
-                filenames_list=self.valid_file_list,
-                batch_size=self.batch_size,
-                name='valid',
-                compression=self.file_compression
-            )
-            batch_dict_valid = valid_reader.batch_generator(num_epochs=1)
-            X_valid = batch_dict_valid[self.features['x']]
-            U_valid = batch_dict_valid[self.features['u']]
-            V_valid = batch_dict_valid[self.features['v']]
-            targ_valid = batch_dict_valid[self.targets_label]
-            f_valid = [X_valid, U_valid, V_valid]
-
-            d = self.build_kbd_function(img_depth=self.img_depth)
-            self.model.prepare_for_inference(f_train, d)
-            self.model.prepare_for_training(
-                targ_train, learning_rate=self.learning_rate
-            )
-            LOGGER.info('Preparing to train model with %d parameters' %
-                        mnv_utils.get_number_of_trainable_parameters())
-
-            writer = tf.summary.FileWriter(run_dest_dir)
-            saver = tf.train.Saver()
 
             # n_batches: control this with num_epochs
             n_batches = 5 if short else int(1e9)
@@ -148,11 +110,49 @@ class MnvTFRunnerCategorical:
                 n_batches, save_every_n_batch
             ))
 
-            init = tf.global_variables_initializer()
-
             with tf.Session(graph=g) as sess:
+
+                train_reader = MnvDataReaderVertexST(
+                    filenames_list=self.train_file_list,
+                    batch_size=self.batch_size,
+                    name='train',
+                    compression=self.file_compression
+                )
+                batch_dict_train = train_reader.shuffle_batch_generator(
+                    num_epochs=self.num_epochs
+                )
+                X_train = batch_dict_train[self.features['x']]
+                U_train = batch_dict_train[self.features['u']]
+                V_train = batch_dict_train[self.features['v']]
+                targ_train = batch_dict_train[self.targets_label]
+                f_train = [X_train, U_train, V_train]
+
+                valid_reader = MnvDataReaderVertexST(
+                    filenames_list=self.valid_file_list,
+                    batch_size=self.batch_size,
+                    name='valid',
+                    compression=self.file_compression
+                )
+                batch_dict_valid = valid_reader.batch_generator(num_epochs=1)
+                X_valid = batch_dict_valid[self.features['x']]
+                U_valid = batch_dict_valid[self.features['u']]
+                V_valid = batch_dict_valid[self.features['v']]
+                targ_valid = batch_dict_valid[self.targets_label]
+                f_valid = [X_valid, U_valid, V_valid]
+
+                d = self.build_kbd_function(img_depth=self.img_depth)
+                self.model.prepare_for_inference(f_train, d)
+                self.model.prepare_for_training(
+                    targ_train, learning_rate=self.learning_rate
+                )
+                LOGGER.info('Preparing to train model with %d parameters' %
+                            mnv_utils.get_number_of_trainable_parameters())
+
+                writer = tf.summary.FileWriter(run_dest_dir)
+                saver = tf.train.Saver()
+
                 start_time = time.time()
-                sess.run(init)
+                sess.run(tf.global_variables_initializer())
                 # have to run local variable init for `string_input_producer`
                 sess.run(tf.local_variables_initializer())
 
@@ -177,12 +177,11 @@ class MnvTFRunnerCategorical:
                             initial_batch, initial_batch + n_batches
                     ):
                         LOGGER.debug('  processing batch {}'.format(b_num))
-                        _, loss_batch, logits_batch, summary, X_batch = sess.run(
+                        _, loss_batch, logits_batch, summary = sess.run(
                             [self.model.optimizer,
                              self.model.loss,
                              self.model.logits,
-                             self.model.train_summary_op,
-                             X_train],
+                             self.model.train_summary_op],
                             feed_dict={
                                 self.model.dropout_keep_prob:
                                 self.dropout_keep_prob
@@ -246,35 +245,34 @@ class MnvTFRunnerCategorical:
         ckpt_dir = self.save_model_directory + '/checkpoints'
 
         with tf.Graph().as_default() as g:
-            data_reader = MnvDataReaderVertexST(
-                filenames_list=self.test_file_list,
-                batch_size=self.batch_size,
-                name='test',
-                compression=self.file_compression
-            )
-            batch_dict = data_reader.batch_generator()
-            X = batch_dict[self.features['x']]
-            U = batch_dict[self.features['u']]
-            V = batch_dict[self.features['v']]
-            targ = batch_dict[self.targets_label]
-            f = [X, U, V]
-
-            d = self.build_kbd_function(img_depth=self.img_depth)
-            self.model.prepare_for_inference(f, d)
-            self.model.prepare_for_loss_computation(targ)
-            LOGGER.info('Preparing to test model with %d parameters' %
-                        mnv_utils.get_number_of_trainable_parameters())
-
-            saver = tf.train.Saver()
 
             n_batches = 2 if short else int(1e9)
-            init = tf.global_variables_initializer()
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
-            start_time = time.time()
-
             with tf.Session(graph=g) as sess:
-                sess.run(init)
+                data_reader = MnvDataReaderVertexST(
+                    filenames_list=self.test_file_list,
+                    batch_size=self.batch_size,
+                    name='test',
+                    compression=self.file_compression
+                )
+                batch_dict = data_reader.batch_generator()
+                X = batch_dict[self.features['x']]
+                U = batch_dict[self.features['u']]
+                V = batch_dict[self.features['v']]
+                targ = batch_dict[self.targets_label]
+                f = [X, U, V]
+
+                d = self.build_kbd_function(img_depth=self.img_depth)
+                self.model.prepare_for_inference(f, d)
+                self.model.prepare_for_loss_computation(targ)
+                LOGGER.info('Preparing to test model with %d parameters' %
+                            mnv_utils.get_number_of_trainable_parameters())
+
+                saver = tf.train.Saver()
+                start_time = time.time()
+
+                sess.run(tf.global_variables_initializer())
                 # have to run local variable init for `string_input_producer`
                 sess.run(tf.local_variables_initializer())
 
@@ -296,8 +294,8 @@ class MnvTFRunnerCategorical:
                 n_processed = 0
                 try:
                     for i in range(n_batches):
-                        loss_batch, logits_batch, Y_batch, X_batch = sess.run(
-                            [self.model.loss, self.model.logits, targ, X],
+                        loss_batch, logits_batch, Y_batch = sess.run(
+                            [self.model.loss, self.model.logits, targ],
                             feed_dict={
                                 self.model.dropout_keep_prob: 1.0
                             }
@@ -352,7 +350,7 @@ class MnvTFRunnerCategorical:
 
         LOGGER.info('Finished testing...')
 
-    def run_prediction(self, short=False):
+    def run_prediction(self, short=False, log_freq=10):
         """
         make predictions based on the TEST file list
 
@@ -366,34 +364,34 @@ class MnvTFRunnerCategorical:
         ckpt_dir = self.save_model_directory + '/checkpoints'
 
         with tf.Graph().as_default() as g:
-            data_reader = MnvDataReaderVertexST(
-                filenames_list=self.test_file_list,
-                batch_size=self.batch_size,
-                name='prediction',
-                compression=self.file_compression
-            )
-            batch_dict = data_reader.batch_generator()
-            X = batch_dict[self.features['x']]
-            U = batch_dict[self.features['u']]
-            V = batch_dict[self.features['v']]
-            evtids = batch_dict['eventids']
-            f = [X, U, V]
-
-            d = self.build_kbd_function(img_depth=self.img_depth)
-            self.model.prepare_for_inference(f, d)
-            LOGGER.info('Predictions with model with %d parameters' %
-                        mnv_utils.get_number_of_trainable_parameters())
-
-            saver = tf.train.Saver()
 
             n_batches = 2 if short else int(1e9)
-            init = tf.global_variables_initializer()
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
-            start_time = time.time()
-
             with tf.Session(graph=g) as sess:
-                sess.run(init)
+                data_reader = MnvDataReaderVertexST(
+                    filenames_list=self.test_file_list,
+                    batch_size=self.batch_size,
+                    name='prediction',
+                    compression=self.file_compression
+                )
+                batch_dict = data_reader.batch_generator()
+                X = batch_dict[self.features['x']]
+                U = batch_dict[self.features['u']]
+                V = batch_dict[self.features['v']]
+                evtids = batch_dict['eventids']
+                f = [X, U, V]
+
+                d = self.build_kbd_function(img_depth=self.img_depth)
+                self.model.prepare_for_inference(f, d)
+                LOGGER.info('Predictions with model with %d parameters' %
+                            mnv_utils.get_number_of_trainable_parameters())
+
+                saver = tf.train.Saver()
+
+                start_time = time.time()
+
+                sess.run(tf.global_variables_initializer())
                 # have to run local variable init for `string_input_producer`
                 sess.run(tf.local_variables_initializer())
 
@@ -408,8 +406,6 @@ class MnvTFRunnerCategorical:
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(coord=coord)
 
-                log_freq = 10  # every N batches
-
                 # NOTE: specifically catch `tf.errors.OutOfRangeError` or we
                 # won't handle the exception correctly.
                 n_processed = 0
@@ -418,8 +414,8 @@ class MnvTFRunnerCategorical:
                         printlog = True if (i + 1) % log_freq == 0 else False
                         if printlog:
                             LOGGER.debug('batch {}'.format(i))
-                        logits_batch, eventids, X_batch = sess.run(
-                            [self.model.logits, evtids, X],
+                        logits_batch, eventids = sess.run(
+                            [self.model.logits, evtids],
                             feed_dict={
                                 self.model.dropout_keep_prob: 1.0
                             }
