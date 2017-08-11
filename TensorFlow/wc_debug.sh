@@ -1,4 +1,4 @@
-MODELCODE=20170803
+MODELCODE=20170811
 DAT=`date +%s`
 
 singularity exec /data/perdue/singularity/simone/ubuntu16-cuda-ml.img python -m pdb mnv_run_st_epsilon.py \

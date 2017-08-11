@@ -196,9 +196,9 @@ class MnvTFRunnerCategorical:
                             feed_dict={
                                 self.model.dropout_keep_prob:
                                 self.dropout_keep_prob,
-                                X: np.random.randn(128, 127, 50, 2),
-                                U: np.random.randn(128, 127, 25, 2),
-                                V: np.random.randn(128, 127, 25, 2),
+                                X_train: np.zeros((128, 127, 50, 2)),
+                                U_train: np.zeros((128, 127, 25, 2)),
+                                V_train: np.zeros((128, 127, 25, 2)),
                                 targ_train: np.array(128 * [1,0,0,0,0,0,0,0,0,0,0]).reshape(128, 11)
                             }
                         )
