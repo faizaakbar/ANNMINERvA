@@ -103,51 +103,6 @@ class MnvTFRunnerCategorical:
         ))
 
         with tf.Graph().as_default() as g:
-            train_reader = MnvDataReaderVertexST(
-                filenames_list=self.train_file_list,
-                batch_size=self.batch_size,
-                name='train',
-                compression=self.file_compression
-            )
-            batch_dict_train = train_reader.shuffle_batch_generator(
-                num_epochs=self.num_epochs
-            )
-            # X_train = batch_dict_train[self.features['x']]
-            # U_train = batch_dict_train[self.features['u']]
-            # V_train = batch_dict_train[self.features['v']]
-            # targ_train = batch_dict_train[self.targets_label]
-            Xshp = [128, 127, 50, 2]
-            UVshp = [128, 127, 25, 2]
-            X_train = tf.placeholder(tf.float32, shape=Xshp, name='X')
-            U_train = tf.placeholder(tf.float32, shape=UVshp, name='U')
-            V_train = tf.placeholder(tf.float32, shape=UVshp, name='V')
-            targ_train = tf.placeholder(tf.float32, shape=[None, 11], name='targ')
-            f_train = [X_train, U_train, V_train]
-
-            valid_reader = MnvDataReaderVertexST(
-                filenames_list=self.valid_file_list,
-                batch_size=self.batch_size,
-                name='valid',
-                compression=self.file_compression
-            )
-            batch_dict_valid = valid_reader.batch_generator(num_epochs=1)
-            X_valid = batch_dict_valid[self.features['x']]
-            U_valid = batch_dict_valid[self.features['u']]
-            V_valid = batch_dict_valid[self.features['v']]
-            targ_valid = batch_dict_valid[self.targets_label]
-            f_valid = [X_valid, U_valid, V_valid]
-
-            d = self.build_kbd_function(img_depth=self.img_depth)
-            self.model.prepare_for_inference(f_train, d)
-            self.model.prepare_for_training(
-                targ_train, learning_rate=self.learning_rate
-            )
-            LOGGER.info('Preparing to train model with %d parameters' %
-                        mnv_utils.get_number_of_trainable_parameters())
-
-            writer = tf.summary.FileWriter(run_dest_dir)
-            saver = tf.train.Saver()
-
             # n_batches: control this with num_epochs
             n_batches = 5 if short else int(1e9)
             save_every_n_batch = 1 if short else self.save_freq
@@ -155,14 +110,58 @@ class MnvTFRunnerCategorical:
                 n_batches, save_every_n_batch
             ))
 
-            init = tf.global_variables_initializer()
-
             with tf.Session(
                     graph=g,
                     config=tf.ConfigProto(log_device_placement=True)
                 ) as sess:
+
+                train_reader = MnvDataReaderVertexST(
+                    filenames_list=self.train_file_list,
+                    batch_size=self.batch_size,
+                    name='train',
+                    compression=self.file_compression
+                )
+                batch_dict_train = train_reader.shuffle_batch_generator(
+                        num_epochs=self.num_epochs
+                )
+                X_train = batch_dict_train[self.features['x']]
+                U_train = batch_dict_train[self.features['u']]
+                V_train = batch_dict_train[self.features['v']]
+                targ_train = batch_dict_train[self.targets_label]
+                # Xshp = [128, 127, 50, 2]
+                # UVshp = [128, 127, 25, 2]
+                # X_train = tf.placeholder(tf.float32, shape=Xshp, name='X')
+                # U_train = tf.placeholder(tf.float32, shape=UVshp, name='U')
+                # V_train = tf.placeholder(tf.float32, shape=UVshp, name='V')
+                # targ_train = tf.placeholder(tf.float32, shape=[None, 11], name='targ')
+                f_train = [X_train, U_train, V_train]
+
+                valid_reader = MnvDataReaderVertexST(
+                    filenames_list=self.valid_file_list,
+                    batch_size=self.batch_size,
+                    name='valid',
+                    compression=self.file_compression
+                )
+                batch_dict_valid = valid_reader.batch_generator(num_epochs=1)
+                X_valid = batch_dict_valid[self.features['x']]
+                U_valid = batch_dict_valid[self.features['u']]
+                V_valid = batch_dict_valid[self.features['v']]
+                targ_valid = batch_dict_valid[self.targets_label]
+                f_valid = [X_valid, U_valid, V_valid]
+
+                d = self.build_kbd_function(img_depth=self.img_depth)
+                self.model.prepare_for_inference(f_train, d)
+                self.model.prepare_for_training(
+                    targ_train, learning_rate=self.learning_rate
+                )
+                LOGGER.info('Preparing to train model with %d parameters' %
+                            mnv_utils.get_number_of_trainable_parameters())
+
+                writer = tf.summary.FileWriter(run_dest_dir)
+                saver = tf.train.Saver()
+
                 start_time = time.time()
-                sess.run(init)
+                sess.run(tf.global_variables_initializer())
                 # have to run local variable init for `string_input_producer`
                 sess.run(tf.local_variables_initializer())
 
@@ -196,10 +195,10 @@ class MnvTFRunnerCategorical:
                             feed_dict={
                                 self.model.dropout_keep_prob:
                                 self.dropout_keep_prob,
-                                X_train: np.zeros((128, 127, 50, 2)),
-                                U_train: np.zeros((128, 127, 25, 2)),
-                                V_train: np.zeros((128, 127, 25, 2)),
-                                targ_train: np.array(128 * [1,0,0,0,0,0,0,0,0,0,0]).reshape(128, 11)
+#                                X_train: np.zeros((128, 127, 50, 2)),
+#                                U_train: np.zeros((128, 127, 25, 2)),
+#                                V_train: np.zeros((128, 127, 25, 2)),
+#                                targ_train: np.array(128 * [1,0,0,0,0,0,0,0,0,0,0]).reshape(128, 11)
                             }
                         )
                         writer.add_summary(summary, global_step=b_num)
