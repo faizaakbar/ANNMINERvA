@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DAT=`date +%s`
-MODEL_CODE="20170811"
+MODEL_CODE="20170812"
 
 # targets
 NCLASS=11
@@ -18,8 +18,8 @@ BASEP="/Users/gnperdue/Documents/MINERvA/AI/minerva_tf"
 
 PREDPATH="${BASEP}/predictions/"
 PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
-PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
+PREDICTIONS="--nodo_prediction"
 
 # data, log, and model logistics
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_011"
