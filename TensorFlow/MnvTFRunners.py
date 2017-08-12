@@ -42,6 +42,7 @@ class MnvTFRunnerCategorical:
             self.test_file_list = run_params_dict['TEST_FILE_LIST']
             self.file_compression = run_params_dict['COMPRESSION']
             self.save_model_directory = run_params_dict['MODEL_DIR']
+            self.save_model_name = run_params_dict['MODEL_NAME']
             self.load_saved_model = run_params_dict['LOAD_SAVED_MODEL']
             self.save_freq = run_params_dict['SAVE_EVRY_N_BATCHES']
             self.be_verbose = run_params_dict['BE_VERBOSE']
@@ -238,7 +239,9 @@ class MnvTFRunnerCategorical:
             writer.close()
 
         out_graph = mnv_utils.freeze_graph(
-            self.save_model_directory, self.model.get_output_nodes()
+            self.save_model_directory,
+            self.model.get_output_nodes(),
+            self.save_model_name
         )
         LOGGER.info(' Saved graph {}'.format(out_graph))
         LOGGER.info('Finished training...')
@@ -272,6 +275,9 @@ class MnvTFRunnerCategorical:
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
                 self.model.prepare_for_inference(f, d)
+                grph = mnv_utils.load_frozen_graph(
+                    self.save_model_directory + '/' + self.save_model_name
+                )
                 self.model.prepare_for_loss_computation(targ)
                 LOGGER.info('Preparing to test model with %d parameters' %
                             mnv_utils.get_number_of_trainable_parameters())
@@ -283,10 +289,10 @@ class MnvTFRunnerCategorical:
                 # have to run local variable init for `string_input_producer`
                 sess.run(tf.local_variables_initializer())
 
-                ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
-                if ckpt and ckpt.model_checkpoint_path:
-                    saver.restore(sess, ckpt.model_checkpoint_path)
-                    LOGGER.info('Restored session from {}'.format(ckpt_dir))
+                # ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+                # if ckpt and ckpt.model_checkpoint_path:
+                #     saver.restore(sess, ckpt.model_checkpoint_path)
+                #     LOGGER.info('Restored session from {}'.format(ckpt_dir))
 
                 final_step = self.model.global_step.eval()
                 LOGGER.info('evaluation after {} steps.'.format(final_step))
