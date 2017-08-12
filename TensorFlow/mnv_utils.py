@@ -171,3 +171,23 @@ def freeze_graph(
         ))
 
     return output_graph
+
+
+def load_frozen_graph(graph_filename):
+    """
+    load a protobuf and parse it to get the deserialized graph - note that we
+    load the graph into the current default! - maybe unexpected... (TODO, etc.)
+
+    https://blog.metaflow.fr/tensorflow-how-to-freeze-a-model-and-serve-it-with-a-python-api-d4f3596b3adc
+    """
+    with tf.gfile.GFile(graph_filename, 'rb') as f:
+        graph_def = tf.GraphDef()
+        graph_def.ParseFromString(f.read())
+
+    # import graph into current default - dangerous?
+    with tf.Graph().as_default() as graph:
+        tf.import_graph_def(
+            graph_def, input_map=None, return_elements=None, name='prefix',
+            op_dict=None, producer_op_list=None
+        )
+    return graph
