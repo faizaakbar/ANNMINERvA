@@ -16,6 +16,7 @@ def make_default_run_params_dict(mnv_type='st_epsilon'):
     run_params_dict['TEST_FILE_LIST'] = None
     run_params_dict['COMPRESSION'] = None
     run_params_dict['MODEL_DIR'] = '/tmp/minerva'
+    run_params_dict['MODEL_NAME'] = 'frozen_model.pb'
     run_params_dict['LOAD_SAVED_MODEL'] = True
     run_params_dict['SAVE_EVRY_N_BATCHES'] = 20
     run_params_dict['BE_VERBOSE'] = False
@@ -186,8 +187,9 @@ def load_frozen_graph(graph_filename):
 
     # import graph into current default - dangerous?
     with tf.Graph().as_default() as graph:
+        # 'name' - will be pre-pended to the graph names
         tf.import_graph_def(
-            graph_def, input_map=None, return_elements=None, name='prefix',
+            graph_def, input_map=None, return_elements=None, name=None,
             op_dict=None, producer_op_list=None
         )
     return graph
