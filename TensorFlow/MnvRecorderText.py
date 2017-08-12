@@ -14,7 +14,7 @@ LOGGER = logging.getLogger(__name__)
 
 class MnvCategoricalTextRecorder:
     """
-    record segments or planecodes in a sqlite db
+    record segments or planecodes in a text file
     """
     def __init__(self, db_base_name):
         self.db_name = db_base_name + '.txt'
