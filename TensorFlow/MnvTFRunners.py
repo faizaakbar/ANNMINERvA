@@ -25,10 +25,17 @@ class MnvTFRunnerCategorical:
             self,
             model,
             run_params_dict,
-            feature_targ_dict=dict(),
-            train_params_dict=dict(),
-            img_params_dict=dict(),
+            feature_targ_dict=None,
+            train_params_dict=None,
+            img_params_dict=None,
     ):
+        if feature_targ_dict is None:
+            feature_targ_dict = dict()
+        if train_params_dict is None:
+            train_params_dict = dict()
+        if img_params_dict is None:
+            img_params_dict = dict()
+
         try:
             self.train_file_list = run_params_dict['TRAIN_FILE_LIST']
             self.valid_file_list = run_params_dict['VALID_FILE_LIST']
