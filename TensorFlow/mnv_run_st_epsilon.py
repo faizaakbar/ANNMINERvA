@@ -72,6 +72,7 @@ def main(argv=None):
     run_params_dict['VALID_FILE_LIST'] = valid_list
     run_params_dict['TEST_FILE_LIST'] = test_list
     run_params_dict['MODEL_DIR'] = FLAGS.model_dir
+    run_params_dict['MODEL_NAME'] = 'frozen_model.pb'  # TODO - fix
     run_params_dict['PREDICTION_STORE_NAME'] = FLAGS.pred_store_name
     run_params_dict['BE_VERBOSE'] = True
 
