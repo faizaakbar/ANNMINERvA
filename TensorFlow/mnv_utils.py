@@ -188,6 +188,7 @@ def load_frozen_graph(graph_filename):
     # import graph into current default - dangerous?
     with tf.Graph().as_default() as graph:
         # 'name' - will be pre-pended to the graph names
+        # if `input_map` is not None, we must use a `name`
         tf.import_graph_def(
             graph_def, input_map=None, return_elements=None, name=None,
             op_dict=None, producer_op_list=None
