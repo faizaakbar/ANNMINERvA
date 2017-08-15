@@ -196,6 +196,10 @@ class MnvTFRunnerCategorical:
                             }
                         )
                         writer.add_summary(summary, global_step=b_num)
+                        LOGGER.debug(' {} - u-tower; conv3 kernels = {}'.format(
+                            b_num,
+                            self.model.weights_biases['u_tower']['conv3']['kernels'].eval()[0,0,0,:]
+                        ))
                         if (b_num + 1) % save_every_n_batch == 0:
                             LOGGER.info(
                                 '  Loss at batch+1 {}: {:5.1f}'.format(
@@ -275,12 +279,14 @@ class MnvTFRunnerCategorical:
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
                 self.model.prepare_for_inference(f, d)
-                grph = mnv_utils.load_frozen_graph(
-                    self.save_model_directory + '/' + self.save_model_name
-                )
+                # grph = mnv_utils.load_frozen_graph(
+                #     self.save_model_directory + '/' + self.save_model_name
+                # )
                 self.model.prepare_for_loss_computation(targ)
                 LOGGER.info('Preparing to test model with %d parameters' %
                             mnv_utils.get_number_of_trainable_parameters())
+                for op in g.get_operations():
+                    LOGGER.debug('op name = {}'.format(op.name))
 
                 saver = tf.train.Saver()
                 start_time = time.time()
@@ -289,10 +295,10 @@ class MnvTFRunnerCategorical:
                 # have to run local variable init for `string_input_producer`
                 sess.run(tf.local_variables_initializer())
 
-                # ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
-                # if ckpt and ckpt.model_checkpoint_path:
-                #     saver.restore(sess, ckpt.model_checkpoint_path)
-                #     LOGGER.info('Restored session from {}'.format(ckpt_dir))
+                ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+                if ckpt and ckpt.model_checkpoint_path:
+                    saver.restore(sess, ckpt.model_checkpoint_path)
+                    LOGGER.info('Restored session from {}'.format(ckpt_dir))
 
                 final_step = self.model.global_step.eval()
                 LOGGER.info('evaluation after {} steps.'.format(final_step))
@@ -320,6 +326,10 @@ class MnvTFRunnerCategorical:
                         correct_preds = tf.equal(
                             tf.argmax(preds, 1), tf.argmax(Y_batch, 1)
                         )
+                        LOGGER.debug(' {} - u-tower; conv3 kernels = {}'.format(
+                            i,
+                            self.model.weights_biases['u_tower']['conv3']['kernels'].eval()[0,0,0,:]
+                        ))
                         if self.be_verbose:
                             LOGGER.debug('   preds   = \n{}'.format(
                                 tf.argmax(preds, 1).eval()
