@@ -7,9 +7,10 @@ MODEL_CODE="20170812"
 NCLASS=11
 TARGETS="--n_classes $NCLASS --targets_label segments"
 
+VALIDATION="--nodo_validaton"
+VALIDATION="--do_validaton"
 TRAINING="--nodo_training"
 TRAINING="--do_training"
-VALIDATION="--do_validaton"
 
 TESTING="--nodo_testing"
 TESTING="--do_testing"
