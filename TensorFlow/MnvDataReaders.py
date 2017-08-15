@@ -58,48 +58,64 @@ class MnvDataReaderVertexST:
             else:
                 raise ValueError('Invalid data format in data reader!')
 
-        file_queue = tf.train.string_input_producer(
-            self.filenames_list,
-            name=self.name+'_file_queue',
-            num_epochs=num_epochs
-        )
-        reader = tf.TFRecordReader(
-            options=tf.python_io.TFRecordOptions(
-                compression_type=self.compression
+        with tf.variable_scope(self.name + '_tfrec_to_graphops'):
+            file_queue = tf.train.string_input_producer(
+                self.filenames_list,
+                name=self.name+'_file_queue',
+                num_epochs=num_epochs
             )
-        )
-        _, tfrecord = reader.read(file_queue)
+            reader = tf.TFRecordReader(
+                options=tf.python_io.TFRecordOptions(
+                    compression_type=self.compression
+                ),
+                name=self.name+'_tfrecordreader'
+            )
+            _, tfrecord = reader.read(file_queue)
 
-        tfrecord_features = tf.parse_single_example(
-            tfrecord,
-            features={
-                'eventids': tf.FixedLenFeature([], tf.string),
-                self.imgdat_names['x']: tf.FixedLenFeature([], tf.string),
-                self.imgdat_names['u']: tf.FixedLenFeature([], tf.string),
-                self.imgdat_names['v']: tf.FixedLenFeature([], tf.string),
-                'planecodes': tf.FixedLenFeature([], tf.string),
-                'segments': tf.FixedLenFeature([], tf.string),
-                'zs': tf.FixedLenFeature([], tf.string),
-            },
-            name=self.name+'_data'
-        )
-        evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
-        hitimesx = proces_hitimes(
-            tfrecord_features[self.imgdat_names['x']], [-1, 2, 127, 50]
-        )
-        hitimesu = proces_hitimes(
-            tfrecord_features[self.imgdat_names['u']], [-1, 2, 127, 25]
-        )
-        hitimesv = proces_hitimes(
-            tfrecord_features[self.imgdat_names['v']], [-1, 2, 127, 25]
-        )
-        pcodes = tf.decode_raw(tfrecord_features['planecodes'], tf.int16)
-        pcodes = tf.cast(pcodes, tf.int32)
-        pcodes = tf.one_hot(indices=pcodes, depth=67, on_value=1, off_value=0)
-        segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
-        segs = tf.cast(segs, tf.int32)
-        segs = tf.one_hot(indices=segs, depth=11, on_value=1, off_value=0)
-        zs = tf.decode_raw(tfrecord_features['zs'], tf.float32)
+            tfrecord_features = tf.parse_single_example(
+                tfrecord,
+                features={
+                    'eventids': tf.FixedLenFeature([], tf.string),
+                    self.imgdat_names['x']: tf.FixedLenFeature([], tf.string),
+                    self.imgdat_names['u']: tf.FixedLenFeature([], tf.string),
+                    self.imgdat_names['v']: tf.FixedLenFeature([], tf.string),
+                    'planecodes': tf.FixedLenFeature([], tf.string),
+                    'segments': tf.FixedLenFeature([], tf.string),
+                    'zs': tf.FixedLenFeature([], tf.string),
+                },
+                name=self.name+'_data'
+            )
+            with tf.variable_scope(self.name + '_eventids'):
+                evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
+            with tf.variable_scope(self.name + '_' + self.imgdat_names['x']):
+                hitimesx = proces_hitimes(
+                    tfrecord_features[self.imgdat_names['x']], [-1, 2, 127, 50]
+                )
+            with tf.variable_scope(self.name + '_' + self.imgdat_names['u']):
+                hitimesu = proces_hitimes(
+                    tfrecord_features[self.imgdat_names['u']], [-1, 2, 127, 25]
+                )
+            with tf.variable_scope(self.name + '_' + self.imgdat_names['v']):
+                hitimesv = proces_hitimes(
+                    tfrecord_features[self.imgdat_names['v']], [-1, 2, 127, 25]
+                )
+            with tf.variable_scope(self.name + '_planecodes'):
+                pcodes = tf.decode_raw(
+                    tfrecord_features['planecodes'], tf.int16
+                )
+                pcodes = tf.cast(pcodes, tf.int32)
+                pcodes = tf.one_hot(
+                    indices=pcodes, depth=67, on_value=1, off_value=0
+                )
+            with tf.variable_scope(self.name + '_segments'):
+                segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
+                segs = tf.cast(segs, tf.int32)
+                segs = tf.one_hot(
+                    indices=segs, depth=11, on_value=1, off_value=0
+                )
+            with tf.variable_scope(self.name + '_zs'):
+                zs = tf.decode_raw(tfrecord_features['zs'], tf.float32)
+                
         return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
 
     def batch_generator(self, num_epochs=1):
