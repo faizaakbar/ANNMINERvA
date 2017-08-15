@@ -132,10 +132,16 @@ class TriColSTEpsilon:
         )
         self.weights_biases = {}
 
-        with tf.name_scope('input_images'):
-            self.X_img = tf.cast(features_list[0], tf.float32)
-            self.U_img = tf.cast(features_list[1], tf.float32)
-            self.V_img = tf.cast(features_list[2], tf.float32)
+        with tf.variable_scope('input_images'):
+            self.X_img = tf.cast(
+                features_list[0], tf.float32, name='input_x'
+            )
+            self.U_img = tf.cast(
+                features_list[1], tf.float32, name='input_u'
+            )
+            self.V_img = tf.cast(
+                features_list[2], tf.float32, name='input_v'
+            )
 
         def make_kernels(
                 name, shp_list, init=tf.truncated_normal_initializer()
