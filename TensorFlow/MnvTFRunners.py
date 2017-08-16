@@ -123,7 +123,7 @@ class MnvTFRunnerCategorical:
                 train_reader = MnvDataReaderVertexST(
                     filenames_list=self.train_file_list,
                     batch_size=self.batch_size,
-                    name='train',
+                    name='data',
                     compression=self.file_compression
                 )
                 batch_dict_train = train_reader.shuffle_batch_generator(
@@ -155,6 +155,10 @@ class MnvTFRunnerCategorical:
                 )
                 LOGGER.info('Preparing to train model with %d parameters' %
                             mnv_utils.get_number_of_trainable_parameters())
+                # for op in g.get_operations():
+                #     LOGGER.debug('op name = {}'.format(op.name))
+                for tnsr in g.as_graph_def().node:
+                    LOGGER.debug('tnsr name = {}'.format(tnsr.name))
 
                 writer = tf.summary.FileWriter(run_dest_dir)
                 saver = tf.train.Saver()
@@ -196,9 +200,9 @@ class MnvTFRunnerCategorical:
                             }
                         )
                         writer.add_summary(summary, global_step=b_num)
-                        LOGGER.debug(' {} - u-tower; conv3 kernels = {}'.format(
+                        LOGGER.debug(' {} - x-tower; conv2 kernels = {}'.format(
                             b_num,
-                            self.model.weights_biases['u_tower']['conv3']['kernels'].eval()[0,0,0,:]
+                            g.get_tensor_by_name('x_tower/conv2/kernels:0').eval()[0,0,0,:]
                         ))
                         if (b_num + 1) % save_every_n_batch == 0:
                             LOGGER.info(
@@ -258,50 +262,72 @@ class MnvTFRunnerCategorical:
         tf.reset_default_graph()
         ckpt_dir = self.save_model_directory + '/checkpoints'
 
-        with tf.Graph().as_default() as g:
+        # with tf.Graph().as_default() as g:
+        for dummy_var in range(1):
+
+            grph = mnv_utils.load_frozen_graph(
+                self.save_model_directory + '/' + self.save_model_name
+            )
 
             n_batches = 2 if short else int(1e9)
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
-            with tf.Session(graph=g) as sess:
-                data_reader = MnvDataReaderVertexST(
-                    filenames_list=self.test_file_list,
-                    batch_size=self.batch_size,
-                    name='test',
-                    compression=self.file_compression
-                )
-                batch_dict = data_reader.batch_generator()
-                X = batch_dict[self.features['x']]
-                U = batch_dict[self.features['u']]
-                V = batch_dict[self.features['v']]
-                targ = batch_dict[self.targets_label]
-                f = [X, U, V]
-
-                d = self.build_kbd_function(img_depth=self.img_depth)
-                self.model.prepare_for_inference(f, d)
+            with tf.Session(graph=grph) as sess:
                 # grph = mnv_utils.load_frozen_graph(
                 #     self.save_model_directory + '/' + self.save_model_name
                 # )
-                self.model.prepare_for_loss_computation(targ)
+                data_reader = MnvDataReaderVertexST(
+                    filenames_list=self.test_file_list,
+                    batch_size=self.batch_size,
+                    name='data',
+                    compression=self.file_compression
+                )
+                batch_dict = data_reader.batch_generator()
+                # for op in grph.get_operations():
+                #     LOGGER.debug('op name = {}'.format(op.name))
+                for tnsr in grph.as_graph_def().node:
+                    LOGGER.debug('tnsr name = {}'.format(tnsr.name))
+                targ = batch_dict[self.targets_label]
+                # targ = grph.get_tensor_by_name('targets:0')
+                lgts = grph.get_tensor_by_name('softmax_linear/logits:0')
+                # lss = grph.get_tensor_by_name('loss/loss:0')
+                drpt = grph.get_tensor_by_name('dropout_keep_prob:0')
+
+                # data_reader = MnvDataReaderVertexST(
+                #     filenames_list=self.test_file_list,
+                #     batch_size=self.batch_size,
+                #     name='data',
+                #     compression=self.file_compression
+                # )
+                # batch_dict = data_reader.batch_generator()
+                # X = batch_dict[self.features['x']]
+                # U = batch_dict[self.features['u']]
+                # V = batch_dict[self.features['v']]
+                # targ = batch_dict[self.targets_label]
+                # f = [X, U, V]
+
+                # d = self.build_kbd_function(img_depth=self.img_depth)
+                # self.model.prepare_for_inference(f, d)
+                # self.model.prepare_for_loss_computation(targ)
                 LOGGER.info('Preparing to test model with %d parameters' %
                             mnv_utils.get_number_of_trainable_parameters())
-                for op in g.get_operations():
-                    LOGGER.debug('op name = {}'.format(op.name))
 
-                saver = tf.train.Saver()
+                # saver = tf.train.Saver()
                 start_time = time.time()
 
                 sess.run(tf.global_variables_initializer())
+                LOGGER.debug('global vars inited')
                 # have to run local variable init for `string_input_producer`
                 sess.run(tf.local_variables_initializer())
+                LOGGER.debug('local vars inited')
 
-                ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
-                if ckpt and ckpt.model_checkpoint_path:
-                    saver.restore(sess, ckpt.model_checkpoint_path)
-                    LOGGER.info('Restored session from {}'.format(ckpt_dir))
+                # ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+                # if ckpt and ckpt.model_checkpoint_path:
+                #     saver.restore(sess, ckpt.model_checkpoint_path)
+                #     LOGGER.info('Restored session from {}'.format(ckpt_dir))
 
-                final_step = self.model.global_step.eval()
-                LOGGER.info('evaluation after {} steps.'.format(final_step))
+                # final_step = self.model.global_step.eval()
+                # LOGGER.info('evaluation after {} steps.'.format(final_step))
                 average_loss = 0.0
                 total_correct_preds = 0
 
@@ -313,22 +339,23 @@ class MnvTFRunnerCategorical:
                 n_processed = 0
                 try:
                     for i in range(n_batches):
-                        loss_batch, logits_batch, Y_batch = sess.run(
-                            [self.model.loss, self.model.logits, targ],
-                            feed_dict={
-                                self.model.dropout_keep_prob: 1.0
-                            }
+                        logits_batch, Y_batch = sess.run(
+                            [lgts, targ], feed_dict={drpt: 1.0}
+                            # [self.model.loss, self.model.logits, targ],
+                            # feed_dict={
+                            #     self.model.dropout_keep_prob: 1.0
+                            # }
                         )
                         batch_sz = logits_batch.shape[0]
                         n_processed += batch_sz
-                        average_loss += loss_batch
+                        # average_loss += loss_batch
                         preds = tf.nn.softmax(logits_batch)
                         correct_preds = tf.equal(
                             tf.argmax(preds, 1), tf.argmax(Y_batch, 1)
                         )
-                        LOGGER.debug(' {} - u-tower; conv3 kernels = {}'.format(
+                        LOGGER.debug(' {} - x-tower; conv2 kernels = {}'.format(
                             i,
-                            self.model.weights_biases['u_tower']['conv3']['kernels'].eval()[0,0,0,:]
+                            g.get_tensor_by_name('x_tower/conv2/kernels:0').eval()[0,0,0,:]
                         ))
                         if self.be_verbose:
                             LOGGER.debug('   preds   = \n{}'.format(
@@ -341,12 +368,12 @@ class MnvTFRunnerCategorical:
                             tf.cast(correct_preds, tf.float32)
                         )
                         total_correct_preds += sess.run(accuracy)
-                        if self.be_verbose:
-                            LOGGER.debug(
-                                '  batch {} loss = {} for size = {}'.format(
-                                    i, loss_batch, batch_sz
-                                )
-                            )
+                        # if self.be_verbose:
+                        #     LOGGER.debug(
+                        #         '  batch {} loss = {} for size = {}'.format(
+                        #             i, loss_batch, batch_sz
+                        #         )
+                        #     )
 
                 except tf.errors.OutOfRangeError:
                     LOGGER.info('Testing stopped - queue is empty.')
