@@ -509,3 +509,231 @@ class MnvTFRunnerCategorical:
                 'first x-tower convolutional kernel shape = {}'.format(k.shape)
             )
             LOGGER.info('  k[0, 0, 0, :] = {}'.format(k[0, 0, 0, :]))
+
+
+class MnvTFRunnerCategoricalFeedDict:
+    """
+    Minerva runner class for categorical classification
+    (not sure we need to make this distinction here)
+    """
+    def __init__(
+            self,
+            model,
+            run_params_dict,
+            feature_targ_dict=None,
+            train_params_dict=None,
+            img_params_dict=None,
+    ):
+        if feature_targ_dict is None:
+            feature_targ_dict = dict()
+        if train_params_dict is None:
+            train_params_dict = dict()
+        if img_params_dict is None:
+            img_params_dict = dict()
+
+        try:
+            self.train_file_list = run_params_dict['TRAIN_FILE_LIST']
+            self.valid_file_list = run_params_dict['VALID_FILE_LIST']
+            self.test_file_list = run_params_dict['TEST_FILE_LIST']
+            self.file_compression = run_params_dict['COMPRESSION']
+            self.save_model_directory = run_params_dict['MODEL_DIR']
+            self.load_saved_model = run_params_dict['LOAD_SAVED_MODEL']
+            self.save_freq = run_params_dict['SAVE_EVRY_N_BATCHES']
+            self.be_verbose = run_params_dict['BE_VERBOSE']
+            self.pred_store_name = run_params_dict['PREDICTION_STORE_NAME']
+        except KeyError as e:
+            print(e)
+
+        self.features = feature_targ_dict.get(
+            'FEATURE_STR_DICT',
+            dict([('x', 'hitimes-x'),
+                  ('u', 'hitimes-u'),
+                  ('v', 'hitimes-v')])
+        )
+        self.targets_label = feature_targ_dict.get(
+            'TARGETS_LABEL', 'segments'
+        )
+        try:
+            self.build_kbd_function = feature_targ_dict['BUILD_KBD_FUNCTION']
+        except KeyError as e:
+            print(e)
+
+        self.learning_rate = train_params_dict.get('LEARNING_RATE', 0.001)
+        self.batch_size = train_params_dict.get('BATCH_SIZE', 128)
+        self.num_epochs = train_params_dict.get('NUM_EPOCHS', 1)
+        self.momentum = train_params_dict.get('MOMENTUM', 0.9)
+        self.dropout_keep_prob = train_params_dict.get(
+            'DROPOUT_KEEP_PROB', 0.75
+        )
+        self.strategy = train_params_dict.get(
+            'STRATEGY', tf.train.AdamOptimizer
+        )
+
+        self.model = model
+        self.img_depth = img_params_dict.get('IMG_DEPTH', 2)
+        self.views = ['x', 'u', 'v']
+
+        self.data_recorder = None
+        try:
+            from MnvRecorderSQLite import MnvCategoricalSQLiteRecorder
+            self.data_recorder = MnvCategoricalSQLiteRecorder(
+                self.model.n_classes, self.pred_store_name
+            )
+        except ImportError as e:
+            LOGGER.error('Cannot store prediction in sqlite: {}'.format(e))
+            from MnvRecorderText import MnvCategoricalTextRecorder
+            self.data_recorder = MnvCategoricalTextRecorder(
+                self.pred_store_name
+            )
+
+    def run_training(
+            self, do_validation=False, short=False
+    ):
+        """
+        run training (TRAIN file list) and optionally run a validation pass
+        (on the VALID file list)
+        """
+        LOGGER.info('staring run_training...')
+        tf.reset_default_graph()
+        initial_batch = 0
+        ckpt_dir = self.save_model_directory + '/checkpoints'
+        run_dest_dir = self.save_model_directory + '/%d' % time.time()
+        LOGGER.info('tensorboard command:')
+        LOGGER.info('\ttensorboard --logdir {}'.format(
+            self.save_model_directory
+        ))
+
+        with tf.Graph().as_default() as g:
+
+            # n_batches: control this with num_epochs
+            n_batches = 5 if short else int(1e9)
+            save_every_n_batch = 1 if short else self.save_freq
+            LOGGER.info(' Processing {} batches, saving every {}...'.format(
+                n_batches, save_every_n_batch
+            ))
+
+            with tf.Session(graph=g) as sess:
+
+                train_reader = MnvDataReaderVertexST(
+                    filenames_list=self.train_file_list,
+                    batch_size=self.batch_size,
+                    name='train',
+                    compression=self.file_compression
+                )
+                batch_dict_train = train_reader.shuffle_batch_generator(
+                    num_epochs=self.num_epochs
+                )
+                X_train = batch_dict_train[self.features['x']]
+                U_train = batch_dict_train[self.features['u']]
+                V_train = batch_dict_train[self.features['v']]
+                targ_train = batch_dict_train[self.targets_label]
+                f_train = [X_train, U_train, V_train]
+
+                valid_reader = MnvDataReaderVertexST(
+                    filenames_list=self.valid_file_list,
+                    batch_size=self.batch_size,
+                    name='valid',
+                    compression=self.file_compression
+                )
+                batch_dict_valid = valid_reader.batch_generator(num_epochs=1)
+                X_valid = batch_dict_valid[self.features['x']]
+                U_valid = batch_dict_valid[self.features['u']]
+                V_valid = batch_dict_valid[self.features['v']]
+                targ_valid = batch_dict_valid[self.targets_label]
+                f_valid = [X_valid, U_valid, V_valid]
+
+                d = self.build_kbd_function(img_depth=self.img_depth)
+                self.model.prepare_for_inference(f_train, d)
+                self.model.prepare_for_training(
+                    targ_train, learning_rate=self.learning_rate
+                )
+                LOGGER.info('Preparing to train model with %d parameters' %
+                            mnv_utils.get_number_of_trainable_parameters())
+
+                writer = tf.summary.FileWriter(run_dest_dir)
+                saver = tf.train.Saver()
+
+                start_time = time.time()
+                sess.run(tf.global_variables_initializer())
+                # have to run local variable init for `string_input_producer`
+                sess.run(tf.local_variables_initializer())
+
+                ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+                if ckpt and ckpt.model_checkpoint_path:
+                    saver.restore(sess, ckpt.model_checkpoint_path)
+                    LOGGER.info('Restored session from {}'.format(ckpt_dir))
+
+                writer.add_graph(sess.graph)
+                initial_batch = self.model.global_step.eval()
+                LOGGER.info('initial step = %d' % initial_batch)
+
+                coord = tf.train.Coordinator()
+                threads = tf.train.start_queue_runners(coord=coord)
+
+                # NOTE: specifically catch `tf.errors.OutOfRangeError` or we
+                # won't handle the exception correctly.
+                try:
+                    # TODO - also grab eventids (for a while) to test and
+                    # be sure we're seeing different events appropriately
+                    for b_num in range(
+                            initial_batch, initial_batch + n_batches
+                    ):
+                        LOGGER.debug('  processing batch {}'.format(b_num))
+                        _, loss_batch, logits_batch, summary = sess.run(
+                            [self.model.optimizer,
+                             self.model.loss,
+                             self.model.logits,
+                             self.model.train_summary_op],
+                            feed_dict={
+                                self.model.dropout_keep_prob:
+                                self.dropout_keep_prob
+                            }
+                        )
+                        writer.add_summary(summary, global_step=b_num)
+                        if (b_num + 1) % save_every_n_batch == 0:
+                            LOGGER.info(
+                                '  Loss at batch+1 {}: {:5.1f}'.format(
+                                    b_num + 1, loss_batch
+                                )
+                            )
+                            LOGGER.info('   Elapsed time = {}'.format(
+                                time.time() - start_time
+                            ))
+                            saver.save(sess, ckpt_dir, b_num)
+                            LOGGER.info('     saved at iter %d' % b_num)
+                            if do_validation:
+                                # try validation
+                                self.model.reassign_features(f_valid)
+                                self.model.reassign_targets(targ_valid)
+                                loss_valid, logits_valid, summary = sess.run(
+                                    [self.model.loss,
+                                     self.model.logits,
+                                     self.model.valid_summary_op],
+                                    feed_dict={
+                                        self.model.dropout_keep_prob: 1.0
+                                    }
+                                )
+                                writer.add_summary(summary, global_step=b_num)
+                                LOGGER.info('   Valid loss = %f' % loss_valid)
+                                # reset for training
+                                self.model.reassign_features(f_train)
+                                self.model.reassign_targets(targ_train)
+                except tf.errors.OutOfRangeError:
+                    LOGGER.info('Training stopped - queue is empty.')
+                    LOGGER.info(
+                        'Executing final save at batch {}'.format(b_num)
+                    )
+                    saver.save(sess, ckpt_dir, b_num)
+                except Exception as e:
+                    LOGGER.error(e)
+                finally:
+                    coord.request_stop()
+                    coord.join(threads)
+
+            writer.close()
+
+        out_graph = mnv_utils.freeze_graph(
+            self.save_model_directory, self.model.get_output_nodes()
+        )
+        LOGGER.info(' Saved graph {}'.format(out_graph))
+        LOGGER.info('Finished training...')
