@@ -13,7 +13,7 @@
 #restore to turn off email - doesn't work #PBS -m n
 
 DAT=`date +%s`
-MODEL_CODE="20170804"
+MODEL_CODE="20170816"
 
 # which singularity image
 SNGLRTY="/data/perdue/singularity/simone/ubuntu16-cuda-ml.img"
@@ -35,10 +35,10 @@ PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
 # data, log, and model logistics
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_011"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc_"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc_00000"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc_000000"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_011"
 DATADIR="/data/perdue/minerva/tensorflow/data"
 LOGDIR="/data/perdue/minerva/tensorflow/logs"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
