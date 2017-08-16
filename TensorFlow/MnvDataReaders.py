@@ -133,3 +133,74 @@ class MnvDataReaderVertexST:
         return self._make_mnv_vertex_finder_batch_dict(
             es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b
         )
+
+
+class MnvDataReaderVertexSTHDF5:
+    def __init__(self, filename, views=['x', 'u', 'v']):
+        self.filename = filename
+        self.views = views
+        self.filetype = filename.split('.')[-1]
+        self.hdf5_extensions = ['hdf5', 'h5']
+
+        if self.filetype not in self.hdf5_extensions:
+            msg = 'Invalid file type extension! '
+            msg += 'Valid extensions: ' + ','.join(self.all_extensions)
+            raise ValueError(msg)
+        self._f = None
+
+        self.times_names = ['times-x', 'times-u', 'times-v']
+        self.energies_names = ['hits-x', 'hits-u', 'hits-v']
+        self.energiestimes_names = ['hitimes-x', 'hitimes-u', 'hitimes-v']
+
+    def _read_hdf5(self):
+        """
+        possibilities: energy tensors, time tensors, energy+time tensors
+        (2-deep). get everything there into a dictionary keyed by type,
+        and then by view.
+        """
+        def extract_data(dset_name, data_dict, tensor_type, dtype='f'):
+            view = dset_name[-1]
+            try:
+                shp = pylab.shape(self._f[dset_name])
+            except KeyError:
+                print("'{}' does not exist.".format(dset_name))
+                shp = None
+            if shp is not None:
+                if len(shp) == 4:
+                    shp = (self.n_events, shp[1], shp[2], shp[3])
+                    data_dict[tensor_type][view] = \
+                        pylab.zeros(shp, dtype=dtype)
+                    data_dict[tensor_type][view] = \
+                        self._f[dset_name][:self.n_events]
+                elif len(shp) == 1:
+                    shp = (self.n_events,)
+                    data_dict[dset_name] = pylab.zeros(shp, dtype=dtype)
+                    data_dict[dset_name] = self._f[dset_name][:self.n_events]
+                else:
+                    raise ValueError('Data shape has a bad length!')
+
+        self._f = h5py.File(self.filename, 'r')
+        
+        data_dict = make_mnv_vertex_finder_data_dict()
+
+        if 'energies+times' in data_dict.keys():
+            for dset_name in self.energiestimes_names:
+                extract_data(dset_name, data_dict, 'energies+times')
+        if 'energies' in data_dict.keys():
+            for dset_name in self.energies_names:
+                extract_data(dset_name, data_dict, 'energies')
+        if 'times' in data_dict.keys():
+            for dset_name in self.times_names:
+                extract_data(dset_name, data_dict, 'times')
+        if 'eventids' in data_dict.keys():
+            extract_data('eventids', data_dict, None, 'uint64')
+        if 'planecodes' in data_dict.keys():
+            extract_data('planecodes', data_dict, None, 'uint16')
+        if 'segments' in data_dict.keys():
+            extract_data('segments', data_dict, None, 'uint8')
+        if 'zs' in data_dict.keys():
+            extract_data('zs', data_dict, None)
+
+        self._f.close()
+        
+        return data_dict
