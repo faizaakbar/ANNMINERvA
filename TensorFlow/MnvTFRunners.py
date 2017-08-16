@@ -140,7 +140,9 @@ class MnvTFRunnerCategorical:
                     name='valid',
                     compression=self.file_compression
                 )
-                batch_dict_valid = valid_reader.batch_generator(num_epochs=1)
+                batch_dict_valid = valid_reader.batch_generator(
+                        num_epochs=1000000
+                )
                 X_valid = batch_dict_valid[self.features['x']]
                 U_valid = batch_dict_valid[self.features['u']]
                 V_valid = batch_dict_valid[self.features['v']]
@@ -210,16 +212,26 @@ class MnvTFRunnerCategorical:
                                 # try validation
                                 self.model.reassign_features(f_valid)
                                 self.model.reassign_targets(targ_valid)
-                                loss_valid, logits_valid, summary = sess.run(
+                                loss_valid, logits_valid, summary, tval = sess.run(
                                     [self.model.loss,
                                      self.model.logits,
-                                     self.model.valid_summary_op],
+                                     self.model.valid_summary_op,
+                                     targ_valid],
                                     feed_dict={
                                         self.model.dropout_keep_prob: 1.0
                                     }
                                 )
+                                LOGGER.info('')
                                 writer.add_summary(summary, global_step=b_num)
                                 LOGGER.info('   Valid loss = %f' % loss_valid)
+                                probs = tf.nn.softmax(logits_valid).eval()
+                                preds = tf.argmax(probs, 1).eval()
+                                LOGGER.debug('    preds   = \n{}'.format(
+                                    preds
+                                ))
+                                LOGGER.debug('    targs   = \n{}'.format(
+                                    tf.argmax(tval, 1).eval()
+                                ))
                                 # reset for training
                                 self.model.reassign_features(f_train)
                                 self.model.reassign_targets(targ_train)
