@@ -190,7 +190,7 @@ def load_frozen_graph(graph_filename):
         # 'name' - will be pre-pended to the graph names
         # if `input_map` is not None, we must use a `name`
         tf.import_graph_def(
-            graph_def, input_map=None, return_elements=None, name=None,
+            graph_def, input_map=None, return_elements=None, name='',
             op_dict=None, producer_op_list=None
         )
     return graph
