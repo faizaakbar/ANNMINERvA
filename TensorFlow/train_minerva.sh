@@ -1,14 +1,14 @@
 #!/bin/bash
 
 DAT=`date +%s`
-MODEL_CODE="20170811"
+MODEL_CODE="20170816"
 
 # targets
 NCLASS=11
 TARGETS="--n_classes $NCLASS --targets_label segments"
 
-TRAINING="--nodo_training"
 TRAINING="--do_training"
+TRAINING="--nodo_training"
 VALIDATION="--do_validaton"
 
 TESTING="--nodo_testing"
