@@ -1,5 +1,22 @@
 #!/usr/bin/env python
 import tensorflow as tf
+import numpy as np
+import h5py
+import logging
+
+LOGGER = logging.getLogger(__name__)
+
+
+def make_mnv_vertex_finder_data_dict():
+    data_dict = {}
+    data_dict['energies+times'] = {}
+    data_dict['energies'] = {}
+    data_dict['times'] = {}
+    data_dict['eventids'] = {}
+    data_dict['planecodes'] = {}
+    data_dict['segments'] = {}
+    data_dict['zs'] = {}
+    return data_dict
 
 
 class MnvDataReaderVertexST:
@@ -152,30 +169,55 @@ class MnvDataReaderVertexSTHDF5:
         self.energies_names = ['hits-x', 'hits-u', 'hits-v']
         self.energiestimes_names = ['hitimes-x', 'hitimes-u', 'hitimes-v']
 
-    def _read_hdf5(self):
+    def open(self):
+        LOGGER.info("Opening hdf5 file {}".format(self.file))
+        self._f = h5py.File(self.file, 'r')
+        for name in self._f:
+            LOGGER.info('{:>12}: {:>8}: shape = {}'.format(
+                name, np.dtype(self._f[name]), np.shape(self._f[name])
+            ))
+
+    def close(self):
+        try:
+            self._f.close()
+        except AttributeError:
+            LOGGER.info('hdf5 file is not open yet.')
+
+    def get_nevents(self):
+        sizes = [self._f[d].shape[0] for d in self._f]
+        if min(sizes) != max(sizes):
+            msg = "All dsets must have the same size!"
+            LOGGER.error(msg)
+            raise ValueError(msg)
+        return sizes[0]
+
+    def _read_hdf5(self, start_idx, stop_idx):
         """
         possibilities: energy tensors, time tensors, energy+time tensors
         (2-deep). get everything there into a dictionary keyed by type,
         and then by view.
         """
+        n_events = stop_idx - start_idx
+
         def extract_data(dset_name, data_dict, tensor_type, dtype='f'):
             view = dset_name[-1]
             try:
-                shp = pylab.shape(self._f[dset_name])
+                shp = np.shape(self._f[dset_name])
             except KeyError:
                 print("'{}' does not exist.".format(dset_name))
                 shp = None
             if shp is not None:
                 if len(shp) == 4:
-                    shp = (self.n_events, shp[1], shp[2], shp[3])
+                    shp = (n_events, shp[1], shp[2], shp[3])
                     data_dict[tensor_type][view] = \
-                        pylab.zeros(shp, dtype=dtype)
+                        np.zeros(shp, dtype=dtype)
                     data_dict[tensor_type][view] = \
-                        self._f[dset_name][:self.n_events]
+                        self._f[dset_name][start_idx:stop_idx]
                 elif len(shp) == 1:
-                    shp = (self.n_events,)
-                    data_dict[dset_name] = pylab.zeros(shp, dtype=dtype)
-                    data_dict[dset_name] = self._f[dset_name][:self.n_events]
+                    shp = (n_events,)
+                    data_dict[dset_name] = np.zeros(shp, dtype=dtype)
+                    data_dict[dset_name] = \
+                        self._f[dset_name][start_idx:stop_idx]
                 else:
                     raise ValueError('Data shape has a bad length!')
 
@@ -200,7 +242,5 @@ class MnvDataReaderVertexSTHDF5:
             extract_data('segments', data_dict, None, 'uint8')
         if 'zs' in data_dict.keys():
             extract_data('zs', data_dict, None)
-
-        self._f.close()
         
         return data_dict
