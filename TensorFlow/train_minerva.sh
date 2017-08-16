@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DAT=`date +%s`
-MODEL_CODE="20170812"
+MODEL_CODE="20170815"
 
 # targets
 NCLASS=11
@@ -9,8 +9,8 @@ TARGETS="--n_classes $NCLASS --targets_label segments"
 
 VALIDATION="--nodo_validaton"
 VALIDATION="--do_validaton"
-TRAINING="--nodo_training"
 TRAINING="--do_training"
+TRAINING="--nodo_training"
 
 TESTING="--nodo_testing"
 TESTING="--do_testing"
