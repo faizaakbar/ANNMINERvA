@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DAT=`date +%s`
-MODEL_CODE="20170817"
+MODEL_CODE="20170818"
 
 # targets
 NCLASS=11
@@ -11,8 +11,8 @@ TRAINING="--nodo_training"
 TRAINING="--do_training"
 VALIDATION="--do_validaton"
 
-TESTING="--do_testing"
 TESTING="--nodo_testing"
+TESTING="--do_testing"
 
 BASEP="/Users/gnperdue/Documents/MINERvA/AI/minerva_tf"
 
