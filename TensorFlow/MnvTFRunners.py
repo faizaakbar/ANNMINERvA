@@ -112,8 +112,8 @@ class MnvTFRunnerCategorical:
         with tf.Graph().as_default() as g:
 
             # n_batches: control this with num_epochs
-            n_batches = 5 if short else int(1e9)
-            save_every_n_batch = 1 if short else self.save_freq
+            n_batches = 10 if short else int(1e9)
+            save_every_n_batch = 5 if short else self.save_freq
             LOGGER.info(' Processing {} batches, saving every {}...'.format(
                 n_batches, save_every_n_batch
             ))
@@ -150,7 +150,7 @@ class MnvTFRunnerCategorical:
                 V_valid = batch_dict_valid[self.features['v']]
                 targets_valid = batch_dict_valid[self.targets_label]
                 features_valid = [X_valid, U_valid, V_valid]
-                eventids_valid = batch_dict_train['eventids']
+                eventids_valid = batch_dict_valid['eventids']
 
                 def get_features_train():
                     return features_train
@@ -186,20 +186,20 @@ class MnvTFRunnerCategorical:
 
                 features = tf.cond(
                     pred,
-                    get_features_train,
                     get_features_valid,
+                    get_features_train,
                     name='features_selection'
                 )
                 targets = tf.cond(
                     pred,
-                    get_targets_train,
                     get_targets_valid,
+                    get_targets_train,
                     name='targets_selection'
                 )
                 eventids = tf.cond(
                     pred,
-                    get_eventids_train,
                     get_eventids_valid,
+                    get_eventids_train,
                     name='eventids_selection'
                 )
 
