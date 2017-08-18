@@ -132,7 +132,7 @@ class TriColSTEpsilon:
         )
         self.weights_biases = {}
 
-        with tf.name_scope('input_images'):
+        with tf.variable_scope('input_images'):
             self.X_img = tf.cast(features_list[0], tf.float32)
             self.U_img = tf.cast(features_list[1], tf.float32)
             self.V_img = tf.cast(features_list[2], tf.float32)
@@ -306,11 +306,11 @@ class TriColSTEpsilon:
             )
 
     def _set_targets(self, targets):
-        with tf.name_scope('targets'):
+        with tf.variable_scope('targets'):
             self.targets = tf.cast(targets, tf.float32)
 
     def _define_loss(self):
-        with tf.name_scope('loss'):
+        with tf.variable_scope('loss'):
             regularization_losses = tf.get_collection(
                 tf.GraphKeys.REGULARIZATION_LOSSES
             )
@@ -325,40 +325,20 @@ class TriColSTEpsilon:
     def _define_train_op(self, learning_rate):
         LOGGER.info('Building train op with learning_rate = %f' %
                     learning_rate)
-        with tf.name_scope('training'):
+        with tf.variable_scope('training'):
             self.optimizer = tf.train.AdamOptimizer(
                 learning_rate=learning_rate
             ).minimize(self.loss, global_step=self.global_step)
 
     def _create_summaries(self):
-        with tf.name_scope('summaries/train'):
+        with tf.variable_scope('summaries/train'):
             tf.summary.scalar('loss', self.loss)
             tf.summary.histogram('histogram_loss', self.loss)
             self.train_summary_op = tf.summary.merge_all()
-        with tf.name_scope('summaries/valid'):
+        with tf.variable_scope('summaries/valid'):
             tf.summary.scalar('loss', self.loss)
             tf.summary.histogram('histogram_loss', self.loss)
             self.valid_summary_op = tf.summary.merge_all()
-
-    def reassign_features(self, features_list):
-        """
-        features_list[0] == X, [1] == U, [2] == V;
-
-        use `reassign_features` to, for example, swap inputs for the
-        current network from the training set to the validation set.
-        """
-        with tf.name_scope('input_images'):
-            self.X_img = tf.cast(features_list[0], tf.float32)
-            self.U_img = tf.cast(features_list[1], tf.float32)
-            self.V_img = tf.cast(features_list[2], tf.float32)
-
-    def reassign_targets(self, targets):
-        """
-        use `reassign_targets` to, for example, swap targets for the
-        current network from the training set to the validation set.
-        """
-        with tf.name_scope('targets'):
-            self.targets = tf.cast(targets, tf.float32)
 
     def prepare_for_inference(self, features, kbd):
         """ kbd == kernels_biases_dict (convpooldict) """

@@ -8,6 +8,7 @@ import time
 import logging
 
 import tensorflow as tf
+import numpy as np
 from six.moves import range
 
 from MnvDataReaders import MnvDataReaderVertexST
@@ -131,8 +132,8 @@ class MnvTFRunnerCategorical:
                 X_train = batch_dict_train[self.features['x']]
                 U_train = batch_dict_train[self.features['u']]
                 V_train = batch_dict_train[self.features['v']]
-                targ_train = batch_dict_train[self.targets_label]
-                f_train = [X_train, U_train, V_train]
+                targets_train = batch_dict_train[self.targets_label]
+                features_train = [X_train, U_train, V_train]
 
                 valid_reader = MnvDataReaderVertexST(
                     filenames_list=self.valid_file_list,
@@ -140,17 +141,54 @@ class MnvTFRunnerCategorical:
                     name='valid',
                     compression=self.file_compression
                 )
-                batch_dict_valid = valid_reader.batch_generator(num_epochs=1)
+                batch_dict_valid = valid_reader.batch_generator(
+                    num_epochs=1000000
+                )
                 X_valid = batch_dict_valid[self.features['x']]
                 U_valid = batch_dict_valid[self.features['u']]
                 V_valid = batch_dict_valid[self.features['v']]
-                targ_valid = batch_dict_valid[self.targets_label]
-                f_valid = [X_valid, U_valid, V_valid]
+                targets_valid = batch_dict_valid[self.targets_label]
+                features_valid = [X_valid, U_valid, V_valid]
+
+                def get_features_train():
+                    return features_train
+
+                def get_features_valid():
+                    return features_valid
+
+                def get_targets_train():
+                    return targets_train
+
+                def get_targets_valid():
+                    return targets_valid
+
+                cntr = tf.placeholder(tf.int32, shape=(), name='batch_counter')
+                pfrq = tf.constant(
+                    save_every_n_batch,
+                    dtype=tf.int32,
+                    name='const_val_mod_nmbr'
+                )
+                tfzo = tf.constant(0, dtype=tf.int32, name='const_zero')
+                pred = tf.equal(
+                    tf.mod(cntr, pfrq), tfzo, name='train_valid_pred'
+                )
+                features = tf.cond(
+                    pred,
+                    get_features_train,
+                    get_features_valid,
+                    name='features_selection'
+                )
+                targets = tf.cond(
+                    pred,
+                    get_targets_train,
+                    get_targets_valid,
+                    name='targets_selection'
+                )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
-                self.model.prepare_for_inference(f_train, d)
+                self.model.prepare_for_inference(features, d)
                 self.model.prepare_for_training(
-                    targ_train, learning_rate=self.learning_rate
+                    targets, learning_rate=self.learning_rate
                 )
                 LOGGER.info('Preparing to train model with %d parameters' %
                             mnv_utils.get_number_of_trainable_parameters())
@@ -178,51 +216,66 @@ class MnvTFRunnerCategorical:
                 # NOTE: specifically catch `tf.errors.OutOfRangeError` or we
                 # won't handle the exception correctly.
                 try:
-                    # TODO - also grab eventids (for a while) to test and
-                    # be sure we're seeing different events appropriately
                     for b_num in range(
                             initial_batch, initial_batch + n_batches
                     ):
                         LOGGER.debug('  processing batch {}'.format(b_num))
-                        _, loss_batch, logits_batch, summary = sess.run(
-                            [self.model.optimizer,
-                             self.model.loss,
-                             self.model.logits,
-                             self.model.train_summary_op],
-                            feed_dict={
-                                self.model.dropout_keep_prob:
-                                self.dropout_keep_prob
-                            }
-                        )
-                        writer.add_summary(summary, global_step=b_num)
                         if (b_num + 1) % save_every_n_batch == 0:
+                            # validation
+                            loss, logits, targs, summary = sess.run(
+                                [self.model.loss,
+                                 self.model.logits,
+                                 targets,
+                                 self.model.valid_summary_op],
+                                feed_dict={
+                                    cntr: (b_num + 1),
+                                    self.model.dropout_keep_prob: 1.0
+                                }
+                            )
+                            writer.add_summary(summary, global_step=b_num)
+                            saver.save(sess, ckpt_dir, b_num)
+                            preds = tf.nn.softmax(logits)
+                            correct_preds = tf.equal(
+                                tf.argmax(preds, 1), tf.argmax(targs, 1)
+                            )
+                            LOGGER.info('   preds   = \n{}'.format(
+                                tf.argmax(preds, 1).eval()
+                            ))
+                            LOGGER.info('   Y_batch = \n{}'.format(
+                                np.argmax(targs, 1)
+                            ))
+                            accuracy = tf.reduce_sum(
+                                tf.cast(correct_preds, tf.float32)
+                            )
+                            LOGGER.info('    accuracy = {}'.format(
+                                accuracy.eval() / targs.shape[0]
+                            ))
                             LOGGER.info(
-                                '  Loss at batch+1 {}: {:5.1f}'.format(
-                                    b_num + 1, loss_batch
+                                '  Valid loss at batch {}: {:5.1f}'.format(
+                                    b_num, loss
                                 )
                             )
                             LOGGER.info('   Elapsed time = {}'.format(
                                 time.time() - start_time
                             ))
-                            saver.save(sess, ckpt_dir, b_num)
-                            LOGGER.info('     saved at iter %d' % b_num)
-                            if do_validation:
-                                # try validation
-                                self.model.reassign_features(f_valid)
-                                self.model.reassign_targets(targ_valid)
-                                loss_valid, logits_valid, summary = sess.run(
-                                    [self.model.loss,
-                                     self.model.logits,
-                                     self.model.valid_summary_op],
-                                    feed_dict={
-                                        self.model.dropout_keep_prob: 1.0
-                                    }
+                        else:
+                            # regular training
+                            _, loss, summary = sess.run(
+                                [self.model.optimizer,
+                                 self.model.loss,
+                                 self.model.train_summary_op],
+                                feed_dict={
+                                    cntr: (b_num + 1),
+                                    self.model.dropout_keep_prob:
+                                    self.dropout_keep_prob
+                                }
+                            )
+                            writer.add_summary(summary, global_step=b_num)
+                            LOGGER.info(
+                                '  Train loss at batch {}: {:5.1f}'.format(
+                                    b_num, loss
                                 )
-                                writer.add_summary(summary, global_step=b_num)
-                                LOGGER.info('   Valid loss = %f' % loss_valid)
-                                # reset for training
-                                self.model.reassign_features(f_train)
-                                self.model.reassign_targets(targ_train)
+                            )                            
                 except tf.errors.OutOfRangeError:
                     LOGGER.info('Training stopped - queue is empty.')
                     LOGGER.info(
