@@ -134,6 +134,7 @@ class MnvTFRunnerCategorical:
                 V_train = batch_dict_train[self.features['v']]
                 targets_train = batch_dict_train[self.targets_label]
                 features_train = [X_train, U_train, V_train]
+                eventids_train = batch_dict_train['eventids']
 
                 valid_reader = MnvDataReaderVertexST(
                     filenames_list=self.valid_file_list,
@@ -149,6 +150,7 @@ class MnvTFRunnerCategorical:
                 V_valid = batch_dict_valid[self.features['v']]
                 targets_valid = batch_dict_valid[self.targets_label]
                 features_valid = [X_valid, U_valid, V_valid]
+                eventids_valid = batch_dict_train['eventids']
 
                 def get_features_train():
                     return features_train
@@ -162,16 +164,26 @@ class MnvTFRunnerCategorical:
                 def get_targets_valid():
                     return targets_valid
 
-                cntr = tf.placeholder(tf.int32, shape=(), name='batch_counter')
-                pfrq = tf.constant(
-                    save_every_n_batch,
-                    dtype=tf.int32,
-                    name='const_val_mod_nmbr'
-                )
-                tfzo = tf.constant(0, dtype=tf.int32, name='const_zero')
-                pred = tf.equal(
-                    tf.mod(cntr, pfrq), tfzo, name='train_valid_pred'
-                )
+                def get_eventids_train():
+                    return eventids_train
+
+                def get_eventids_valid():
+                    return eventids_valid
+
+                with tf.variable_scope('pipeline_control'):
+                    cntr = tf.placeholder(
+                        tf.int32, shape=(), name='batch_counter'
+                    )
+                    pfrq = tf.constant(
+                        save_every_n_batch,
+                        dtype=tf.int32,
+                        name='const_val_mod_nmbr'
+                    )
+                    tfzo = tf.constant(0, dtype=tf.int32, name='const_zero')
+                    pred = tf.equal(
+                        tf.mod(cntr, pfrq), tfzo, name='train_valid_pred'
+                    )
+
                 features = tf.cond(
                     pred,
                     get_features_train,
@@ -183,6 +195,12 @@ class MnvTFRunnerCategorical:
                     get_targets_train,
                     get_targets_valid,
                     name='targets_selection'
+                )
+                eventids = tf.cond(
+                    pred,
+                    get_eventids_train,
+                    get_eventids_valid,
+                    name='eventids_selection'
                 )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
@@ -222,18 +240,19 @@ class MnvTFRunnerCategorical:
                         LOGGER.debug('  processing batch {}'.format(b_num))
                         if (b_num + 1) % save_every_n_batch == 0:
                             # validation
-                            loss, logits, targs, summary = sess.run(
+                            loss, logits, targs, summary, evtids = sess.run(
                                 [self.model.loss,
                                  self.model.logits,
-                                 targets,
-                                 self.model.valid_summary_op],
+                                 self.model.targets,
+                                 self.model.valid_summary_op,
+                                 eventids],
                                 feed_dict={
                                     cntr: (b_num + 1),
                                     self.model.dropout_keep_prob: 1.0
                                 }
                             )
-                            writer.add_summary(summary, global_step=b_num)
                             saver.save(sess, ckpt_dir, b_num)
+                            writer.add_summary(summary, global_step=b_num)
                             preds = tf.nn.softmax(logits)
                             correct_preds = tf.equal(
                                 tf.argmax(preds, 1), tf.argmax(targs, 1)
@@ -243,6 +262,9 @@ class MnvTFRunnerCategorical:
                             ))
                             LOGGER.info('   Y_batch = \n{}'.format(
                                 np.argmax(targs, 1)
+                            ))
+                            LOGGER.info('   eventids[:10] = \n{}'.format(
+                                evtids[:10]
                             ))
                             accuracy = tf.reduce_sum(
                                 tf.cast(correct_preds, tf.float32)
