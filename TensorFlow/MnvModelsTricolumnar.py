@@ -331,14 +331,28 @@ class TriColSTEpsilon:
             ).minimize(self.loss, global_step=self.global_step)
 
     def _create_summaries(self):
+        # assume we built the readers before the model...
+        base_summaries = tf.get_collection(tf.GraphKeys.SUMMARIES)
         with tf.variable_scope('summaries/train'):
-            tf.summary.scalar('loss', self.loss)
-            tf.summary.histogram('histogram_loss', self.loss)
-            self.train_summary_op = tf.summary.merge_all()
+            train_loss = tf.summary.scalar('loss', self.loss)
+            train_histo_loss = tf.summary.histogram(
+                'histogram_loss', self.loss
+            )
+            train_summaries = [train_loss, train_histo_loss]
+            train_summaries.extend(base_summaries)
+            self.train_summary_op = tf.summary.merge(
+                train_summaries
+            )
         with tf.variable_scope('summaries/valid'):
-            tf.summary.scalar('loss', self.loss)
-            tf.summary.histogram('histogram_loss', self.loss)
-            self.valid_summary_op = tf.summary.merge_all()
+            valid_loss = tf.summary.scalar('loss', self.loss)
+            valid_histo_loss = tf.summary.histogram(
+                'histogram_loss', self.loss
+            )
+            valid_summaries = [valid_loss, valid_histo_loss]
+            valid_summaries.extend(base_summaries)
+            self.valid_summary_op = tf.summary.merge(
+                valid_summaries
+            )
 
     def prepare_for_inference(self, features, kbd):
         """ kbd == kernels_biases_dict (convpooldict) """
