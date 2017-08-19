@@ -171,33 +171,24 @@ class MnvTFRunnerCategorical:
                     return eventids_valid
 
                 with tf.variable_scope('pipeline_control'):
-                    cntr = tf.placeholder(
-                        tf.int32, shape=(), name='batch_counter'
-                    )
-                    pfrq = tf.constant(
-                        save_every_n_batch,
-                        dtype=tf.int32,
-                        name='const_val_mod_nmbr'
-                    )
-                    tfzo = tf.constant(0, dtype=tf.int32, name='const_zero')
-                    pred = tf.equal(
-                        tf.mod(cntr, pfrq), tfzo, name='train_valid_pred'
+                    use_valid = tf.placeholder(
+                        tf.bool, shape=(), name='train_val_batch_logic'
                     )
 
                 features = tf.cond(
-                    pred,
+                    use_valid,
                     get_features_valid,
                     get_features_train,
                     name='features_selection'
                 )
                 targets = tf.cond(
-                    pred,
+                    use_valid,
                     get_targets_valid,
                     get_targets_train,
                     name='targets_selection'
                 )
                 eventids = tf.cond(
-                    pred,
+                    use_valid,
                     get_eventids_valid,
                     get_eventids_train,
                     name='eventids_selection'
@@ -238,21 +229,37 @@ class MnvTFRunnerCategorical:
                             initial_batch, initial_batch + n_batches
                     ):
                         LOGGER.debug('  processing batch {}'.format(b_num))
+                        _, loss, summary_t = sess.run(
+                            [self.model.optimizer,
+                             self.model.loss,
+                             self.model.train_summary_op],
+                            feed_dict={
+                                use_valid: False,
+                                self.model.dropout_keep_prob:
+                                self.dropout_keep_prob
+                            }
+                        )
+                        writer.add_summary(summary_t, global_step=b_num)
+                        LOGGER.info(
+                            '  Train loss at batch {}: {:5.1f}'.format(
+                                b_num, loss
+                            )
+                        )                            
                         if (b_num + 1) % save_every_n_batch == 0:
                             # validation
-                            loss, logits, targs, summary, evtids = sess.run(
+                            loss, logits, targs, summary_v, evtids = sess.run(
                                 [self.model.loss,
                                  self.model.logits,
                                  self.model.targets,
                                  self.model.valid_summary_op,
                                  eventids],
                                 feed_dict={
-                                    cntr: (b_num + 1),
+                                    use_valid: True,
                                     self.model.dropout_keep_prob: 1.0
                                 }
                             )
                             saver.save(sess, ckpt_dir, b_num)
-                            writer.add_summary(summary, global_step=b_num)
+                            writer.add_summary(summary_v, global_step=b_num)
                             preds = tf.nn.softmax(logits)
                             correct_preds = tf.equal(
                                 tf.argmax(preds, 1), tf.argmax(targs, 1)
@@ -280,24 +287,6 @@ class MnvTFRunnerCategorical:
                             LOGGER.info('   Elapsed time = {}'.format(
                                 time.time() - start_time
                             ))
-                        else:
-                            # regular training
-                            _, loss, summary = sess.run(
-                                [self.model.optimizer,
-                                 self.model.loss,
-                                 self.model.train_summary_op],
-                                feed_dict={
-                                    cntr: (b_num + 1),
-                                    self.model.dropout_keep_prob:
-                                    self.dropout_keep_prob
-                                }
-                            )
-                            writer.add_summary(summary, global_step=b_num)
-                            LOGGER.info(
-                                '  Train loss at batch {}: {:5.1f}'.format(
-                                    b_num, loss
-                                )
-                            )                            
                 except tf.errors.OutOfRangeError:
                     LOGGER.info('Training stopped - queue is empty.')
                     LOGGER.info(
