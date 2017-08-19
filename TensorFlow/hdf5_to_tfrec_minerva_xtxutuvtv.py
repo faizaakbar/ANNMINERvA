@@ -225,7 +225,7 @@ def batch_generator(tfrecord_filelist, compressed, num_epochs=1):
     capacity = 10 * 100
     es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b = tf.train.batch(
         [es, x, u, v, ps, sg, zs],
-        batch_size=100,
+        batch_size=64,
         capacity=capacity,
         enqueue_many=True,
         allow_smaller_final_batch=True,
@@ -237,6 +237,7 @@ def batch_generator(tfrecord_filelist, compressed, num_epochs=1):
 
 
 def test_read_tfrecord(tfrecord_file, compressed):
+    tf.reset_default_graph()
     LOGGER.info('opening {} for reading'.format(tfrecord_file))
     batch_dict = batch_generator([tfrecord_file], compressed)
     with tf.Session() as sess:
@@ -257,6 +258,9 @@ def test_read_tfrecord(tfrecord_file, compressed):
                 ])
                 LOGGER.info('batch = {}'.format(batch_num))
                 LOGGER.info('evtids shape = {}'.format(evtids.shape))
+                LOGGER.info('  evtids = {}'.format(
+                    evtids
+                ))
                 LOGGER.info('hitimes x shape = {}'.format(hitsx.shape))
                 LOGGER.info('hitimes u shape = {}'.format(hitsu.shape))
                 LOGGER.info('hitimes v shape = {}'.format(hitsv.shape))
