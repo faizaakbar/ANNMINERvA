@@ -88,7 +88,7 @@ def main(argv=None):
     # set up image parameters
     img_params_dict = mnv_utils.make_default_img_params_dict(MNV_TYPE)
 
-    short = True
+    short = False
     if short:
         run_params_dict['SAVE_EVRY_N_BATCHES'] = 1
         train_params_dict['BATCH_SIZE'] = 64
