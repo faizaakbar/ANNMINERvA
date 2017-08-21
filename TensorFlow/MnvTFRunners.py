@@ -244,15 +244,16 @@ class MnvTFRunnerCategorical:
                             '  Train loss at batch {}: {:5.1f}'.format(
                                 b_num, loss
                             )
-                        )                            
+                        )
                         if (b_num + 1) % save_every_n_batch == 0:
                             # validation
-                            loss, logits, targs, summary_v, evtids = sess.run(
+                            loss, logits, targs, summary_v, evtids, acc = sess.run(
                                 [self.model.loss,
                                  self.model.logits,
                                  self.model.targets,
                                  self.model.valid_summary_op,
-                                 eventids],
+                                 eventids,
+                                 self.model.accuracy],
                                 feed_dict={
                                     use_valid: True,
                                     self.model.dropout_keep_prob: 1.0
@@ -273,11 +274,8 @@ class MnvTFRunnerCategorical:
                             LOGGER.info('   eventids[:10] = \n{}'.format(
                                 evtids[:10]
                             ))
-                            accuracy = tf.reduce_sum(
-                                tf.cast(correct_preds, tf.float32)
-                            )
                             LOGGER.info('    accuracy = {}'.format(
-                                accuracy.eval() / targs.shape[0]
+                                acc
                             ))
                             LOGGER.info(
                                 '  Valid loss at batch {}: {:5.1f}'.format(

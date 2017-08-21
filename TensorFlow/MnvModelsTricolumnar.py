@@ -96,7 +96,7 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
     convpooldict['nfeat_concat_dense'] = 98
 
     convpooldict['regularizer'] = tf.contrib.layers.l2_regularizer(
-        scale=0.0001
+        scale=0.0000
     )
 
     return convpooldict
@@ -321,6 +321,16 @@ class TriColSTEpsilon:
                 axis=0,
                 name='loss'
             ) + sum(regularization_losses)
+            preds = tf.nn.softmax(self.logits, name='preds')
+            correct_preds = tf.equal(
+                tf.argmax(preds, 1), tf.argmax(self.targets, 1),
+                name='correct_preds'
+            )
+            self.accuracy = tf.divide(
+                tf.reduce_sum(tf.cast(correct_preds, tf.float32)),
+                tf.cast(tf.shape(self.targets)[0], tf.float32),
+                name='accuracy'
+            )
 
     def _define_train_op(self, learning_rate):
         LOGGER.info('Building train op with learning_rate = %f' %
@@ -348,7 +358,14 @@ class TriColSTEpsilon:
             valid_histo_loss = tf.summary.histogram(
                 'histogram_loss', self.loss
             )
-            valid_summaries = [valid_loss, valid_histo_loss]
+            valid_accuracy = tf.summary.scalar('accuracy', self.accuracy)
+            valid_histo_accuracy = tf.summary.histogram(
+                'histogram_accuracy', self.accuracy
+            )
+            valid_summaries = [
+                valid_loss, valid_histo_loss,
+                valid_accuracy, valid_histo_accuracy
+            ]
             valid_summaries.extend(base_summaries)
             self.valid_summary_op = tf.summary.merge(
                 valid_summaries
