@@ -2,6 +2,8 @@
 MINERvA Tri-columnar "spacetime" (energy+time tensors) epsilon network
 """
 import tensorflow as tf
+from tensorflow.contrib.layers import xavier_initializer as xavier_init
+
 import logging
 
 from six.moves import range
@@ -138,16 +140,14 @@ class TriColSTEpsilon:
             self.V_img = tf.cast(features_list[2], tf.float32)
 
         def make_kernels(name, shp_list):
-            init = tf.contrib.layers.xavier_initializer(uniform=False)
             return tf.get_variable(
-                name, shp_list, initializer=init,
+                name, shp_list, initializer=xavier_init(uniform=False),
                 regularizer=kbd['regularizer']
             )
 
         def make_biases(name, shp_list):
-            init = tf.contrib.layers.xavier_initializer(uniform=False)
             return tf.get_variable(
-                name, shp_list, initializer=init,
+                name, shp_list, initializer=xavier_init(uniform=False),
                 regularizer=kbd['regularizer']
             )
 
@@ -223,13 +223,13 @@ class TriColSTEpsilon:
                 self.weights_biases[twr]['dense_weights'] = tf.get_variable(
                     'dense_weights',
                     [nfeat_tower, kbd['nfeat_dense_tower']],
-                    initializer=tf.random_normal_initializer(),
+                    initializer=xavier_init(uniform=False),
                     regularizer=kbd['regularizer']
                 )
                 self.weights_biases[twr]['dense_biases'] = tf.get_variable(
                     'dense_biases',
                     [kbd['nfeat_dense_tower']],
-                    initializer=tf.random_normal_initializer(),
+                    initializer=xavier_init(uniform=False),
                     regularizer=kbd['regularizer']
                 )
                 # apply relu on matmul of pool2/out_lyr and w + b
@@ -268,13 +268,13 @@ class TriColSTEpsilon:
             self.weights_fc = tf.get_variable(
                 'weights',
                 [nfeatures_joined, kbd['nfeat_concat_dense']],
-                initializer=tf.random_normal_initializer(),
+                initializer=xavier_init(uniform=False),
                 regularizer=kbd['regularizer']
             )
             self.biases_fc = tf.get_variable(
                 'biases',
                 [kbd['nfeat_concat_dense']],
-                initializer=tf.random_normal_initializer(),
+                initializer=xavier_init(uniform=False),
                 regularizer=kbd['regularizer']
             )
             # apply relu on matmul of joined and w + b
@@ -294,13 +294,13 @@ class TriColSTEpsilon:
             self.weights_softmax = tf.get_variable(
                 'weights',
                 [kbd['nfeat_concat_dense'], self.n_classes],
-                initializer=tf.random_normal_initializer(),
+                initializer=xavier_init(uniform=False),
                 regularizer=kbd['regularizer']
             )
             self.biases_softmax = tf.get_variable(
                 'biases',
                 [self.n_classes],
-                initializer=tf.random_normal_initializer(),
+                initializer=xavier_init(uniform=False),
                 regularizer=kbd['regularizer']
             )
             self.logits = tf.nn.bias_add(
