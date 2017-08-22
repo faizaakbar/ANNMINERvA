@@ -96,7 +96,7 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
     convpooldict['nfeat_concat_dense'] = 98
 
     convpooldict['regularizer'] = tf.contrib.layers.l2_regularizer(
-        scale=0.0000
+        scale=0.0001
     )
 
     return convpooldict
@@ -137,15 +137,15 @@ class TriColSTEpsilon:
             self.U_img = tf.cast(features_list[1], tf.float32)
             self.V_img = tf.cast(features_list[2], tf.float32)
 
-        def make_kernels(
-                name, shp_list, init=tf.truncated_normal_initializer()
-        ):
+        def make_kernels(name, shp_list):
+            init = tf.contrib.layers.xavier_initializer(uniform=False)
             return tf.get_variable(
                 name, shp_list, initializer=init,
                 regularizer=kbd['regularizer']
             )
 
-        def make_biases(name, shp_list, init=tf.random_normal_initializer()):
+        def make_biases(name, shp_list):
+            init = tf.contrib.layers.xavier_initializer(uniform=False)
             return tf.get_variable(
                 name, shp_list, initializer=init,
                 regularizer=kbd['regularizer']
@@ -279,7 +279,11 @@ class TriColSTEpsilon:
             )
             # apply relu on matmul of joined and w + b
             self.fc = tf.nn.relu(
-                tf.matmul(tower_joined, self.weights_fc) + self.biases_fc
+                tf.nn.bias_add(
+                    tf.matmul(tower_joined, self.weights_fc),
+                    self.biases_fc,
+                    data_format=self.data_format
+                )
             )
             # apply dropout
             self.fc = tf.nn.dropout(
@@ -299,9 +303,10 @@ class TriColSTEpsilon:
                 initializer=tf.random_normal_initializer(),
                 regularizer=kbd['regularizer']
             )
-            self.logits = tf.add(
+            self.logits = tf.nn.bias_add(
                 tf.matmul(self.fc, self.weights_softmax),
                 self.biases_softmax,
+                data_format=self.data_format,
                 name='logits'
             )
 
