@@ -344,6 +344,10 @@ class TriColSTEpsilon:
             self.optimizer = tf.train.AdamOptimizer(
                 learning_rate=learning_rate
             ).minimize(self.loss, global_step=self.global_step)
+            # self.optimizer = tf.train.MomentumOptimizer(
+            #     learning_rate=learning_rate,
+            #     momentum=0.9, use_nesterov=True
+            # ).minimize(self.loss, global_step=self.global_step)
 
     def _create_summaries(self):
         # assume we built the readers before the model...

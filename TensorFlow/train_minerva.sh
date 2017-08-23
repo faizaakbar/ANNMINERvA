@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DAT=`date +%s`
-MODEL_CODE="20170820"
+MODEL_CODE="20170822"
 
 # targets
 NCLASS=11
