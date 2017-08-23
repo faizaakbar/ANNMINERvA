@@ -92,6 +92,16 @@ class MnvTFRunnerCategorical:
                 self.pred_store_name
             )
 
+    def _prep_targets_and_features_minerva(self, generator, num_epochs):
+        batch_dict = generator(num_epochs=num_epochs)
+        X = batch_dict[self.features['x']]
+        U = batch_dict[self.features['u']]
+        V = batch_dict[self.features['v']]
+        targets = batch_dict[self.targets_label]
+        features = [X, U, V]
+        eventids = batch_dict['eventids']
+        return targets, features, eventids
+
     def run_training(
             self, do_validation=False, short=False
     ):
@@ -126,15 +136,20 @@ class MnvTFRunnerCategorical:
                     name='train',
                     compression=self.file_compression
                 )
-                batch_dict_train = train_reader.shuffle_batch_generator(
-                    num_epochs=self.num_epochs
-                )
-                X_train = batch_dict_train[self.features['x']]
-                U_train = batch_dict_train[self.features['u']]
-                V_train = batch_dict_train[self.features['v']]
-                targets_train = batch_dict_train[self.targets_label]
-                features_train = [X_train, U_train, V_train]
-                eventids_train = batch_dict_train['eventids']
+                # batch_dict_train = train_reader.shuffle_batch_generator(
+                #     num_epochs=self.num_epochs
+                # )
+                # X_train = batch_dict_train[self.features['x']]
+                # U_train = batch_dict_train[self.features['u']]
+                # V_train = batch_dict_train[self.features['v']]
+                # targets_train = batch_dict_train[self.targets_label]
+                # features_train = [X_train, U_train, V_train]
+                # eventids_train = batch_dict_train['eventids']
+                targets_train, features_train, eventids_train = \
+                    self._prep_targets_and_features_minerva(
+                        train_reader.shuffle_batch_generator,
+                        self.num_epochs
+                    )
 
                 valid_reader = MnvDataReaderVertexST(
                     filenames_list=self.valid_file_list,
@@ -142,15 +157,20 @@ class MnvTFRunnerCategorical:
                     name='valid',
                     compression=self.file_compression
                 )
-                batch_dict_valid = valid_reader.batch_generator(
-                    num_epochs=1000000
-                )
-                X_valid = batch_dict_valid[self.features['x']]
-                U_valid = batch_dict_valid[self.features['u']]
-                V_valid = batch_dict_valid[self.features['v']]
-                targets_valid = batch_dict_valid[self.targets_label]
-                features_valid = [X_valid, U_valid, V_valid]
-                eventids_valid = batch_dict_valid['eventids']
+                # batch_dict_valid = valid_reader.batch_generator(
+                #     num_epochs=1000000
+                # )
+                # X_valid = batch_dict_valid[self.features['x']]
+                # U_valid = batch_dict_valid[self.features['u']]
+                # V_valid = batch_dict_valid[self.features['v']]
+                # targets_valid = batch_dict_valid[self.targets_label]
+                # features_valid = [X_valid, U_valid, V_valid]
+                # eventids_valid = batch_dict_valid['eventids']
+                targets_valid, features_valid, eventids_valid = \
+                    self._prep_targets_and_features_minerva(
+                        valid_reader.batch_generator,
+                        1000000
+                    )
 
                 def get_features_train():
                     return features_train
@@ -262,9 +282,6 @@ class MnvTFRunnerCategorical:
                             saver.save(sess, ckpt_dir, b_num)
                             writer.add_summary(summary_v, global_step=b_num)
                             preds = tf.nn.softmax(logits)
-                            correct_preds = tf.equal(
-                                tf.argmax(preds, 1), tf.argmax(targs, 1)
-                            )
                             LOGGER.info('   preds   = \n{}'.format(
                                 tf.argmax(preds, 1).eval()
                             ))
@@ -325,16 +342,21 @@ class MnvTFRunnerCategorical:
                     name='test',
                     compression=self.file_compression
                 )
-                batch_dict = data_reader.batch_generator()
-                X = batch_dict[self.features['x']]
-                U = batch_dict[self.features['u']]
-                V = batch_dict[self.features['v']]
-                targ = batch_dict[self.targets_label]
-                f = [X, U, V]
+                # batch_dict = data_reader.batch_generator()
+                # X = batch_dict[self.features['x']]
+                # U = batch_dict[self.features['u']]
+                # V = batch_dict[self.features['v']]
+                # targ = batch_dict[self.targets_label]
+                # f = [X, U, V]
+                targets, features, _ = \
+                    self._prep_targets_and_features_minerva(
+                        data_reader.batch_generator,
+                        self.num_epochs
+                    )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
-                self.model.prepare_for_inference(f, d)
-                self.model.prepare_for_loss_computation(targ)
+                self.model.prepare_for_inference(features, d)
+                self.model.prepare_for_loss_computation(targets)
                 LOGGER.info('Preparing to test model with %d parameters' %
                             mnv_utils.get_number_of_trainable_parameters())
 
@@ -364,7 +386,7 @@ class MnvTFRunnerCategorical:
                 try:
                     for i in range(n_batches):
                         loss_batch, logits_batch, Y_batch = sess.run(
-                            [self.model.loss, self.model.logits, targ],
+                            [self.model.loss, self.model.logits, targets],
                             feed_dict={
                                 self.model.dropout_keep_prob: 1.0
                             }
@@ -444,15 +466,20 @@ class MnvTFRunnerCategorical:
                     name='prediction',
                     compression=self.file_compression
                 )
-                batch_dict = data_reader.batch_generator()
-                X = batch_dict[self.features['x']]
-                U = batch_dict[self.features['u']]
-                V = batch_dict[self.features['v']]
-                evtids = batch_dict['eventids']
-                f = [X, U, V]
+                # batch_dict = data_reader.batch_generator()
+                # X = batch_dict[self.features['x']]
+                # U = batch_dict[self.features['u']]
+                # V = batch_dict[self.features['v']]
+                # evtids = batch_dict['eventids']
+                # f = [X, U, V]
+                targets, features, eventids = \
+                    self._prep_targets_and_features_minerva(
+                        data_reader.batch_generator,
+                        self.num_epochs
+                    )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
-                self.model.prepare_for_inference(f, d)
+                self.model.prepare_for_inference(features, d)
                 LOGGER.info('Predictions with model with %d parameters' %
                             mnv_utils.get_number_of_trainable_parameters())
 
@@ -483,8 +510,8 @@ class MnvTFRunnerCategorical:
                         printlog = True if (i + 1) % log_freq == 0 else False
                         if printlog:
                             LOGGER.debug('batch {}'.format(i))
-                        logits_batch, eventids = sess.run(
-                            [self.model.logits, evtids],
+                        logits_batch, evtids = sess.run(
+                            [self.model.logits, eventids],
                             feed_dict={
                                 self.model.dropout_keep_prob: 1.0
                             }
@@ -499,7 +526,7 @@ class MnvTFRunnerCategorical:
                             ))
                             LOGGER.info("  batch size = %d" % batch_sz)
                             LOGGER.info("  tot processed = %d" % n_processed)
-                        for i, evtid in enumerate(eventids):
+                        for i, evtid in enumerate(evtids):
                             if printlog:
                                 LOGGER.debug(' {} = {}, pred = {}'.format(
                                     i, evtid, preds[i]
