@@ -73,7 +73,7 @@ def main(argv=None):
     run_params_dict['TEST_FILE_LIST'] = test_list
     run_params_dict['MODEL_DIR'] = FLAGS.model_dir
     run_params_dict['PREDICTION_STORE_NAME'] = FLAGS.pred_store_name
-    run_params_dict['BE_VERBOSE'] = True
+    run_params_dict['BE_VERBOSE'] = False
 
     # set up features parameters
     feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)
