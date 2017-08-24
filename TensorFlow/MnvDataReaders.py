@@ -107,7 +107,7 @@ class MnvDataReaderVertexST:
                 )
             with tf.variable_scope(self.name + '_segments'):
                 segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
-                segs = tf.cast(segs, tf.int32)
+                # segs = tf.cast(segs, tf.int32)
                 segs = tf.one_hot(
                     indices=segs, depth=11, on_value=1, off_value=0
                 )
