@@ -345,7 +345,7 @@ def make_plots(data_dict, max_events):
                     pylab.xlabel('plane', fontsize=10)
                     pylab.ylabel('strip', fontsize=10)
             figname = 'evt_%d.pdf' % (counter)
-            pylab.savefig(figname)
+            pylab.savefig(figname, bbox_inches='tight')
             pylab.close()
             evt_plotted += 1
         else:
