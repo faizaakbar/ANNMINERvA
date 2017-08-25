@@ -49,7 +49,8 @@ def make_default_train_params_dict(mnv_type='st_epsilon'):
 
 def make_default_img_params_dict(mnv_type='st_epsilon'):
     img_params_dict = {}
-    img_params_dict['IMG_DEPTH'] = 2
+    if mnv_type == 'st_epsilon':
+        img_params_dict['IMG_DEPTH'] = 2
     return img_params_dict
 
 
@@ -71,7 +72,14 @@ def get_logging_level(log_level):
     return logging_level
 
 
-def get_file_lists(data_dir, file_root, comp_ext):
+def get_trainvalidtest_file_lists(data_dir, file_root, comp_ext):
+    """
+    Assume we are looking for three sets of files in the form of
+    TFRecords, with groups of files with extensions like
+    `..._train.tfrecord`, `..._valid.tfrecord`, and
+    `..._test.tfrecord` (possibly with .zz or .gz compression
+    extension markers).
+    """
     import glob
     train_list = glob.glob(data_dir + '/' + file_root +
                            '*_train.tfrecord' + comp_ext)
