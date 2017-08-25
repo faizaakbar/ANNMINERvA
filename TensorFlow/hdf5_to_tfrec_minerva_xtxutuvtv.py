@@ -78,13 +78,17 @@ def slices_maker(n, slice_size=100000):
 
 
 def make_mnv_data_dict():
-    # eventids are really uint64, planecodes are really uint16
+    """ create a dict of fields to extract from the hdf5 with target dtypes """
+    # eventids are really (in the hdf5) uint64, planecodes are really uint16;
+    # use tf.{int64,int32,uint8} because these are the dtypes that one-hot
+    # supports (_not_ int16 or uint16, at least in TF v1.2); use int64 instead
+    # of unit64 because reshape supports int64 (and not uint64).
     data_list = [
         ('eventids', tf.int64),
         ('hitimes-u', tf.float32),
         ('hitimes-v', tf.float32),
         ('hitimes-x', tf.float32),
-        ('planecodes', tf.int16),
+        ('planecodes', tf.int32),
         ('segments', tf.uint8),
         ('zs', tf.float32)
     ]
@@ -118,8 +122,15 @@ def get_binary_data(reader, name, start_idx, stop_idx):
     * name of dset in the hdf5 file
     * indices
     returns byte data
+
+    NOTE: we must treat the 'planecodes' dataset as special - TF has some
+    issues with 16bit dtypes as of TF 1.2, so we must cast planecodes as 32-bit
+    _prior_ to byte conversion.
     """
     dta = reader.get_data(name, start_idx, stop_idx)
+    if name == 'planecodes':
+        # we must cast the 16 bit values into 32 bit values
+        dta = dta.astype(np.int32)
     return dta.tobytes()
 
 
@@ -161,15 +172,16 @@ def write_tfrecord(
 
 
 def tfrecord_to_graph_ops_xtxutuvtv(filenames, compressed):
-    def proces_hitimes(inp, shape):
+    def proces_hitimes(inp, shape, dtyp):
         """
         *Note* - Minerva HDF5's are packed (N, C, H, W), so we must transpose
         them to (N, H, W, C) here.
         """
-        hitimes = tf.decode_raw(inp, tf.float32)
+        hitimes = tf.decode_raw(inp, dtyp)
         hitimes = tf.reshape(hitimes, shape)
         hitimes = tf.transpose(hitimes, [0, 2, 3, 1])
         return hitimes
+    dtype_dict = make_mnv_data_dict()
 
     file_queue = tf.train.string_input_producer(
         filenames, name='file_queue', num_epochs=1
@@ -200,21 +212,31 @@ def tfrecord_to_graph_ops_xtxutuvtv(filenames, compressed):
     )
     evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
     hitimesx = proces_hitimes(
-        tfrecord_features['hitimes-x'], [-1, 2, 127, 50]
+        tfrecord_features['hitimes-x'],
+        [-1, 2, 127, 50],
+        dtype_dict['hitimes-x']['dtype']
     )
     hitimesu = proces_hitimes(
-        tfrecord_features['hitimes-u'], [-1, 2, 127, 25]
+        tfrecord_features['hitimes-u'],
+        [-1, 2, 127, 25],
+        dtype_dict['hitimes-u']['dtype']
     )
     hitimesv = proces_hitimes(
-        tfrecord_features['hitimes-v'], [-1, 2, 127, 25]
+        tfrecord_features['hitimes-v'],
+        [-1, 2, 127, 25],
+        dtype_dict['hitimes-v']['dtype']
     )
-    pcodes = tf.decode_raw(tfrecord_features['planecodes'], tf.int16)
-    pcodes = tf.cast(pcodes, tf.int32)
+    pcodes = tf.decode_raw(
+        tfrecord_features['planecodes'], dtype_dict['planecodes']['dtype']
+    )
     pcodes = tf.one_hot(indices=pcodes, depth=67, on_value=1, off_value=0)
-    segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
-    segs = tf.cast(segs, tf.int32)
+    segs = tf.decode_raw(
+        tfrecord_features['segments'], dtype_dict['segments']['dtype']
+    )
     segs = tf.one_hot(indices=segs, depth=11, on_value=1, off_value=0)
-    zs = tf.decode_raw(tfrecord_features['zs'], tf.float32)
+    zs = tf.decode_raw(
+        tfrecord_features['zs'], dtype_dict['zs']['dtype']
+    )
     return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
 
 
