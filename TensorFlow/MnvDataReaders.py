@@ -99,15 +99,13 @@ class MnvDataReaderVertexST:
                 )
             with tf.variable_scope(self.name + '_planecodes'):
                 pcodes = tf.decode_raw(
-                    tfrecord_features['planecodes'], tf.int16
+                    tfrecord_features['planecodes'], tf.int32
                 )
-                pcodes = tf.cast(pcodes, tf.int32)
                 pcodes = tf.one_hot(
                     indices=pcodes, depth=67, on_value=1, off_value=0
                 )
             with tf.variable_scope(self.name + '_segments'):
                 segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
-                # segs = tf.cast(segs, tf.int32)
                 segs = tf.one_hot(
                     indices=segs, depth=11, on_value=1, off_value=0
                 )
