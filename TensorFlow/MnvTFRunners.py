@@ -136,15 +136,6 @@ class MnvTFRunnerCategorical:
                     name='train',
                     compression=self.file_compression
                 )
-                # batch_dict_train = train_reader.shuffle_batch_generator(
-                #     num_epochs=self.num_epochs
-                # )
-                # X_train = batch_dict_train[self.features['x']]
-                # U_train = batch_dict_train[self.features['u']]
-                # V_train = batch_dict_train[self.features['v']]
-                # targets_train = batch_dict_train[self.targets_label]
-                # features_train = [X_train, U_train, V_train]
-                # eventids_train = batch_dict_train['eventids']
                 targets_train, features_train, eventids_train = \
                     self._prep_targets_and_features_minerva(
                         train_reader.shuffle_batch_generator,
@@ -157,15 +148,6 @@ class MnvTFRunnerCategorical:
                     name='valid',
                     compression=self.file_compression
                 )
-                # batch_dict_valid = valid_reader.batch_generator(
-                #     num_epochs=1000000
-                # )
-                # X_valid = batch_dict_valid[self.features['x']]
-                # U_valid = batch_dict_valid[self.features['u']]
-                # V_valid = batch_dict_valid[self.features['v']]
-                # targets_valid = batch_dict_valid[self.targets_label]
-                # features_valid = [X_valid, U_valid, V_valid]
-                # eventids_valid = batch_dict_valid['eventids']
                 targets_valid, features_valid, eventids_valid = \
                     self._prep_targets_and_features_minerva(
                         valid_reader.batch_generator,
@@ -267,18 +249,19 @@ class MnvTFRunnerCategorical:
                         )
                         if (b_num + 1) % save_every_n_batch == 0:
                             # validation
-                            loss, logits, targs, summary_v, evtids, acc = sess.run(
-                                [self.model.loss,
-                                 self.model.logits,
-                                 self.model.targets,
-                                 self.model.valid_summary_op,
-                                 eventids,
-                                 self.model.accuracy],
-                                feed_dict={
-                                    use_valid: True,
-                                    self.model.dropout_keep_prob: 1.0
-                                }
-                            )
+                            loss, logits, targs, summary_v, evtids, acc = \
+                                sess.run(
+                                    [self.model.loss,
+                                     self.model.logits,
+                                     self.model.targets,
+                                     self.model.valid_summary_op,
+                                     eventids,
+                                     self.model.accuracy],
+                                    feed_dict={
+                                        use_valid: True,
+                                        self.model.dropout_keep_prob: 1.0
+                                    }
+                                )
                             saver.save(sess, ckpt_dir, b_num)
                             writer.add_summary(summary_v, global_step=b_num)
                             preds = tf.nn.softmax(logits)
@@ -342,12 +325,6 @@ class MnvTFRunnerCategorical:
                     name='test',
                     compression=self.file_compression
                 )
-                # batch_dict = data_reader.batch_generator()
-                # X = batch_dict[self.features['x']]
-                # U = batch_dict[self.features['u']]
-                # V = batch_dict[self.features['v']]
-                # targ = batch_dict[self.targets_label]
-                # f = [X, U, V]
                 targets, features, _ = \
                     self._prep_targets_and_features_minerva(
                         data_reader.batch_generator,
@@ -444,11 +421,6 @@ class MnvTFRunnerCategorical:
     def run_prediction(self, short=False, log_freq=10):
         """
         make predictions based on the TEST file list
-
-        TODO - look for sqlalchemy and put the predictions into a sqlite db.
-        If sqlalchemy is not available, look for h5py and store the predictions
-        in an HDF5 file. If neither is available, store predictions in plain
-        text.
         """
         LOGGER.info("Starting prediction...")
         tf.reset_default_graph()
@@ -466,12 +438,6 @@ class MnvTFRunnerCategorical:
                     name='prediction',
                     compression=self.file_compression
                 )
-                # batch_dict = data_reader.batch_generator()
-                # X = batch_dict[self.features['x']]
-                # U = batch_dict[self.features['u']]
-                # V = batch_dict[self.features['v']]
-                # evtids = batch_dict['eventids']
-                # f = [X, U, V]
                 targets, features, eventids = \
                     self._prep_targets_and_features_minerva(
                         data_reader.batch_generator,
