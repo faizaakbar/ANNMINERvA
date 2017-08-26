@@ -4,8 +4,8 @@ DAT=`date +%s`
 MODEL_CODE="20170825"
 
 # targets
-NCLASS=11
-TARGETS="--n_classes $NCLASS --targets_label segments"
+TARGETS="--n_classes 11 --targets_label segments"
+TARGETS="--n_classes 67 --targets_label planecodes"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
@@ -13,6 +13,11 @@ VALIDATION="--do_validaton"
 
 TESTING="--nodo_testing"
 TESTING="--do_testing"
+
+SPECIAL=""
+SPECIAL="--use_all_for_test"
+SPECIAL="--use_test_for_train --use_valid_for_test"
+SPECIAL="--use_valid_for_test"
 
 BASEP="/Users/gnperdue/Documents/MINERvA/AI/minerva_tf"
 
@@ -28,7 +33,7 @@ DATADIR="${BASEP}/tfrec"
 LOGDIR="${BASEP}/logs"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 LOGLEVEL="--log_level INFO"
-LOGLEVEL="--log_level DEBUG"
+LOGLEVEL="--log_level DEBUG --be_verbose"
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 
 # show what we will do...
@@ -39,7 +44,7 @@ python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TRAINING $VALIDATION $TESTING $PREDICTIONS
+  $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL
 EOF
 
 python mnv_run_st_epsilon.py \
@@ -48,6 +53,6 @@ python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TRAINING $VALIDATION $TESTING $PREDICTIONS
+  $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL
 
 echo "Job finished "`date`""
