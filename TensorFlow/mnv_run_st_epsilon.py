@@ -169,7 +169,7 @@ def main(argv=None):
     if do_testing:
         runner.run_testing(short=short)
     if do_prediction:
-        runner.run_prediction(short=short)
+        runner.run_prediction(short=short, log_freq=10)
 
 
 if __name__ == '__main__':
