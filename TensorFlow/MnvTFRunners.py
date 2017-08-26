@@ -450,7 +450,6 @@ class MnvTFRunnerCategorical:
                             mnv_utils.get_number_of_trainable_parameters())
 
                 saver = tf.train.Saver()
-
                 start_time = time.time()
 
                 sess.run(tf.global_variables_initializer())
@@ -487,13 +486,14 @@ class MnvTFRunnerCategorical:
                         probs = tf.nn.softmax(logits_batch).eval()
                         preds = tf.argmax(probs, 1).eval()
                         if printlog:
-                            LOGGER.debug('   preds   = \n{}'.format(
-                                preds
-                            ))
-                            LOGGER.info("  batch size = %d" % batch_sz)
+                            if self.be_verbose:
+                                LOGGER.info("  batch size = %d" % batch_sz)
+                                LOGGER.debug('   preds   = \n{}'.format(
+                                    preds
+                                ))
                             LOGGER.info("  tot processed = %d" % n_processed)
                         for i, evtid in enumerate(evtids):
-                            if printlog:
+                            if printlog and self.be_verbose:
                                 LOGGER.debug(' {} = {}, pred = {}'.format(
                                     i, evtid, preds[i]
                                 ))
