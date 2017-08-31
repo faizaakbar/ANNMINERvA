@@ -1,11 +1,13 @@
 #!/bin/bash
 
 DAT=`date +%s`
-MODEL_CODE="20170825"
+MODEL_CODE="20170830"
 
-# targets
-TARGETS="--n_classes 11 --targets_label segments"
-TARGETS="--n_classes 67 --targets_label planecodes"
+# targets - use NCLASS when making the logfile & model dir names also
+NCLASS=11
+TARGETS="--n_classes $NCLASS --targets_label segments"
+NCLASS=67
+TARGETS="--n_classes $NCLASS --targets_label planecodes"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
@@ -30,11 +32,13 @@ PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_011"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000"
 DATADIR="${BASEP}/tfrec"
+MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 LOGDIR="${BASEP}/logs"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 LOGLEVEL="--log_level INFO"
 LOGLEVEL="--log_level DEBUG --be_verbose"
-MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
+SHORT=""
+SHORT="--do_a_short_run"
 
 # show what we will do...
 cat << EOF
@@ -44,7 +48,7 @@ python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL
+  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL $SHORT
 EOF
 
 python mnv_run_st_epsilon.py \
@@ -53,6 +57,6 @@ python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL
+  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL $SHORT
 
 echo "Job finished "`date`""
