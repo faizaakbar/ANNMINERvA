@@ -205,7 +205,9 @@ class MnvTFRunnerCategorical:
                             mnv_utils.get_number_of_trainable_parameters())
 
                 writer = tf.summary.FileWriter(run_dest_dir)
-                saver = tf.train.Saver()
+                saver = tf.train.Saver(
+                    save_relative_paths=True
+                )
 
                 start_time = time.time()
                 sess.run(tf.global_variables_initializer())
