@@ -1,13 +1,13 @@
 #!/bin/bash
 
 DAT=`date +%s`
-MODEL_CODE="20170830"
+MODEL_CODE="20170905"
 
 # targets - use NCLASS when making the logfile & model dir names also
-NCLASS=11
-TARGETS="--n_classes $NCLASS --targets_label segments"
 NCLASS=67
 TARGETS="--n_classes $NCLASS --targets_label planecodes"
+NCLASS=11
+TARGETS="--n_classes $NCLASS --targets_label segments"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
@@ -16,10 +16,10 @@ VALIDATION="--do_validaton"
 TESTING="--nodo_testing"
 TESTING="--do_testing"
 
-SPECIAL=""
 SPECIAL="--use_all_for_test"
 SPECIAL="--use_test_for_train --use_valid_for_test"
 SPECIAL="--use_valid_for_test"
+SPECIAL=""
 
 BASEP="/Users/gnperdue/Documents/MINERvA/AI/minerva_tf"
 
