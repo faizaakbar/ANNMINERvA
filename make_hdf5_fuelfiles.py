@@ -618,12 +618,16 @@ def transform_to_4d_tensor(tensr):
 
 def make_file_list(filebase, use_gzipped_files=True):
     # look for "filebase"+(_learn/_valid/_test/ - zero or more times)+whatever
+    pieces = filebase.split('/')
+    filen = pieces[-1]
+    path = '/'.join(filebase.split('/')[:-1])
+    path = '.' if len(path) == 0 else path
     filestr = r"^%s(_learn|_test|_valid)*.*dat$"
     if use_gzipped_files:
         filestr = r"^%s(_learn|_test|_valid)*.*dat.gz$"
     filebase = re.compile(filestr % filebase)
-    files = os.listdir('.')
-    files = [f for f in files if re.match(filebase, f)]
+    files = os.listdir(path)
+    files = [path + '/' + f for f in files if re.match(filebase, f)]
     print(files)
     return files
 
