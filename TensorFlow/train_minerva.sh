@@ -1,7 +1,7 @@
 #!/bin/bash
 
 DAT=`date +%s`
-MODEL_CODE="20170905"
+MODEL_CODE="20170908"
 
 # targets - use NCLASS when making the logfile & model dir names also
 NCLASS=67
@@ -9,17 +9,17 @@ TARGETS="--n_classes $NCLASS --targets_label planecodes"
 NCLASS=11
 TARGETS="--n_classes $NCLASS --targets_label segments"
 
-TRAINING="--nodo_training"
 TRAINING="--do_training"
 VALIDATION="--do_validaton"
+TRAINING="--nodo_training"
 
 TESTING="--nodo_testing"
 TESTING="--do_testing"
 
-SPECIAL="--use_all_for_test"
 SPECIAL="--use_test_for_train --use_valid_for_test"
 SPECIAL="--use_valid_for_test"
 SPECIAL=""
+SPECIAL="--use_all_for_test"
 
 BASEP="/Users/gnperdue/Documents/MINERvA/AI/minerva_tf"
 
@@ -37,8 +37,9 @@ LOGDIR="${BASEP}/logs"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 LOGLEVEL="--log_level INFO"
 LOGLEVEL="--log_level DEBUG --be_verbose"
-SHORT=""
+
 SHORT="--do_a_short_run"
+SHORT=""
 
 # show what we will do...
 cat << EOF
