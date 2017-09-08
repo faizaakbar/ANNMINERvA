@@ -235,18 +235,6 @@ class MnvDataReader:
             return self._read_tfr()
         else:
             raise ValueError('Invalid file type extension!')
-    
-# labels_shp = (max_evts,)
-# evtids_shp = (max_evts,)
-# labels = pylab.zeros(labels_shp, dtype='f')
-# evtids = pylab.zeros(evtids_shp, dtype='uint64')
-# evtids = f['eventids'][:max_evts]
-# try:
-#     labels = f['segments'][:max_evts]
-#     pcodes = f['planecodes'][:max_evts]
-#     zs = f['zs'][:max_evts]
-# except KeyError:
-#     labels_shp = None
 
 
 def make_plots(data_dict, max_events):
@@ -356,37 +344,6 @@ def make_plots(data_dict, max_events):
         pylab.savefig(figname, bbox_inches='tight')
         pylab.close()
         evt_plotted += 1
-        
-#     for i in range(len(evt)):
-#         ax = pylab.subplot(gs[i])
-#         ax.axis('on')
-#         ax.xaxis.set_major_locator(pylab.NullLocator())
-#         ax.yaxis.set_major_locator(pylab.NullLocator())
-#         # images are normalized such the max e-dep has val 1, independent
-#         # of view, so set vmin, vmax here to keep matplotlib from
-#         # normalizing each view on its own
-#         minv = 0
-#         cmap = 'jet'
-#         if have_times:
-#             minv = -1
-#             cmap = 'bwr'
-#         im = ax.imshow(evt[i][0], cmap=pylab.get_cmap(cmap),
-#                        interpolation='nearest', vmin=minv, vmax=1)
-#         cbar = pylab.colorbar(im, fraction=0.04)
-#         cbar.set_label(colorbar_tile, size=9)
-#         cbar.ax.tick_params(labelsize=6)
-#         pylab.title(titles[i], fontsize=12)
-#         pylab.xlabel("plane", fontsize=10)
-#         pylab.ylabel("strip", fontsize=10)
-#     if labels_shp is not None:
-#         figname = 'evt_%s_%s_%s_%s_targ_%d_pcode_%d.pdf' % \
-#                   (run, subrun, gate, phys_evt, targ, pcode)
-#     else:
-#         figname = 'evt_%s_%s_%s_%s.pdf' % \
-#                   (run, subrun, gate, phys_evt)
-#     pylab.savefig(figname)
-#     pylab.close()
-#     evt_plotted += 1
 
 
 if __name__ == '__main__':
