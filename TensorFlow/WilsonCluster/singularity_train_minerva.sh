@@ -13,11 +13,11 @@
 #restore to turn off email - doesn't work #PBS -m n
 
 DAT=`date +%s`
-MODEL_CODE="20170906"
+MODEL_CODE="20170908"
 
 # which singularity image
 SNGLRTY="/data/perdue/singularity/simone/ubuntu16-cuda-ml.img"
-SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-ml-tf1.3.img"
+SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
 
 # targets
 NCLASS=11
