@@ -291,8 +291,10 @@ def make_plots(data_dict, max_events):
             data_dict['oned']['type'] = None
             if data_dict['energies']:
                 data_dict['oned']['type'] = 'energies'
+                types = ['energy']
             else:
                 data_dict['oned']['type'] = 'times'
+                types = ['time']
             for view in views:
                 if data_dict['energies']:
                     data_dict['oned'][view] = data_dict['energies'][view]
@@ -321,39 +323,39 @@ def make_plots(data_dict, max_events):
         fig = pylab.figure(figsize=(fig_wid, fig_height))
         gs = pylab.GridSpec(grid_height, 3)
 
-        if plotting_two_tensors:
-            for i, t in enumerate(types):
-                for j, view in enumerate(views):
-                    gs_pos = i * 3 + j
-                    ax = pylab.subplot(gs[gs_pos])
-                    ax.axis('on')
-                    ax.xaxis.set_major_locator(pylab.NullLocator())
-                    ax.yaxis.set_major_locator(pylab.NullLocator())
-                    minv = 0 if t == 'energy' else -1
-                    cmap = 'jet' if t == 'energy' else 'bwr'
-                    cbt = 'scaled energy' if i == 0 else 'scaled times'
-                    im = ax.imshow(
-                        data_dict['energies+times'][view][counter, i, :, :],
-                        cmap=pylab.get_cmap(cmap),
-                        interpolation='nearest',
-                        vmin=minv, vmax=1
-                    )
-                    cbar = pylab.colorbar(im, fraction=0.04)
-                    cbar.set_label(cbt, size=9)
-                    cbar.ax.tick_params(labelsize=6)
-                    pylab.title(t + ' - ' + view, fontsize=12)
-                    pylab.xlabel('plane', fontsize=10)
-                    pylab.ylabel('strip', fontsize=10)
-            figname = 'evt_%d.pdf' % (counter)
-            pylab.savefig(figname, bbox_inches='tight')
-            pylab.close()
-            evt_plotted += 1
-        else:
-            if data_dict['oned']['type'] == 'energies':
-                colorbar_tile = 'scaled energy'
-            else:
-                colorbar_tile = 'scaled times'
-
+        for i, t in enumerate(types):
+            for j, view in enumerate(views):
+                gs_pos = i * 3 + j
+                ax = pylab.subplot(gs[gs_pos])
+                ax.axis('on')
+                ax.xaxis.set_major_locator(pylab.NullLocator())
+                ax.yaxis.set_major_locator(pylab.NullLocator())
+                minv = 0 if t == 'energy' else -1
+                cmap = 'jet' if t == 'energy' else 'bwr'
+                cbt = 'scaled energy' if t == 'energy' else 'scaled times'
+                if plotting_two_tensors:
+                    datap = data_dict['energies+times'][view][counter, i, :, :]
+                else:
+                    if t == 'energy':
+                        datap = data_dict['energies'][view][counter, i, :, :]
+                    else:
+                        datap = data_dict['times'][view][counter, i, :, :]
+                im = ax.imshow(
+                    datap,
+                    cmap=pylab.get_cmap(cmap),
+                    interpolation='nearest',
+                    vmin=minv, vmax=1
+                )
+                cbar = pylab.colorbar(im, fraction=0.04)
+                cbar.set_label(cbt, size=9)
+                cbar.ax.tick_params(labelsize=6)
+                pylab.title(t + ' - ' + view, fontsize=12)
+                pylab.xlabel('plane', fontsize=10)
+                pylab.ylabel('strip', fontsize=10)
+        figname = 'evt_%d.pdf' % (counter)
+        pylab.savefig(figname, bbox_inches='tight')
+        pylab.close()
+        evt_plotted += 1
         
 #     for i in range(len(evt)):
 #         ax = pylab.subplot(gs[i])
