@@ -625,7 +625,7 @@ def make_file_list(filebase, use_gzipped_files=True):
     filestr = r"^%s(_learn|_test|_valid)*.*dat$"
     if use_gzipped_files:
         filestr = r"^%s(_learn|_test|_valid)*.*dat.gz$"
-    filebase = re.compile(filestr % filebase)
+    filebase = re.compile(filestr % filen)
     files = os.listdir(path)
     files = [path + '/' + f for f in files if re.match(filebase, f)]
     print(files)
