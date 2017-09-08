@@ -126,7 +126,7 @@ def main(argv=None):
         do_training = False   # just in case, turn this off
         test_list.extend(train_list)
         test_list.extend(valid_list)
-        test_list = []
+        train_list = []
         valid_list = []
     if FLAGS.use_valid_for_test:
         test_list = valid_list
