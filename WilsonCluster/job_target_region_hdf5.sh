@@ -15,8 +15,8 @@
 START=1
 STOP=37
 
-DOENGY="yes"
-DOTIME="no"
+DOENGY="no"
+DOTIME="yes"
 
 SAMPLE=me1Adata
 
@@ -28,7 +28,7 @@ INBASE="${INPATH}/minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}"
 OUTBASE="${OUTPATH}/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xuv_${SAMPLE}"
 
 # time-lattice images
-INBASET="${INPATH}/minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}"
+INBASET="${INPATH}/minosmatch_nukecczdefs_fullzwitht_tproc_127x94_${SAMPLE}"
 OUTBASET="${OUTPATH}/minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_txtutv_${SAMPLE}"
 
 
