@@ -296,7 +296,8 @@ def make_plots(data_dict, max_events):
     evt_plotted = 0
     for counter in range(len(data_dict['eventids'])):
         evtid = data_dict['eventids'][counter]
-        segment = data_dict['segments'][counter]
+        segment = data_dict['segments'][counter] \
+            if data_dict['segments'] else -1
         (run, subrun, gate, phys_evt) = decode_eventid(evtid)
         if evt_plotted > max_events:
             break
