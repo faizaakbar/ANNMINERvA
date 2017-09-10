@@ -12,13 +12,13 @@
 #restore to turn off email #PBS -m n
 
 
-START=1
-STOP=37
+START=0
+STOP=55
 
 DOENGY="no"
 DOTIME="yes"
 
-SAMPLE=me1Adata
+SAMPLE=me1Amc
 
 INPATH="/data/perdue/minerva/rawtxt/201709"
 OUTPATH="/data/perdue/minerva/hdf5/201709"
