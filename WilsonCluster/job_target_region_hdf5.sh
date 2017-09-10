@@ -12,7 +12,7 @@
 #restore to turn off email #PBS -m n
 
 
-START=0
+START=48
 STOP=55
 
 DOENGY="no"
