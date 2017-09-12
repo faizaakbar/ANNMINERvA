@@ -25,13 +25,13 @@ DAT=`date +%s`
 
 # which singularity image
 SNGLRTY="/data/perdue/singularity/simone/ubuntu16-cuda-ml.img"
+SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
 
 # file logistics
-HDF5DIR="/data/perdue/minerva/targets"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_011"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc"
-OUTDIR="/data/perdue/minerva/tensorflow/data"
-LOGDIR="/data/perdue/minerva/tensorflow/logs"
+HDF5DIR="/data/perdue/minerva/hdf5/201709"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc"
+OUTDIR="/data/perdue/minerva/tensorflow/data/201709"
+LOGDIR="/data/perdue/minerva/tensorflow/logs/201709"
 LOGFILE=$LOGDIR/log_hdf5_to_tfrec_minerva_xtxutuvtv${DAT}.txt
 
 # print identifying info for this job
