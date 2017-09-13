@@ -24,7 +24,6 @@ TESTREAD=""
 DAT=`date +%s`
 
 # which singularity image
-SNGLRTY="/data/perdue/singularity/simone/ubuntu16-cuda-ml.img"
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
 
 # file logistics
