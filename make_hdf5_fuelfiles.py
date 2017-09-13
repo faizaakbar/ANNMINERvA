@@ -442,9 +442,13 @@ def get_kine_data_from_file(filename):
     W_arr = []
     Q2_arr = []
     targZ_arr = []
+    nuE_arr = []
+    lepE_arr = []
+    xbj_arr = []
+    ybj_arr = []
     # format:
-    # 0   1   2   3   4       5        6 7  8
-    # run sub gt  slc current int_type W Q2 targZ
+    # 0   1   2   3   4       5        6 7  8     9   10   11  12
+    # run sub gt  slc current int_type W Q2 targZ nuE lepE xbj ybj
 
     with gzip.open(filename, 'r') as f:
         for line in f.readlines():
@@ -459,14 +463,25 @@ def get_kine_data_from_file(filename):
             W_arr.append(elems[6])
             Q2_arr.append(elems[7])
             targZ_arr.append(elems[8])
+            nuE_arr.append(elems[9])
+            lepE_arr.append(elems[10])
+            xbj_arr.append(elems[11])
+            ybj_arr.append(elems[12])
     eventids = np.asarray(eventids, dtype=np.uint64)
     current_arr = np.asarray(current_arr, dtype=np.uint8)
     int_type_arr = np.asarray(int_type_arr, dtype=np.uint8)
     W_arr = np.asarray(W_arr, dtype=np.float32)
     Q2_arr = np.asarray(Q2_arr, dtype=np.float32)
+    nuE_arr = np.asarray(nuE_arr, dtype=np.float32)
+    lepE_arr = np.asarray(lepE_arr, dtype=np.float32)
+    xbj_arr = np.asarray(xbj_arr, dtype=np.float32)
+    ybj_arr = np.asarray(ybj_arr, dtype=np.float32)
     targZ_arr = np.asarray(targZ_arr, dtype=np.uint8)
-    storedat = (current_arr, int_type_arr, W_arr, Q2_arr, targZ_arr,
-                eventids)
+    storedat = (
+        current_arr, int_type_arr, W_arr, Q2_arr,
+        nuE_arr, lepE_arr, xbj_arr, ybj_arr,
+        targZ_arr, eventids
+    )
     print("...finished loading")
     return storedat
 
@@ -838,6 +853,10 @@ def build_kine_data_dset_description():
          ('int_type', ('uint8', 'int_type')),
          ('W', ('float32', 'W')),
          ('Q2', ('float32', 'Q2')),
+         ('nuE', ('float32', 'nuE')),
+         ('lepE', ('float32', 'lepE')),
+         ('xbj', ('float32', 'xbj')),
+         ('ybj', ('float32', 'ybj')),
          ('targZ', ('uint8', 'targZ')),
          ('eventids', ('uint64', 'run+subrun+gate+slices[0]')))
     )
