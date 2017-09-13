@@ -12,7 +12,7 @@ elif [[ $# > 1 ]]; then
   STOP=$2
 fi
 
-SAMPLE=me1Bmc
+SAMPLE=me1Amc
 
 INPUT_BASENAME=minosmatch_kinematics_${SAMPLE}
 OUTPUTNAME=minosmatch_kinedat_${SAMPLE}
