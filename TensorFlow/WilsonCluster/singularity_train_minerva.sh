@@ -18,6 +18,10 @@ MODEL_CODE="20170919_${SAMPLE}"
 
 SHORT="--do_a_short_run"
 SHORT=""
+LOGLEVEL="--log_level DEBUG"
+LOGLEVEL="--log_level INFO"
+
+NEPOCHS="--num_epochs 3"
 
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
@@ -44,13 +48,10 @@ PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
 PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
-# data, log, and model logistics
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
 DATADIR="/data/perdue/minerva/tensorflow/data/201709/${SAMPLE}"
 LOGDIR="/data/perdue/minerva/tensorflow/logs/201709/${SAMPLE}"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
-LOGLEVEL="--log_level DEBUG"
-LOGLEVEL="--log_level INFO"
 MODELDIR="/data/perdue/minerva/tensorflow/models/${NCLASS}/${MODEL_CODE}"
 
 
@@ -93,7 +94,8 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL $SHORT
+  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
+  $SPECIAL $SHORT $NEPOCHS
 EOF
 
 singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
@@ -102,7 +104,8 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL $SHORT
+  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
+  $SPECIAL $SHORT $NEPOCHS
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
