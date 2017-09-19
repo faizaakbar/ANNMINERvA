@@ -93,7 +93,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL
+  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL $SHORT
 EOF
 
 singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
@@ -102,7 +102,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL
+  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL $SHORT
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0

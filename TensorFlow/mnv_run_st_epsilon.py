@@ -82,7 +82,7 @@ def main(argv=None):
        FLAGS.use_valid_for_test:
         print('Impossible set of special run flags!')
         return
-    
+
     do_training = FLAGS.do_training
     do_validation = FLAGS.do_validation
     do_testing = FLAGS.do_testing
@@ -157,6 +157,10 @@ def main(argv=None):
     logger.info(' feature_targ_dict = {}'.format(repr(feature_targ_dict)))
     logger.info(' train_params_dict = {}'.format(repr(train_params_dict)))
     logger.info(' img_params_dict = {}'.format(repr(img_params_dict)))
+    logger.info('  Final file list lengths:')
+    logger.info('   N train = {}'.format(len(run_params_dict['TRAIN_FILE_LIST'])))
+    logger.info('   N valid = {}'.format(len(run_params_dict['VALID_FILE_LIST'])))
+    logger.info('   N test = {}'.format(len(run_params_dict['TEST_FILE_LIST'])))
     runner = MnvTFRunnerCategorical(
         model,
         run_params_dict=run_params_dict,
