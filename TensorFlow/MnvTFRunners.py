@@ -92,7 +92,7 @@ class MnvTFRunnerCategorical:
                 self.pred_store_name
             )
 
-    def _prep_targets_and_features_minerva(self, generator, num_epochs):
+    def _prep_targets_and_features_minerva(self, generator, num_epochs=1):
         batch_dict = generator(num_epochs=num_epochs)
         X = batch_dict[self.features['x']]
         U = batch_dict[self.features['u']]
@@ -244,7 +244,7 @@ class MnvTFRunnerCategorical:
                             }
                         )
                         writer.add_summary(summary_t, global_step=b_num)
-                        LOGGER.info(
+                        LOGGER.debug(
                             '  Train loss at batch {}: {:5.1f}'.format(
                                 b_num, loss
                             )
@@ -267,23 +267,23 @@ class MnvTFRunnerCategorical:
                             saver.save(sess, ckpt_dir, b_num)
                             writer.add_summary(summary_v, global_step=b_num)
                             preds = tf.nn.softmax(logits)
-                            LOGGER.info('   preds   = \n{}'.format(
+                            LOGGER.debug('   preds   = \n{}'.format(
                                 tf.argmax(preds, 1).eval()
                             ))
-                            LOGGER.info('   Y_batch = \n{}'.format(
+                            LOGGER.debug('   Y_batch = \n{}'.format(
                                 np.argmax(targs, 1)
                             ))
-                            LOGGER.info('   eventids[:10] = \n{}'.format(
+                            LOGGER.debug('   eventids[:10] = \n{}'.format(
                                 evtids[:10]
-                            ))
-                            LOGGER.info('    accuracy = {}'.format(
-                                acc
                             ))
                             LOGGER.info(
                                 '  Valid loss at batch {}: {:5.1f}'.format(
                                     b_num, loss
                                 )
                             )
+                            LOGGER.info('    accuracy = {}'.format(
+                                acc
+                            ))
                             LOGGER.info('   Elapsed time = {}'.format(
                                 time.time() - start_time
                             ))
@@ -329,8 +329,7 @@ class MnvTFRunnerCategorical:
                 )
                 targets, features, _ = \
                     self._prep_targets_and_features_minerva(
-                        data_reader.batch_generator,
-                        self.num_epochs
+                        data_reader.batch_generator
                     )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
@@ -442,8 +441,7 @@ class MnvTFRunnerCategorical:
                 )
                 targets, features, eventids = \
                     self._prep_targets_and_features_minerva(
-                        data_reader.batch_generator,
-                        self.num_epochs
+                        data_reader.batch_generator
                     )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
@@ -489,11 +487,11 @@ class MnvTFRunnerCategorical:
                         preds = tf.argmax(probs, 1).eval()
                         if printlog:
                             if self.be_verbose:
-                                LOGGER.info("  batch size = %d" % batch_sz)
+                                LOGGER.debug("  batch size = %d" % batch_sz)
                                 LOGGER.debug('   preds   = \n{}'.format(
                                     preds
                                 ))
-                            LOGGER.info("  tot processed = %d" % n_processed)
+                            LOGGER.debug("  tot processed = %d" % n_processed)
                         for i, evtid in enumerate(evtids):
                             if printlog and self.be_verbose:
                                 LOGGER.debug(' {} = {}, pred = {}'.format(
