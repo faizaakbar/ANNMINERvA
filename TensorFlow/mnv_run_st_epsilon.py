@@ -37,6 +37,12 @@ tf.app.flags.DEFINE_string('model_dir', '/tmp/minerva/models',
 tf.app.flags.DEFINE_string('pred_store_name', 'temp_store',
                            """Predictions store name.""")
 #
+# training description
+#
+tf.app.flags.DEFINE_integer('num_epochs', 1,
+                            """Number of training epochs.""")
+# TODO - add learning rate, l2 reg params, etc.
+#
 # classification goal specification
 #
 tf.app.flags.DEFINE_string('targets_label', 'segments',
@@ -143,6 +149,7 @@ def main(argv=None):
     # TODO - pass some training params in on the command line
     # set up training parameters
     train_params_dict = mnv_utils.make_default_train_params_dict(MNV_TYPE)
+    train_params_dict['NUM_EPOCHS'] = FLAGS.num_epochs
 
     # set up image parameters
     img_params_dict = mnv_utils.make_default_img_params_dict(MNV_TYPE)
