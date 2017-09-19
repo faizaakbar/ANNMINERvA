@@ -13,7 +13,11 @@
 #restore to turn off email - doesn't work #PBS -m n
 
 DAT=`date +%s`
-MODEL_CODE="20170908"
+SAMPLE="me1Amc"
+MODEL_CODE="20170919_${SAMPLE}"
+
+SHORT=""
+SHORT="--do_a_short_run"
 
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
@@ -21,6 +25,8 @@ SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
 # targets
 NCLASS=11
 TARGETS="--n_classes $NCLASS --targets_label segments"
+NCLASS=67
+TARGETS="--n_classes $NCLASS --targets_label planecodes"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
@@ -29,16 +35,19 @@ VALIDATION="--do_validaton"
 TESTING="--nodo_testing"
 TESTING="--do_testing"
 
+SPECIAL="--use_all_for_test"
+SPECIAL=""
+SPECIAL="--use_test_for_train --use_valid_for_test"
+
 PREDPATH="/data/perdue/minerva/tensorflow/predictions/"
 PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
 PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
 # data, log, and model logistics
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc_000000"
-DATADIR="/data/perdue/minerva/tensorflow/data"
-LOGDIR="/data/perdue/minerva/tensorflow/logs"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
+DATADIR="/data/perdue/minerva/tensorflow/data/201709/${SAMPLE}"
+LOGDIR="/data/perdue/minerva/tensorflow/logs/201709/${SAMPLE}"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
@@ -84,7 +93,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TRAINING $VALIDATION $TESTING $PREDICTIONS
+  $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL
 EOF
 
 singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
@@ -93,7 +102,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --file_root $FILEPAT \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
-  $TRAINING $VALIDATION $TESTING $PREDICTIONS
+  $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
