@@ -16,8 +16,8 @@ DAT=`date +%s`
 SAMPLE="me1Amc"
 MODEL_CODE="20170919_${SAMPLE}"
 
-SHORT=""
 SHORT="--do_a_short_run"
+SHORT=""
 
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
