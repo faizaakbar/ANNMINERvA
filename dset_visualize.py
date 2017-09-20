@@ -38,7 +38,14 @@ def make_mnv_vertex_finder_data_dict():
 
 
 class MnvDataReader:
-    def __init__(self, filename, n_events=10, views=['x', 'u', 'v']):
+    def __init__(
+            self,
+            filename,
+            n_events=10,
+            views=['x', 'u', 'v'],
+            img_sizes=(50, 25),
+            n_planecodes=67
+    ):
         """
         currently, only work with compressed tfrecord files; assume compression
         for hdf5 is inside, etc.
@@ -47,6 +54,8 @@ class MnvDataReader:
         self.n_events = n_events
         self.views = views
         self.filetype = filename.split('.')[-1]
+        self.img_sizes = img_sizes
+        self.n_planecodes = n_planecodes
 
         self.compression = tf.python_io.TFRecordCompressionType.NONE
         if self.filetype == 'gz':
@@ -108,17 +117,18 @@ class MnvDataReader:
         )
         evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
         hitimesx = proces_hitimes(
-            tfrecord_features['hitimes-x'], [-1, 2, 127, 50]
+            tfrecord_features['hitimes-x'], [-1, 2, 127, self.img_sizes[0]]
         )
         hitimesu = proces_hitimes(
-            tfrecord_features['hitimes-u'], [-1, 2, 127, 25]
+            tfrecord_features['hitimes-u'], [-1, 2, 127, self.img_sizes[1]]
         )
         hitimesv = proces_hitimes(
-            tfrecord_features['hitimes-v'], [-1, 2, 127, 25]
+            tfrecord_features['hitimes-v'], [-1, 2, 127, self.img_sizes[1]]
         )
-        pcodes = tf.decode_raw(tfrecord_features['planecodes'], tf.int16)
-        pcodes = tf.cast(pcodes, tf.int32)
-        pcodes = tf.one_hot(indices=pcodes, depth=67, on_value=1, off_value=0)
+        pcodes = tf.decode_raw(tfrecord_features['planecodes'], tf.int32)
+        pcodes = tf.one_hot(
+            indices=pcodes, depth=self.n_planecodes, on_value=1, off_value=0
+        )
         segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
         zs = tf.decode_raw(tfrecord_features['zs'], tf.float32)
         return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
@@ -357,6 +367,15 @@ if __name__ == '__main__':
     parser.add_option('-n', '--nevents', dest='n_events', default=10,
                       help='Number of events', metavar='N_EVENTS',
                       type='int')
+    parser.add_option('--imgw_x', dest='imgw_x', default=50,
+                      help='Image width (x)', metavar='IMG_WIDTHX',
+                      type='int')
+    parser.add_option('--imgw_uv', dest='imgw_uv', default=25,
+                      help='Image width (uv)', metavar='IMG_WIDTHUV',
+                      type='int')
+    parser.add_option('--n_planecodes', dest='n_planecodes', default=67,
+                      help='Number of planecodes (onehot)',
+                      metavar='N_PLANECODES', type='int')
 
     (options, args) = parser.parse_args()
 
@@ -365,8 +384,12 @@ if __name__ == '__main__':
         print(__doc__)
         sys.exit(1)
 
+    img_sizes = (options.imgw_x, options.imgw_uv)
     reader = MnvDataReader(
-        filename=options.filename, n_events=options.n_events
+        filename=options.filename,
+        n_events=options.n_events,
+        img_sizes=img_sizes,
+        n_planecodes=options.n_planecodes
     )
     dd = reader.read_data()
 
