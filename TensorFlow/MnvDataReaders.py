@@ -14,11 +14,18 @@ class MnvDataReaderVertexST:
     """
     def __init__(
             self, filenames_list, batch_size=100,
-            name='reader', data_format='NHWC', compression=None
+            name='reader', data_format='NHWC', compression=None,
+            img_shp=(127, 50, 25), n_planecodes=67
     ):
+        """
+        img_shp = (imgh, imgw_x, imgw_ux, img_depth)
+        TODO - get the img depth into this call also...
+        """
         self.filenames_list = filenames_list
         self.batch_size = batch_size
         self.name = name
+        self.img_shp = img_shp
+        self.n_planecodes = n_planecodes
         imgdat_names = {}
         imgdat_names['x'] = 'hitimes-x'
         imgdat_names['u'] = 'hitimes-u'
@@ -89,20 +96,24 @@ class MnvDataReaderVertexST:
                 evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
             with tf.variable_scope(self.name + '_hitimes'):
                 hitimesx = proces_hitimes(
-                    tfrecord_features[self.imgdat_names['x']], [-1, 2, 127, 50]
+                    tfrecord_features[self.imgdat_names['x']],
+                    [-1, self.img_shp[3], self.img_shp[0], self.img_shp[1]]
                 )
                 hitimesu = proces_hitimes(
-                    tfrecord_features[self.imgdat_names['u']], [-1, 2, 127, 25]
+                    tfrecord_features[self.imgdat_names['u']],
+                    [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
                 )
                 hitimesv = proces_hitimes(
-                    tfrecord_features[self.imgdat_names['v']], [-1, 2, 127, 25]
+                    tfrecord_features[self.imgdat_names['v']],
+                    [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
                 )
             with tf.variable_scope(self.name + '_planecodes'):
                 pcodes = tf.decode_raw(
                     tfrecord_features['planecodes'], tf.int32
                 )
                 pcodes = tf.one_hot(
-                    indices=pcodes, depth=67, on_value=1, off_value=0
+                    indices=pcodes, depth=self.n_planecodes,
+                    on_value=1, off_value=0
                 )
             with tf.variable_scope(self.name + '_segments'):
                 segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)

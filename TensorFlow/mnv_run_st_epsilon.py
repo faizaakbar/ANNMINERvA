@@ -50,6 +50,17 @@ tf.app.flags.DEFINE_string('targets_label', 'segments',
 tf.app.flags.DEFINE_integer('n_classes', 11,
                             """Name of target classes.""")
 #
+# img and data features
+#
+tf.app.flags.DEFINE_integer('imgh', 127,
+                            """Img height.""")
+tf.app.flags.DEFINE_integer('imgw_x', 50,
+                            """X-view img width.""")
+tf.app.flags.DEFINE_integer('imgw_uv', 25,
+                            """U/V-view img width.""")
+tf.app.flags.DEFINE_integer('n_planecodes', 67,
+                            """Number of planecodes.""")
+#
 # action flags
 #
 tf.app.flags.DEFINE_boolean('do_training', True,
@@ -144,6 +155,7 @@ def main(argv=None):
     feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)
     feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
     feature_targ_dict['TARGETS_LABEL'] = FLAGS.targets_label
+    feature_targ_dict['N_PLANECODES'] = FLAGS.n_planecodes
     model = TriColSTEpsilon(n_classes=FLAGS.n_classes)
 
     # TODO - pass some training params in on the command line
@@ -153,6 +165,9 @@ def main(argv=None):
 
     # set up image parameters
     img_params_dict = mnv_utils.make_default_img_params_dict(MNV_TYPE)
+    img_params_dict['IMGH'] = FLAGS.imgh
+    img_params_dict['IMGW_X'] = FLAGS.imgw_x
+    img_params_dict['IMGW_UV'] = FLAGS.imgw_uv
 
     # tweak operating parameters for very short runs
     short = FLAGS.do_a_short_run
@@ -165,9 +180,15 @@ def main(argv=None):
     logger.info(' train_params_dict = {}'.format(repr(train_params_dict)))
     logger.info(' img_params_dict = {}'.format(repr(img_params_dict)))
     logger.info('  Final file list lengths:')
-    logger.info('   N train = {}'.format(len(run_params_dict['TRAIN_FILE_LIST'])))
-    logger.info('   N valid = {}'.format(len(run_params_dict['VALID_FILE_LIST'])))
-    logger.info('   N test = {}'.format(len(run_params_dict['TEST_FILE_LIST'])))
+    logger.info('   N train = {}'.format(
+        len(run_params_dict['TRAIN_FILE_LIST'])
+    ))
+    logger.info('   N valid = {}'.format(
+        len(run_params_dict['VALID_FILE_LIST'])
+    ))
+    logger.info('   N test = {}'.format(
+        len(run_params_dict['TEST_FILE_LIST'])
+    ))
     runner = MnvTFRunnerCategorical(
         model,
         run_params_dict=run_params_dict,

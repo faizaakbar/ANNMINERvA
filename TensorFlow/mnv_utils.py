@@ -33,6 +33,7 @@ def make_default_feature_targ_dict(mnv_type='st_epsilon'):
         feature_targ_dict['TARGETS_LABEL'] = None
         feature_targ_dict['IMG_DEPTH'] = 2
         feature_targ_dict['BUILD_KBD_FUNCTION'] = None
+        feature_targ_dict['N_PLANECODES'] = 67
     return feature_targ_dict
 
 
@@ -51,6 +52,9 @@ def make_default_img_params_dict(mnv_type='st_epsilon'):
     img_params_dict = {}
     if mnv_type == 'st_epsilon':
         img_params_dict['IMG_DEPTH'] = 2
+    img_params_dict['IMGH'] = 127
+    img_params_dict['IMGW_X'] = 50
+    img_params_dict['IMGW_UV'] = 25
     return img_params_dict
 
 
@@ -89,9 +93,9 @@ def get_trainvalidtest_file_lists(data_dir, file_root, comp_ext):
                           '*_test.tfrecord' + comp_ext)
     for t, l in zip(['training', 'validation', 'test'],
                     [train_list, valid_list, test_list]):
-        LOGGER.info('{} file list ='.format(t))
+        LOGGER.debug('{} file list ='.format(t))
         for filename in l:
-            LOGGER.info('  {}'.format(filename))
+            LOGGER.debug('  {}'.format(filename))
     if len(train_list) == 0 and \
        len(valid_list) == 0 and \
        len(test_list) == 0:

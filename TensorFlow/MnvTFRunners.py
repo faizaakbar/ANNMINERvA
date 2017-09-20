@@ -59,6 +59,8 @@ class MnvTFRunnerCategorical:
         self.targets_label = feature_targ_dict.get(
             'TARGETS_LABEL', 'segments'
         )
+        self.img_depth = feature_targ_dict.get('IMG_DEPTH', 2)
+        self.n_planecodes = feature_targ_dict.get('N_PLANECODES', 67)
         try:
             self.build_kbd_function = feature_targ_dict['BUILD_KBD_FUNCTION']
         except KeyError as e:
@@ -77,6 +79,9 @@ class MnvTFRunnerCategorical:
 
         self.model = model
         self.img_depth = img_params_dict.get('IMG_DEPTH', 2)
+        self.imgh = img_params_dict.get('IMGH', 127)
+        self.imgw_x = img_params_dict.get('IMGW_X', 50)
+        self.imgw_uv = img_params_dict.get('IMGW_UV', 25)
         self.views = ['x', 'u', 'v']
 
         self.data_recorder = None
@@ -134,7 +139,11 @@ class MnvTFRunnerCategorical:
                     filenames_list=self.train_file_list,
                     batch_size=self.batch_size,
                     name='train',
-                    compression=self.file_compression
+                    compression=self.file_compression,
+                    img_shp=(
+                        self.imgh, self.imgw_x, self.imgw_uv, self.img_depth
+                    ),
+                    n_planecodes=self.n_planecodes
                 )
                 targets_train, features_train, eventids_train = \
                     self._prep_targets_and_features_minerva(
@@ -146,7 +155,11 @@ class MnvTFRunnerCategorical:
                     filenames_list=self.valid_file_list,
                     batch_size=self.batch_size,
                     name='valid',
-                    compression=self.file_compression
+                    compression=self.file_compression,
+                    img_shp=(
+                        self.imgh, self.imgw_x, self.imgw_uv, self.img_depth
+                    ),
+                    n_planecodes=self.n_planecodes
                 )
                 targets_valid, features_valid, eventids_valid = \
                     self._prep_targets_and_features_minerva(
@@ -325,7 +338,11 @@ class MnvTFRunnerCategorical:
                     filenames_list=self.test_file_list,
                     batch_size=self.batch_size,
                     name='test',
-                    compression=self.file_compression
+                    compression=self.file_compression,
+                    img_shp=(
+                        self.imgh, self.imgw_x, self.imgw_uv, self.img_depth
+                    ),
+                    n_planecodes=self.n_planecodes
                 )
                 targets, features, _ = \
                     self._prep_targets_and_features_minerva(
@@ -437,7 +454,11 @@ class MnvTFRunnerCategorical:
                     filenames_list=self.test_file_list,
                     batch_size=self.batch_size,
                     name='prediction',
-                    compression=self.file_compression
+                    compression=self.file_compression,
+                    img_shp=(
+                        self.imgh, self.imgw_x, self.imgw_uv, self.img_depth
+                    ),
+                    n_planecodes=self.n_planecodes                    
                 )
                 targets, features, eventids = \
                     self._prep_targets_and_features_minerva(

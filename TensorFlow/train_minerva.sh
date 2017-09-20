@@ -5,9 +5,9 @@ MODEL_CODE="20170908"
 
 # targets - use NCLASS when making the logfile & model dir names also
 NCLASS=67
-TARGETS="--n_classes $NCLASS --targets_label planecodes"
-NCLASS=11
-TARGETS="--n_classes $NCLASS --targets_label segments"
+TARGLABEL="segments"
+TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
+IMGPAR="--imgw_x 94 --imgw_uv 47"
 
 TRAINING="--do_training"
 VALIDATION="--do_validaton"
