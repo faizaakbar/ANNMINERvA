@@ -21,7 +21,7 @@ SHORT=""
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 
-NEPOCHS="--num_epochs 3"
+NEPOCHS="--num_epochs 6"
 
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
