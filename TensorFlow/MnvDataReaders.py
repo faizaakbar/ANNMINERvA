@@ -12,29 +12,23 @@ class MnvDataReaderVertexST:
     * `tf.python_io.TFRecordCompressionType.ZLIB`
     * `tf.python_io.TFRecordCompressionType.GZIP`
     """
-    def __init__(
-            self, filenames_list, batch_size=100,
-            name='reader', data_format='NHWC', compression=None,
-            img_shp=(127, 50, 25), n_planecodes=67
-    ):
+    def __init__(self, args_dict):
         """
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
         TODO - get the img depth into this call also...
         """
-        self.filenames_list = filenames_list
-        self.batch_size = batch_size
-        self.name = name
-        self.img_shp = img_shp
-        self.n_planecodes = n_planecodes
+        self.filenames_list = args_dict['FILENAMES_LIST']
+        self.batch_size = args_dict['BATCH_SIZE']
+        self.name = args_dict['NAME']
+        self.img_shp = args_dict['IMG_SHP']
+        self.n_planecodes = args_dict['N_PLANECODES']
         imgdat_names = {}
         imgdat_names['x'] = 'hitimes-x'
         imgdat_names['u'] = 'hitimes-u'
         imgdat_names['v'] = 'hitimes-v'
         self.imgdat_names = imgdat_names
-        self.data_format = data_format
-        self.compression = tf.python_io.TFRecordCompressionType.NONE
-        if compression:
-            self.compression = compression
+        self.data_format = args_dict['DATA_FORMAT']
+        self.compression = args_dict['FILE_COMPRESSION']
 
     def _make_mnv_vertex_finder_batch_dict(
             self, eventids_batch,

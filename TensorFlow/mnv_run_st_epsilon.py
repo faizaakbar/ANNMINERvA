@@ -11,6 +11,7 @@ import tensorflow as tf
 from MnvModelsTricolumnar import TriColSTEpsilon
 from MnvModelsTricolumnar import make_default_convpooldict
 from MnvTFRunners import MnvTFRunnerCategorical
+from MnvDataReaders import MnvDataReaderVertexST
 import mnv_utils
 
 MNV_TYPE = 'st_epsilon'
@@ -25,6 +26,8 @@ tf.app.flags.DEFINE_string('file_root', 'mnv_data_',
                            """File basename.""")
 tf.app.flags.DEFINE_string('compression', '',
                            """pigz (zz) or gzip (gz).""")
+tf.app.flags.DEFINE_string('data_format', 'NHWC',
+                           """Tensor packing structure.""")
 #
 # logs and special outputs (models, predictions, etc.)
 #
@@ -120,10 +123,11 @@ def main(argv=None):
     logger.info(__file__)
 
     # set up run parameters
-    run_params_dict = mnv_utils.make_default_run_params_dict(MNV_TYPE)
-    run_params_dict['MODEL_DIR'] = FLAGS.model_dir
-    run_params_dict['PREDICTION_STORE_NAME'] = FLAGS.pred_store_name
-    run_params_dict['BE_VERBOSE'] = FLAGS.be_verbose
+    runpars_dict = mnv_utils.make_default_run_params_dict(MNV_TYPE)
+    runpars_dict['MODEL_DIR'] = FLAGS.model_dir
+    runpars_dict['PREDICTION_STORE_NAME'] = FLAGS.pred_store_name
+    runpars_dict['BE_VERBOSE'] = FLAGS.be_verbose
+    runpars_dict['DATA_READER_CLASS'] = MnvDataReaderVertexST
 
     # set up file lists - part of run parameters
     train_list, valid_list, test_list = \
@@ -142,26 +146,28 @@ def main(argv=None):
         valid_list = []
     if FLAGS.use_valid_for_test:
         test_list = valid_list
-    run_params_dict['TRAIN_FILE_LIST'] = train_list
-    run_params_dict['VALID_FILE_LIST'] = valid_list
-    run_params_dict['TEST_FILE_LIST'] = test_list
 
-    def make_local_data_reader_dict(filenames_list, name):
+    def datareader_dict(filenames_list, name):
         img_shp = (FLAGS.imgh, FLAGS.imgw_x, FLAGS.imgw_uv, FLAGS.img_depth)
         dd = mnv_utils.make_data_reader_dict(
             filenames_list=filenames_list,
             name=name,
             compression=FLAGS.compression,
-            img_shp=img_shp
+            img_shp=img_shp,
+            data_format=FLAGS.data_format
         )
+        dd['N_PLANECODES'] = FLAGS.n_planecodes
         return dd
+
+    runpars_dict['TRAIN_READER_ARGS'] = datareader_dict(train_list, 'train')
+    runpars_dict['VALID_READER_ARGS'] = datareader_dict(valid_list, 'valid')
+    runpars_dict['TEST_READER_ARGS'] = datareader_dict(test_list, 'data')
 
     # set up features parameters
     feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)
     feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
     feature_targ_dict['TARGETS_LABEL'] = FLAGS.targets_label
-    feature_targ_dict['N_PLANECODES'] = FLAGS.n_planecodes
-    model = TriColSTEpsilon(n_classes=FLAGS.n_classes)
+    feature_targ_dict['IMG_DEPTH'] = FLAGS.img_depth
 
     # TODO - pass some training params in on the command line
     # set up training parameters
@@ -171,29 +177,30 @@ def main(argv=None):
     # tweak operating parameters for very short runs
     short = FLAGS.do_a_short_run
     if short:
-        run_params_dict['SAVE_EVRY_N_BATCHES'] = 1
+        runpars_dict['SAVE_EVRY_N_BATCHES'] = 1
         train_params_dict['BATCH_SIZE'] = 64
 
-    logger.info(' run_params_dict = {}'.format(repr(run_params_dict)))
+    logger.info(' run_params_dict = {}'.format(repr(runpars_dict)))
     logger.info(' feature_targ_dict = {}'.format(repr(feature_targ_dict)))
     logger.info(' train_params_dict = {}'.format(repr(train_params_dict)))
-    logger.info(' img_params_dict = {}'.format(repr(img_params_dict)))
     logger.info('  Final file list lengths:')
     logger.info('   N train = {}'.format(
-        len(run_params_dict['TRAIN_FILE_LIST'])
+        len(runpars_dict['TRAIN_FILE_LIST'])
     ))
     logger.info('   N valid = {}'.format(
-        len(run_params_dict['VALID_FILE_LIST'])
+        len(runpars_dict['VALID_FILE_LIST'])
     ))
     logger.info('   N test = {}'.format(
-        len(run_params_dict['TEST_FILE_LIST'])
+        len(runpars_dict['TEST_FILE_LIST'])
     ))
+    model = TriColSTEpsilon(
+        n_classes=FLAGS.n_classes, data_format=FLAGS.data_format
+    )
     runner = MnvTFRunnerCategorical(
         model,
-        run_params_dict=run_params_dict,
+        run_params_dict=runpars_dict,
         feature_targ_dict=feature_targ_dict,
-        train_params_dict=train_params_dict,
-        img_params_dict=img_params_dict
+        train_params_dict=train_params_dict
     )
     if do_training:
         runner.run_training(do_validation=do_validation, short=short)

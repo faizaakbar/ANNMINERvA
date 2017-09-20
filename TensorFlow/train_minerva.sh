@@ -57,13 +57,13 @@ python mnv_run_st_epsilon.py \
   $SPECIAL $SHORT $PLANECODES $IMGPAR
 EOF
 
-python mnv_run_st_epsilon.py \
-  --compression gz \
-  --data_dir $DATADIR \
-  --file_root $FILEPAT \
-  --model_dir $MODELDIR \
-  --log_name $LOGFILE $LOGLEVEL \
-  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $PLANECODES $IMGPAR
+# python mnv_run_st_epsilon.py \
+#   --compression gz \
+#   --data_dir $DATADIR \
+#   --file_root $FILEPAT \
+#   --model_dir $MODELDIR \
+#   --log_name $LOGFILE $LOGLEVEL \
+#   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
+#   $SPECIAL $SHORT $PLANECODES $IMGPAR
 
 echo "Job finished "`date`""

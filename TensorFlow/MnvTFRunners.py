@@ -11,7 +11,6 @@ import tensorflow as tf
 import numpy as np
 from six.moves import range
 
-from MnvDataReaders import MnvDataReaderVertexST
 import mnv_utils
 
 LOGGER = logging.getLogger(__name__)
@@ -28,20 +27,17 @@ class MnvTFRunnerCategorical:
             run_params_dict,
             feature_targ_dict=None,
             train_params_dict=None,
-            img_params_dict=None,
     ):
         if feature_targ_dict is None:
             feature_targ_dict = dict()
         if train_params_dict is None:
             train_params_dict = dict()
-        if img_params_dict is None:
-            img_params_dict = dict()
 
         try:
-            self.train_file_list = run_params_dict['TRAIN_FILE_LIST']
-            self.valid_file_list = run_params_dict['VALID_FILE_LIST']
-            self.test_file_list = run_params_dict['TEST_FILE_LIST']
-            self.file_compression = run_params_dict['COMPRESSION']
+            self.data_reader = run_params_dict['DATA_READER_CLASS']
+            self.train_reader_args = run_params_dict['TRAIN_READER_ARGS']
+            self.valid_reader_args = run_params_dict['VALID_READER_ARGS']
+            self.test_reader_args = run_params_dict['TEST_READER_ARGS']
             self.save_model_directory = run_params_dict['MODEL_DIR']
             self.load_saved_model = run_params_dict['LOAD_SAVED_MODEL']
             self.save_freq = run_params_dict['SAVE_EVRY_N_BATCHES']
@@ -60,7 +56,6 @@ class MnvTFRunnerCategorical:
             'TARGETS_LABEL', 'segments'
         )
         self.img_depth = feature_targ_dict.get('IMG_DEPTH', 2)
-        self.n_planecodes = feature_targ_dict.get('N_PLANECODES', 67)
         try:
             self.build_kbd_function = feature_targ_dict['BUILD_KBD_FUNCTION']
         except KeyError as e:
@@ -78,10 +73,6 @@ class MnvTFRunnerCategorical:
         )
 
         self.model = model
-        self.img_depth = img_params_dict.get('IMG_DEPTH', 2)
-        self.imgh = img_params_dict.get('IMGH', 127)
-        self.imgw_x = img_params_dict.get('IMGW_X', 50)
-        self.imgw_uv = img_params_dict.get('IMGW_UV', 25)
         self.views = ['x', 'u', 'v']
 
         self.data_recorder = None
@@ -135,32 +126,14 @@ class MnvTFRunnerCategorical:
 
             with tf.Session(graph=g) as sess:
 
-                train_reader = MnvDataReaderVertexST(
-                    filenames_list=self.train_file_list,
-                    batch_size=self.batch_size,
-                    name='train',
-                    compression=self.file_compression,
-                    img_shp=(
-                        self.imgh, self.imgw_x, self.imgw_uv, self.img_depth
-                    ),
-                    n_planecodes=self.n_planecodes
-                )
+                train_reader = self.data_reader(self.train_reader_args)
                 targets_train, features_train, eventids_train = \
                     self._prep_targets_and_features_minerva(
                         train_reader.shuffle_batch_generator,
                         self.num_epochs
                     )
 
-                valid_reader = MnvDataReaderVertexST(
-                    filenames_list=self.valid_file_list,
-                    batch_size=self.batch_size,
-                    name='valid',
-                    compression=self.file_compression,
-                    img_shp=(
-                        self.imgh, self.imgw_x, self.imgw_uv, self.img_depth
-                    ),
-                    n_planecodes=self.n_planecodes
-                )
+                valid_reader = self.data_reader(self.valid_reader_args)
                 targets_valid, features_valid, eventids_valid = \
                     self._prep_targets_and_features_minerva(
                         valid_reader.batch_generator,
@@ -334,16 +307,7 @@ class MnvTFRunnerCategorical:
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
             with tf.Session(graph=g) as sess:
-                data_reader = MnvDataReaderVertexST(
-                    filenames_list=self.test_file_list,
-                    batch_size=self.batch_size,
-                    name='test',
-                    compression=self.file_compression,
-                    img_shp=(
-                        self.imgh, self.imgw_x, self.imgw_uv, self.img_depth
-                    ),
-                    n_planecodes=self.n_planecodes
-                )
+                data_reader = self.data_reader(self.test_reader_args)
                 targets, features, _ = \
                     self._prep_targets_and_features_minerva(
                         data_reader.batch_generator
@@ -453,16 +417,7 @@ class MnvTFRunnerCategorical:
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
             with tf.Session(graph=g) as sess:
-                data_reader = MnvDataReaderVertexST(
-                    filenames_list=self.test_file_list,
-                    batch_size=self.batch_size,
-                    name='prediction',
-                    compression=self.file_compression,
-                    img_shp=(
-                        self.imgh, self.imgw_x, self.imgw_uv, self.img_depth
-                    ),
-                    n_planecodes=self.n_planecodes
-                )
+                data_reader = self.data_reader(self.test_reader_args)
                 targets, features, eventids = \
                     self._prep_targets_and_features_minerva(
                         data_reader.batch_generator
@@ -551,6 +506,7 @@ class MnvTFRunnerCategorical:
 
         # note - don't need input data here, we just want to load the saved
         # model to inspect the weights
+        # TODO - fix img sizes!
         X = tf.placeholder(
             tf.float32, shape=[None, 127, 50, self.img_depth], name='X'
         )

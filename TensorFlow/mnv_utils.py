@@ -15,7 +15,8 @@ def make_data_reader_dict(
         batch_size=128,
         name='reader',
         compression=None,
-        img_shp=(127, 50, 25, 2)
+        img_shp=(127, 50, 25, 2),
+        data_format='NHWC'
 ):
     """
     NOTE: `img_shp` is not a regular TF 4-tensor.
@@ -25,22 +26,24 @@ def make_data_reader_dict(
     data_reader_dict['FILENAMES_LIST'] = filenames_list
     data_reader_dict['BATCH_SIZE'] = batch_size
     data_reader_dict['NAME'] = name
-    if compression == 'zz':
+    if compression is None:
+        data_reader_dict['FILE_COMPRESSION'] = NONE_COMP
+    elif compression == 'zz':
         data_reader_dict['FILE_COMPRESSION'] = ZLIB_COMP
     elif compression == 'gz':
         data_reader_dict['FILE_COMPRESSION'] = GZIP_COMP
     else:
-        data_reader_dict['FILE_COMPRESSION'] = NONE_COMP
+        msg = 'Invalid compression type in mnv_utils!'
+        LOGGER.error(msg)
+        raise ValueError(msg)
     data_reader_dict['IMG_SHP'] = img_shp
+    data_reader_dict['DATA_FORMAT'] = data_format
     return data_reader_dict
 
 
 def make_default_run_params_dict(mnv_type='st_epsilon'):
     run_params_dict = {}
-    run_params_dict['TRAIN_FILE_LIST'] = None
-    run_params_dict['VALID_FILE_LIST'] = None
-    run_params_dict['TEST_FILE_LIST'] = None
-    run_params_dict['COMPRESSION'] = None
+    run_params_dict['DATA_READER_CLASS'] = None
     run_params_dict['MODEL_DIR'] = '/tmp/minerva'
     run_params_dict['LOAD_SAVED_MODEL'] = True
     run_params_dict['SAVE_EVRY_N_BATCHES'] = 50
@@ -52,18 +55,13 @@ def make_default_run_params_dict(mnv_type='st_epsilon'):
 def make_default_feature_targ_dict(mnv_type='st_epsilon'):
     feature_targ_dict = {}
     if mnv_type == 'st_epsilon':
-        """
-        note: we must track `n_planecodes` separately from `n_classes` because
-        even if we are targeting 11 segments, we need to know the number of
-        planecodes to correctly unpack the tfrecord file.
-        """
         feature_targ_dict['FEATURE_STR_DICT'] = {}
         feature_targ_dict['FEATURE_STR_DICT']['x'] = 'hitimes-x'
         feature_targ_dict['FEATURE_STR_DICT']['u'] = 'hitimes-u'
         feature_targ_dict['FEATURE_STR_DICT']['v'] = 'hitimes-v'
         feature_targ_dict['TARGETS_LABEL'] = None
         feature_targ_dict['BUILD_KBD_FUNCTION'] = None
-        feature_targ_dict['N_PLANECODES'] = 67
+        feature_targ_dict['IMG_DEPTH'] = 2
     return feature_targ_dict
 
 
