@@ -14,23 +14,28 @@
 
 DAT=`date +%s`
 SAMPLE="me1Amc"
-MODEL_CODE="20170919_${SAMPLE}"
 
-SHORT="--do_a_short_run"
 SHORT=""
+SHORT="--do_a_short_run"
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 
-NEPOCHS="--num_epochs 6"
+NEPOCHS="--num_epochs 1"
+
+# targets
+# NCLASS=11
+# TARGLABEL="segments"
+# NCLASS=67
+# TARGLABEL="planecodes"
+NCLASS=173
+TARGLABEL="planecodes"
+TARGETS="--n_classes $NCLASS --targets_label $TARGLABEL"
+
+MODEL_CODE="20170920_${SAMPLE}_${TARGLABEL}${NCLASS}"
 
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
 
-# targets
-NCLASS=11
-TARGETS="--n_classes $NCLASS --targets_label segments"
-NCLASS=67
-TARGETS="--n_classes $NCLASS --targets_label planecodes"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
@@ -49,6 +54,7 @@ PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_${SAMPLE}"
 DATADIR="/data/perdue/minerva/tensorflow/data/201709/${SAMPLE}"
 LOGDIR="/data/perdue/minerva/tensorflow/logs/201709/${SAMPLE}"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
