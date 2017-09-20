@@ -366,6 +366,9 @@ class MnvTFRunnerCategorical:
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
                     LOGGER.info('Restored session from {}'.format(ckpt_dir))
+                else:
+                    LOGGER.error('No model found!')
+                    return
 
                 final_step = self.model.global_step.eval()
                 LOGGER.info('evaluation after {} steps.'.format(final_step))
@@ -458,7 +461,7 @@ class MnvTFRunnerCategorical:
                     img_shp=(
                         self.imgh, self.imgw_x, self.imgw_uv, self.img_depth
                     ),
-                    n_planecodes=self.n_planecodes                    
+                    n_planecodes=self.n_planecodes
                 )
                 targets, features, eventids = \
                     self._prep_targets_and_features_minerva(
@@ -481,6 +484,9 @@ class MnvTFRunnerCategorical:
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
                     LOGGER.info('Restored session from {}'.format(ckpt_dir))
+                else:
+                    LOGGER.error('No model found!')
+                    return
 
                 final_step = self.model.global_step.eval()
                 LOGGER.info('evaluation after {} steps.'.format(final_step))
