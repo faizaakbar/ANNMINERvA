@@ -58,6 +58,8 @@ tf.app.flags.DEFINE_integer('imgw_x', 50,
                             """X-view img width.""")
 tf.app.flags.DEFINE_integer('imgw_uv', 25,
                             """U/V-view img width.""")
+tf.app.flags.DEFINE_integer('img_depth', 2,
+                            """Img depth.""")
 tf.app.flags.DEFINE_integer('n_planecodes', 67,
                             """Number of planecodes.""")
 #
@@ -124,16 +126,9 @@ def main(argv=None):
     run_params_dict['BE_VERBOSE'] = FLAGS.be_verbose
 
     # set up file lists - part of run parameters
-    comp_ext = ''
-    if FLAGS.compression == 'zz':
-        comp_ext = '.zz'
-        run_params_dict['COMPRESSION'] = mnv_utils.ZLIB_COMP
-    elif FLAGS.compression == 'gz':
-        comp_ext = '.gz'
-        run_params_dict['COMPRESSION'] = mnv_utils.GZIP_COMP
     train_list, valid_list, test_list = \
         mnv_utils.get_trainvalidtest_file_lists(
-            FLAGS.data_dir, FLAGS.file_root, comp_ext
+            FLAGS.data_dir, FLAGS.file_root, FLAGS.compression
         )
     # fix lists if there are special options
     if FLAGS.use_test_for_train:
@@ -151,6 +146,16 @@ def main(argv=None):
     run_params_dict['VALID_FILE_LIST'] = valid_list
     run_params_dict['TEST_FILE_LIST'] = test_list
 
+    def make_local_data_reader_dict(filenames_list, name):
+        img_shp = (FLAGS.imgh, FLAGS.imgw_x, FLAGS.imgw_uv, FLAGS.img_depth)
+        dd = mnv_utils.make_data_reader_dict(
+            filenames_list=filenames_list,
+            name=name,
+            compression=FLAGS.compression,
+            img_shp=img_shp
+        )
+        return dd
+
     # set up features parameters
     feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)
     feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
@@ -162,12 +167,6 @@ def main(argv=None):
     # set up training parameters
     train_params_dict = mnv_utils.make_default_train_params_dict(MNV_TYPE)
     train_params_dict['NUM_EPOCHS'] = FLAGS.num_epochs
-
-    # set up image parameters
-    img_params_dict = mnv_utils.make_default_img_params_dict(MNV_TYPE)
-    img_params_dict['IMGH'] = FLAGS.imgh
-    img_params_dict['IMGW_X'] = FLAGS.imgw_x
-    img_params_dict['IMGW_UV'] = FLAGS.imgw_uv
 
     # tweak operating parameters for very short runs
     short = FLAGS.do_a_short_run

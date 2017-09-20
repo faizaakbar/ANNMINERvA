@@ -18,7 +18,7 @@ class MnvDataReaderVertexST:
             img_shp=(127, 50, 25), n_planecodes=67
     ):
         """
-        img_shp = (imgh, imgw_x, imgw_ux, img_depth)
+        img_shp = (imgh, imgw_x, imgw_uv, img_depth)
         TODO - get the img depth into this call also...
         """
         self.filenames_list = filenames_list

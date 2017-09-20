@@ -7,6 +7,32 @@ LOGGER = logging.getLogger(__name__)
 BATCH_SIZE = 128
 ZLIB_COMP = tf.python_io.TFRecordCompressionType.ZLIB
 GZIP_COMP = tf.python_io.TFRecordCompressionType.GZIP
+NONE_COMP = tf.python_io.TFRecordCompressionType.NONE
+
+
+def make_data_reader_dict(
+        filenames_list=None,
+        batch_size=128,
+        name='reader',
+        compression=None,
+        img_shp=(127, 50, 25, 2)
+):
+    """
+    NOTE: `img_shp` is not a regular TF 4-tensor.
+    img_shp = (height, width_x, widht_uv, depth)
+    """
+    data_reader_dict = {}
+    data_reader_dict['FILENAMES_LIST'] = filenames_list
+    data_reader_dict['BATCH_SIZE'] = batch_size
+    data_reader_dict['NAME'] = name
+    if compression == 'zz':
+        data_reader_dict['FILE_COMPRESSION'] = ZLIB_COMP
+    elif compression == 'gz':
+        data_reader_dict['FILE_COMPRESSION'] = GZIP_COMP
+    else:
+        data_reader_dict['FILE_COMPRESSION'] = NONE_COMP
+    data_reader_dict['IMG_SHP'] = img_shp
+    return data_reader_dict
 
 
 def make_default_run_params_dict(mnv_type='st_epsilon'):
@@ -26,12 +52,16 @@ def make_default_run_params_dict(mnv_type='st_epsilon'):
 def make_default_feature_targ_dict(mnv_type='st_epsilon'):
     feature_targ_dict = {}
     if mnv_type == 'st_epsilon':
+        """
+        note: we must track `n_planecodes` separately from `n_classes` because
+        even if we are targeting 11 segments, we need to know the number of
+        planecodes to correctly unpack the tfrecord file.
+        """
         feature_targ_dict['FEATURE_STR_DICT'] = {}
         feature_targ_dict['FEATURE_STR_DICT']['x'] = 'hitimes-x'
         feature_targ_dict['FEATURE_STR_DICT']['u'] = 'hitimes-u'
         feature_targ_dict['FEATURE_STR_DICT']['v'] = 'hitimes-v'
         feature_targ_dict['TARGETS_LABEL'] = None
-        feature_targ_dict['IMG_DEPTH'] = 2
         feature_targ_dict['BUILD_KBD_FUNCTION'] = None
         feature_targ_dict['N_PLANECODES'] = 67
     return feature_targ_dict
@@ -46,16 +76,6 @@ def make_default_train_params_dict(mnv_type='st_epsilon'):
     train_params_dict['STRATEGY'] = tf.train.AdamOptimizer
     train_params_dict['DROPOUT_KEEP_PROB'] = 0.5
     return train_params_dict
-
-
-def make_default_img_params_dict(mnv_type='st_epsilon'):
-    img_params_dict = {}
-    if mnv_type == 'st_epsilon':
-        img_params_dict['IMG_DEPTH'] = 2
-    img_params_dict['IMGH'] = 127
-    img_params_dict['IMGW_X'] = 50
-    img_params_dict['IMGW_UV'] = 25
-    return img_params_dict
 
 
 def get_logging_level(log_level):
@@ -76,7 +96,7 @@ def get_logging_level(log_level):
     return logging_level
 
 
-def get_trainvalidtest_file_lists(data_dir, file_root, comp_ext):
+def get_trainvalidtest_file_lists(data_dir, file_root, compression):
     """
     Assume we are looking for three sets of files in the form of
     TFRecords, with groups of files with extensions like
@@ -85,6 +105,7 @@ def get_trainvalidtest_file_lists(data_dir, file_root, comp_ext):
     extension markers).
     """
     import glob
+    comp_ext = compression if compression == '' else '.' + compression
     train_list = glob.glob(data_dir + '/' + file_root +
                            '*_train.tfrecord' + comp_ext)
     valid_list = glob.glob(data_dir + '/' + file_root +
