@@ -44,6 +44,8 @@ tf.app.flags.DEFINE_string('pred_store_name', 'temp_store',
 #
 tf.app.flags.DEFINE_integer('num_epochs', 1,
                             """Number of training epochs.""")
+tf.app.flags.DEFINE_integer('batch_size', 128,
+                            """Batch size.""")
 # TODO - add learning rate, l2 reg params, etc.
 #
 # classification goal specification
@@ -129,6 +131,11 @@ def main(argv=None):
     runpars_dict['BE_VERBOSE'] = FLAGS.be_verbose
     runpars_dict['DATA_READER_CLASS'] = MnvDataReaderVertexST
 
+   # tweak operating parameters for very short runs
+    short = FLAGS.do_a_short_run
+    if short:
+        runpars_dict['SAVE_EVRY_N_BATCHES'] = 1
+
     # set up file lists - part of run parameters
     train_list, valid_list, test_list = \
         mnv_utils.get_trainvalidtest_file_lists(
@@ -151,6 +158,7 @@ def main(argv=None):
         img_shp = (FLAGS.imgh, FLAGS.imgw_x, FLAGS.imgw_uv, FLAGS.img_depth)
         dd = mnv_utils.make_data_reader_dict(
             filenames_list=filenames_list,
+            batch_size=FLAGS.batch_size,
             name=name,
             compression=FLAGS.compression,
             img_shp=img_shp,
@@ -174,25 +182,15 @@ def main(argv=None):
     train_params_dict = mnv_utils.make_default_train_params_dict(MNV_TYPE)
     train_params_dict['NUM_EPOCHS'] = FLAGS.num_epochs
 
-    # tweak operating parameters for very short runs
-    short = FLAGS.do_a_short_run
-    if short:
-        runpars_dict['SAVE_EVRY_N_BATCHES'] = 1
-        train_params_dict['BATCH_SIZE'] = 64
-
     logger.info(' run_params_dict = {}'.format(repr(runpars_dict)))
     logger.info(' feature_targ_dict = {}'.format(repr(feature_targ_dict)))
     logger.info(' train_params_dict = {}'.format(repr(train_params_dict)))
     logger.info('  Final file list lengths:')
-    logger.info('   N train = {}'.format(
-        len(runpars_dict['TRAIN_FILE_LIST'])
-    ))
-    logger.info('   N valid = {}'.format(
-        len(runpars_dict['VALID_FILE_LIST'])
-    ))
-    logger.info('   N test = {}'.format(
-        len(runpars_dict['TEST_FILE_LIST'])
-    ))
+    for typ in ['train', 'valid', 'test']:
+        dkey = '%s_READER_ARGS' % typ.upper()
+        logger.info('   N {} = {}'.format(
+            typ, len(runpars_dict[dkey]['FILENAMES_LIST'])
+        ))
     model = TriColSTEpsilon(
         n_classes=FLAGS.n_classes, data_format=FLAGS.data_format
     )

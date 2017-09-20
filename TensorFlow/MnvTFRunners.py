@@ -62,7 +62,6 @@ class MnvTFRunnerCategorical:
             print(e)
 
         self.learning_rate = train_params_dict.get('LEARNING_RATE', 0.001)
-        self.batch_size = train_params_dict.get('BATCH_SIZE', 128)
         self.num_epochs = train_params_dict.get('NUM_EPOCHS', 1)
         self.momentum = train_params_dict.get('MOMENTUM', 0.9)
         self.dropout_keep_prob = train_params_dict.get(

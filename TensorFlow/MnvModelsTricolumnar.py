@@ -108,13 +108,13 @@ class TriColSTEpsilon:
     """
     Tri-Columnar SpaceTime Epsilon
     """
-    def __init__(self, n_classes):
+    def __init__(self, n_classes, data_format='NHWC'):
         self.n_classes = n_classes
         self.dropout_keep_prob = None
         self.global_step = None
         self.padding = 'VALID'
         # note, 'NCHW' is only supported on GPUs
-        self.data_format = 'NHWC'
+        self.data_format = data_format
 
     def _build_network(self, features_list, kbd):
         """
