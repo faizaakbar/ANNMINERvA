@@ -15,21 +15,28 @@
 DAT=`date +%s`
 SAMPLE="me1Amc"
 
-SHORT=""
 SHORT="--do_a_short_run"
+SHORT=""
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 
-NEPOCHS="--num_epochs 1"
+NEPOCHS="--num_epochs 10"
 
-# targets
-# NCLASS=11
-# TARGLABEL="segments"
-# NCLASS=67
+# NCLASS=173
+# NPLANECODES=173
+# IMGWX=94
+# IMGWUV=47
 # TARGLABEL="planecodes"
-NCLASS=173
+
+NCLASS=67
+NPLANECODES=67
+IMGWX=50
+IMGWUV=25
 TARGLABEL="planecodes"
-TARGETS="--n_classes $NCLASS --targets_label $TARGLABEL"
+
+PLANECODES="--n_planecodes $NPLANECODES"
+TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
+IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 
 MODEL_CODE="20170920_${SAMPLE}_${TARGLABEL}${NCLASS}"
 
@@ -53,8 +60,8 @@ PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
 PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_${SAMPLE}"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
 DATADIR="/data/perdue/minerva/tensorflow/data/201709/${SAMPLE}"
 LOGDIR="/data/perdue/minerva/tensorflow/logs/201709/${SAMPLE}"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
@@ -101,7 +108,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS
+  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR
 EOF
 
 singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
@@ -111,7 +118,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS
+  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
