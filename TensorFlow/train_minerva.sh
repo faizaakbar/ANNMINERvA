@@ -5,12 +5,22 @@ SAMPLE=me1Amc
 
 # targets - note, `n_planecodes` may be different than `nclass` - we need to
 # know the number of planecodes when unpacking even when targeting semgnets.
-NCLASS=173
-NPLANECODES=173
-PLANECODES="--n_planecodes $NPLANECODES"
+
+# NCLASS=173
+# NPLANECODES=173
+# IMGWX=94
+# IMGWUV=47
+# TARGLABEL="planecodes"
+
+NCLASS=67
+NPLANECODES=67
+IMGWX=50
+IMGWUV=25
 TARGLABEL="planecodes"
+
+PLANECODES="--n_planecodes $NPLANECODES"
 TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
-IMGPAR="--imgw_x 94 --imgw_uv 47"
+IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 
 SHORT=""
 SHORT="--do_a_short_run"
@@ -40,6 +50,7 @@ PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
 # data, log, and model logistics
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_me1Amc_000000"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_000000"
 DATADIR="${BASEP}/tfrec"
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 LOGDIR="${BASEP}/logs"
