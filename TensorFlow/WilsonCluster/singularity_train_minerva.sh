@@ -22,17 +22,17 @@ LOGLEVEL="--log_level INFO"
 
 NEPOCHS="--num_epochs 10"
 
-# NCLASS=173
-# NPLANECODES=173
-# IMGWX=94
-# IMGWUV=47
-# TARGLABEL="planecodes"
-
-NCLASS=67
-NPLANECODES=67
-IMGWX=50
-IMGWUV=25
+NCLASS=173
+NPLANECODES=173
+IMGWX=94
+IMGWUV=47
 TARGLABEL="planecodes"
+
+# NCLASS=67
+# NPLANECODES=67
+# IMGWX=50
+# IMGWUV=25
+# TARGLABEL="planecodes"
 
 PLANECODES="--n_planecodes $NPLANECODES"
 TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
@@ -60,8 +60,8 @@ PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
 PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_${SAMPLE}"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_${SAMPLE}"
 DATADIR="/data/perdue/minerva/tensorflow/data/201709/${SAMPLE}"
 LOGDIR="/data/perdue/minerva/tensorflow/logs/201709/${SAMPLE}"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
