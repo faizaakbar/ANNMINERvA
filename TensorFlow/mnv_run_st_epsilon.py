@@ -124,6 +124,12 @@ def main(argv=None):
     logger.info("Starting...")
     logger.info(__file__)
 
+    # set up features parameters
+    feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)
+    feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
+    feature_targ_dict['TARGETS_LABEL'] = FLAGS.targets_label
+    feature_targ_dict['IMG_DEPTH'] = FLAGS.img_depth
+
     # set up run parameters
     runpars_dict = mnv_utils.make_default_run_params_dict(MNV_TYPE)
     runpars_dict['MODEL_DIR'] = FLAGS.model_dir
@@ -131,7 +137,7 @@ def main(argv=None):
     runpars_dict['BE_VERBOSE'] = FLAGS.be_verbose
     runpars_dict['DATA_READER_CLASS'] = MnvDataReaderVertexST
 
-   # tweak operating parameters for very short runs
+    # tweak operating parameters for very short runs
     short = FLAGS.do_a_short_run
     if short:
         runpars_dict['SAVE_EVRY_N_BATCHES'] = 1
@@ -165,17 +171,12 @@ def main(argv=None):
             data_format=FLAGS.data_format
         )
         dd['N_PLANECODES'] = FLAGS.n_planecodes
+        dd['FEATURE_STR_DICT'] = feature_targ_dict['FEATURE_STR_DICT']
         return dd
 
     runpars_dict['TRAIN_READER_ARGS'] = datareader_dict(train_list, 'train')
     runpars_dict['VALID_READER_ARGS'] = datareader_dict(valid_list, 'valid')
     runpars_dict['TEST_READER_ARGS'] = datareader_dict(test_list, 'data')
-
-    # set up features parameters
-    feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)
-    feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
-    feature_targ_dict['TARGETS_LABEL'] = FLAGS.targets_label
-    feature_targ_dict['IMG_DEPTH'] = FLAGS.img_depth
 
     # TODO - pass some training params in on the command line
     # set up training parameters

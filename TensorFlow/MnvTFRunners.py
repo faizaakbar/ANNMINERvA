@@ -67,9 +67,6 @@ class MnvTFRunnerCategorical:
         self.dropout_keep_prob = train_params_dict.get(
             'DROPOUT_KEEP_PROB', 0.75
         )
-        self.strategy = train_params_dict.get(
-            'STRATEGY', tf.train.AdamOptimizer
-        )
 
         self.model = model
         self.views = ['x', 'u', 'v']
@@ -86,6 +83,10 @@ class MnvTFRunnerCategorical:
             self.data_recorder = MnvCategoricalTextRecorder(
                 self.pred_store_name
             )
+
+    def _get_img_shp(self):
+        img_shp = self.train_reader_args['IMG_SHP']
+        return img_shp
 
     def _prep_targets_and_features_minerva(self, generator, num_epochs=1):
         batch_dict = generator(num_epochs=num_epochs)
@@ -505,21 +506,27 @@ class MnvTFRunnerCategorical:
 
         # note - don't need input data here, we just want to load the saved
         # model to inspect the weights
-        # TODO - fix img sizes!
+        img_shp = self._get_img_shp()  # h, w_x, w_uv, depth
         X = tf.placeholder(
-            tf.float32, shape=[None, 127, 50, self.img_depth], name='X'
+            tf.float32,
+            shape=[None, img_shp[0], img_shp[1], img_shp[3]],
+            name='X'
         )
         U = tf.placeholder(
-            tf.float32, shape=[None, 127, 25, self.img_depth], name='U'
+            tf.float32,
+            shape=[None, img_shp[0], img_shp[2], img_shp[3]],
+            name='U'
         )
         V = tf.placeholder(
-            tf.float32, shape=[None, 127, 25, self.img_depth], name='V'
+            tf.float32,
+            shape=[None, img_shp[0], img_shp[2], img_shp[3]],
+            name='V'
         )
         targ = tf.placeholder(
             tf.float32, shape=[None, self.model.n_classes], name='targ'
         )
         f = [X, U, V]
-        d = self.build_kbd_function(img_depth=self.img_depth)
+        d = self.build_kbd_function(img_depth=img_shp[3])
         self.model.prepare_for_inference(f, d)
         self.model.prepare_for_loss_computation(targ)
         LOGGER.info('Preparing to check model with %d parameters' %

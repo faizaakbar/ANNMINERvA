@@ -22,11 +22,7 @@ class MnvDataReaderVertexST:
         self.name = args_dict['NAME']
         self.img_shp = args_dict['IMG_SHP']
         self.n_planecodes = args_dict['N_PLANECODES']
-        imgdat_names = {}
-        imgdat_names['x'] = 'hitimes-x'
-        imgdat_names['u'] = 'hitimes-u'
-        imgdat_names['v'] = 'hitimes-v'
-        self.imgdat_names = imgdat_names
+        self.imgdat_names = args_dict['FEATURE_STR_DICT']
         self.data_format = args_dict['DATA_FORMAT']
         self.compression = args_dict['FILE_COMPRESSION']
 
