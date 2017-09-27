@@ -12,22 +12,30 @@ SAMPLE=me1Amc
 # IMGWUV=47
 # TARGLABEL="planecodes"
 
-NCLASS=67
+# NCLASS=67
+# NPLANECODES=67
+# IMGWX=50
+# IMGWUV=25
+# TARGLABEL="planecodes"
+
+NCLASS=11
 NPLANECODES=67
 IMGWX=50
 IMGWUV=25
-TARGLABEL="planecodes"
+TARGLABEL="segments"
 
 PLANECODES="--n_planecodes $NPLANECODES"
 TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
 IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 
-SHORT=""
 SHORT="--do_a_short_run"
+SHORT=""
 LOGLEVEL="--log_level INFO"
 LOGLEVEL="--log_level DEBUG --be_verbose"
 
-MODEL_CODE="20170920_${SAMPLE}_${TARGLABEL}${NCLASS}"
+NEPOCHS="--num_epochs 1"
+
+MODEL_CODE="20170927_${SAMPLE}_${TARGLABEL}${NCLASS}"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
@@ -37,11 +45,11 @@ TESTING="--nodo_testing"
 TESTING="--do_testing"
 
 SPECIAL="--use_all_for_test"
-SPECIAL="--use_test_for_train --use_valid_for_test"
 SPECIAL="--use_valid_for_test"
 SPECIAL=""
+SPECIAL="--use_test_for_train --use_valid_for_test"
 
-BASEP="/Users/gnperdue/Documents/MINERvA/AI/minerva_tf"
+BASEP="${HOME}/Documents/MINERvA/AI/minerva_tf"
 
 PREDPATH="${BASEP}/predictions/"
 PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
@@ -51,6 +59,7 @@ PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 # data, log, and model logistics
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_me1Amc_000000"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_000000"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_00000"
 DATADIR="${BASEP}/tfrec"
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 LOGDIR="${BASEP}/logs"
@@ -65,7 +74,7 @@ python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $PLANECODES $IMGPAR
+  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS
 EOF
 
 python mnv_run_st_epsilon.py \
@@ -75,6 +84,6 @@ python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $PLANECODES $IMGPAR
+  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS
 
 echo "Job finished "`date`""
