@@ -98,6 +98,21 @@ class MnvTFRunnerCategorical:
         eventids = batch_dict['eventids']
         return targets, features, eventids
 
+    def _log_confusion_maxtr(self, conf_mat):
+        conf_mat_filename = self.save_model_directory + \
+            '/confusion_matrix.npy'
+        if os.path.isfile(conf_mat_filename):
+            os.remove(conf_mat_filename)
+        LOGGER.info('   Saving confusion matrix to {}'.format(
+            conf_mat_filename
+        ))
+        np.save(conf_mat_filename, conf_mat)
+        acc_by_class = 100.0 * np.diag(conf_mat) / np.sum(conf_mat, axis=1)
+        for i, v in enumerate(acc_by_class):
+            LOGGER.info("   class {:03d} accuracy:\t{:0.5f} %".format(
+                i, acc_by_class[i]
+            ))
+
     def run_training(
             self, do_validation=False, short=False
     ):
@@ -339,6 +354,11 @@ class MnvTFRunnerCategorical:
                 average_loss = 0.0
                 total_correct_preds = 0
 
+                confusion_matrix = np.zeros(
+                    self.model.n_classes * self.model.n_classes,
+                    dtype='float32'
+                ).reshape(self.model.n_classes, self.model.n_classes)
+
                 coord = tf.train.Coordinator()
                 threads = tf.train.start_queue_runners(coord=coord)
 
@@ -360,18 +380,21 @@ class MnvTFRunnerCategorical:
                         correct_preds = tf.equal(
                             tf.argmax(preds, 1), tf.argmax(Y_batch, 1)
                         )
-                        if self.be_verbose:
-                            LOGGER.debug('   preds   = \n{}'.format(
-                                tf.argmax(preds, 1).eval()
-                            ))
-                            LOGGER.debug('   Y_batch = \n{}'.format(
-                                tf.argmax(Y_batch, 1).eval()
-                            ))
                         accuracy = tf.reduce_sum(
                             tf.cast(correct_preds, tf.float32)
                         )
                         total_correct_preds += sess.run(accuracy)
+                        evald_preds = tf.argmax(preds, 1).eval()
+                        evald_ysbatch = tf.argmax(Y_batch, 1).eval()
+                        for t, p in zip(evald_ysbatch, evald_preds):
+                            confusion_matrix[p][t] += 1.0
                         if self.be_verbose:
+                            LOGGER.debug('   preds   = \n{}'.format(
+                                evald_preds
+                            ))
+                            LOGGER.debug('   Y_batch = \n{}'.format(
+                                evald_ysbatch
+                            ))
                             LOGGER.debug(
                                 '  batch {} loss = {} for size = {}'.format(
                                     i, loss_batch, batch_sz
@@ -399,6 +422,7 @@ class MnvTFRunnerCategorical:
                     coord.request_stop()
                     coord.join(threads)
 
+            self._log_confusion_maxtr(confusion_matrix)
             LOGGER.info('  Elapsed time = {}'.format(time.time() - start_time))
 
         LOGGER.info('Finished testing...')
