@@ -15,8 +15,8 @@
 DAT=`date +%s`
 SAMPLE="me1Amc"
 
-SHORT=""
 SHORT="--do_a_short_run"
+SHORT=""
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 
@@ -57,8 +57,8 @@ SPECIAL="--use_test_for_train --use_valid_for_test"
 
 PREDPATH="/data/perdue/minerva/tensorflow/predictions/"
 PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
-PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
+PREDICTIONS="--nodo_prediction"
 
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_${SAMPLE}"
