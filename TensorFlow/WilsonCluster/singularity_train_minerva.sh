@@ -22,23 +22,27 @@ LOGLEVEL="--log_level INFO"
 
 NEPOCHS="--num_epochs 1"
 
-NCLASS=173
-NPLANECODES=173
-IMGWX=94
-IMGWUV=47
+# NCLASS=173
+# NPLANECODES=173
+# IMGWX=94
+# IMGWUV=47
+# TARGLABEL="planecodes"
+
+NCLASS=67
+NPLANECODES=67
+IMGWX=50
+IMGWUV=25
 TARGLABEL="planecodes"
 
-# NCLASS=67
-# NPLANECODES=67
-# IMGWX=50
-# IMGWUV=25
-# TARGLABEL="planecodes"
+PCODECAP=$(($NPLANECODES - 1))
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
 
 PLANECODES="--n_planecodes $NPLANECODES"
 TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
 IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 
 MODEL_CODE="20170927_${SAMPLE}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20170920_${SAMPLE}_${TARGLABEL}${NCLASS}"
 
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
@@ -60,8 +64,6 @@ PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 PREDICTIONS="--nodo_prediction"
 
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_${SAMPLE}"
 DATADIR="/data/perdue/minerva/tensorflow/data/201709/${SAMPLE}"
 LOGDIR="/data/perdue/minerva/tensorflow/logs/201709/${SAMPLE}"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
