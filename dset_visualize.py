@@ -255,6 +255,7 @@ def make_plots(data_dict, max_events):
     * or 'energies' or 'times'
     If 2-deep tensor, assume energy is index 0, time is index 1
     """
+    target_plane_codes = { 9: 1, 18: 2, 27: 3, 44: 4, 49: 5}
     pkeys = []
     for k in data_dict.keys():
         if len(data_dict[k]) > 0:
@@ -308,18 +309,29 @@ def make_plots(data_dict, max_events):
         evtid = data_dict['eventids'][counter]
         segment = data_dict['segments'][counter] \
             if len(data_dict['segments']) > 0 else -1
+        planecode = data_dict['planecodes'][counter] \
+            if len(data_dict['planecodes']) > 0 else -1
         (run, subrun, gate, phys_evt) = decode_eventid(evtid)
         if evt_plotted > max_events:
             break
-        print('Plotting entry {}: {}: {} - {} - {} - {} for segment {}'.format(
-            counter, evtid, run, subrun, gate, phys_evt, segment
-        ))
+        print('Plotting entry {}: {}: {} - {} - {} - {} for segment {} / planecode {}'.format(
+                  counter, evtid, run, subrun, gate, phys_evt, segment, planecode
+              ))
 
         # run, subrun, gate, phys_evt = decode_eventid(evtid)
         fig_wid = 9
         fig_height = 6 if plotting_two_tensors else 3
         grid_height = 2 if plotting_two_tensors else 1
         fig = pylab.figure(figsize=(fig_wid, fig_height))
+        if planecode in target_plane_codes.keys():
+            fig.suptitle('{}/{}/{}/{}: seg {} / pcode {} / targ {}'.format(
+                run, subrun, gate, phys_evt,
+                segment, planecode, target_plane_codes[planecode]
+            ))
+        else:
+            fig.suptitle('{}/{}/{}/{}: seg {} / pcode {}'.format(
+                run, subrun, gate, phys_evt, segment, planecode
+            ))
         gs = pylab.GridSpec(grid_height, 3)
 
         for i, t in enumerate(types):
