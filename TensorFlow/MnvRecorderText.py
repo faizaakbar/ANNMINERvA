@@ -17,6 +17,9 @@ class MnvCategoricalTextRecorder:
     record segments or planecodes in a text file
     """
     def __init__(self, db_base_name):
+        LOGGER.info('Setting up {}...'.format(
+            self.__class__.__name__
+        ))
         self.db_name = db_base_name + '.txt'
         if os.path.isfile(self.db_name):
             LOGGER.info('found existing record file {}, removing'.format(
