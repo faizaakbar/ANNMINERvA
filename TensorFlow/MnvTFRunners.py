@@ -83,6 +83,12 @@ class MnvTFRunnerCategorical:
             self.data_recorder = MnvCategoricalTextRecorder(
                 self.pred_store_name
             )
+        except ValueError as e:
+            LOGGER.error('{}'.format(e))
+            from MnvRecorderText import MnvCategoricalTextRecorder
+            self.data_recorder = MnvCategoricalTextRecorder(
+                self.pred_store_name
+            )            
 
     def _get_img_shp(self):
         img_shp = self.train_reader_args['IMG_SHP']
