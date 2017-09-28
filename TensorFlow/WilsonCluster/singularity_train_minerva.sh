@@ -20,7 +20,7 @@ SHORT=""
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 
-NEPOCHS="--num_epochs 10"
+NEPOCHS="--num_epochs 1"
 
 NCLASS=173
 NPLANECODES=173
