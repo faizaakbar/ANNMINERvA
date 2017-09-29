@@ -45,7 +45,7 @@ def make_default_run_params_dict(mnv_type='st_epsilon'):
     run_params_dict['DATA_READER_CLASS'] = None
     run_params_dict['MODEL_DIR'] = '/tmp/minerva'
     run_params_dict['LOAD_SAVED_MODEL'] = True
-    run_params_dict['SAVE_EVRY_N_BATCHES'] = 50
+    run_params_dict['SAVE_EVRY_N_BATCHES'] = 500
     run_params_dict['BE_VERBOSE'] = False
     run_params_dict['PREDICTION_STORE_NAME'] = 'preds'
     return run_params_dict
