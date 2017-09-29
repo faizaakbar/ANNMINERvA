@@ -15,12 +15,12 @@
 DAT=`date +%s`
 SAMPLE="me1Amc"
 
-SHORT=""
 SHORT="--do_a_short_run"
+SHORT=""
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 
-NEPOCHS="--num_epochs 1"
+NEPOCHS="--num_epochs 11"
 
 # NCLASS=173
 # NPLANECODES=173
