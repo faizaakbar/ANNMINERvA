@@ -106,6 +106,8 @@ class TriColSTEpsilon:
     """
     Tri-Columnar SpaceTime Epsilon
     """
+    _allowed_strategies = ['Adam', 'AdaGrad']
+    
     def __init__(self, n_classes, data_format='NHWC'):
         self.n_classes = n_classes
         self.dropout_keep_prob = None
@@ -335,17 +337,22 @@ class TriColSTEpsilon:
                 name='accuracy'
             )
 
-    def _define_train_op(self, learning_rate):
+    def _define_train_op(self, learning_rate, strategy):
         LOGGER.info('Building train op with learning_rate = %f' %
                     learning_rate)
-        with tf.variable_scope('training'):
-            self.optimizer = tf.train.AdamOptimizer(
-                learning_rate=learning_rate
-            ).minimize(self.loss, global_step=self.global_step)
-            # self.optimizer = tf.train.MomentumOptimizer(
-            #     learning_rate=learning_rate,
-            #     momentum=0.9, use_nesterov=True
-            # ).minimize(self.loss, global_step=self.global_step)
+        if strategy in self._allowed_strategies:
+            with tf.variable_scope('training'):
+                if strategy == 'Adam':
+                    self.optimizer = tf.train.AdamOptimizer(
+                        learning_rate=learning_rate
+                    ).minimize(self.loss, global_step=self.global_step)
+                elif strategy == 'AdaGrad':
+                    self.optimizer = tf.train.MomentumOptimizer(
+                        learning_rate=learning_rate,
+                        momentum=0.9, use_nesterov=True
+                    ).minimize(self.loss, global_step=self.global_step)
+        else:
+            raise ValueError('Invalud training strategy choice!')
 
     def _create_summaries(self):
         # assume we built the readers before the model...
@@ -382,11 +389,13 @@ class TriColSTEpsilon:
         """ kbd == kernels_biases_dict (convpooldict) """
         self._build_network(features, kbd)
 
-    def prepare_for_training(self, targets, learning_rate=0.001):
+    def prepare_for_training(
+            self, targets, learning_rate=0.001, strategy='Adam'
+    ):
         """ prep the train op and compute loss, plus summaries """
         self._set_targets(targets)
         self._define_loss()
-        self._define_train_op(learning_rate)
+        self._define_train_op(learning_rate, strategy)
         self._create_summaries()
 
     def prepare_for_loss_computation(self, targets):

@@ -69,7 +69,7 @@ def make_default_train_params_dict(mnv_type='st_epsilon'):
     train_params_dict['LEARNING_RATE'] = 0.001
     train_params_dict['NUM_EPOCHS'] = 1
     train_params_dict['MOMENTUM'] = 0.9
-    train_params_dict['STRATEGY'] = tf.train.AdamOptimizer
+    train_params_dict['STRATEGY'] = "Adam"
     train_params_dict['DROPOUT_KEEP_PROB'] = 0.5
     return train_params_dict
 

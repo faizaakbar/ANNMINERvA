@@ -67,6 +67,7 @@ class MnvTFRunnerCategorical:
         self.dropout_keep_prob = train_params_dict.get(
             'DROPOUT_KEEP_PROB', 0.75
         )
+        self.strategy = train_params_dict.get('STRATEGY', 'Adam')
 
         self.model = model
         self.views = ['x', 'u', 'v']
@@ -206,7 +207,9 @@ class MnvTFRunnerCategorical:
                 d = self.build_kbd_function(img_depth=self.img_depth)
                 self.model.prepare_for_inference(features, d)
                 self.model.prepare_for_training(
-                    targets, learning_rate=self.learning_rate
+                    targets,
+                    learning_rate=self.learning_rate,
+                    strategy=self.strategy
                 )
                 LOGGER.info('Preparing to train model with %d parameters' %
                             mnv_utils.get_number_of_trainable_parameters())
@@ -252,7 +255,7 @@ class MnvTFRunnerCategorical:
                         )
                         writer.add_summary(summary_t, global_step=b_num)
                         LOGGER.debug(
-                            '  Train loss at batch {}: {:5.1f}'.format(
+                            '  Train loss at batch {}: {:6.5f}'.format(
                                 b_num, loss
                             )
                         )
@@ -284,7 +287,7 @@ class MnvTFRunnerCategorical:
                                 evtids[:10]
                             ))
                             LOGGER.info(
-                                '  Valid loss at batch {}: {:5.1f}'.format(
+                                '  Valid loss at batch {}: {:6.5f}'.format(
                                     b_num, loss
                                 )
                             )

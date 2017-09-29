@@ -46,6 +46,8 @@ tf.app.flags.DEFINE_integer('num_epochs', 1,
                             """Number of training epochs.""")
 tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Batch size.""")
+tf.app.flags.DEFINE_string('strategy', 'Adam',
+                           """Optimizer strategy.""")
 # TODO - add learning rate, l2 reg params, etc.
 #
 # classification goal specification
@@ -182,6 +184,7 @@ def main(argv=None):
     # set up training parameters
     train_params_dict = mnv_utils.make_default_train_params_dict(MNV_TYPE)
     train_params_dict['NUM_EPOCHS'] = FLAGS.num_epochs
+    train_params_dict['STRATEGY'] = FLAGS.strategy
 
     logger.info(' run_params_dict = {}'.format(repr(runpars_dict)))
     logger.info(' feature_targ_dict = {}'.format(repr(feature_targ_dict)))
