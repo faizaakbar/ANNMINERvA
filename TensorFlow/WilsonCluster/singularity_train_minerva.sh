@@ -47,6 +47,9 @@ STRATEGY="--strategy ${OPTIMIZER}"
 # MODEL_CODE="20170920_${SAMPLE}_${TARGLABEL}${NCLASS}"
 MODEL_CODE="20170929_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
 
+BATCHSIZE=500
+BATCH="--batch_size $BATCHSIZE"
+
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
 
@@ -113,7 +116,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY
+  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH
 EOF
 
 singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
@@ -123,7 +126,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY
+  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0

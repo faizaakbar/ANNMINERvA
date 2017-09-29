@@ -35,6 +35,9 @@ LOGLEVEL="--log_level DEBUG --be_verbose"
 
 NEPOCHS="--num_epochs 1"
 
+BATCHSIZE=500
+BATCH="--batch_size $BATCHSIZE"
+
 OPTIMIZER="AdaGrad"
 STRATEGY="--strategy ${OPTIMIZER}"
 
@@ -77,7 +80,7 @@ python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY
+  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH
 EOF
 
 python mnv_run_st_epsilon.py \
@@ -87,6 +90,6 @@ python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY
+  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH
 
 echo "Job finished "`date`""
