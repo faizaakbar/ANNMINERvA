@@ -4,9 +4,9 @@
 #PBS -j oe
 #PBS -o ./batchlog_tfrec_prod.txt
 # not 3 #PBS -l nodes=gpu3:gpu,walltime=24:00:00
-#PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
+# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
 # not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
-# not unspecified #PBS -l nodes=1:gpu,walltime=24:00:00
+#PBS -l nodes=1:gpu,walltime=24:00:00
 # not short #PBS -l nodes=1:gpu,walltime=6:00:00
 #PBS -A minervaG
 #PBS -q gpu
@@ -15,8 +15,8 @@
 DAT=`date +%s`
 SAMPLE="me1Amc"
 
-SHORT="--do_a_short_run"
 SHORT=""
+SHORT="--do_a_short_run"
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 
@@ -41,8 +41,11 @@ PLANECODES="--n_planecodes $NPLANECODES"
 TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
 IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 
-MODEL_CODE="20170927_${SAMPLE}_${TARGLABEL}${NCLASS}"
-MODEL_CODE="20170920_${SAMPLE}_${TARGLABEL}${NCLASS}"
+OPTIMIZER="AdaGrad"
+STRATEGY="--strategy ${OPTIMIZER}"
+
+# MODEL_CODE="20170920_${SAMPLE}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20170929_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
 
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
@@ -110,7 +113,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR
+  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY
 EOF
 
 singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
@@ -120,7 +123,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR
+  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
