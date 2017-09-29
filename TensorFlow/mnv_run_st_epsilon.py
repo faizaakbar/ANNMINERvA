@@ -139,10 +139,8 @@ def main(argv=None):
     runpars_dict['BE_VERBOSE'] = FLAGS.be_verbose
     runpars_dict['DATA_READER_CLASS'] = MnvDataReaderVertexST
 
-    # tweak operating parameters for very short runs
+    # do a short test run?
     short = FLAGS.do_a_short_run
-    if short:
-        runpars_dict['SAVE_EVRY_N_BATCHES'] = 1
 
     # set up file lists - part of run parameters
     train_list, valid_list, test_list = \
