@@ -6,17 +6,17 @@ SAMPLE=me1Amc
 # targets - note, `n_planecodes` may be different than `nclass` - we need to
 # know the number of planecodes when unpacking even when targeting semgnets.
 
-NCLASS=173
-NPLANECODES=173
-IMGWX=94
-IMGWUV=47
-TARGLABEL="planecodes"
-
-# NCLASS=67
-# NPLANECODES=67
-# IMGWX=50
-# IMGWUV=25
+# NCLASS=173
+# NPLANECODES=173
+# IMGWX=94
+# IMGWUV=47
 # TARGLABEL="planecodes"
+
+NCLASS=67
+NPLANECODES=67
+IMGWX=50
+IMGWUV=25
+TARGLABEL="planecodes"
 
 # NCLASS=11
 # NPLANECODES=67
@@ -34,6 +34,12 @@ LOGLEVEL="--log_level INFO"
 LOGLEVEL="--log_level DEBUG --be_verbose"
 
 NEPOCHS="--num_epochs 1"
+
+PCODECAP=$(($NPLANECODES - 1))
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
+# FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_000000"
+# FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_00000"
+# FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_me1Amc_000000"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
@@ -62,10 +68,6 @@ PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
 PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
-# data, log, and model logistics
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_000000"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_00000"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_me1Amc_000000"
 DATADIR="${BASEP}/tfrec"
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 LOGDIR="${BASEP}/logs"
