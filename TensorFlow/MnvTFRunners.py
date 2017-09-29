@@ -140,7 +140,7 @@ class MnvTFRunnerCategorical:
         with tf.Graph().as_default() as g:
 
             # n_batches: control this with num_epochs
-            n_batches = 10 if short else int(1e9)
+            n_batches = 20 if short else int(1e9)
             save_every_n_batch = 5 if short else self.save_freq
             LOGGER.info(' Processing {} batches, saving every {}...'.format(
                 n_batches, save_every_n_batch
@@ -253,12 +253,13 @@ class MnvTFRunnerCategorical:
                                 self.dropout_keep_prob
                             }
                         )
-                        writer.add_summary(summary_t, global_step=b_num)
                         LOGGER.debug(
                             '  Train loss at batch {}: {:6.5f}'.format(
                                 b_num, loss
                             )
                         )
+                        if (b_num) % save_every_n_batch == 0:
+                            writer.add_summary(summary_t, global_step=b_num)
                         if (b_num + 1) % save_every_n_batch == 0:
                             # validation
                             loss, logits, targs, summary_v, evtids, acc = \
