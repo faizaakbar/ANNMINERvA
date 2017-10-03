@@ -2,6 +2,7 @@
 
 DAT=`date +%s`
 SAMPLE=me1Amc
+SAMPLE=me1ABmc
 
 # targets - note, `n_planecodes` may be different than `nclass` - we need to
 # know the number of planecodes when unpacking even when targeting semgnets.
@@ -37,6 +38,7 @@ NEPOCHS="--num_epochs 1"
 
 PCODECAP=$(($NPLANECODES - 1))
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_"
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_000000"
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_00000"
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_me1Amc_000000"
@@ -44,10 +46,11 @@ FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
 
-OPTIMIZER="AdaGrad"
+# OPTIMIZER="AdaGrad"
+OPTIMIZER="Adam"
 STRATEGY="--strategy ${OPTIMIZER}"
 
-MODEL_CODE="20170929_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171003_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
@@ -68,7 +71,7 @@ PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
 PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
-DATADIR="${BASEP}/tfrec"
+DATADIR="${BASEP}/tfrec,${BASEP}/tfrec2"
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 LOGDIR="${BASEP}/logs"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
