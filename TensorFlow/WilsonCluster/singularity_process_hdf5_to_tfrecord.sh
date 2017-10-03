@@ -29,7 +29,7 @@ DAT=`date +%s`
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
 
 # file logistics
-SAMPLE="me1Amc"
+SAMPLE="me1Bmc"
 HDF5DIR="/data/perdue/minerva/hdf5/201709"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_${SAMPLE}"
