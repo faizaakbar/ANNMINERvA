@@ -92,7 +92,7 @@ def get_logging_level(log_level):
     return logging_level
 
 
-def get_trainvalidtest_file_lists(data_dir, file_root, compression):
+def get_trainvalidtest_file_lists(data_dir_str, file_root_str, compression):
     """
     Assume we are looking for three sets of files in the form of
     TFRecords, with groups of files with extensions like
@@ -102,12 +102,23 @@ def get_trainvalidtest_file_lists(data_dir, file_root, compression):
     """
     import glob
     comp_ext = compression if compression == '' else '.' + compression
-    train_list = glob.glob(data_dir + '/' + file_root +
-                           '*_train.tfrecord' + comp_ext)
-    valid_list = glob.glob(data_dir + '/' + file_root +
-                           '*_valid.tfrecord' + comp_ext)
-    test_list = glob.glob(data_dir + '/' + file_root +
+    train_list = []
+    valid_list = []
+    test_list = []
+    for data_dir in data_dir_str.split(','):
+        for file_root in file_root_str.split(','):
+            train_list.extend(
+                glob.glob(data_dir + '/' + file_root +
+                          '*_train.tfrecord' + comp_ext)
+            )
+            valid_list.extend(
+                glob.glob(data_dir + '/' + file_root +
+                          '*_valid.tfrecord' + comp_ext)
+            )
+            test_list.extend(
+                glob.glob(data_dir + '/' + file_root +
                           '*_test.tfrecord' + comp_ext)
+            )
     for t, l in zip(['training', 'validation', 'test'],
                     [train_list, valid_list, test_list]):
         LOGGER.debug('{} file list ='.format(t))
