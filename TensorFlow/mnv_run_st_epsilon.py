@@ -19,6 +19,8 @@ FLAGS = tf.app.flags.FLAGS
 
 #
 # input data specification
+# NOTE - data_dir and file_root can be commma-separated lists and still be
+# handled correctly here, etc.
 #
 tf.app.flags.DEFINE_string('data_dir', '/tmp/data',
                            """Directory where data is stored.""")
@@ -142,7 +144,9 @@ def main(argv=None):
     # do a short test run?
     short = FLAGS.do_a_short_run
 
-    # set up file lists - part of run parameters
+    # set up file lists - part of run parameters; assume our data_dir and
+    # file_root are both comma-separated lists - we will make every possible
+    # combinaton of them, so be careful, etc.
     train_list, valid_list, test_list = \
         mnv_utils.get_trainvalidtest_file_lists(
             FLAGS.data_dir, FLAGS.file_root, FLAGS.compression
