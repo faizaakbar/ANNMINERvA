@@ -13,7 +13,7 @@
 #restore to turn off email - doesn't work #PBS -m n
 
 DAT=`date +%s`
-SAMPLE="me1Amc"
+SAMPLE="me1ABmc"
 
 SHORT="--do_a_short_run"
 SHORT=""
@@ -35,7 +35,8 @@ TARGLABEL="planecodes"
 # TARGLABEL="planecodes"
 
 PCODECAP=$(($NPLANECODES - 1))
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
+# FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_"
 
 PLANECODES="--n_planecodes $NPLANECODES"
 TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
@@ -74,10 +75,13 @@ PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 PREDICTIONS="--nodo_prediction"
 
-DATADIR="/data/perdue/minerva/tensorflow/data/201709/${SAMPLE}"
-LOGDIR="/data/perdue/minerva/tensorflow/logs/201709/${SAMPLE}"
+BASEP="/data/perdue/minerva/tensorflow"
+DBASE="${BASEP}/data/201709"
+# DATADIR="${DBASE}/${SAMPLE}"
+DATADIR="${DBASE}/me1Amc,${DBASE}/me1Bmc"
+LOGDIR="${BASEP}/logs/201709/"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
-MODELDIR="/data/perdue/minerva/tensorflow/models/${NCLASS}/${MODEL_CODE}"
+MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 
 
 # print identifying info for this job
