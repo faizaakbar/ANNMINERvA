@@ -137,7 +137,6 @@ class TriColSTEpsilon:
             0, dtype=tf.int32, trainable=False, name='global_step'
         )
         self.is_training = tf.placeholder(tf.bool, name='is_training')
-        self.weights_biases = {}
 
         with tf.variable_scope('input_images'):
             self.X_img = tf.cast(features_list[0], tf.float32)
@@ -193,8 +192,6 @@ class TriColSTEpsilon:
             twr = view + '_tower'
             with tf.variable_scope(twr):
 
-                self.weights_biases[twr] = {}
-
                 for i in range(n_layers):
                     layer = str(i + 1)
                     if layer == '1':
@@ -205,19 +202,9 @@ class TriColSTEpsilon:
                     # scope the convolutional layer
                     nm = 'conv' + layer
                     with tf.variable_scope(nm):
-                        self.weights_biases[twr][nm] = {}
-                        self.weights_biases[twr][nm]['kernels'] = make_kernels(
-                            'kernels', kbd[view][nm]['kernels'],
-                        )
-                        self.weights_biases[twr][nm]['biases'] = make_biases(
-                            'biases', kbd[view][nm]['biases'],
-                        )
-                        conv = make_active_conv(
-                            inp_lyr,
-                            self.weights_biases[twr][nm]['kernels'],
-                            self.weights_biases[twr][nm]['biases'],
-                            nm + '_conv'
-                        )
+                        k = make_kernels('kernels', kbd[view][nm]['kernels'])
+                        b = make_biases('biases', kbd[view][nm]['biases'])
+                        conv = make_active_conv(inp_lyr, k, b, nm + '_conv')
 
                     # scope the pooling layer
                     scope_name = 'pool' + layer
@@ -230,13 +217,13 @@ class TriColSTEpsilon:
                 out_lyr = tf.reshape(out_lyr, [-1, nfeat_tower])
 
                 # final dense layer parameters
-                self.weights_biases[twr]['dense_weights'] = tf.get_variable(
+                w = tf.get_variable(
                     'dense_weights',
                     [nfeat_tower, kbd['nfeat_dense_tower']],
                     initializer=xavier_init(uniform=False),
                     regularizer=kbd['regularizer']
                 )
-                self.weights_biases[twr]['dense_biases'] = tf.get_variable(
+                b = tf.get_variable(
                     'dense_biases',
                     [kbd['nfeat_dense_tower']],
                     initializer=xavier_init(uniform=False),
@@ -245,12 +232,7 @@ class TriColSTEpsilon:
                 # apply relu on matmul of pool2/out_lyr and w + b
                 fc = tf.nn.relu(
                     tf.nn.bias_add(
-                        tf.matmul(
-                            out_lyr,
-                            self.weights_biases[twr]['dense_weights'],
-                            name='matmul'
-                        ), 
-                        self.weights_biases[twr]['dense_biases'],
+                        tf.matmul(out_lyr, w, name='matmul'), b,
                         data_format=self.data_format,
                         name='bias_add'
                     ),
@@ -275,29 +257,26 @@ class TriColSTEpsilon:
 
             joined_shp = tower_joined.shape.as_list()
             nfeatures_joined = joined_shp[1]
-            self.weights_fc = tf.get_variable(
+            w = tf.get_variable(
                 'weights',
                 [nfeatures_joined, kbd['nfeat_concat_dense']],
                 initializer=xavier_init(uniform=False),
                 regularizer=kbd['regularizer']
             )
-            self.biases_fc = tf.get_variable(
+            b = tf.get_variable(
                 'biases',
                 [kbd['nfeat_concat_dense']],
                 initializer=xavier_init(uniform=False),
                 regularizer=kbd['regularizer']
             )
-            # apply relu on matmul of joined and w + b
-            self.fc = tf.nn.relu(
-                tf.nn.bias_add(
-                    tf.matmul(tower_joined, self.weights_fc),
-                    self.biases_fc,
-                    data_format=self.data_format
-                )
+            fc_lyr = tf.nn.bias_add(
+                tf.matmul(tower_joined, w), b, data_format=self.data_format
             )
+            # apply relu on matmul of joined and w + b
+            fc_lyr = tf.nn.relu(fc_lyr)
             # apply dropout
             self.fc = tf.nn.dropout(
-                self.fc, self.dropout_keep_prob, name='relu_dropout'
+                fc_lyr, self.dropout_keep_prob, name='relu_dropout'
             )
 
         with tf.variable_scope('softmax_linear'):
