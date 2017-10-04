@@ -352,7 +352,7 @@ class TriColSTEpsilon:
                         momentum=0.9, use_nesterov=True
                     ).minimize(self.loss, global_step=self.global_step)
         else:
-            raise ValueError('Invalud training strategy choice!')
+            raise ValueError('Invalid training strategy choice!')
 
     def _create_summaries(self):
         # assume we built the readers before the model...
