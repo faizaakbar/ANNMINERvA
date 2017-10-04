@@ -319,13 +319,14 @@ class TriColSTEpsilon:
             regularization_losses = tf.get_collection(
                 tf.GraphKeys.REGULARIZATION_LOSSES
             )
+            self.reg_loss = sum(regularization_losses)
             self.loss = tf.reduce_mean(
                 tf.nn.softmax_cross_entropy_with_logits(
                     logits=self.logits, labels=self.targets
                 ),
                 axis=0,
                 name='loss'
-            ) + sum(regularization_losses)
+            ) + self.reg_loss
             preds = tf.nn.softmax(self.logits, name='preds')
             correct_preds = tf.equal(
                 tf.argmax(preds, 1), tf.argmax(self.targets, 1),
@@ -358,11 +359,14 @@ class TriColSTEpsilon:
         # assume we built the readers before the model...
         base_summaries = tf.get_collection(tf.GraphKeys.SUMMARIES)
         with tf.variable_scope('summaries/train'):
+            train_reg_loss = tf.summary.scalar('reg_loss', self.reg_loss)
             train_loss = tf.summary.scalar('loss', self.loss)
             train_histo_loss = tf.summary.histogram(
                 'histogram_loss', self.loss
             )
-            train_summaries = [train_loss, train_histo_loss]
+            train_summaries = [
+                train_reg_loss, train_loss, train_histo_loss
+            ]
             train_summaries.extend(base_summaries)
             self.train_summary_op = tf.summary.merge(
                 train_summaries
