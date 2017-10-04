@@ -11,7 +11,9 @@ from six.moves import range
 LOGGER = logging.getLogger(__name__)
 
 
-def make_default_convpooldict(img_depth=1, data_format='NHWC'):
+def make_default_convpooldict(
+        img_depth=1, data_format='NHWC', use_batch_norm=False
+):
     """
     return the default network structure dictionary
 
@@ -31,6 +33,7 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
 
     convpooldict['pool_ksize'] = pool_ksize
     convpooldict['pool_strides'] = pool_strides
+    convpooldict['use_batch_norm'] = use_batch_norm
 
     # assume 127x(N) images
     convpooldict_x = {}
@@ -112,6 +115,7 @@ class TriColSTEpsilon:
         self.n_classes = n_classes
         self.dropout_keep_prob = None
         self.global_step = None
+        self.is_training = None
         self.padding = 'VALID'
         # note, 'NCHW' is only supported on GPUs
         self.data_format = data_format
@@ -132,6 +136,7 @@ class TriColSTEpsilon:
         self.global_step = tf.Variable(
             0, dtype=tf.int32, trainable=False, name='global_step'
         )
+        self.is_training = tf.placeholder(tf.bool, name='is_training')
         self.weights_biases = {}
 
         with tf.variable_scope('input_images'):
@@ -171,6 +176,11 @@ class TriColSTEpsilon:
                 padding=self.padding, data_format=self.data_format,
                 name=name
             )
+
+        def make_weights_and_biases(
+                input_lyr, name, shp_list
+        ):
+            pass
 
         def make_convolutional_tower(view, input_layer, kbd, n_layers=4):
             """
