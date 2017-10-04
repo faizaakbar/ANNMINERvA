@@ -538,52 +538,56 @@ class MnvTFRunnerCategorical:
         tf.reset_default_graph()
         ckpt_dir = self.save_model_directory + '/checkpoints'
 
-        # note - don't need input data here, we just want to load the saved
-        # model to inspect the weights
-        img_shp = self._get_img_shp()  # h, w_x, w_uv, depth
-        X = tf.placeholder(
-            tf.float32,
-            shape=[None, img_shp[0], img_shp[1], img_shp[3]],
-            name='X'
-        )
-        U = tf.placeholder(
-            tf.float32,
-            shape=[None, img_shp[0], img_shp[2], img_shp[3]],
-            name='U'
-        )
-        V = tf.placeholder(
-            tf.float32,
-            shape=[None, img_shp[0], img_shp[2], img_shp[3]],
-            name='V'
-        )
-        targ = tf.placeholder(
-            tf.float32, shape=[None, self.model.n_classes], name='targ'
-        )
-        f = [X, U, V]
-        d = self.build_kbd_function(img_depth=img_shp[3])
-        self.model.prepare_for_inference(f, d)
-        self.model.prepare_for_loss_computation(targ)
-        LOGGER.info('Preparing to check model with %d parameters' %
-                    mnv_utils.get_number_of_trainable_parameters())
-
-        saver = tf.train.Saver()
-        init = tf.global_variables_initializer()
-
-        with tf.Session() as sess:
-            sess.run(init)
-            # have to run local variable init for `string_input_producer`
-            sess.run(tf.local_variables_initializer())
-
-            ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
-            if ckpt and ckpt.model_checkpoint_path:
-                saver.restore(sess, ckpt.model_checkpoint_path)
-                print('Restored session from {}'.format(ckpt_dir))
-
-            final_step = self.model.global_step.eval()
-            LOGGER.info('model after {} steps.'.format(final_step))
-
-            k = self.model.weights_biases['x_tower']['conv1']['kernels'].eval()
-            LOGGER.info(
-                'first x-tower convolutional kernel shape = {}'.format(k.shape)
+        g = tf.Graph()
+        with g.as_default():
+            # note - don't need input data here, we just want to load the saved
+            # model to inspect the weights
+            img_shp = self._get_img_shp()  # h, w_x, w_uv, depth
+            X = tf.placeholder(
+                tf.float32,
+                shape=[None, img_shp[0], img_shp[1], img_shp[3]],
+                name='X'
             )
-            LOGGER.info('  k[0, 0, 0, :] = {}'.format(k[0, 0, 0, :]))
+            U = tf.placeholder(
+                tf.float32,
+                shape=[None, img_shp[0], img_shp[2], img_shp[3]],
+                name='U'
+            )
+            V = tf.placeholder(
+                tf.float32,
+                shape=[None, img_shp[0], img_shp[2], img_shp[3]],
+                name='V'
+            )
+            targ = tf.placeholder(
+                tf.float32, shape=[None, self.model.n_classes], name='targ'
+            )
+            f = [X, U, V]
+            d = self.build_kbd_function(img_depth=img_shp[3])
+            self.model.prepare_for_inference(f, d)
+            self.model.prepare_for_loss_computation(targ)
+            LOGGER.info('Preparing to check model with %d parameters' %
+                        mnv_utils.get_number_of_trainable_parameters())
+
+            saver = tf.train.Saver()
+            init = tf.global_variables_initializer()
+
+            with tf.Session() as sess:
+                sess.run(init)
+                # have to run local variable init for `string_input_producer`
+                sess.run(tf.local_variables_initializer())
+
+                ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+                if ckpt and ckpt.model_checkpoint_path:
+                    saver.restore(sess, ckpt.model_checkpoint_path)
+                    print('Restored session from {}'.format(ckpt_dir))
+
+                final_step = self.model.global_step.eval()
+                LOGGER.info('model after {} steps.'.format(final_step))
+
+                k = g.get_tensor_by_name('x_tower/conv1/kernels:0').eval()
+                LOGGER.info(
+                    'first x-tower convolutional kernel shape = {}'.format(
+                        k.shape
+                    )
+                )
+                LOGGER.info('  k[0, 0, 0, :] = {}'.format(k[0, 0, 0, :]))
