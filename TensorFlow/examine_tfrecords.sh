@@ -4,10 +4,8 @@
 DAT=`date +%s`
 
 # file logistics
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_000000_train"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_000000_valid"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_000000_test"
-DIR="/Users/gnperdue/Documents/MINERvA/AI/minerva_tf/tfrec"
+FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Bmc_000000_test"
+DIR="${HOME}/Documents/MINERvA/AI/minerva_tf/tfrec2"
 LOGFILE=log_examine_tfrec${DAT}.txt
 
 cat << EOF
