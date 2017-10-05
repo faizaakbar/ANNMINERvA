@@ -51,13 +51,19 @@ def make_default_run_params_dict(mnv_type='st_epsilon'):
     return run_params_dict
 
 
+def make_hitimes_feature_str_dict():
+    dd = {}
+    dd['x'] = 'hitimes-x'
+    dd['u'] = 'hitimes-u'
+    dd['v'] = 'hitimes-v'
+    return dd
+
+
 def make_default_feature_targ_dict(mnv_type='st_epsilon'):
     feature_targ_dict = {}
     if mnv_type == 'st_epsilon':
-        feature_targ_dict['FEATURE_STR_DICT'] = {}
-        feature_targ_dict['FEATURE_STR_DICT']['x'] = 'hitimes-x'
-        feature_targ_dict['FEATURE_STR_DICT']['u'] = 'hitimes-u'
-        feature_targ_dict['FEATURE_STR_DICT']['v'] = 'hitimes-v'
+        feature_targ_dict['FEATURE_STR_DICT'] = \
+            make_hitimes_feature_str_dict()
         feature_targ_dict['TARGETS_LABEL'] = None
         feature_targ_dict['BUILD_KBD_FUNCTION'] = None
         feature_targ_dict['IMG_DEPTH'] = 2
