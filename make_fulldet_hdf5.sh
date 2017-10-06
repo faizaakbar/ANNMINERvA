@@ -10,8 +10,9 @@ elif [[ $# > 1 ]]; then
   STOP=$2
 fi
 
-INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_minerva1nofsimc
-OUTBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_xuv_minerva1nofsimc
+SAMPLE=me1Amc
+INBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}
+OUTBASE=minosmatch_nukecczdefs_fullz_tproc_127x94_xuv_${SAMPLE}
 
 for i in `seq ${START} 1 ${STOP}`
 do
