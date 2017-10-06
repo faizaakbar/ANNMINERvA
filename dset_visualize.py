@@ -247,7 +247,7 @@ class MnvDataReader:
             raise ValueError('Invalid file type extension!')
 
 
-def make_plots(data_dict, max_events, unnormed_img):
+def make_plots(data_dict, max_events, normed_img):
     """
     cases:
     * 'energies+times',
@@ -351,15 +351,15 @@ def make_plots(data_dict, max_events, unnormed_img):
                     else:
                         datap = data_dict['times'][view][counter, i, :, :]
                 # set the bounds on the color scale
-                if unnormed_img:
+                if normed_img:
+                    minv = 0 if t == 'energy' else -1
+                    maxv = 1
+                else:
                     minv = np.abs(np.min(datap))
                     maxv = np.abs(np.max(datap))
                     maxex = maxv if maxv > minv else minv
                     minv = 0 if minv < 0.0001 else -maxex
                     maxv = maxex
-                else:
-                    minv = 0 if t == 'energy' else -1
-                    maxv = 1
                 # make the plot
                 im = ax.imshow(
                     datap,
@@ -398,9 +398,9 @@ if __name__ == '__main__':
     parser.add_option('--n_planecodes', dest='n_planecodes', default=67,
                       help='Number of planecodes (onehot)',
                       metavar='N_PLANECODES', type='int')
-    parser.add_option('--unnormed_img', dest='unnormed_img', default=True,
-                      help='Image from un-normalized source',
-                      metavar='UNNORMED_IMG', action='store_false')
+    parser.add_option('--normed_img', dest='normed_img', default=False,
+                      help='Image from normalized source',
+                      metavar='NORMED_IMG', action='store_true')
 
     (options, args) = parser.parse_args()
 
@@ -418,4 +418,4 @@ if __name__ == '__main__':
     )
     dd = reader.read_data()
 
-    make_plots(dd, options.n_events, options.unnormed_img)
+    make_plots(dd, options.n_events, options.normed_img)
