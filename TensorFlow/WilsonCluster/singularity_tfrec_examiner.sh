@@ -52,6 +52,8 @@ fi
 
 PYPROG=tfrec_examiner.py
 cp /home/perdue/ANNMINERvA/TensorFlow/${PYPROG} ${PBS_O_WORKDIR}
+cp /home/perdue/ANNMINERvA/TensorFlow/mnv_utils.py ${PBS_O_WORKDIR}
+cp /home/perdue/ANNMINERvA/TensorFlow/MnvDataReaders.py ${PBS_O_WORKDIR}
 
 # show what we will do...
 cat << EOF
