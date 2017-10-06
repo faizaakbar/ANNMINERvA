@@ -7,7 +7,7 @@ import pylab
 import sys
 import h5py
 import tensorflow as tf
-import gzip
+import numpy as np
 
 
 def decode_eventid(eventid):
@@ -247,7 +247,7 @@ class MnvDataReader:
             raise ValueError('Invalid file type extension!')
 
 
-def make_plots(data_dict, max_events):
+def make_plots(data_dict, max_events, unnormed_img):
     """
     cases:
     * 'energies+times',
@@ -255,7 +255,7 @@ def make_plots(data_dict, max_events):
     * or 'energies' or 'times'
     If 2-deep tensor, assume energy is index 0, time is index 1
     """
-    target_plane_codes = { 9: 1, 18: 2, 27: 3, 44: 4, 49: 5}
+    target_plane_codes = {9: 1, 18: 2, 27: 3, 44: 4, 49: 5}
     pkeys = []
     for k in data_dict.keys():
         if len(data_dict[k]) > 0:
@@ -341,7 +341,6 @@ def make_plots(data_dict, max_events):
                 ax.axis('on')
                 ax.xaxis.set_major_locator(pylab.NullLocator())
                 ax.yaxis.set_major_locator(pylab.NullLocator())
-                minv = 0 if t == 'energy' else -1
                 cmap = 'jet' if t == 'energy' else 'bwr'
                 cbt = 'scaled energy' if t == 'energy' else 'scaled times'
                 if plotting_two_tensors:
@@ -351,11 +350,22 @@ def make_plots(data_dict, max_events):
                         datap = data_dict['energies'][view][counter, i, :, :]
                     else:
                         datap = data_dict['times'][view][counter, i, :, :]
+                # set the bounds on the color scale
+                if unnormed_img:
+                    minv = np.abs(np.min(datap))
+                    maxv = np.abs(np.max(datap))
+                    maxex = maxv if maxv > minv else minv
+                    minv = 0 if minv < 0.0001 else -maxex
+                    maxv = maxex
+                else:
+                    minv = 0 if t == 'energy' else -1
+                    maxv = 1
+                # make the plot
                 im = ax.imshow(
                     datap,
                     cmap=pylab.get_cmap(cmap),
                     interpolation='nearest',
-                    vmin=minv, vmax=1
+                    vmin=minv, vmax=maxv
                 )
                 cbar = pylab.colorbar(im, fraction=0.04)
                 cbar.set_label(cbt, size=9)
@@ -388,6 +398,9 @@ if __name__ == '__main__':
     parser.add_option('--n_planecodes', dest='n_planecodes', default=67,
                       help='Number of planecodes (onehot)',
                       metavar='N_PLANECODES', type='int')
+    parser.add_option('--unnormed_img', dest='unnormed_img', default=True,
+                      help='Image from un-normalized source',
+                      metavar='UNNORMED_IMG', action='store_false')
 
     (options, args) = parser.parse_args()
 
@@ -405,4 +418,4 @@ if __name__ == '__main__':
     )
     dd = reader.read_data()
 
-    make_plots(dd, options.n_events)
+    make_plots(dd, options.n_events, options.unnormed_img)
