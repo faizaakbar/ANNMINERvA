@@ -229,50 +229,54 @@ class TriColSTEpsilon:
                 out_lyr = tf.reshape(out_lyr, [-1, nfeat_tower])
 
                 # make final active dense layer
-                fc = make_active_fc_Layer(
-                    out_lyr, 'fc_relu',
-                    'dense_weights', [nfeat_tower, kbd['nfeat_dense_tower']],
-                    'dense_biases', [kbd['nfeat_dense_tower']]
-                )
-                fc = tf.nn.dropout(
-                    fc, self.dropout_keep_prob, name='relu_dropout'
-                )
+                with tf.variable_scope('fully_connected'):
+                    fc = make_active_fc_Layer(
+                        out_lyr, 'fc_relu',
+                        'dense_weights',
+                        [nfeat_tower, kbd['nfeat_dense_tower']],
+                        'dense_biases',
+                        [kbd['nfeat_dense_tower']]
+                    )
+                    fc = tf.nn.dropout(
+                        fc, self.dropout_keep_prob, name='relu_dropout'
+                    )
 
             return fc
 
-        out_x = make_convolutional_tower('x', self.X_img, kbd)
-        out_u = make_convolutional_tower('u', self.U_img, kbd)
-        out_v = make_convolutional_tower('v', self.V_img, kbd)
+        with tf.variable_scope('model'):
+            out_x = make_convolutional_tower('x', self.X_img, kbd)
+            out_u = make_convolutional_tower('u', self.U_img, kbd)
+            out_v = make_convolutional_tower('v', self.V_img, kbd)
 
-        # next, concat, then 'final' fc...
-        with tf.variable_scope('fully_connected') as scope:
-            tower_joined = tf.concat(
-                [out_x, out_u, out_v], axis=1, name=scope.name + '_concat'
-            )
-            joined_shp = tower_joined.shape.as_list()
-            nfeatures_joined = joined_shp[1]
-            fc_lyr = make_active_fc_Layer(
-                tower_joined, 'fc_relu',
-                'weights', [nfeatures_joined, kbd['nfeat_concat_dense']],
-                'biases', [kbd['nfeat_concat_dense']]
-            )
-            self.fc = tf.nn.dropout(
-                fc_lyr, self.dropout_keep_prob, name='relu_dropout'
-            )
+            # next, concat, then 'final' fc...
+            with tf.variable_scope('fully_connected') as scope:
+                tower_joined = tf.concat(
+                    [out_x, out_u, out_v], axis=1, name=scope.name + '_concat'
+                )
+                joined_shp = tower_joined.shape.as_list()
+                nfeatures_joined = joined_shp[1]
+                fc_lyr = make_active_fc_Layer(
+                    tower_joined, 'fc_relu',
+                    'weights', [nfeatures_joined, kbd['nfeat_concat_dense']],
+                    'biases', [kbd['nfeat_concat_dense']]
+                )
+                self.fc = tf.nn.dropout(
+                    fc_lyr, self.dropout_keep_prob, name='relu_dropout'
+                )
 
-        with tf.variable_scope('softmax_linear'):
-            self.weights_softmax = make_wbkernels(
-                'weights', [kbd['nfeat_concat_dense'], self.n_classes]
-            )
-            self.biases_softmax = make_wbkernels(
-                'biases', [self.n_classes]
-            )
-            self.logits = tf.nn.bias_add(
-                tf.matmul(self.fc, self.weights_softmax),
-                self.biases_softmax,
-                data_format=self.data_format,
-                name='logits'
-            )
+            with tf.variable_scope('softmax_linear'):
+                self.weights_softmax = make_wbkernels(
+                    'weights', [kbd['nfeat_concat_dense'], self.n_classes]
+                )
+                self.biases_softmax = make_wbkernels(
+                    'biases', [self.n_classes]
+                )
+                self.logits = tf.nn.bias_add(
+                    tf.matmul(self.fc, self.weights_softmax),
+                    self.biases_softmax,
+                    data_format=self.data_format,
+                    name='logits'
+                )
 
     def _set_targets(self, targets):
         with tf.variable_scope('targets'):
@@ -374,7 +378,7 @@ class TriColSTEpsilon:
 
     def get_output_nodes(self):
         """ list of output nodes for graph freezing """
-        return ["softmax_linear/logits"]
+        return ["model/softmax_linear/logits"]
 
 
 def test():
