@@ -143,13 +143,7 @@ class TriColSTEpsilon:
             self.U_img = tf.cast(features_list[1], tf.float32)
             self.V_img = tf.cast(features_list[2], tf.float32)
 
-        def make_kernels(name, shp_list):
-            return tf.get_variable(
-                name, shp_list, initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
-            )
-
-        def make_biases(name, shp_list):
+        def make_wbkernels(name, shp_list):
             return tf.get_variable(
                 name, shp_list, initializer=xavier_init(uniform=False),
                 regularizer=kbd['regularizer']
@@ -176,11 +170,6 @@ class TriColSTEpsilon:
                 name=name
             )
 
-        def make_weights_and_biases(
-                input_lyr, name, shp_list
-        ):
-            pass
-
         def make_convolutional_tower(view, input_layer, kbd, n_layers=4):
             """
             input_layer == e.g., self.X_img, etc. corresponding to 'view'
@@ -202,8 +191,8 @@ class TriColSTEpsilon:
                     # scope the convolutional layer
                     nm = 'conv' + layer
                     with tf.variable_scope(nm):
-                        k = make_kernels('kernels', kbd[view][nm]['kernels'])
-                        b = make_biases('biases', kbd[view][nm]['biases'])
+                        k = make_wbkernels('kernels', kbd[view][nm]['kernels'])
+                        b = make_wbkernels('biases', kbd[view][nm]['biases'])
                         conv = make_active_conv(inp_lyr, k, b, nm + '_conv')
 
                     # scope the pooling layer
@@ -217,17 +206,11 @@ class TriColSTEpsilon:
                 out_lyr = tf.reshape(out_lyr, [-1, nfeat_tower])
 
                 # final dense layer parameters
-                w = tf.get_variable(
-                    'dense_weights',
-                    [nfeat_tower, kbd['nfeat_dense_tower']],
-                    initializer=xavier_init(uniform=False),
-                    regularizer=kbd['regularizer']
+                w = make_wbkernels(
+                    'dense_weights', [nfeat_tower, kbd['nfeat_dense_tower']]
                 )
-                b = tf.get_variable(
-                    'dense_biases',
-                    [kbd['nfeat_dense_tower']],
-                    initializer=xavier_init(uniform=False),
-                    regularizer=kbd['regularizer']
+                b = make_wbkernels(
+                    'dense_biases', [kbd['nfeat_dense_tower']]
                 )
                 # apply relu on matmul of pool2/out_lyr and w + b
                 fc = tf.nn.relu(
@@ -257,17 +240,11 @@ class TriColSTEpsilon:
 
             joined_shp = tower_joined.shape.as_list()
             nfeatures_joined = joined_shp[1]
-            w = tf.get_variable(
-                'weights',
-                [nfeatures_joined, kbd['nfeat_concat_dense']],
-                initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
+            w = make_wbkernels(
+                'weights', [nfeatures_joined, kbd['nfeat_concat_dense']]
             )
-            b = tf.get_variable(
-                'biases',
-                [kbd['nfeat_concat_dense']],
-                initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
+            b = make_wbkernels(
+                'biases', [kbd['nfeat_concat_dense']]
             )
             fc_lyr = tf.nn.bias_add(
                 tf.matmul(tower_joined, w), b, data_format=self.data_format
@@ -280,17 +257,11 @@ class TriColSTEpsilon:
             )
 
         with tf.variable_scope('softmax_linear'):
-            self.weights_softmax = tf.get_variable(
-                'weights',
-                [kbd['nfeat_concat_dense'], self.n_classes],
-                initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
+            self.weights_softmax = make_wbkernels(
+                'weights', [kbd['nfeat_concat_dense'], self.n_classes]
             )
-            self.biases_softmax = tf.get_variable(
-                'biases',
-                [self.n_classes],
-                initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
+            self.biases_softmax = make_wbkernels(
+                'biases', [self.n_classes]
             )
             self.logits = tf.nn.bias_add(
                 tf.matmul(self.fc, self.weights_softmax),
