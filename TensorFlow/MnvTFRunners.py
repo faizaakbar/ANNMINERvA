@@ -148,19 +148,25 @@ class MnvTFRunnerCategorical:
 
             with tf.Session(graph=g) as sess:
 
-                train_reader = self.data_reader(self.train_reader_args)
-                targets_train, features_train, eventids_train = \
-                    self._prep_targets_and_features_minerva(
-                        train_reader.shuffle_batch_generator,
-                        self.num_epochs
-                    )
+                with tf.variable_scope('pipeline_queue'):
+                    train_reader = self.data_reader(self.train_reader_args)
+                    targets_train, features_train, eventids_train = \
+                        self._prep_targets_and_features_minerva(
+                            train_reader.shuffle_batch_generator,
+                            self.num_epochs
+                        )
 
-                valid_reader = self.data_reader(self.valid_reader_args)
-                targets_valid, features_valid, eventids_valid = \
-                    self._prep_targets_and_features_minerva(
-                        valid_reader.batch_generator,
-                        1000000
-                    )
+                    valid_reader = self.data_reader(self.valid_reader_args)
+                    targets_valid, features_valid, eventids_valid = \
+                        self._prep_targets_and_features_minerva(
+                            valid_reader.batch_generator,
+                            1000000
+                        )
+
+                    with tf.variable_scope('pipeline_control'):
+                        use_valid = tf.placeholder(
+                            tf.bool, shape=(), name='train_val_batch_logic'
+                        )
 
                 def get_features_train():
                     return features_train
@@ -179,11 +185,6 @@ class MnvTFRunnerCategorical:
 
                 def get_eventids_valid():
                     return eventids_valid
-
-                with tf.variable_scope('pipeline_control'):
-                    use_valid = tf.placeholder(
-                        tf.bool, shape=(), name='train_val_batch_logic'
-                    )
 
                 features = tf.cond(
                     use_valid,
@@ -332,11 +333,12 @@ class MnvTFRunnerCategorical:
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
             with tf.Session(graph=g) as sess:
-                data_reader = self.data_reader(self.test_reader_args)
-                targets, features, _ = \
-                    self._prep_targets_and_features_minerva(
-                        data_reader.batch_generator
-                    )
+                with tf.variable_scope('pipeline_queue'):
+                    data_reader = self.data_reader(self.test_reader_args)
+                    targets, features, _ = \
+                        self._prep_targets_and_features_minerva(
+                            data_reader.batch_generator
+                        )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
                 self.model.prepare_for_inference(features, d)
@@ -410,7 +412,6 @@ class MnvTFRunnerCategorical:
                                     i, loss_batch, batch_sz
                                 )
                             )
-
                 except tf.errors.OutOfRangeError:
                     LOGGER.info('Testing stopped - queue is empty.')
                 except Exception as e:
@@ -451,11 +452,12 @@ class MnvTFRunnerCategorical:
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
             with tf.Session(graph=g) as sess:
-                data_reader = self.data_reader(self.test_reader_args)
-                targets, features, eventids = \
-                    self._prep_targets_and_features_minerva(
-                        data_reader.batch_generator
-                    )
+                with tf.variable_scope('pipeline_queue'):
+                    data_reader = self.data_reader(self.test_reader_args)
+                    targets, features, eventids = \
+                        self._prep_targets_and_features_minerva(
+                            data_reader.batch_generator
+                        )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
                 self.model.prepare_for_inference(features, d)
