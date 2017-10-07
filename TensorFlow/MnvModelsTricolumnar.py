@@ -170,6 +170,29 @@ class TriColSTEpsilon:
                 name=name
             )
 
+        def make_fc_Layer(
+                inp_lyr, name_w, shp_w, name_b=None, shp_b=None
+        ):
+            """ assume if shp_b is None that we are using batch norm. """
+            if shp_b is None:
+                fc_lyr = None   # TODO - implement, etc.
+            else:
+                W = make_wbkernels(name_w, shp_w)
+                b = make_wbkernels(name_b, shp_b)
+                fc_lyr = tf.nn.bias_add(
+                    tf.matmul(inp_lyr, W, name='matmul'), b,
+                    data_format=self.data_format, name='bias_add'
+                )
+            return fc_lyr
+
+        def make_active_fc_Layer(
+                inp_lyr, name_fc_lyr,
+                name_w, shp_w, name_b=None, shp_b=None, act=tf.nn.relu
+        ):
+            fc_lyr = make_fc_Layer(inp_lyr, name_w, shp_w, name_b, shp_b)
+            fc_lyr = act(fc_lyr, name=name_fc_lyr)
+            return fc_lyr
+
         def make_convolutional_tower(view, input_layer, kbd, n_layers=4):
             """
             input_layer == e.g., self.X_img, etc. corresponding to 'view'
@@ -205,23 +228,12 @@ class TriColSTEpsilon:
                 nfeat_tower = out_lyr_shp[1] * out_lyr_shp[2] * out_lyr_shp[3]
                 out_lyr = tf.reshape(out_lyr, [-1, nfeat_tower])
 
-                # final dense layer parameters
-                w = make_wbkernels(
-                    'dense_weights', [nfeat_tower, kbd['nfeat_dense_tower']]
-                )
-                b = make_wbkernels(
+                # make final active dense layer
+                fc = make_active_fc_Layer(
+                    out_lyr, 'fc_relu',
+                    'dense_weights', [nfeat_tower, kbd['nfeat_dense_tower']],
                     'dense_biases', [kbd['nfeat_dense_tower']]
                 )
-                # apply relu on matmul of pool2/out_lyr and w + b
-                fc = tf.nn.relu(
-                    tf.nn.bias_add(
-                        tf.matmul(out_lyr, w, name='matmul'), b,
-                        data_format=self.data_format,
-                        name='bias_add'
-                    ),
-                    name='reul_activation'
-                )
-                # apply dropout
                 fc = tf.nn.dropout(
                     fc, self.dropout_keep_prob, name='relu_dropout'
                 )
@@ -237,21 +249,13 @@ class TriColSTEpsilon:
             tower_joined = tf.concat(
                 [out_x, out_u, out_v], axis=1, name=scope.name + '_concat'
             )
-
             joined_shp = tower_joined.shape.as_list()
             nfeatures_joined = joined_shp[1]
-            w = make_wbkernels(
-                'weights', [nfeatures_joined, kbd['nfeat_concat_dense']]
-            )
-            b = make_wbkernels(
+            fc_lyr = make_active_fc_Layer(
+                tower_joined, 'fc_relu',
+                'weights', [nfeatures_joined, kbd['nfeat_concat_dense']],
                 'biases', [kbd['nfeat_concat_dense']]
             )
-            fc_lyr = tf.nn.bias_add(
-                tf.matmul(tower_joined, w), b, data_format=self.data_format
-            )
-            # apply relu on matmul of joined and w + b
-            fc_lyr = tf.nn.relu(fc_lyr)
-            # apply dropout
             self.fc = tf.nn.dropout(
                 fc_lyr, self.dropout_keep_prob, name='relu_dropout'
             )
