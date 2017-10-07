@@ -22,18 +22,19 @@ LOGLEVEL="--log_level INFO"
 
 NEPOCHS="--num_epochs 11"
 NEPOCHS="--num_epochs 1"
+NEPOCHS="--num_epochs 5"
 
-NCLASS=173
-NPLANECODES=173
-IMGWX=94
-IMGWUV=47
-TARGLABEL="planecodes"
-
-# NCLASS=67
-# NPLANECODES=67
-# IMGWX=50
-# IMGWUV=25
+# NCLASS=173
+# NPLANECODES=173
+# IMGWX=94
+# IMGWUV=47
 # TARGLABEL="planecodes"
+
+NCLASS=67
+NPLANECODES=67
+IMGWX=50
+IMGWUV=25
+TARGLABEL="planecodes"
 
 PCODECAP=$(($NPLANECODES - 1))
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
