@@ -105,6 +105,14 @@ def make_default_convpooldict(
     return convpooldict
 
 
+class LayerCreator:
+    def __init__(
+            self, regularization_strategy='l2', regularization_scale=0.0001,
+            use_batch_norm=False, data_format='NHWC'
+    ):
+        pass
+    
+
 class TriColSTEpsilon:
     """
     Tri-Columnar SpaceTime Epsilon
