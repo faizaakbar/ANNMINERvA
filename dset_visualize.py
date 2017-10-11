@@ -335,6 +335,29 @@ def make_plots(data_dict, max_events, normed_img):
         gs = pylab.GridSpec(grid_height, 3)
 
         for i, t in enumerate(types):
+            if plotting_two_tensors:
+                datatyp = 'energies+times'
+            else:
+                datatyp = 'energies' if t == 'energy' else 'times'
+            # set the bounds on the color scale
+            if normed_img:
+                minv = 0 if t == 'energy' else -1
+                maxv = 1
+            else:
+                maxes = []
+                mins = []
+                for v in views:
+                    maxes.append(
+                        np.abs(np.max(data_dict[datatyp][v][counter, i, :, :]))
+                    )
+                    mins.append(
+                        np.abs(np.max(data_dict[datatyp][v][counter, i, :, :]))
+                    )
+                minv = np.max(mins)
+                maxv = np.max(maxes)
+                maxex = maxv if maxv > minv else minv
+                minv = 0 if minv < 0.0001 else 0 if t == 'energy' else -maxv
+                maxv = maxex
             for j, view in enumerate(views):
                 gs_pos = i * 3 + j
                 ax = pylab.subplot(gs[gs_pos])
@@ -343,23 +366,7 @@ def make_plots(data_dict, max_events, normed_img):
                 ax.yaxis.set_major_locator(pylab.NullLocator())
                 cmap = 'jet' if t == 'energy' else 'bwr'
                 cbt = 'scaled energy' if t == 'energy' else 'scaled times'
-                if plotting_two_tensors:
-                    datap = data_dict['energies+times'][view][counter, i, :, :]
-                else:
-                    if t == 'energy':
-                        datap = data_dict['energies'][view][counter, i, :, :]
-                    else:
-                        datap = data_dict['times'][view][counter, i, :, :]
-                # set the bounds on the color scale
-                if normed_img:
-                    minv = 0 if t == 'energy' else -1
-                    maxv = 1
-                else:
-                    minv = np.abs(np.min(datap))
-                    maxv = np.abs(np.max(datap))
-                    maxex = maxv if maxv > minv else minv
-                    minv = 0 if minv < 0.0001 else -maxex
-                    maxv = maxex
+                datap = data_dict[datatyp][view][counter, i, :, :]
                 # make the plot
                 im = ax.imshow(
                     datap,
