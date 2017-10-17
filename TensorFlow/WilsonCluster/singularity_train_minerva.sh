@@ -21,8 +21,8 @@ LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 
 NEPOCHS="--num_epochs 11"
-NEPOCHS="--num_epochs 1"
 NEPOCHS="--num_epochs 5"
+NEPOCHS="--num_epochs 1"
 
 # NCLASS=173
 # NPLANECODES=173
@@ -48,11 +48,7 @@ IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 OPTIMIZER="Adam"
 STRATEGY="--strategy ${OPTIMIZER}"
 
-# MODEL_CODE="20170920_${SAMPLE}_${TARGLABEL}${NCLASS}"
-# AdaGrad with 500 batch size
-# MODEL_CODE="20170930_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
-# Adam with 500 batch size
-MODEL_CODE="20171001_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171017_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
