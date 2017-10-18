@@ -52,7 +52,9 @@ tf.app.flags.DEFINE_string('strategy', 'Adam',
                            """Optimizer strategy.""")
 tf.app.flags.DEFINE_float('learning_rate', 0.001,
                           """Learning rate.""")
-# TODO - add learning rate, l2 reg params, etc.
+tf.app.flags.DEFINE_boolean('do_batch_norm', False,
+                            """Do batch normalization.""")
+# TODO - add l2 reg params, etc.
 #
 # classification goal specification
 #
@@ -201,7 +203,9 @@ def main(argv=None):
             typ, len(runpars_dict[dkey]['FILENAMES_LIST'])
         ))
     model = TriColSTEpsilon(
-        n_classes=FLAGS.n_classes, data_format=FLAGS.data_format
+        n_classes=FLAGS.n_classes,
+        data_format=FLAGS.data_format,
+        use_batch_norm=FLAGS.do_batch_norm
     )
     runner = MnvTFRunnerCategorical(
         model,
