@@ -137,19 +137,10 @@ def main(argv=None):
     # set up features parameters
     feature_targ_dict = mnv_utils.make_feature_targ_dict(MNV_TYPE, FLAGS)
     feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
-    # feature_targ_dict['TARGETS_LABEL'] = FLAGS.targets_label
-    # feature_targ_dict['IMG_DEPTH'] = FLAGS.img_depth
 
     # set up run parameters
-    runpars_dict = mnv_utils.make_default_run_params_dict(MNV_TYPE)
-    runpars_dict['MODEL_DIR'] = FLAGS.model_dir
-    runpars_dict['PREDICTION_STORE_NAME'] = FLAGS.pred_store_name
-    runpars_dict['BE_VERBOSE'] = FLAGS.be_verbose
+    runpars_dict = mnv_utils.make_run_params_dict(MNV_TYPE, FLAGS)
     runpars_dict['DATA_READER_CLASS'] = MnvDataReaderVertexST
-    if FLAGS.do_log_devices:
-        runpars_dict['CONFIG_PROTO'] = tf.ConfigProto(
-            log_device_placement=True
-        )
 
     # do a short test run?
     short = FLAGS.do_a_short_run
@@ -192,12 +183,8 @@ def main(argv=None):
     runpars_dict['VALID_READER_ARGS'] = datareader_dict(valid_list, 'valid')
     runpars_dict['TEST_READER_ARGS'] = datareader_dict(test_list, 'data')
 
-    # TODO - pass some training params in on the command line
     # set up training parameters
-    train_params_dict = mnv_utils.make_default_train_params_dict(MNV_TYPE)
-    train_params_dict['NUM_EPOCHS'] = FLAGS.num_epochs
-    train_params_dict['STRATEGY'] = FLAGS.strategy
-    train_params_dict['LEARNING_RATE'] = FLAGS.learning_rate
+    train_params_dict = mnv_utils.make_train_params_dict(MNV_TYPE, FLAGS)
 
     logger.info(' run_params_dict = {}'.format(repr(runpars_dict)))
     logger.info(' feature_targ_dict = {}'.format(repr(feature_targ_dict)))
