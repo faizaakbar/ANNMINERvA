@@ -48,6 +48,7 @@ def make_default_run_params_dict(mnv_type='st_epsilon'):
     run_params_dict['SAVE_EVRY_N_BATCHES'] = 500
     run_params_dict['BE_VERBOSE'] = False
     run_params_dict['PREDICTION_STORE_NAME'] = 'preds'
+    run_params_dict['CONFIG_PROTO'] = None
     return run_params_dict
 
 
@@ -59,14 +60,16 @@ def make_hitimes_feature_str_dict():
     return dd
 
 
-def make_default_feature_targ_dict(mnv_type='st_epsilon'):
+def make_feature_targ_dict(mnv_type='st_epsilon', tf_flags=None):
     feature_targ_dict = {}
     if mnv_type == 'st_epsilon':
         feature_targ_dict['FEATURE_STR_DICT'] = \
             make_hitimes_feature_str_dict()
-        feature_targ_dict['TARGETS_LABEL'] = None
+        feature_targ_dict['TARGETS_LABEL'] = tf_flags.targets_label \
+            if tf_flags else None
         feature_targ_dict['BUILD_KBD_FUNCTION'] = None
-        feature_targ_dict['IMG_DEPTH'] = 2
+        feature_targ_dict['IMG_DEPTH'] = tf_flags.img_depth \
+            if tf_flags else 1
     return feature_targ_dict
 
 

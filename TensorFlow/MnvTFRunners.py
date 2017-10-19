@@ -43,6 +43,7 @@ class MnvTFRunnerCategorical:
             self.save_freq = run_params_dict['SAVE_EVRY_N_BATCHES']
             self.be_verbose = run_params_dict['BE_VERBOSE']
             self.pred_store_name = run_params_dict['PREDICTION_STORE_NAME']
+            self.config_proto = run_params_dict['CONFIG_PROTO']
         except KeyError as e:
             print(e)
 
@@ -146,7 +147,7 @@ class MnvTFRunnerCategorical:
                 n_batches, save_every_n_batch
             ))
 
-            with tf.Session(graph=g) as sess:
+            with tf.Session(graph=g, config=self.config_proto) as sess:
 
                 with tf.variable_scope('pipeline_queue'):
                     train_reader = self.data_reader(self.train_reader_args)
@@ -251,7 +252,8 @@ class MnvTFRunnerCategorical:
                             feed_dict={
                                 use_valid: False,
                                 self.model.dropout_keep_prob:
-                                self.dropout_keep_prob
+                                self.dropout_keep_prob,
+                                self.model.is_training: True
                             }
                         )
                         LOGGER.debug(
@@ -273,7 +275,8 @@ class MnvTFRunnerCategorical:
                                      self.model.accuracy],
                                     feed_dict={
                                         use_valid: True,
-                                        self.model.dropout_keep_prob: 1.0
+                                        self.model.dropout_keep_prob: 1.0,
+                                        self.model.is_training: False
                                     }
                                 )
                             saver.save(sess, ckpt_dir, b_num)
@@ -332,7 +335,7 @@ class MnvTFRunnerCategorical:
             n_batches = 2 if short else int(1e9)
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
-            with tf.Session(graph=g) as sess:
+            with tf.Session(graph=g, config=self.config_proto) as sess:
                 with tf.variable_scope('pipeline_queue'):
                     data_reader = self.data_reader(self.test_reader_args)
                     targets, features, _ = \
@@ -382,7 +385,8 @@ class MnvTFRunnerCategorical:
                         loss_batch, logits_batch, Y_batch = sess.run(
                             [self.model.loss, self.model.logits, targets],
                             feed_dict={
-                                self.model.dropout_keep_prob: 1.0
+                                self.model.dropout_keep_prob: 1.0,
+                                self.model.is_training: False
                             }
                         )
                         batch_sz = logits_batch.shape[0]
@@ -451,7 +455,7 @@ class MnvTFRunnerCategorical:
             n_batches = 2 if short else int(1e9)
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
-            with tf.Session(graph=g) as sess:
+            with tf.Session(graph=g, config=self.config_proto) as sess:
                 with tf.variable_scope('pipeline_queue'):
                     data_reader = self.data_reader(self.test_reader_args)
                     targets, features, eventids = \
@@ -496,7 +500,8 @@ class MnvTFRunnerCategorical:
                         logits_batch, evtids = sess.run(
                             [self.model.logits, eventids],
                             feed_dict={
-                                self.model.dropout_keep_prob: 1.0
+                                self.model.dropout_keep_prob: 1.0,
+                                self.model.is_training: False
                             }
                         )
                         batch_sz = logits_batch.shape[0]
@@ -573,7 +578,7 @@ class MnvTFRunnerCategorical:
             saver = tf.train.Saver()
             init = tf.global_variables_initializer()
 
-            with tf.Session() as sess:
+            with tf.Session(config=self.config_proto) as sess:
                 sess.run(init)
                 # have to run local variable init for `string_input_producer`
                 sess.run(tf.local_variables_initializer())

@@ -33,6 +33,8 @@ SHORT=""
 SHORT="--do_a_short_run"
 LOGLEVEL="--log_level INFO"
 LOGLEVEL="--log_level DEBUG --be_verbose"
+LOGDEVS=""
+LOGDEVS="--do_log_devices"
 
 NEPOCHS="--num_epochs 1"
 
@@ -90,7 +92,7 @@ python mnv_run_st_epsilon.py \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
   $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH \
-  $BATCHNORM
+  $BATCHNORM $LOGDEVS
 EOF
 
 python mnv_run_st_epsilon.py \
@@ -101,6 +103,6 @@ python mnv_run_st_epsilon.py \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
   $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH \
-  $BATCHNORM
+  $BATCHNORM $LOGDEVS
 
 echo "Job finished "`date`""
