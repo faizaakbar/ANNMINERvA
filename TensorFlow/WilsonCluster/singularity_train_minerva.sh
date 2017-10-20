@@ -15,8 +15,8 @@
 DAT=`date +%s`
 SAMPLE="me1ABmc"
 
-SHORT="--do_a_short_run"
 SHORT=""
+SHORT="--do_a_short_run"
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 LOGDEVS=""
@@ -61,6 +61,8 @@ BATCH="--batch_size $BATCHSIZE"
 
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
+SNGLRTY="/data/simone/singularity/ubuntu16-cuda8-cudnn6-ml.img"
+SNGLRTY="/data/simone/singularity/ubuntu16-ml-gpu.img"
 
 
 TRAINING="--nodo_training"
