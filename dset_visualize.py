@@ -187,12 +187,16 @@ class MnvDataReader:
         (2-deep). get everything there into a dictionary keyed by type,
         and then by view.
         """
-        def extract_data(dset_name, data_dict, tensor_type, dtype='f'):
+        def extract_data(
+                group_name, dset_name, data_dict, tensor_type, dtype='f'
+        ):
             view = dset_name[-1]
             try:
-                shp = pylab.shape(self._f[dset_name])
+                shp = pylab.shape(self._f[group_name][dset_name])
             except KeyError:
-                print("'{}' does not exist.".format(dset_name))
+                print("'{}/{}' does not exist.".format(
+                    group_name, dset_name
+                ))
                 shp = None
             if shp is not None:
                 if len(shp) == 4:
@@ -200,11 +204,17 @@ class MnvDataReader:
                     data_dict[tensor_type][view] = \
                         pylab.zeros(shp, dtype=dtype)
                     data_dict[tensor_type][view] = \
-                        self._f[dset_name][:self.n_events]
+                        self._f[group_name][dset_name][:self.n_events]
+                elif len(shp) == 2:
+                    shp = (self.n_events, 1)
+                    data_dict[dset_name] = pylab.zeros(shp, dtype=dtype)
+                    data_dict[dset_name] = \
+                        self._f[group_name][dset_name][:self.n_events]
                 elif len(shp) == 1:
                     shp = (self.n_events,)
                     data_dict[dset_name] = pylab.zeros(shp, dtype=dtype)
-                    data_dict[dset_name] = self._f[dset_name][:self.n_events]
+                    data_dict[dset_name] = \
+                        self._f[group_name][dset_name][:self.n_events]
                 else:
                     raise ValueError('Data shape has a bad length!')
 
@@ -214,21 +224,23 @@ class MnvDataReader:
 
         if 'energies+times' in data_dict.keys():
             for dset_name in self.energiestimes_names:
-                extract_data(dset_name, data_dict, 'energies+times')
+                extract_data(
+                    'img_data', dset_name, data_dict, 'energies+times'
+                )
         if 'energies' in data_dict.keys():
             for dset_name in self.energies_names:
-                extract_data(dset_name, data_dict, 'energies')
+                extract_data('img_data', dset_name, data_dict, 'energies')
         if 'times' in data_dict.keys():
             for dset_name in self.times_names:
-                extract_data(dset_name, data_dict, 'times')
+                extract_data('img_data', dset_name, data_dict, 'times')
         if 'eventids' in data_dict.keys():
-            extract_data('eventids', data_dict, None, 'uint64')
+            extract_data('event_data', 'eventids', data_dict, None, 'uint64')
         if 'planecodes' in data_dict.keys():
-            extract_data('planecodes', data_dict, None, 'uint16')
+            extract_data('event_data', 'planecodes', data_dict, None, 'uint16')
         if 'segments' in data_dict.keys():
-            extract_data('segments', data_dict, None, 'uint8')
+            extract_data('event_data', 'segments', data_dict, None, 'uint8')
         if 'zs' in data_dict.keys():
-            extract_data('zs', data_dict, None)
+            extract_data('event_data', 'zs', data_dict, None)
 
         self._f.close()
         
