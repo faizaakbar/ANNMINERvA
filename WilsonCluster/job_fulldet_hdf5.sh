@@ -13,15 +13,15 @@
 
 
 START=0
-STOP=58
+STOP=0
 
-DOENGY="yes"
-DOTIME="no"
+DOENGY="no"
+DOTIME="yes"
 
-SAMPLE=me1Bmc
+SAMPLE=me1Amc
 
-INPATH="/data/perdue/minerva/rawtxt/201709"
-OUTPATH="/data/perdue/minerva/hdf5/201709"
+INPATH="/data/perdue/minerva/rawtxt/201710"
+OUTPATH="/data/perdue/minerva/hdf5/201710"
 
 # energy lattice images
 INBASE="${INPATH}/minosmatch_nukecczdefs_fullz_tproc_127x94_${SAMPLE}"

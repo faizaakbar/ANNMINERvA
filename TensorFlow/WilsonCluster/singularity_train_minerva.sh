@@ -15,25 +15,28 @@
 DAT=`date +%s`
 SAMPLE="me1ABmc"
 
-SHORT="--do_a_short_run"
 SHORT=""
+SHORT="--do_a_short_run"
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
+LOGDEVS=""
+LOGDEVS="--do_log_devices"
 
 NEPOCHS="--num_epochs 11"
+NEPOCHS="--num_epochs 5"
 NEPOCHS="--num_epochs 1"
 
-NCLASS=173
-NPLANECODES=173
-IMGWX=94
-IMGWUV=47
-TARGLABEL="planecodes"
-
-# NCLASS=67
-# NPLANECODES=67
-# IMGWX=50
-# IMGWUV=25
+# NCLASS=173
+# NPLANECODES=173
+# IMGWX=94
+# IMGWUV=47
 # TARGLABEL="planecodes"
+
+NCLASS=67
+NPLANECODES=67
+IMGWX=50
+IMGWUV=25
+TARGLABEL="planecodes"
 
 PCODECAP=$(($NPLANECODES - 1))
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
@@ -47,17 +50,19 @@ IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 OPTIMIZER="Adam"
 STRATEGY="--strategy ${OPTIMIZER}"
 
-# MODEL_CODE="20170920_${SAMPLE}_${TARGLABEL}${NCLASS}"
-# AdaGrad with 500 batch size
-# MODEL_CODE="20170930_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
-# Adam with 500 batch size
-MODEL_CODE="20171001_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
+BATCHF="nodo_batch_norm"
+BATCHF="do_batch_norm"
+BATCHNORM="--$BATCHF"
+
+MODEL_CODE="20171019_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
 
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
+SNGLRTY="/data/simone/singularity/ubuntu16-cuda8-cudnn6-ml.img"
+SNGLRTY="/data/simone/singularity/ubuntu16-ml-gpu.img"
 
 
 TRAINING="--nodo_training"
@@ -125,7 +130,8 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH
+  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH \
+  $LOGDEVS $BATCHNORM
 EOF
 
 singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
@@ -135,7 +141,8 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH
+  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH \
+  $LOGDEVS $BATCHNORM
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0

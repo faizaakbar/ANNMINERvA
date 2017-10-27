@@ -37,6 +37,8 @@ tf.app.flags.DEFINE_string('log_name', 'temp_log.txt',
                            """Logfile name.""")
 tf.app.flags.DEFINE_string('log_level', 'INFO',
                            """Logging level (INFO/DEBUG/etc.).""")
+tf.app.flags.DEFINE_boolean('do_log_devices', False,
+                            """Log device placement.""")
 tf.app.flags.DEFINE_string('model_dir', '/tmp/minerva/models',
                            """Directory where models are stored.""")
 tf.app.flags.DEFINE_string('pred_store_name', 'temp_store',
@@ -50,7 +52,11 @@ tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Batch size.""")
 tf.app.flags.DEFINE_string('strategy', 'Adam',
                            """Optimizer strategy.""")
-# TODO - add learning rate, l2 reg params, etc.
+tf.app.flags.DEFINE_float('learning_rate', 0.001,
+                          """Learning rate.""")
+tf.app.flags.DEFINE_boolean('do_batch_norm', False,
+                            """Do batch normalization.""")
+# TODO - add l2 reg params, etc.
 #
 # classification goal specification
 #
@@ -129,16 +135,11 @@ def main(argv=None):
     logger.info(__file__)
 
     # set up features parameters
-    feature_targ_dict = mnv_utils.make_default_feature_targ_dict(MNV_TYPE)
+    feature_targ_dict = mnv_utils.make_feature_targ_dict(MNV_TYPE, FLAGS)
     feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
-    feature_targ_dict['TARGETS_LABEL'] = FLAGS.targets_label
-    feature_targ_dict['IMG_DEPTH'] = FLAGS.img_depth
 
     # set up run parameters
-    runpars_dict = mnv_utils.make_default_run_params_dict(MNV_TYPE)
-    runpars_dict['MODEL_DIR'] = FLAGS.model_dir
-    runpars_dict['PREDICTION_STORE_NAME'] = FLAGS.pred_store_name
-    runpars_dict['BE_VERBOSE'] = FLAGS.be_verbose
+    runpars_dict = mnv_utils.make_run_params_dict(MNV_TYPE, FLAGS)
     runpars_dict['DATA_READER_CLASS'] = MnvDataReaderVertexST
 
     # do a short test run?
@@ -182,11 +183,8 @@ def main(argv=None):
     runpars_dict['VALID_READER_ARGS'] = datareader_dict(valid_list, 'valid')
     runpars_dict['TEST_READER_ARGS'] = datareader_dict(test_list, 'data')
 
-    # TODO - pass some training params in on the command line
     # set up training parameters
-    train_params_dict = mnv_utils.make_default_train_params_dict(MNV_TYPE)
-    train_params_dict['NUM_EPOCHS'] = FLAGS.num_epochs
-    train_params_dict['STRATEGY'] = FLAGS.strategy
+    train_params_dict = mnv_utils.make_train_params_dict(MNV_TYPE, FLAGS)
 
     logger.info(' run_params_dict = {}'.format(repr(runpars_dict)))
     logger.info(' feature_targ_dict = {}'.format(repr(feature_targ_dict)))
@@ -198,7 +196,9 @@ def main(argv=None):
             typ, len(runpars_dict[dkey]['FILENAMES_LIST'])
         ))
     model = TriColSTEpsilon(
-        n_classes=FLAGS.n_classes, data_format=FLAGS.data_format
+        n_classes=FLAGS.n_classes,
+        data_format=FLAGS.data_format,
+        use_batch_norm=FLAGS.do_batch_norm
     )
     runner = MnvTFRunnerCategorical(
         model,

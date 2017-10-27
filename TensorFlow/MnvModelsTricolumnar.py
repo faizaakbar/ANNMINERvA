@@ -11,7 +11,9 @@ from six.moves import range
 LOGGER = logging.getLogger(__name__)
 
 
-def make_default_convpooldict(img_depth=1, data_format='NHWC'):
+def make_default_convpooldict(
+        img_depth=1, data_format='NHWC', use_batch_norm=False
+):
     """
     return the default network structure dictionary
 
@@ -31,6 +33,7 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
 
     convpooldict['pool_ksize'] = pool_ksize
     convpooldict['pool_strides'] = pool_strides
+    convpooldict['use_batch_norm'] = use_batch_norm
 
     # assume 127x(N) images
     convpooldict_x = {}
@@ -102,19 +105,202 @@ def make_default_convpooldict(img_depth=1, data_format='NHWC'):
     return convpooldict
 
 
+class LayerCreator:
+    def __init__(
+            self, regularization_strategy='l2', regularization_scale=0.0001,
+            use_batch_norm=False, data_format='NHWC', padding='VALID'
+    ):
+        if regularization_strategy == 'l2':
+            self.reg = tf.contrib.layers.l2_regularizer(
+                scale=regularization_scale
+            )
+        else:
+            raise NotImplementedError(
+                'Regularization strategy ' + regularization_strategy + ' \
+                is not implemented yet.'
+            )
+        self.use_batch_norm = use_batch_norm
+        self.batch_norm_decay = 0.999
+        self.is_training = None
+        self.data_format = data_format
+        self.padding = padding  # TODO - layer by layer option?
+        # self.dropout_config??
+
+    def set_is_training_placeholder(self, is_training):
+        self.is_training = is_training
+
+    def make_wbkernels(
+            self, name, shp=None, initializer=xavier_init(uniform=False),
+    ):
+        """ make weights, biases, kernels """
+        return tf.get_variable(
+            name, shp, initializer=initializer, regularizer=self.reg
+        )
+
+    def make_fc_layer(
+            self, inp_lyr, name_fc_lyr,
+            name_w, shp_w, name_b=None, shp_b=None,
+            initializer=xavier_init(uniform=False)
+    ):
+        """ TODO - regularize batch norm params? """
+        W = self.make_wbkernels(name_w, shp_w, initializer=initializer)
+        b = self.make_wbkernels(
+            name_b, shp_b, initializer=tf.zeros_initializer()
+        )
+        fc_lyr = tf.nn.bias_add(
+            tf.matmul(inp_lyr, W, name=name_fc_lyr+'_matmul'), b,
+            data_format=self.data_format, name=name_fc_lyr,
+        )
+        if self.use_batch_norm:
+            fc_lyr = tf.contrib.layers.batch_norm(
+                fc_lyr, decay=self.batch_norm_decay, center=True, scale=True,
+                data_format=self.data_format, is_training=self.is_training
+            )
+        return fc_lyr
+            
+    def make_active_fc_layer(
+            self, inp_lyr, name_fc_lyr,
+            name_w, shp_w, name_b=None, shp_b=None,
+            act=tf.nn.relu, initializer=xavier_init(uniform=False)
+    ):
+        return act(self.make_fc_layer(
+            inp_lyr, name_fc_lyr, name_w, shp_w, name_b, shp_b,
+            initializer=initializer
+        ), name=name_fc_lyr+'_act')
+
+    def make_active_conv(
+            self, input_lyr, name, kernels,
+            biases=None, act=tf.nn.relu, strides=[1, 1, 1, 1]
+    ):
+        """ TODO - regularize batch norm params? biases? """
+        conv = tf.nn.conv2d(
+            input_lyr, kernels, strides=strides,
+            padding=self.padding, data_format=self.data_format,
+            name=name
+        )
+        if self.use_batch_norm:
+            # TODO - test `activation_fun` argument
+            return act(
+                tf.contrib.layers.batch_norm(
+                    tf.nn.bias_add(
+                        conv, biases, data_format=self.data_format,
+                        name=name+'_plus_biases'
+                    ), decay=self.batch_norm_decay,
+                    center=True, scale=True,
+                    data_format=self.data_format, is_training=self.is_training
+                ),
+                name=name+'_act'
+            )
+        else:
+            return act(tf.nn.bias_add(
+                conv, biases, data_format=self.data_format, name=name+'_act'
+            ))
+
+    def make_pool(
+            self, input_lyr, name, ksize, strides, padding=None
+    ):
+        padding = padding or self.padding
+        pool = tf.nn.max_pool(
+            input_lyr, ksize=ksize, strides=strides,
+            padding=padding, data_format=self.data_format, name=name
+        )
+        return pool
+
+
+def create_train_valid_summaries(
+        loss, accuracy=None, reg_loss=None, do_valid=True
+):
+    base_summaries = tf.get_collection(tf.GraphKeys.SUMMARIES)
+    train_summaries, valid_summaries = [], []
+    train_summary_op, valid_summary_op = None, None
+    with tf.name_scope('summaries/train'):
+        train_loss = tf.summary.scalar('loss', loss)
+        train_histo_loss = tf.summary.histogram(
+            'histogram_loss', loss
+        )
+        train_summaries.extend([train_loss, train_histo_loss])
+        if reg_loss is not None:
+            train_reg_loss = tf.summary.scalar('reg_loss', reg_loss)
+            train_summaries.append(train_reg_loss)
+        if accuracy is not None:
+            train_accuracy = tf.summary.scalar('accuracy', accuracy)
+            train_summaries.append(train_accuracy)
+        train_summaries.extend(base_summaries)
+        train_summary_op = tf.summary.merge(train_summaries)
+    if do_valid:
+        with tf.name_scope('summaries/valid'):
+            valid_loss = tf.summary.scalar('loss', loss)
+            valid_histo_loss = tf.summary.histogram(
+                'histogram_loss', loss
+            )
+            valid_summaries.extend([valid_loss, valid_histo_loss])
+            if reg_loss is not None:
+                valid_reg_loss = tf.summary.scalar('reg_loss', reg_loss)
+                valid_summaries.append(valid_reg_loss)
+            if accuracy is not None:
+                valid_accuracy = tf.summary.scalar('accuracy', accuracy)
+                valid_summaries.append(valid_accuracy)
+            valid_summaries.extend(base_summaries)
+            valid_summary_op = tf.summary.merge(valid_summaries)
+    return train_summary_op, valid_summary_op
+
+
+def compute_categorical_loss_and_accuracy(logits, targets):
+    """return total loss, reg loss (subset of total), and accuracy"""
+    with tf.variable_scope('loss'):
+        regularization_losses = sum(
+            tf.get_collection(
+                tf.GraphKeys.REGULARIZATION_LOSSES
+            )
+        )
+        loss = tf.reduce_mean(
+            tf.nn.softmax_cross_entropy_with_logits(
+                logits=logits, labels=targets
+            ),
+            axis=0,
+            name='loss'
+        ) + regularization_losses
+        preds = tf.nn.softmax(logits, name='preds')
+        correct_preds = tf.equal(
+            tf.argmax(preds, 1), tf.argmax(targets, 1),
+            name='correct_preds'
+        )
+        accuracy = tf.divide(
+            tf.reduce_sum(tf.cast(correct_preds, tf.float32)),
+            tf.cast(tf.shape(targets)[0], tf.float32),
+            name='accuracy'
+        )
+    return loss, regularization_losses, accuracy
+
+
+def make_standard_placeholders():
+    dropout_keep_prob = tf.placeholder(tf.float32, name='dropout_keep_prob')
+    global_step = tf.Variable(
+        0, dtype=tf.int32, trainable=False, name='global_step'
+    )
+    is_training = tf.placeholder(tf.bool, name='is_training')
+    return dropout_keep_prob, global_step, is_training
+    
+
 class TriColSTEpsilon:
     """
     Tri-Columnar SpaceTime Epsilon
     """
     _allowed_strategies = ['Adam', 'AdaGrad']
     
-    def __init__(self, n_classes, data_format='NHWC'):
+    def __init__(self, n_classes, data_format='NHWC', use_batch_norm=False):
+        """ note, 'NCHW' is only supported on GPUs """
         self.n_classes = n_classes
+        self.loss = None
+        self.logits = None
         self.dropout_keep_prob = None
         self.global_step = None
+        self.is_training = None
         self.padding = 'VALID'
-        # note, 'NCHW' is only supported on GPUs
         self.data_format = data_format
+        self.layer_creator = LayerCreator(
+            'l2', 0.0001, use_batch_norm, self.data_format, self.padding
+        )
 
     def _build_network(self, features_list, kbd):
         """
@@ -126,51 +312,15 @@ class TriColSTEpsilon:
         kbd = kernels-biases-dict (convpooldict)
         """
         LOGGER.info('Building network from structure: %s' % str(kbd))
-        self.dropout_keep_prob = tf.placeholder(
-            tf.float32, name='dropout_keep_prob'
-        )
-        self.global_step = tf.Variable(
-            0, dtype=tf.int32, trainable=False, name='global_step'
-        )
-        self.weights_biases = {}
+        self.dropout_keep_prob, self.global_step, self.is_training = \
+            make_standard_placeholders()
+        lc = self.layer_creator
+        lc.set_is_training_placeholder(self.is_training)
 
         with tf.variable_scope('input_images'):
             self.X_img = tf.cast(features_list[0], tf.float32)
             self.U_img = tf.cast(features_list[1], tf.float32)
             self.V_img = tf.cast(features_list[2], tf.float32)
-
-        def make_kernels(name, shp_list):
-            return tf.get_variable(
-                name, shp_list, initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
-            )
-
-        def make_biases(name, shp_list):
-            return tf.get_variable(
-                name, shp_list, initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
-            )
-
-        def make_active_conv(
-                input_lyr, kernels, biases, name, act=tf.nn.relu
-        ):
-            conv = tf.nn.conv2d(
-                input_lyr, kernels, strides=[1, 1, 1, 1],
-                padding=self.padding, data_format=self.data_format
-            )
-            return act(tf.nn.bias_add(
-                conv, biases, data_format=self.data_format, name=name
-            ))
-
-        def make_pool(
-                input_lyr, name,
-                ksize=kbd['pool_ksize'], strides=kbd['pool_strides']
-        ):
-            return tf.nn.max_pool(
-                input_lyr, ksize=ksize, strides=strides,
-                padding=self.padding, data_format=self.data_format,
-                name=name
-            )
 
         def make_convolutional_tower(view, input_layer, kbd, n_layers=4):
             """
@@ -183,8 +333,6 @@ class TriColSTEpsilon:
             twr = view + '_tower'
             with tf.variable_scope(twr):
 
-                self.weights_biases[twr] = {}
-
                 for i in range(n_layers):
                     layer = str(i + 1)
                     if layer == '1':
@@ -195,194 +343,110 @@ class TriColSTEpsilon:
                     # scope the convolutional layer
                     nm = 'conv' + layer
                     with tf.variable_scope(nm):
-                        self.weights_biases[twr][nm] = {}
-                        self.weights_biases[twr][nm]['kernels'] = make_kernels(
-                            'kernels', kbd[view][nm]['kernels'],
+                        k = lc.make_wbkernels(
+                            'kernels', kbd[view][nm]['kernels']
                         )
-                        self.weights_biases[twr][nm]['biases'] = make_biases(
-                            'biases', kbd[view][nm]['biases'],
+                        b = lc.make_wbkernels(
+                            'biases', kbd[view][nm]['biases']
                         )
-                        conv = make_active_conv(
-                            inp_lyr,
-                            self.weights_biases[twr][nm]['kernels'],
-                            self.weights_biases[twr][nm]['biases'],
-                            nm + '_conv'
-                        )
+                        conv = lc.make_active_conv(inp_lyr, nm+'_conv', k, b)
 
                     # scope the pooling layer
                     scope_name = 'pool' + layer
                     with tf.variable_scope(scope_name):
-                        out_lyr = make_pool(conv, scope_name + '_pool')
+                        out_lyr = lc.make_pool(
+                            conv, scope_name+'_pool',
+                            kbd['pool_ksize'], kbd['pool_strides']
+                        )
 
                 # reshape pool/out_lyr to 2 dimensional
                 out_lyr_shp = out_lyr.shape.as_list()
                 nfeat_tower = out_lyr_shp[1] * out_lyr_shp[2] * out_lyr_shp[3]
                 out_lyr = tf.reshape(out_lyr, [-1, nfeat_tower])
 
-                # final dense layer parameters
-                self.weights_biases[twr]['dense_weights'] = tf.get_variable(
-                    'dense_weights',
-                    [nfeat_tower, kbd['nfeat_dense_tower']],
-                    initializer=xavier_init(uniform=False),
-                    regularizer=kbd['regularizer']
-                )
-                self.weights_biases[twr]['dense_biases'] = tf.get_variable(
-                    'dense_biases',
-                    [kbd['nfeat_dense_tower']],
-                    initializer=xavier_init(uniform=False),
-                    regularizer=kbd['regularizer']
-                )
-                # apply relu on matmul of pool2/out_lyr and w + b
-                fc = tf.nn.relu(
-                    tf.nn.bias_add(
-                        tf.matmul(
-                            out_lyr,
-                            self.weights_biases[twr]['dense_weights'],
-                            name='matmul'
-                        ), 
-                        self.weights_biases[twr]['dense_biases'],
-                        data_format=self.data_format,
-                        name='bias_add'
-                    ),
-                    name='reul_activation'
-                )
-                # apply dropout
-                fc = tf.nn.dropout(
-                    fc, self.dropout_keep_prob, name='relu_dropout'
-                )
+                # make final active dense layer
+                with tf.variable_scope('fully_connected'):
+                    fc = lc.make_active_fc_layer(
+                        out_lyr, 'fc_relu',
+                        'dense_weights',
+                        [nfeat_tower, kbd['nfeat_dense_tower']],
+                        'dense_biases',
+                        [kbd['nfeat_dense_tower']]
+                    )
+                    fc = tf.nn.dropout(
+                        fc, self.dropout_keep_prob, name='relu_dropout'
+                    )
 
             return fc
 
-        out_x = make_convolutional_tower('x', self.X_img, kbd)
-        out_u = make_convolutional_tower('u', self.U_img, kbd)
-        out_v = make_convolutional_tower('v', self.V_img, kbd)
+        with tf.variable_scope('model'):
+            out_x = make_convolutional_tower('x', self.X_img, kbd)
+            out_u = make_convolutional_tower('u', self.U_img, kbd)
+            out_v = make_convolutional_tower('v', self.V_img, kbd)
 
-        # next, concat, then 'final' fc...
-        with tf.variable_scope('fully_connected') as scope:
-            tower_joined = tf.concat(
-                [out_x, out_u, out_v], axis=1, name=scope.name + '_concat'
-            )
-
-            joined_shp = tower_joined.shape.as_list()
-            nfeatures_joined = joined_shp[1]
-            self.weights_fc = tf.get_variable(
-                'weights',
-                [nfeatures_joined, kbd['nfeat_concat_dense']],
-                initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
-            )
-            self.biases_fc = tf.get_variable(
-                'biases',
-                [kbd['nfeat_concat_dense']],
-                initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
-            )
-            # apply relu on matmul of joined and w + b
-            self.fc = tf.nn.relu(
-                tf.nn.bias_add(
-                    tf.matmul(tower_joined, self.weights_fc),
-                    self.biases_fc,
-                    data_format=self.data_format
+            # next, concat, then 'final' fc...
+            with tf.variable_scope('fully_connected') as scope:
+                tower_joined = tf.concat(
+                    [out_x, out_u, out_v], axis=1, name=scope.name+'_concat'
                 )
-            )
-            # apply dropout
-            self.fc = tf.nn.dropout(
-                self.fc, self.dropout_keep_prob, name='relu_dropout'
-            )
+                joined_shp = tower_joined.shape.as_list()
+                nfeatures_joined = joined_shp[1]
+                fc_lyr = lc.make_active_fc_layer(
+                    tower_joined, 'fc_relu',
+                    'weights', [nfeatures_joined, kbd['nfeat_concat_dense']],
+                    'biases', [kbd['nfeat_concat_dense']]
+                )
+                self.fc = tf.nn.dropout(
+                    fc_lyr, self.dropout_keep_prob, name='relu_dropout'
+                )
 
-        with tf.variable_scope('softmax_linear'):
-            self.weights_softmax = tf.get_variable(
-                'weights',
-                [kbd['nfeat_concat_dense'], self.n_classes],
-                initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
-            )
-            self.biases_softmax = tf.get_variable(
-                'biases',
-                [self.n_classes],
-                initializer=xavier_init(uniform=False),
-                regularizer=kbd['regularizer']
-            )
-            self.logits = tf.nn.bias_add(
-                tf.matmul(self.fc, self.weights_softmax),
-                self.biases_softmax,
-                data_format=self.data_format,
-                name='logits'
-            )
+            with tf.variable_scope('softmax_linear'):
+                self.weights_softmax = lc.make_wbkernels(
+                    'weights', [kbd['nfeat_concat_dense'], self.n_classes]
+                )
+                self.biases_softmax = lc.make_wbkernels(
+                    'biases', [self.n_classes]
+                )
+                self.logits = tf.nn.bias_add(
+                    tf.matmul(self.fc, self.weights_softmax),
+                    self.biases_softmax,
+                    data_format=self.data_format,
+                    name='logits'
+                )
 
     def _set_targets(self, targets):
         with tf.variable_scope('targets'):
             self.targets = tf.cast(targets, tf.float32)
 
     def _define_loss(self):
-        with tf.variable_scope('loss'):
-            regularization_losses = tf.get_collection(
-                tf.GraphKeys.REGULARIZATION_LOSSES
-            )
-            self.loss = tf.reduce_mean(
-                tf.nn.softmax_cross_entropy_with_logits(
-                    logits=self.logits, labels=self.targets
-                ),
-                axis=0,
-                name='loss'
-            ) + sum(regularization_losses)
-            preds = tf.nn.softmax(self.logits, name='preds')
-            correct_preds = tf.equal(
-                tf.argmax(preds, 1), tf.argmax(self.targets, 1),
-                name='correct_preds'
-            )
-            self.accuracy = tf.divide(
-                tf.reduce_sum(tf.cast(correct_preds, tf.float32)),
-                tf.cast(tf.shape(self.targets)[0], tf.float32),
-                name='accuracy'
-            )
+        self.loss, self.regularization_losses, self.accuracy = \
+            compute_categorical_loss_and_accuracy(self.logits, self.targets)
 
     def _define_train_op(self, learning_rate, strategy):
         LOGGER.info('Building train op with learning_rate = %f' %
                     learning_rate)
         if strategy in self._allowed_strategies:
             with tf.variable_scope('training'):
-                if strategy == 'Adam':
-                    self.optimizer = tf.train.AdamOptimizer(
-                        learning_rate=learning_rate
-                    ).minimize(self.loss, global_step=self.global_step)
-                elif strategy == 'AdaGrad':
-                    self.optimizer = tf.train.MomentumOptimizer(
-                        learning_rate=learning_rate,
-                        momentum=0.9, use_nesterov=True
-                    ).minimize(self.loss, global_step=self.global_step)
+                # need update_ops for batch normalization
+                update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
+                with tf.control_dependencies(update_ops):
+                    if strategy == 'Adam':
+                        self.optimizer = tf.train.AdamOptimizer(
+                            learning_rate=learning_rate
+                        ).minimize(self.loss, global_step=self.global_step)
+                    elif strategy == 'AdaGrad':
+                        self.optimizer = tf.train.MomentumOptimizer(
+                            learning_rate=learning_rate,
+                            momentum=0.9, use_nesterov=True
+                        ).minimize(self.loss, global_step=self.global_step)
         else:
             raise ValueError('Invalid training strategy choice!')
 
     def _create_summaries(self):
         # assume we built the readers before the model...
-        base_summaries = tf.get_collection(tf.GraphKeys.SUMMARIES)
-        with tf.variable_scope('summaries/train'):
-            train_loss = tf.summary.scalar('loss', self.loss)
-            train_histo_loss = tf.summary.histogram(
-                'histogram_loss', self.loss
-            )
-            train_summaries = [train_loss, train_histo_loss]
-            train_summaries.extend(base_summaries)
-            self.train_summary_op = tf.summary.merge(
-                train_summaries
-            )
-        with tf.variable_scope('summaries/valid'):
-            valid_loss = tf.summary.scalar('loss', self.loss)
-            valid_histo_loss = tf.summary.histogram(
-                'histogram_loss', self.loss
-            )
-            valid_accuracy = tf.summary.scalar('accuracy', self.accuracy)
-            valid_histo_accuracy = tf.summary.histogram(
-                'histogram_accuracy', self.accuracy
-            )
-            valid_summaries = [
-                valid_loss, valid_histo_loss,
-                valid_accuracy, valid_histo_accuracy
-            ]
-            valid_summaries.extend(base_summaries)
-            self.valid_summary_op = tf.summary.merge(
-                valid_summaries
+        self.train_summary_op, self.valid_summary_op =  \
+            create_train_valid_summaries(
+                self.loss, self.accuracy, self.regularization_losses
             )
 
     def prepare_for_inference(self, features, kbd):
@@ -406,7 +470,7 @@ class TriColSTEpsilon:
 
     def get_output_nodes(self):
         """ list of output nodes for graph freezing """
-        return ["softmax_linear/logits"]
+        return ["model/softmax_linear/logits"]
 
 
 def test():
@@ -423,15 +487,6 @@ def test():
     t = TriColSTEpsilon(11)
     t.prepare_for_inference(f, d)
     t.prepare_for_training(targ)
-
-    # test reassignment
-    Xp = tf.placeholder(tf.float32, shape=Xshp, name='Xp')
-    Up = tf.placeholder(tf.float32, shape=UVshp, name='Up')
-    Vp = tf.placeholder(tf.float32, shape=UVshp, name='Vp')
-    targp = tf.placeholder(tf.float32, shape=[None, 11], name='targp')
-    fp = [Xp, Up, Vp]
-    t.reassign_features(fp)
-    t.reassign_targets(targp)
 
 
 if __name__ == '__main__':

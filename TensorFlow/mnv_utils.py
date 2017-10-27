@@ -40,14 +40,22 @@ def make_data_reader_dict(
     return data_reader_dict
 
 
-def make_default_run_params_dict(mnv_type='st_epsilon'):
+def make_run_params_dict(mnv_type='st_epsilon', tf_flags=None):
     run_params_dict = {}
     run_params_dict['DATA_READER_CLASS'] = None
-    run_params_dict['MODEL_DIR'] = '/tmp/minerva'
+    run_params_dict['MODEL_DIR'] = tf_flags.model_dir \
+        if tf_flags else '/tmp/model'
     run_params_dict['LOAD_SAVED_MODEL'] = True
     run_params_dict['SAVE_EVRY_N_BATCHES'] = 500
-    run_params_dict['BE_VERBOSE'] = False
-    run_params_dict['PREDICTION_STORE_NAME'] = 'preds'
+    run_params_dict['BE_VERBOSE'] = tf_flags.be_verbose \
+        if tf_flags else False
+    run_params_dict['PREDICTION_STORE_NAME'] = tf_flags.pred_store_name \
+        if tf_flags else 'preds'
+    run_params_dict['CONFIG_PROTO'] = None
+    if tf_flags and tf_flags.do_log_devices:
+        run_params_dict['CONFIG_PROTO'] = tf.ConfigProto(
+            log_device_placement=True
+        )
     return run_params_dict
 
 
@@ -59,23 +67,28 @@ def make_hitimes_feature_str_dict():
     return dd
 
 
-def make_default_feature_targ_dict(mnv_type='st_epsilon'):
+def make_feature_targ_dict(mnv_type='st_epsilon', tf_flags=None):
     feature_targ_dict = {}
     if mnv_type == 'st_epsilon':
         feature_targ_dict['FEATURE_STR_DICT'] = \
             make_hitimes_feature_str_dict()
-        feature_targ_dict['TARGETS_LABEL'] = None
+        feature_targ_dict['TARGETS_LABEL'] = tf_flags.targets_label \
+            if tf_flags else None
         feature_targ_dict['BUILD_KBD_FUNCTION'] = None
-        feature_targ_dict['IMG_DEPTH'] = 2
+        feature_targ_dict['IMG_DEPTH'] = tf_flags.img_depth \
+            if tf_flags else 1
     return feature_targ_dict
 
 
-def make_default_train_params_dict(mnv_type='st_epsilon'):
+def make_train_params_dict(mnv_type='st_epsilon', tf_flags=None):
     train_params_dict = {}
-    train_params_dict['LEARNING_RATE'] = 0.001
-    train_params_dict['NUM_EPOCHS'] = 1
+    train_params_dict['LEARNING_RATE'] = tf_flags.learning_rate \
+        if tf_flags else 0.001
+    train_params_dict['NUM_EPOCHS'] = tf_flags.num_epochs \
+        if tf_flags else 1
     train_params_dict['MOMENTUM'] = 0.9
-    train_params_dict['STRATEGY'] = "Adam"
+    train_params_dict['STRATEGY'] = tf_flags.strategy \
+        if tf_flags else "Adam"
     train_params_dict['DROPOUT_KEEP_PROB'] = 0.5
     return train_params_dict
 

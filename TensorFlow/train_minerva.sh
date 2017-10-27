@@ -33,6 +33,8 @@ SHORT=""
 SHORT="--do_a_short_run"
 LOGLEVEL="--log_level INFO"
 LOGLEVEL="--log_level DEBUG --be_verbose"
+LOGDEVS=""
+LOGDEVS="--do_log_devices"
 
 NEPOCHS="--num_epochs 1"
 
@@ -50,7 +52,11 @@ BATCH="--batch_size $BATCHSIZE"
 OPTIMIZER="Adam"
 STRATEGY="--strategy ${OPTIMIZER}"
 
-MODEL_CODE="20171003_${OPTIMIZER}_${SAMPLE}_${TARGLABEL}${NCLASS}"
+BATCHF="nodo_batch_norm"
+BATCHF="do_batch_norm"
+BATCHNORM="--$BATCHF"
+
+MODEL_CODE="20171018_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
@@ -85,7 +91,8 @@ python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH
+  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH \
+  $BATCHNORM $LOGDEVS
 EOF
 
 python mnv_run_st_epsilon.py \
@@ -95,6 +102,7 @@ python mnv_run_st_epsilon.py \
   --model_dir $MODELDIR \
   --log_name $LOGFILE $LOGLEVEL \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH
+  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH \
+  $BATCHNORM $LOGDEVS
 
 echo "Job finished "`date`""

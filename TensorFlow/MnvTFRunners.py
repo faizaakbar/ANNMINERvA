@@ -43,6 +43,7 @@ class MnvTFRunnerCategorical:
             self.save_freq = run_params_dict['SAVE_EVRY_N_BATCHES']
             self.be_verbose = run_params_dict['BE_VERBOSE']
             self.pred_store_name = run_params_dict['PREDICTION_STORE_NAME']
+            self.config_proto = run_params_dict['CONFIG_PROTO']
         except KeyError as e:
             print(e)
 
@@ -146,21 +147,27 @@ class MnvTFRunnerCategorical:
                 n_batches, save_every_n_batch
             ))
 
-            with tf.Session(graph=g) as sess:
+            with tf.Session(graph=g, config=self.config_proto) as sess:
 
-                train_reader = self.data_reader(self.train_reader_args)
-                targets_train, features_train, eventids_train = \
-                    self._prep_targets_and_features_minerva(
-                        train_reader.shuffle_batch_generator,
-                        self.num_epochs
-                    )
+                with tf.variable_scope('pipeline_queue'):
+                    train_reader = self.data_reader(self.train_reader_args)
+                    targets_train, features_train, eventids_train = \
+                        self._prep_targets_and_features_minerva(
+                            train_reader.shuffle_batch_generator,
+                            self.num_epochs
+                        )
 
-                valid_reader = self.data_reader(self.valid_reader_args)
-                targets_valid, features_valid, eventids_valid = \
-                    self._prep_targets_and_features_minerva(
-                        valid_reader.batch_generator,
-                        1000000
-                    )
+                    valid_reader = self.data_reader(self.valid_reader_args)
+                    targets_valid, features_valid, eventids_valid = \
+                        self._prep_targets_and_features_minerva(
+                            valid_reader.batch_generator,
+                            1000000
+                        )
+
+                    with tf.variable_scope('pipeline_control'):
+                        use_valid = tf.placeholder(
+                            tf.bool, shape=(), name='train_val_batch_logic'
+                        )
 
                 def get_features_train():
                     return features_train
@@ -179,11 +186,6 @@ class MnvTFRunnerCategorical:
 
                 def get_eventids_valid():
                     return eventids_valid
-
-                with tf.variable_scope('pipeline_control'):
-                    use_valid = tf.placeholder(
-                        tf.bool, shape=(), name='train_val_batch_logic'
-                    )
 
                 features = tf.cond(
                     use_valid,
@@ -250,7 +252,8 @@ class MnvTFRunnerCategorical:
                             feed_dict={
                                 use_valid: False,
                                 self.model.dropout_keep_prob:
-                                self.dropout_keep_prob
+                                self.dropout_keep_prob,
+                                self.model.is_training: True
                             }
                         )
                         LOGGER.debug(
@@ -272,7 +275,8 @@ class MnvTFRunnerCategorical:
                                      self.model.accuracy],
                                     feed_dict={
                                         use_valid: True,
-                                        self.model.dropout_keep_prob: 1.0
+                                        self.model.dropout_keep_prob: 1.0,
+                                        self.model.is_training: False
                                     }
                                 )
                             saver.save(sess, ckpt_dir, b_num)
@@ -331,12 +335,13 @@ class MnvTFRunnerCategorical:
             n_batches = 2 if short else int(1e9)
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
-            with tf.Session(graph=g) as sess:
-                data_reader = self.data_reader(self.test_reader_args)
-                targets, features, _ = \
-                    self._prep_targets_and_features_minerva(
-                        data_reader.batch_generator
-                    )
+            with tf.Session(graph=g, config=self.config_proto) as sess:
+                with tf.variable_scope('pipeline_queue'):
+                    data_reader = self.data_reader(self.test_reader_args)
+                    targets, features, _ = \
+                        self._prep_targets_and_features_minerva(
+                            data_reader.batch_generator
+                        )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
                 self.model.prepare_for_inference(features, d)
@@ -380,7 +385,8 @@ class MnvTFRunnerCategorical:
                         loss_batch, logits_batch, Y_batch = sess.run(
                             [self.model.loss, self.model.logits, targets],
                             feed_dict={
-                                self.model.dropout_keep_prob: 1.0
+                                self.model.dropout_keep_prob: 1.0,
+                                self.model.is_training: False
                             }
                         )
                         batch_sz = logits_batch.shape[0]
@@ -410,7 +416,6 @@ class MnvTFRunnerCategorical:
                                     i, loss_batch, batch_sz
                                 )
                             )
-
                 except tf.errors.OutOfRangeError:
                     LOGGER.info('Testing stopped - queue is empty.')
                 except Exception as e:
@@ -450,12 +455,13 @@ class MnvTFRunnerCategorical:
             n_batches = 2 if short else int(1e9)
             LOGGER.info(' Processing {} batches...'.format(n_batches))
 
-            with tf.Session(graph=g) as sess:
-                data_reader = self.data_reader(self.test_reader_args)
-                targets, features, eventids = \
-                    self._prep_targets_and_features_minerva(
-                        data_reader.batch_generator
-                    )
+            with tf.Session(graph=g, config=self.config_proto) as sess:
+                with tf.variable_scope('pipeline_queue'):
+                    data_reader = self.data_reader(self.test_reader_args)
+                    targets, features, eventids = \
+                        self._prep_targets_and_features_minerva(
+                            data_reader.batch_generator
+                        )
 
                 d = self.build_kbd_function(img_depth=self.img_depth)
                 self.model.prepare_for_inference(features, d)
@@ -494,7 +500,8 @@ class MnvTFRunnerCategorical:
                         logits_batch, evtids = sess.run(
                             [self.model.logits, eventids],
                             feed_dict={
-                                self.model.dropout_keep_prob: 1.0
+                                self.model.dropout_keep_prob: 1.0,
+                                self.model.is_training: False
                             }
                         )
                         batch_sz = logits_batch.shape[0]
@@ -538,52 +545,56 @@ class MnvTFRunnerCategorical:
         tf.reset_default_graph()
         ckpt_dir = self.save_model_directory + '/checkpoints'
 
-        # note - don't need input data here, we just want to load the saved
-        # model to inspect the weights
-        img_shp = self._get_img_shp()  # h, w_x, w_uv, depth
-        X = tf.placeholder(
-            tf.float32,
-            shape=[None, img_shp[0], img_shp[1], img_shp[3]],
-            name='X'
-        )
-        U = tf.placeholder(
-            tf.float32,
-            shape=[None, img_shp[0], img_shp[2], img_shp[3]],
-            name='U'
-        )
-        V = tf.placeholder(
-            tf.float32,
-            shape=[None, img_shp[0], img_shp[2], img_shp[3]],
-            name='V'
-        )
-        targ = tf.placeholder(
-            tf.float32, shape=[None, self.model.n_classes], name='targ'
-        )
-        f = [X, U, V]
-        d = self.build_kbd_function(img_depth=img_shp[3])
-        self.model.prepare_for_inference(f, d)
-        self.model.prepare_for_loss_computation(targ)
-        LOGGER.info('Preparing to check model with %d parameters' %
-                    mnv_utils.get_number_of_trainable_parameters())
-
-        saver = tf.train.Saver()
-        init = tf.global_variables_initializer()
-
-        with tf.Session() as sess:
-            sess.run(init)
-            # have to run local variable init for `string_input_producer`
-            sess.run(tf.local_variables_initializer())
-
-            ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
-            if ckpt and ckpt.model_checkpoint_path:
-                saver.restore(sess, ckpt.model_checkpoint_path)
-                print('Restored session from {}'.format(ckpt_dir))
-
-            final_step = self.model.global_step.eval()
-            LOGGER.info('model after {} steps.'.format(final_step))
-
-            k = self.model.weights_biases['x_tower']['conv1']['kernels'].eval()
-            LOGGER.info(
-                'first x-tower convolutional kernel shape = {}'.format(k.shape)
+        g = tf.Graph()
+        with g.as_default():
+            # note - don't need input data here, we just want to load the saved
+            # model to inspect the weights
+            img_shp = self._get_img_shp()  # h, w_x, w_uv, depth
+            X = tf.placeholder(
+                tf.float32,
+                shape=[None, img_shp[0], img_shp[1], img_shp[3]],
+                name='X'
             )
-            LOGGER.info('  k[0, 0, 0, :] = {}'.format(k[0, 0, 0, :]))
+            U = tf.placeholder(
+                tf.float32,
+                shape=[None, img_shp[0], img_shp[2], img_shp[3]],
+                name='U'
+            )
+            V = tf.placeholder(
+                tf.float32,
+                shape=[None, img_shp[0], img_shp[2], img_shp[3]],
+                name='V'
+            )
+            targ = tf.placeholder(
+                tf.float32, shape=[None, self.model.n_classes], name='targ'
+            )
+            f = [X, U, V]
+            d = self.build_kbd_function(img_depth=img_shp[3])
+            self.model.prepare_for_inference(f, d)
+            self.model.prepare_for_loss_computation(targ)
+            LOGGER.info('Preparing to check model with %d parameters' %
+                        mnv_utils.get_number_of_trainable_parameters())
+
+            saver = tf.train.Saver()
+            init = tf.global_variables_initializer()
+
+            with tf.Session(config=self.config_proto) as sess:
+                sess.run(init)
+                # have to run local variable init for `string_input_producer`
+                sess.run(tf.local_variables_initializer())
+
+                ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+                if ckpt and ckpt.model_checkpoint_path:
+                    saver.restore(sess, ckpt.model_checkpoint_path)
+                    print('Restored session from {}'.format(ckpt_dir))
+
+                final_step = self.model.global_step.eval()
+                LOGGER.info('model after {} steps.'.format(final_step))
+
+                k = g.get_tensor_by_name('x_tower/conv1/kernels:0').eval()
+                LOGGER.info(
+                    'first x-tower convolutional kernel shape = {}'.format(
+                        k.shape
+                    )
+                )
+                LOGGER.info('  k[0, 0, 0, :] = {}'.format(k[0, 0, 0, :]))
