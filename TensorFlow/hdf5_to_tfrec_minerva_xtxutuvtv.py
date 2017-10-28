@@ -23,17 +23,21 @@ class minerva_hdf5_reader:
     the `minerva_hdf5_reader` will return numpy ndarrays of data for given
     ranges. user should call `open()` and `close()` to start/finish.
     """
-    def __init__(self, hdf5_file):
+    def __init__(self, hdf5_file, data_dict):
         self.file = hdf5_file
         self._f = None
+        self._dd = data_dict
 
     def open(self):
         LOGGER.info("Opening hdf5 file {}".format(self.file))
         self._f = h5py.File(self.file, 'r')
-        for name in self._f:
-            LOGGER.info('{:>12}: {:>8}: shape = {}'.format(
-                name, np.dtype(self._f[name]), np.shape(self._f[name])
-            ))
+        for group in self._f:
+            for dset in self._f[group]:
+                LOGGER.info('{:>12}/{:>12}: {:>8}: shape = {}'.format(
+                    group, dset,
+                    np.dtype(self._f[group][dset]),
+                    np.shape(self._f[group][dset])
+                ))
 
     def close(self):
         try:
@@ -42,10 +46,11 @@ class minerva_hdf5_reader:
             LOGGER.info('hdf5 file is not open yet.')
 
     def get_data(self, name, start_idx, stop_idx):
-        return self._f[name][start_idx: stop_idx]
+        group = self._dd[name]['group']
+        return self._f[group][name][start_idx: stop_idx]
 
-    def get_nevents(self):
-        sizes = [self._f[d].shape[0] for d in self._f]
+    def get_nevents(self, g='event_data'):
+        sizes = [self._f[g][d].shape[0] for d in self._f[g]]
         if min(sizes) != max(sizes):
             msg = "All dsets must have the same size!"
             LOGGER.error(msg)
@@ -84,19 +89,20 @@ def make_mnv_data_dict():
     # supports (_not_ int16 or uint16, at least in TF v1.2); use int64 instead
     # of unit64 because reshape supports int64 (and not uint64).
     data_list = [
-        ('eventids', tf.int64),
-        ('hitimes-u', tf.float32),
-        ('hitimes-v', tf.float32),
-        ('hitimes-x', tf.float32),
-        ('planecodes', tf.int32),
-        ('segments', tf.uint8),
-        ('zs', tf.float32)
+        ('eventids', tf.int64, 'event_data'),
+        ('hitimes-u', tf.float32, 'img_data'),
+        ('hitimes-v', tf.float32, 'img_data'),
+        ('hitimes-x', tf.float32, 'img_data'),
+        ('planecodes', tf.int32, 'event_data'),
+        ('segments', tf.uint8, 'event_data'),
+        ('zs', tf.float32, 'event_data')
     ]
     mnv_data = {}
     for datum in data_list:
         mnv_data[datum[0]] = {}
         mnv_data[datum[0]]['dtype'] = datum[1]
         mnv_data[datum[0]]['byte_data'] = None
+        mnv_data[datum[0]]['group'] = datum[2]
 
     return mnv_data
 
@@ -171,7 +177,9 @@ def write_tfrecord(
     write_to_tfrecord(data_dict, tfrecord_file, compress_to_gz)
 
 
-def tfrecord_to_graph_ops_xtxutuvtv(filenames, compressed):
+def tfrecord_to_graph_ops_xtxutuvtv(
+        filenames, compressed, imgw_x, imgw_uv, n_planecodes
+):
     def proces_hitimes(inp, shape, dtyp):
         """
         *Note* - Minerva HDF5's are packed (N, C, H, W), so we must transpose
@@ -213,23 +221,25 @@ def tfrecord_to_graph_ops_xtxutuvtv(filenames, compressed):
     evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
     hitimesx = proces_hitimes(
         tfrecord_features['hitimes-x'],
-        [-1, 2, 127, 50],
+        [-1, 2, 127, imgw_x],
         dtype_dict['hitimes-x']['dtype']
     )
     hitimesu = proces_hitimes(
         tfrecord_features['hitimes-u'],
-        [-1, 2, 127, 25],
+        [-1, 2, 127, imgw_uv],
         dtype_dict['hitimes-u']['dtype']
     )
     hitimesv = proces_hitimes(
         tfrecord_features['hitimes-v'],
-        [-1, 2, 127, 25],
+        [-1, 2, 127, imgw_uv],
         dtype_dict['hitimes-v']['dtype']
     )
     pcodes = tf.decode_raw(
         tfrecord_features['planecodes'], dtype_dict['planecodes']['dtype']
     )
-    pcodes = tf.one_hot(indices=pcodes, depth=67, on_value=1, off_value=0)
+    pcodes = tf.one_hot(
+        indices=pcodes, depth=n_planecodes, on_value=1, off_value=0
+    )
     segs = tf.decode_raw(
         tfrecord_features['segments'], dtype_dict['segments']['dtype']
     )
@@ -240,9 +250,12 @@ def tfrecord_to_graph_ops_xtxutuvtv(filenames, compressed):
     return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
 
 
-def batch_generator(tfrecord_filelist, compressed, num_epochs=1):
+def batch_generator(
+        tfrecord_filelist, compressed, imgw_x, imgw_uv, n_planecodes,
+        num_epochs=1
+):
     es, x, u, v, ps, sg, zs = tfrecord_to_graph_ops_xtxutuvtv(
-        tfrecord_filelist, compressed
+        tfrecord_filelist, compressed, imgw_x, imgw_uv, n_planecodes
     )
     capacity = 10 * 100
     es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b = tf.train.batch(
@@ -258,10 +271,14 @@ def batch_generator(tfrecord_filelist, compressed, num_epochs=1):
     )
 
 
-def test_read_tfrecord(tfrecord_file, compressed):
+def test_read_tfrecord(
+        tfrecord_file, compressed, imgw_x, imgw_uv, n_planecodes
+):
     tf.reset_default_graph()
     LOGGER.info('opening {} for reading'.format(tfrecord_file))
-    batch_dict = batch_generator([tfrecord_file], compressed)
+    batch_dict = batch_generator(
+        [tfrecord_file], compressed, imgw_x, imgw_uv, n_planecodes
+    )
     with tf.Session() as sess:
         # have to run local variable init for `string_input_producer`
         sess.run(tf.local_variables_initializer())
@@ -315,7 +332,8 @@ def write_all(
     LOGGER.info('opening hdf5 file {} for file start number {}'.format(
         hdf5_file, file_num_start
     ))
-    m = minerva_hdf5_reader(hdf5_file)
+    data_dict = make_mnv_data_dict()
+    m = minerva_hdf5_reader(hdf5_file, data_dict)
     m.open()
     n_total = m.get_nevents()
     slcs = slices_maker(n_total, n_events_per_tfrecord_triplet)
@@ -398,7 +416,9 @@ def write_all(
     return file_num, new_files
 
 
-def read_all(files_written, dry_run, compressed):
+def read_all(
+        files_written, dry_run, compressed, imgw_x, imgw_uv, n_planecodes
+):
     LOGGER.info('reading files...')
 
     for filename in files_written:
@@ -409,7 +429,9 @@ def read_all(files_written, dry_run, compressed):
                 )
             )
             if not dry_run:
-                test_read_tfrecord(filename, compressed)
+                test_read_tfrecord(
+                    filename, compressed, imgw_x, imgw_uv, n_planecodes
+                )
 
 
 if __name__ == '__main__':
@@ -456,6 +478,15 @@ if __name__ == '__main__':
     parser.add_option('-g', '--logfile', dest='logfilename',
                       help='Log file name', metavar='LOGFILENAME',
                       default=None, type='string')
+    parser.add_option('--imgw_x', dest='imgw_x', default=94,
+                      help='Image width-x', metavar='IMGWX',
+                      type='int')
+    parser.add_option('--imgw_uv', dest='imgw_uv', default=47,
+                      help='Image width-uv', metavar='IMGWUV',
+                      type='int')
+    parser.add_option('--n_planecodes', dest='n_planecodes', default=173,
+                      help='Number (count) of planecodes', metavar='NPCODES',
+                      type='int')
 
     (options, args) = parser.parse_args()
 
@@ -509,6 +540,7 @@ if __name__ == '__main__':
         valid_file_pat = base_name + '_%06d_valid.tfrecord'
         test_file_pat = base_name + '_%06d_test.tfrecord'
 
+        # TODO: add a 'mask' that properly trims imgw_x/uv, caps the pcodes
         out_num, files_written = write_all(
             n_events_per_tfrecord_triplet=options.n_events,
             max_triplets=options.max_triplets, file_num_start=file_num,
@@ -521,4 +553,11 @@ if __name__ == '__main__':
         file_num = out_num
 
         if options.do_test:
-            read_all(files_written, options.dry_run, options.compress_to_gz)
+            read_all(
+                files_written,
+                options.dry_run,
+                options.compress_to_gz,
+                options.imgw_x,
+                options.imgw_uv,
+                options.n_planecodes
+            )
