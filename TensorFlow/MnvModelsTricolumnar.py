@@ -385,9 +385,9 @@ class TriColSTEpsilon:
             out_v = make_convolutional_tower('v', self.V_img, kbd)
 
             # next, concat, then 'final' fc...
-            with tf.variable_scope('fully_connected') as scope:
+            with tf.variable_scope('fully_connected'):
                 tower_joined = tf.concat(
-                    [out_x, out_u, out_v], axis=1, name=scope.name+'_concat'
+                    [out_x, out_u, out_v], axis=1, name='concat'
                 )
                 joined_shp = tower_joined.shape.as_list()
                 nfeatures_joined = joined_shp[1]
@@ -405,7 +405,8 @@ class TriColSTEpsilon:
                     'weights', [kbd['nfeat_concat_dense'], self.n_classes]
                 )
                 self.biases_softmax = lc.make_wbkernels(
-                    'biases', [self.n_classes]
+                    'biases', [self.n_classes],
+                    initializer=tf.zeros_initializer()
                 )
                 self.logits = tf.nn.bias_add(
                     tf.matmul(self.fc, self.weights_softmax),
