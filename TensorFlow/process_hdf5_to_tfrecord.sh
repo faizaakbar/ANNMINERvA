@@ -11,9 +11,7 @@ DAT=`date +%s`
 
 # file logistics
 HDF5DIR="${HOME}/Documents/MINERvA/AI/hdf5"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_011"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_"
+FILEPAT="vtxfndingimgs_127x94_me1Bmc"
 OUTDIR="${HOME}/Documents/MINERvA/AI/minerva_tf/tfrec"
 LOGDIR="${HOME}/Documents/MINERvA/AI/minerva_tf/logs"
 LOGFILE=$LOGDIR/log_hdf5_to_tfrec_minerva_xtxutuvtv${DAT}.txt

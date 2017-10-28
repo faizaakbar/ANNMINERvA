@@ -1,23 +1,23 @@
 #!/bin/bash
 
 DAT=`date +%s`
-SAMPLE=me1Amc
 SAMPLE=me1ABmc
+SAMPLE=me1Bmc
 
 # targets - note, `n_planecodes` may be different than `nclass` - we need to
 # know the number of planecodes when unpacking even when targeting semgnets.
 
-# NCLASS=173
-# NPLANECODES=173
-# IMGWX=94
-# IMGWUV=47
-# TARGLABEL="planecodes"
-
-NCLASS=67
-NPLANECODES=67
-IMGWX=50
-IMGWUV=25
+NCLASS=173
+NPLANECODES=173
+IMGWX=94
+IMGWUV=47
 TARGLABEL="planecodes"
+
+# NCLASS=67
+# NPLANECODES=67
+# IMGWX=50
+# IMGWUV=25
+# TARGLABEL="planecodes"
 
 # NCLASS=11
 # NPLANECODES=67
@@ -33,14 +33,15 @@ SHORT=""
 SHORT="--do_a_short_run"
 LOGLEVEL="--log_level INFO"
 LOGLEVEL="--log_level DEBUG --be_verbose"
-LOGDEVS=""
 LOGDEVS="--do_log_devices"
+LOGDEVS=""
 
 NEPOCHS="--num_epochs 1"
 
 PCODECAP=$(($NPLANECODES - 1))
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_"
+FILEPAT="vtxfndingimgs_127x${IMGWX}_${SAMPLE}"
+# FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
+# FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_"
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_000000"
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_me1Amc_0000_00000"
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_me1Amc_000000"
@@ -52,11 +53,11 @@ BATCH="--batch_size $BATCHSIZE"
 OPTIMIZER="Adam"
 STRATEGY="--strategy ${OPTIMIZER}"
 
-BATCHF="nodo_batch_norm"
 BATCHF="do_batch_norm"
+BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-MODEL_CODE="20171018_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171028_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
