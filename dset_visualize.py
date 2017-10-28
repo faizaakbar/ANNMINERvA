@@ -338,7 +338,7 @@ def make_plots(data_dict, max_events, normed_img):
         if planecode in target_plane_codes.keys():
             fig.suptitle('{}/{}/{}/{}: seg {} / pcode {} / targ {}'.format(
                 run, subrun, gate, phys_evt,
-                segment, planecode, target_plane_codes[planecode]
+                segment, planecode, target_plane_codes[planecode[0]]
             ))
         else:
             fig.suptitle('{}/{}/{}/{}: seg {} / pcode {}'.format(
