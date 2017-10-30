@@ -30,13 +30,15 @@ DAT=`date +%s`
 SNGLRTY="/data/simone/singularity/ubuntu16-cuda8-cudnn6-ml.img"
 
 # file logistics
-SAMPLE="me1Bmc"
-HDF5DIR="/data/perdue/minerva/hdf5/201709"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25_xtxutuvtv_${SAMPLE}"
-FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_${SAMPLE}"
-OUTDIR="/data/perdue/minerva/tensorflow/data/201709/${SAMPLE}"
-LOGDIR="/data/perdue/minerva/tensorflow/logs/201709/${SAMPLE}"
+SAMPLE="me1Amc"
+HDF5DIR="/data/perdue/minerva/hdf5/201710"
+FILEPAT="vtxfndingimgs_127x94_${SAMPLE}"
+OUTDIR="/data/perdue/minerva/tensorflow/data/201710/${SAMPLE}"
+LOGDIR="/data/perdue/minerva/tensorflow/logs/201710/${SAMPLE}"
 LOGFILE=$LOGDIR/log_hdf5_to_tfrec_minerva_xtxutuvtv${DAT}.txt
+
+mkdir -p $OUTDIR
+mkdir -p $LOGDIR
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
