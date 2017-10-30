@@ -14,33 +14,35 @@
 
 DAT=`date +%s`
 SAMPLE="me1ABmc"
+SAMPLE="me1Amc"
 
-SHORT=""
 SHORT="--do_a_short_run"
+SHORT=""
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
-LOGDEVS=""
 LOGDEVS="--do_log_devices"
+LOGDEVS=""
 
-NEPOCHS="--num_epochs 11"
 NEPOCHS="--num_epochs 5"
 NEPOCHS="--num_epochs 1"
+NEPOCHS="--num_epochs 10"
 
-# NCLASS=173
-# NPLANECODES=173
-# IMGWX=94
-# IMGWUV=47
-# TARGLABEL="planecodes"
-
-NCLASS=67
-NPLANECODES=67
-IMGWX=50
-IMGWUV=25
+NCLASS=173
+NPLANECODES=173
+IMGWX=94
+IMGWUV=47
 TARGLABEL="planecodes"
+
+# NCLASS=67
+# NPLANECODES=67
+# IMGWX=50
+# IMGWUV=25
+# TARGLABEL="planecodes"
 
 PCODECAP=$(($NPLANECODES - 1))
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_"
+FILEPAT="vtxfndingimgs_127x${IMGWX}_${SAMPLE}_"
 
 PLANECODES="--n_planecodes $NPLANECODES"
 TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
@@ -50,11 +52,11 @@ IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 OPTIMIZER="Adam"
 STRATEGY="--strategy ${OPTIMIZER}"
 
-BATCHF="nodo_batch_norm"
 BATCHF="do_batch_norm"
+BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-MODEL_CODE="20171019_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171030_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
@@ -82,10 +84,10 @@ PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 PREDICTIONS="--nodo_prediction"
 
 BASEP="/data/perdue/minerva/tensorflow"
-DBASE="${BASEP}/data/201709"
+DBASE="${BASEP}/data/201710"
 # DATADIR="${DBASE}/${SAMPLE}"
 DATADIR="${DBASE}/me1Amc,${DBASE}/me1Bmc"
-LOGDIR="${BASEP}/logs/201709/"
+LOGDIR="${BASEP}/logs/201710/"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 
