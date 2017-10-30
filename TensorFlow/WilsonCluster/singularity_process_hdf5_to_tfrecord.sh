@@ -26,7 +26,8 @@ TESTREAD=""
 DAT=`date +%s`
 
 # which singularity image
-SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
+# SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
+SNGLRTY="/data/simone/singularity/ubuntu16-cuda8-cudnn6-ml.img"
 
 # file logistics
 SAMPLE="me1Bmc"
