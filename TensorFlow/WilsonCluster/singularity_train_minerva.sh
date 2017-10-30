@@ -59,10 +59,10 @@ MODEL_CODE="20171019_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
 
+# pick up singularity v2.2
+export PATH=/usr/local/singularity/bin:$PATH
 # which singularity image
-# SNGLRTY="/data/simone/singularity/ubuntu16-ml-gpu.img"
-SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
-SNGLRTY="/data/simone/singularity/ubuntu16-cuda8-cudnn6-ml.img"
+SNGLRTY="/data/simone/singularity/ML/ubuntu16-ML.simg"
 
 
 TRAINING="--nodo_training"
