@@ -17,17 +17,21 @@ if '-h' in sys.argv or '--help' in sys.argv:
 filename = sys.argv[1]
 f = h5py.File(filename, 'r')
 
-print("\ngroups in the hdf5 file")
+print("\ngroups/datasets in the hdf5 file")
 print("-----------------------")
-for name in f:
-    print('{:>12}: {:>8}: shape = {}'.format(
-        name, np.dtype(f[name]), np.shape(f[name])
-    ))
+for group in f:
+    for dataset in f[group]:
+        print('{:>10} / {:<10}: {:>8}: shape = {}'.format(
+            group,
+            dataset,
+            np.dtype(f[group][dataset]),
+            np.shape(f[group][dataset])
+        ))
     
 print("\nto examine data, type things like:")
 print("----------------------------------")
-print("f['mygroup'][:5]     - 1st 5 items")
-print("f['mygroup'][0][:5]  - 1st 5 items in second index of first item")
+print("f['mygroup']['mydataset'][:5]     - 1st 5 items")
+print("f['mygroup']['mydataset'][0][:5]  - 1st 5 items in 2nd idx of 1st item")
 print(" - etc. - basically you may use numpy slice notation")
 
 f.close()
