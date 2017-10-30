@@ -2,7 +2,7 @@
 
 DAT=`date +%s`
 SAMPLE=me1ABmc
-SAMPLE=me1Bmc
+SAMPLE=me1Amc
 
 # targets - note, `n_planecodes` may be different than `nclass` - we need to
 # know the number of planecodes when unpacking even when targeting semgnets.
