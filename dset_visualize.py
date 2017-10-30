@@ -166,7 +166,9 @@ class MnvDataReader:
                 data_dict['energies+times']['u'] = hu
                 data_dict['energies+times']['v'] = hv
                 data_dict['eventids'] = evts
-                data_dict['planecodes'] = pcds
+                data_dict['planecodes'] = np.argmax(
+                    pcds, axis=1
+                ).reshape(pcds.shape[0], 1)  # pcds
                 data_dict['segments'] = segs
                 data_dict['zs'] = zs
             # specifically catch `tf.errors.OutOfRangeError` or we won't handle
