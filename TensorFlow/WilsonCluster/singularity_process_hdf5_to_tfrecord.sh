@@ -30,7 +30,7 @@ DAT=`date +%s`
 SNGLRTY="/data/simone/singularity/ubuntu16-cuda8-cudnn6-ml.img"
 
 # file logistics
-SAMPLE="me1Bmc"
+SAMPLE="me1Gmc"
 HDF5DIR="/data/perdue/minerva/hdf5/201710"
 FILEPAT="vtxfndingimgs_127x94_${SAMPLE}"
 OUTDIR="/data/perdue/minerva/tensorflow/data/201710/${SAMPLE}"
