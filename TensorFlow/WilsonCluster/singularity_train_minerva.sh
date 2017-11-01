@@ -93,6 +93,7 @@ DBASE="${BASEP}/data/201710"
 # DATADIR="${DBASE}/${SAMPLE}"
 DATADIR="${DBASE}/me1Amc,${DBASE}/me1Bmc"
 DATADIR="${DBASE}/me1Bmc"
+DATADIR="${DBASE}/me1Gmc"
 LOGDIR="${BASEP}/logs/201710/"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
