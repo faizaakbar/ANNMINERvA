@@ -16,6 +16,7 @@ DAT=`date +%s`
 SAMPLE="me1ABmc"
 SAMPLE="me1Amc"
 SAMPLE="me1Bmc"
+SAMPLE="me1Gmc"
 
 SHORT="--do_a_short_run"
 SHORT=""
