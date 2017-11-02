@@ -15,7 +15,7 @@
 # tag the log file
 DAT=`date +%s`
 
-SAMPLE=me1Amc
+SAMPLE=me1Bmc
 IMGWX=94
 IMGWUV=47
 NPLANECODES=173
