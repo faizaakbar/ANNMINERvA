@@ -94,7 +94,7 @@ def main(argv=None):
     LOGGER.info("Starting...")
     LOGGER.info(__file__)
 
-    runpars_dict = mnv_utils.make_default_run_params_dict()
+    runpars_dict = mnv_utils.make_run_params_dict()
     train_list, valid_list, test_list = \
         mnv_utils.get_trainvalidtest_file_lists(
             FLAGS.data_dir, FLAGS.file_root, FLAGS.compression
