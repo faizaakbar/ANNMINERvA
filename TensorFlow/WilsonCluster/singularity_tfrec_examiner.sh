@@ -23,15 +23,17 @@ PCODECAP=$(($NPLANECODES - 1))
 PLANECODES="--n_planecodes $NPLANECODES"
 IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
+FILEPAT="vtxfndingimgs_127x${IMGWX}_${SAMPLE}"
 
 BASEP="/data/perdue/minerva/tensorflow"
-DATADIR="${BASEP}/data/201709/${SAMPLE}"
-LOGFILE="${BASEP}/logs/201709/${SAMPLE}/log_examine_tfrec_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}_${DAT}.txt"
-OUTPAT="${BASEP}/logs/201709/${SAMPLE}/results_examine_tfrec_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}_${DAT}"
+DATADIR="${BASEP}/data/201710/${SAMPLE}"
+LOGFILE="${BASEP}/logs/201710/${SAMPLE}/log_examine_tfrec_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}_${DAT}.txt"
+OUTPAT="${BASEP}/logs/201710/${SAMPLE}/results_examine_tfrec_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}_${DAT}"
 
-
+# pick up singularity v2.2
+export PATH=/usr/local/singularity/bin:$PATH
 # which singularity image
-SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
+SNGLRTY="/data/simone/singularity/ML/ubuntu16-ML.simg"
 
 # print identifying info for this job
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
