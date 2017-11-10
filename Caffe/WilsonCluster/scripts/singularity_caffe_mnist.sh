@@ -41,7 +41,7 @@ echo "                     Test                              "
 
 singularity exec $SNGLRTY $CAFFE test \
   -model $NETWORKDIR/lenet_train_test.prototxt \
-  -weights $NETWORKDIR/lenet_iter_10000.caffemodel \
+  -weights $NETWORKDIR/snapshots_iter_10000.caffemodel \
   -gpu 0
 
 exit 0
