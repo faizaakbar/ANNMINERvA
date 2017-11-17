@@ -15,19 +15,19 @@
 DAT=`date +%s`
 SAMPLE="me1ABmc"
 SAMPLE="me1Amc"
-SAMPLE="me1Gmc"
-SAMPLE="me1Bmc"
 
-SHORT=""
+TRAINSAMPLE="me1Amc"
+
 SHORT="--do_a_short_run"
+SHORT=""
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 LOGDEVS=""
 LOGDEVS="--do_log_devices"
 
 NEPOCHS="--num_epochs 5"
-NEPOCHS="--num_epochs 10"
 NEPOCHS="--num_epochs 1"
+NEPOCHS="--num_epochs 10"
 
 NCLASS=173
 NPLANECODES=173
@@ -58,9 +58,7 @@ BATCHF="do_batch_norm"
 BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-MODEL_CODE="20171117_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
-# use the me1G model for classification
-MODEL_CODE="20171117_${OPTIMIZER}_me1Gmc_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171117_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
@@ -90,10 +88,8 @@ PREDICTIONS="--nodo_prediction"
 
 BASEP="/data/perdue/minerva/tensorflow"
 DBASE="${BASEP}/data/201710"
-# DATADIR="${DBASE}/${SAMPLE}"
-DATADIR="${DBASE}/me1Amc,${DBASE}/me1Bmc"
-DATADIR="${DBASE}/me1Gmc"
-DATADIR="${DBASE}/me1Bmc"
+# DATADIR="${DBASE}/me1Amc,${DBASE}/me1Bmc"
+DATADIR="${DBASE}/${SAMPLE}"
 LOGDIR="${BASEP}/logs/201710/"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"

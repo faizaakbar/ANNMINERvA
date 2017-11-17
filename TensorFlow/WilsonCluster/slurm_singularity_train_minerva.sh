@@ -7,8 +7,8 @@ nvidia-smi -L
 DAT=`date +%s`
 SAMPLE="me1ABmc"
 SAMPLE="me1Amc"
-SAMPLE="me1Gmc"
-SAMPLE="me1Bmc"
+
+TRAINSAMPLE="me1Amc"
 
 SHORT="--do_a_short_run"
 SHORT=""
@@ -50,9 +50,7 @@ BATCHF="do_batch_norm"
 BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-MODEL_CODE="20171117_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
-# use the me1G model for classification
-MODEL_CODE="20171117_${OPTIMIZER}_me1Gmc_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171117_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
