@@ -18,12 +18,12 @@ SAMPLE="me1Amc"
 SAMPLE="me1Gmc"
 SAMPLE="me1Bmc"
 
-SHORT="--do_a_short_run"
 SHORT=""
+SHORT="--do_a_short_run"
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
-LOGDEVS="--do_log_devices"
 LOGDEVS=""
+LOGDEVS="--do_log_devices"
 
 NEPOCHS="--num_epochs 5"
 NEPOCHS="--num_epochs 10"
@@ -58,9 +58,9 @@ BATCHF="do_batch_norm"
 BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-MODEL_CODE="20171030_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171117_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 # use the me1G model for classification
-MODEL_CODE="20171030_${OPTIMIZER}_me1Gmc_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171117_${OPTIMIZER}_me1Gmc_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
@@ -71,22 +71,22 @@ export PATH=/usr/local/singularity/bin:$PATH
 SNGLRTY="/data/simone/singularity/ML/ubuntu16-ML.simg"
 
 
-TRAINING="--do_training"
-VALIDATION="--do_validaton"
 TRAINING="--nodo_training"
 VALIDATION="--nodo_validaton"
+TRAINING="--do_training"
+VALIDATION="--do_validaton"
 
 TESTING="--nodo_testing"
 TESTING="--do_testing"
 
 SPECIAL=""
-SPECIAL="--use_test_for_train --use_valid_for_test"
 SPECIAL="--use_all_for_test"
+SPECIAL="--use_test_for_train --use_valid_for_test"
 
 PREDPATH="/data/perdue/minerva/tensorflow/predictions/"
 PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
-PREDICTIONS="--nodo_prediction"
 PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
+PREDICTIONS="--nodo_prediction"
 
 BASEP="/data/perdue/minerva/tensorflow"
 DBASE="${BASEP}/data/201710"
