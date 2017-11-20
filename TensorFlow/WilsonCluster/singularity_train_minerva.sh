@@ -22,8 +22,8 @@ SHORT="--do_a_short_run"
 SHORT=""
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
-LOGDEVS=""
 LOGDEVS="--do_log_devices"
+LOGDEVS=""
 
 NEPOCHS="--num_epochs 5"
 NEPOCHS="--num_epochs 1"
@@ -58,7 +58,7 @@ BATCHF="do_batch_norm"
 BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-MODEL_CODE="20171117_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171120_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
