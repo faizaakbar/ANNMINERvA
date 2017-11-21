@@ -12,6 +12,8 @@
 #PBS -q gpu
 #restore to turn off email - doesn't work #PBS -m n
 
+nvidia-smi -L
+
 DAT=`date +%s`
 SAMPLE="me1ABmc"
 SAMPLE="me1Amc"
