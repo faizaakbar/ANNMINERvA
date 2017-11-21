@@ -151,5 +151,8 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH \
   $LOGDEVS $BATCHNORM
 
+nvidia-smi -L >> $LOGFILE
+nvidia-smi >> $LOGFILE
+
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
