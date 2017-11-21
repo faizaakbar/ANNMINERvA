@@ -50,7 +50,7 @@ BATCHF="do_batch_norm"
 BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-MODEL_CODE="20171119_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171121_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
@@ -139,6 +139,9 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
   $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH \
   $LOGDEVS $BATCHNORM
+
+nvidia-smi -L >> $LOGFILE
+nvidia-smi >> $LOGFILE
 
 echo "finished "`date`" "`date +%s`""
 exit 0
