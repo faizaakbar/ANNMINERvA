@@ -60,11 +60,11 @@ BATCHF="do_batch_norm"
 BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-GPU=`hostname`
-MODEL_CODE="20171121_${GPU}_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
-
-BATCHSIZE=500
+BATCHSIZE=1024
 BATCH="--batch_size $BATCHSIZE"
+
+GPU=`hostname`
+MODEL_CODE="20171128_${GPU}_batch${BATCHSIZE}_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 # pick up singularity v2.2
 export PATH=/usr/local/singularity/bin:$PATH
