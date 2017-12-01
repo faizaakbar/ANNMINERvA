@@ -60,7 +60,7 @@ BATCHF="do_batch_norm"
 BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-BATCHSIZE=1024
+BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
 
 GPU=`hostname`
