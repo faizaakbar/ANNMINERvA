@@ -20,16 +20,20 @@ SAMPLE="me1Amc"
 
 TRAINSAMPLE="me1Amc"
 
-SHORT="--do_a_short_run"
+NUMACTL=""
+NUMACTL="numactl -l"
+# run `watch -n 3 numastat` on node...
+
 SHORT=""
+SHORT="--do_a_short_run"
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 LOGDEVS="--do_log_devices"
 LOGDEVS=""
 
 NEPOCHS="--num_epochs 5"
-NEPOCHS="--num_epochs 1"
 NEPOCHS="--num_epochs 10"
+NEPOCHS="--num_epochs 1"
 
 NCLASS=173
 NPLANECODES=173
@@ -64,7 +68,7 @@ BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
 
 GPU=`hostname`
-MODEL_CODE="20171128_${GPU}_batch${BATCHSIZE}_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171207_${GPU}_batch${BATCHSIZE}_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 # pick up singularity v2.2
 export PATH=/usr/local/singularity/bin:$PATH
@@ -131,7 +135,7 @@ done
 
 # show what we will do...
 cat << EOF
-singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
+$NUMACTL singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --compression gz \
   --data_dir $DATADIR \
   --file_root $FILEPAT \
@@ -142,7 +146,7 @@ singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   $LOGDEVS $BATCHNORM
 EOF
 
-singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
+$NUMACTL singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
   --compression gz \
   --data_dir $DATADIR \
   --file_root $FILEPAT \
