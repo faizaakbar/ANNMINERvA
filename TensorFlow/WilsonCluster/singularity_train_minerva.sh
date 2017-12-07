@@ -20,8 +20,8 @@ SAMPLE="me1Amc"
 
 TRAINSAMPLE="me1Amc"
 
-NUMACTL=""
 NUMACTL="numactl -l"
+NUMACTL=""
 # run `watch -n 3 numastat` on node...
 
 SHORT=""
