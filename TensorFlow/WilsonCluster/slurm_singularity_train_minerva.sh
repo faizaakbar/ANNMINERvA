@@ -10,8 +10,8 @@ SAMPLE="me1Amc"
 
 TRAINSAMPLE="me1Amc"
 
-SHORT="--do_a_short_run"
 SHORT=""
+SHORT="--do_a_short_run"
 LOGLEVEL="--log_level DEBUG"
 LOGLEVEL="--log_level INFO"
 LOGDEVS="--do_log_devices"
@@ -60,6 +60,7 @@ MODEL_CODE="20171128_${GPU}_batch${BATCHSIZE}_${OPTIMIZER}_train${TRAINSAMPLE}_t
 export PATH=/usr/local/singularity/bin:$PATH
 # which singularity image
 SNGLRTY="/data/simone/singularity/ML/ubuntu16-ML.simg"
+SNGLRTY="/data/perdue/singularity/tf_1_4.simg"
 
 
 TRAINING="--nodo_training"
