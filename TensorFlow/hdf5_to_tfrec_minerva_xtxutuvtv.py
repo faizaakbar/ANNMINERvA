@@ -150,31 +150,29 @@ def gz_compress(infile):
         raise IOError('Compressed file not produced!')
 
 
-def write_to_tfrecord(data_dict, tfrecord_file, compress_to_gz):
+def write_tfrecord(
+        reader, data_dict, start_idx, stop_idx, tfrecord_file, compress_to_gz
+):
     writer = tf.python_io.TFRecordWriter(tfrecord_file)
     features_dict = {}
-    for k in data_dict.keys():
-        features_dict[k] = tf.train.Feature(
-            bytes_list=tf.train.BytesList(value=[data_dict[k]['byte_data']])
+    for idx in range(start_idx, stop_idx):
+        for k in data_dict:
+            data_dict[k]['byte_data'] = get_binary_data(
+                reader, k, idx, idx + 1
+            )
+            features_dict[k] = tf.train.Feature(
+                bytes_list=tf.train.BytesList(
+                    value=[data_dict[k]['byte_data']]
+                )
+            )
+        example = tf.train.Example(
+            features=tf.train.Features(feature=features_dict)
         )
-    example = tf.train.Example(
-        features=tf.train.Features(feature=features_dict)
-    )
-    writer.write(example.SerializeToString())
+        writer.write(example.SerializeToString())
     writer.close()
 
     if compress_to_gz:
         gz_compress(tfrecord_file)
-
-
-def write_tfrecord(
-        reader, data_dict, start_idx, stop_idx, tfrecord_file, compress_to_gz
-):
-    for k in data_dict:
-        data_dict[k]['byte_data'] = get_binary_data(
-            reader, k, start_idx, stop_idx
-        )
-    write_to_tfrecord(data_dict, tfrecord_file, compress_to_gz)
 
 
 def tfrecord_to_graph_ops_xtxutuvtv(
@@ -285,7 +283,7 @@ def test_read_tfrecord(
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(coord=coord)
         try:
-            for batch_num in range(1000000):
+            for batch_num in range(10):
                 evtids, hitsx, hitsu, hitsv, pcodes, segs, zs = sess.run([
                     batch_dict['eventids'],
                     batch_dict['hitimes-x'],
