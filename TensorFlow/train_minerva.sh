@@ -2,7 +2,7 @@
 
 DAT=`date +%s`
 SAMPLE=me1ABmc
-SAMPLE=me1Amc
+SAMPLE=me1Bmc
 
 # targets - note, `n_planecodes` may be different than `nclass` - we need to
 # know the number of planecodes when unpacking even when targeting semgnets.
@@ -57,7 +57,7 @@ BATCHF="do_batch_norm"
 BATCHF="nodo_batch_norm"
 BATCHNORM="--$BATCHF"
 
-MODEL_CODE="20171028_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20171209_${OPTIMIZER}_${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 TRAINING="--nodo_training"
 TRAINING="--do_training"
