@@ -10,7 +10,8 @@ export PATH=/usr/local/singularity/bin:$PATH
 SNGLRTY="/data/perdue/singularity/tf_1_4.simg"
 
 # get mpirun in PATH
-export PATH=/usr/local/openmpi/bin:$PATH
+# export PATH=/usr/local/openmpi/bin:$PATH
+export PATH=/usr/local/openmpi-1.10.7/bin:$PATH
 
 cp -v /home/perdue/ANNMINERvA/TensorFlow/horovod_*.py `pwd`
 
