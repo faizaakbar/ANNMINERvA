@@ -4,6 +4,8 @@ echo "started "`date`" "`date +%s`""
 
 nvidia-smi -L
 
+NGPU=2
+
 # pick up singularity v2.2
 export PATH=/usr/local/singularity/bin:$PATH
 # which singularity image
@@ -24,10 +26,10 @@ singularity exec $SNGLRTY python horovod_test.py
 
 # show what we will do...
 cat << EOF
-mpirun -np 1 -H localhost -bind-to core -map-by core singularity exec $SNGLRTY python horovod_mnist.py
+mpirun -np ${NGPU} -H localhost -bind-to core -map-by core singularity exec $SNGLRTY python horovod_mnist.py
 EOF
 # do the thing...
-mpirun -np 1 -H localhost -bind-to core -map-by core singularity exec $SNGLRTY python horovod_mnist.py
+mpirun -np ${NGPU} -H localhost -bind-to core -map-by core singularity exec $SNGLRTY python horovod_mnist.py
 
 nvidia-smi
 
