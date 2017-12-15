@@ -3,10 +3,10 @@
 #PBS -N tfrec_prod
 #PBS -j oe
 #PBS -o ./batchlog_tfrec_prod.txt
-# not 3 #PBS -l nodes=gpu2:gpu,walltime=24:00:00
+#PBS -l nodes=gpu2:gpu,walltime=24:00:00
 # not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
 # not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
-#PBS -l nodes=1:gpu,walltime=24:00:00
+# not generic #PBS -l nodes=1:gpu,walltime=24:00:00
 # not short #PBS -l nodes=1:gpu,walltime=6:00:00
 #PBS -A minervaG
 #PBS -q gpu
@@ -26,8 +26,7 @@ TESTREAD=""
 DAT=`date +%s`
 
 # which singularity image
-# SNGLRTY="/data/simone/singularity/ML/NEW/ubuntu16-cuda-tf1.3.img"
-SNGLRTY="/data/simone/singularity/ubuntu16-cuda8-cudnn6-ml.img"
+SNGLRTY="/data/perdue/singularity/tf_1_4.simg"
 
 # file logistics
 SAMPLE="me1Gmc"
