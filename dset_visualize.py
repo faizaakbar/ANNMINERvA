@@ -379,7 +379,7 @@ def make_plots(data_dict, max_events, normed_img):
                 ax.xaxis.set_major_locator(pylab.NullLocator())
                 ax.yaxis.set_major_locator(pylab.NullLocator())
                 cmap = 'jet' if t == 'energy' else 'bwr'
-                cbt = 'scaled energy' if t == 'energy' else 'scaled times'
+                cbt = 'energy' if t == 'energy' else 'times'
                 datap = data_dict[datatyp][view][counter, i, :, :]
                 # make the plot
                 im = ax.imshow(
