@@ -32,10 +32,7 @@ mkdir -p $OUTDIR
 mkdir -p $LOGDIR
 
 # print identifying info for this job
-echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
-cat ${PBS_NODEFILE}
-cd ${PBS_O_WORKDIR}
-echo "PBS_O_WORKDIR is `pwd`"
+echo "working directory is `pwd`"
 GIT_VERSION=`git describe --abbrev=12 --dirty --always`
 echo "Git repo version is $GIT_VERSION"
 DIRTY=`echo $GIT_VERSION | perl -ne 'print if /dirty/'`
