@@ -1,16 +1,8 @@
 #!/bin/bash
-#PBS -S /bin/bash
-#PBS -N tfrec_prod
-#PBS -j oe
-#PBS -o ./batchlog_tfrec_prod.txt
-#PBS -l nodes=gpu2:gpu,walltime=24:00:00
-# not 2 #PBS -l nodes=gpu2:gpu:ppn=2,walltime=24:00:00
-# not 1 #PBS -l nodes=gpu1:gpu:ppn=2,walltime=24:00:00
-# not generic #PBS -l nodes=1:gpu,walltime=24:00:00
-# not short #PBS -l nodes=1:gpu,walltime=6:00:00
-#PBS -A minervaG
-#PBS -q gpu
-#restore to turn off email - doesn't work #PBS -m n
+
+echo "started "`date`" "`date +%s`""
+
+nvidia-smi -L
 
 # file creation parameters
 NEVTS=20000
@@ -85,6 +77,9 @@ singularity exec $SNGLRTY python hdf5_to_tfrec_minerva_xtxutuvtv.py \
 
 rm -f ${PBS_O_WORKDIR}/hdf5_to_tfrec_minerva_xtxutuvtv.py
 rm -f ${PBS_O_WORKDIR}/hdf5_to_tfrec_minerva_xtxutuvtv.pyc
+
+nvidia-smi -L >> $LOGFILE
+nvidia-smi >> $LOGFILE
 
 echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
 exit 0
