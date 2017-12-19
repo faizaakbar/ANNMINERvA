@@ -26,10 +26,10 @@ singularity exec $SNGLRTY python horovod_test.py
 
 # show what we will do...
 cat << EOF
-mpirun -np ${NGPU} -H localhost -bind-to core -map-by core singularity exec $SNGLRTY python horovod_mnist.py
+mpirun -np ${NGPU} -H localhost -bind-to core -map-by core --oversubscribe singularity exec $SNGLRTY python horovod_mnist.py
 EOF
 # do the thing...
-mpirun -np ${NGPU} -H localhost -bind-to core -map-by core singularity exec $SNGLRTY python horovod_mnist.py
+mpirun -np ${NGPU} -H localhost -bind-to core -map-by core --oversubscribe singularity exec $SNGLRTY python horovod_mnist.py
 
 nvidia-smi
 
