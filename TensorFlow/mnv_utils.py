@@ -187,10 +187,10 @@ def decode_eventid(eventid):
 
 
 def encode_eventid(run, subrun, gate, phys_evt):
-    run = '{0:06d}'.format(run)
-    subrun = '{0:04d}'.format(subrun)
-    gate = '{0:04d}'.format(gate)
-    phys_evt = '{0:02d}'.format(phys_evt)
+    run = '{0:06d}'.format(int(run))
+    subrun = '{0:04d}'.format(int(subrun))
+    gate = '{0:04d}'.format(int(gate))
+    phys_evt = '{0:02d}'.format(int(phys_evt))
     return run + subrun + gate + phys_evt
 
 
