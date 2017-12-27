@@ -186,6 +186,14 @@ def decode_eventid(eventid):
     return (run, subrun, gate, phys_evt)
 
 
+def encode_eventid(run, subrun, gate, phys_evt):
+    run = '{0:06d}'.format(run)
+    subrun = '{0:04d}'.format(subrun)
+    gate = '{0:04d}'.format(gate)
+    phys_evt = '{0:02d}'.format(phys_evt)
+    return run + subrun + gate + phys_evt
+
+
 def freeze_graph(
         model_dir, output_nodes_list, output_graph_name='frozen_model.pb'
 ):
