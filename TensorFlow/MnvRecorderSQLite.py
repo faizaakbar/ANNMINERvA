@@ -37,7 +37,10 @@ class MnvCategoricalSQLiteRecorder:
                 'Unsupported number of classes in ' +
                 self.__class__.__name__ + '!'
             )
-        self.db_name = db_base_name + '.db'
+        if db_base_name[-3:] == '.db':
+            self.db_name = db_base_name
+        else:
+            self.db_name = db_base_name + '.db'
         self._configure_db()
 
     def write_data(self, eventid, pred, probs):
