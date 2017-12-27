@@ -21,7 +21,7 @@ DAT=`date +%s`
 SNGLRTY="/data/perdue/singularity/tf_1_4.simg"
 
 # file logistics
-SAMPLE="me1Amc"
+SAMPLE="me1Bmc"
 HDF5DIR="/data/perdue/minerva/hdf5/201710"
 FILEPAT="vtxfndingimgs_127x94_${SAMPLE}"
 OUTDIR="/data/perdue/minerva/tensorflow/data/201710/${SAMPLE}"

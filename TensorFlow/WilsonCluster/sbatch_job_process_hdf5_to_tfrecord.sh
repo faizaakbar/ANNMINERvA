@@ -2,6 +2,7 @@
 
 NGPU=1
 NODES=gpu4
+NODES=gpu2
 SCRIPT=slurm_singularity_process_hdf5_to_tfrecord.sh
 
 # show what we will do...
