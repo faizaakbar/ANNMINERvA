@@ -32,10 +32,7 @@ mkdir -p $OUTDIR
 mkdir -p $LOGDIR
 
 # print identifying info for this job
-echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
-cat ${PBS_NODEFILE}
-cd ${PBS_O_WORKDIR}
-echo "PBS_O_WORKDIR is `pwd`"
+echo "working directory is `pwd`"
 GIT_VERSION=`git describe --abbrev=12 --dirty --always`
 echo "Git repo version is $GIT_VERSION"
 DIRTY=`echo $GIT_VERSION | perl -ne 'print if /dirty/'`
@@ -48,7 +45,7 @@ if [[ $DIRTY != "" ]]; then
   # exit 0
 fi
 
-cp /home/perdue/ANNMINERvA/TensorFlow/hdf5_to_tfrec_minerva_xtxutuvtv.py ${PBS_O_WORKDIR}
+cp /home/perdue/ANNMINERvA/TensorFlow/hdf5_to_tfrec_minerva_xtxutuvtv.py `pwd`
 
 # show what we will do...
 cat << EOF
@@ -75,11 +72,11 @@ singularity exec $SNGLRTY python hdf5_to_tfrec_minerva_xtxutuvtv.py \
   --logfile $LOGFILE \
   --compress_to_gz $TESTREAD
 
-rm -f ${PBS_O_WORKDIR}/hdf5_to_tfrec_minerva_xtxutuvtv.py
-rm -f ${PBS_O_WORKDIR}/hdf5_to_tfrec_minerva_xtxutuvtv.pyc
+rm -f hdf5_to_tfrec_minerva_xtxutuvtv.py
+rm -f hdf5_to_tfrec_minerva_xtxutuvtv.pyc
 
 nvidia-smi -L >> $LOGFILE
 nvidia-smi >> $LOGFILE
 
-echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} finished "`date`" jobid ${PBS_JOBID}"
+echo "finished "`date`" "`date +%s`""
 exit 0
