@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # file creation parameters
-NEVTS=3000
-MAXTRIPS=3
+NEVTS=1000
+MAXTRIPS=2
 TRAINFRAC=0.88
 VALIDFRAC=0.06
+STARTIDX=2
 
 # tag the log file
 DAT=`date +%s`
@@ -15,6 +16,9 @@ FILEPAT="vtxfndingimgs_127x94_me1Bmc"
 OUTDIR="${HOME}/Documents/MINERvA/AI/minerva_tf/tfrec"
 LOGDIR="${HOME}/Documents/MINERvA/AI/minerva_tf/logs"
 LOGFILE=$LOGDIR/log_hdf5_to_tfrec_minerva_xtxutuvtv${DAT}.txt
+
+ARGS="--nevents $NEVTS --max_triplets $MAXTRIPS --file_pattern $FILEPAT --in_dir $HDF5DIR --out_dir $OUTDIR --train_fraction $TRAINFRAC --valid_fraction $VALIDFRAC --logfile $LOGFILE --compress_to_gz --start_idx $STARTIDX"
+echo $ARGS
 
 cat << EOF
 python hdf5_to_tfrec_minerva_xtxutuvtv.py \
@@ -27,8 +31,10 @@ python hdf5_to_tfrec_minerva_xtxutuvtv.py \
   --valid_fraction $VALIDFRAC \
   --logfile $LOGFILE \
   --compress_to_gz \
-  --test_read
+  --start_idx $STARTIDX
 EOF
+# --test_read \
+
 
 python hdf5_to_tfrec_minerva_xtxutuvtv.py \
   --nevents $NEVTS \
@@ -40,5 +46,6 @@ python hdf5_to_tfrec_minerva_xtxutuvtv.py \
   --valid_fraction $VALIDFRAC \
   --logfile $LOGFILE \
   --compress_to_gz \
-  --test_read
+  --start_idx $STARTIDX
+# --test_read \
 # --dry_run

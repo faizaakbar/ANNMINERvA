@@ -322,7 +322,8 @@ def test_read_tfrecord(
 def write_all(
         n_events_per_tfrecord_triplet, max_triplets, file_num_start,
         hdf5_file, train_file_pat, valid_file_pat, test_file_pat,
-        train_fraction, valid_fraction, dry_run, compress_to_gz
+        train_fraction, valid_fraction, dry_run, compress_to_gz,
+        file_num_start_write
 ):
     # todo, make this a while loop that keeps making tf record files
     # until we run out of events in the hdf5, then pass back the
@@ -340,8 +341,6 @@ def write_all(
 
     for i, slc in enumerate(slcs):
         file_num = i + file_num_start
-        if (max_triplets > 0) and ((file_num + 1) > max_triplets):
-            break
         n_slc = slc[-1] - slc[0]
         n_train = int(n_slc * train_fraction)
         n_valid = int(n_slc * valid_fraction)
@@ -375,7 +374,7 @@ def write_all(
                 )
                 os.remove(filename)
 
-        if not dry_run:
+        if not dry_run and file_num >= file_num_start_write:
             data_dict = make_mnv_data_dict()
             # events included are [start, stop)
             if n_train > 0:
@@ -405,6 +404,9 @@ def write_all(
                 new_files.append(
                     test_file + '.gz' if compress_to_gz else test_file
                 )
+        if (max_triplets > 0) and (len(new_files) / 3 >= max_triplets):
+            break
+
         n_processed += n_slc
 
     LOGGER.info("Processed {} events, finished with file number {}".format(
@@ -455,6 +457,9 @@ if __name__ == '__main__':
     parser.add_option('-n', '--nevents', dest='n_events', default=0,
                       help='Number of events per file', metavar='N_EVENTS',
                       type='int')
+    parser.add_option('-s', '--start_idx', dest='start_idx', default=0,
+                      help='Start writing to disk at index value',
+                      metavar='START_IDX', type='int')
     parser.add_option('-m', '--max_triplets', dest='max_triplets', default=0,
                       help='Max number of each file type',
                       metavar='MAX_TRIPLETS', type='int')
@@ -546,7 +551,8 @@ if __name__ == '__main__':
             valid_file_pat=valid_file_pat, test_file_pat=test_file_pat,
             train_fraction=options.train_fraction,
             valid_fraction=options.valid_fraction,
-            dry_run=options.dry_run, compress_to_gz=options.compress_to_gz
+            dry_run=options.dry_run, compress_to_gz=options.compress_to_gz,
+            file_num_start_write=options.start_idx
         )
         file_num = out_num
 
@@ -559,3 +565,7 @@ if __name__ == '__main__':
                 options.imgw_uv,
                 options.n_planecodes
             )
+
+        if (options.max_triplets > 0) and \
+           (len(files_written) / 3 > options.max_triplets):
+            break
