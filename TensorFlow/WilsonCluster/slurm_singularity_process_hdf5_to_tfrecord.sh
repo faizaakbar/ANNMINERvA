@@ -21,7 +21,9 @@ DAT=`date +%s`
 SNGLRTY="/data/perdue/singularity/tf_1_4.simg"
 
 # file logistics
-SAMPLE="me1Gmc"
+SAMPLE="me1Amc"
+STARTIDX=0
+STARTIDX=89
 HDF5DIR="/data/perdue/minerva/hdf5/201710"
 FILEPAT="vtxfndingimgs_127x94_${SAMPLE}"
 OUTDIR="/data/perdue/minerva/tensorflow/data/201710/${SAMPLE}"
@@ -58,7 +60,8 @@ singularity exec $SNGLRTY python hdf5_to_tfrec_minerva_xtxutuvtv.py \
   --train_fraction $TRAINFRAC \
   --valid_fraction $VALIDFRAC \
   --logfile $LOGFILE \
-  --compress_to_gz $TESTREAD
+  --compress_to_gz $TESTREAD \
+  --start_idx $STARTIDX
 EOF
 
 singularity exec $SNGLRTY python hdf5_to_tfrec_minerva_xtxutuvtv.py \
@@ -70,7 +73,8 @@ singularity exec $SNGLRTY python hdf5_to_tfrec_minerva_xtxutuvtv.py \
   --train_fraction $TRAINFRAC \
   --valid_fraction $VALIDFRAC \
   --logfile $LOGFILE \
-  --compress_to_gz $TESTREAD
+  --compress_to_gz $TESTREAD \
+  --start_idx $STARTIDX
 
 rm -f hdf5_to_tfrec_minerva_xtxutuvtv.py
 rm -f hdf5_to_tfrec_minerva_xtxutuvtv.pyc
