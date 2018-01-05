@@ -5,10 +5,11 @@ echo "started "`date`" "`date +%s`""
 nvidia-smi -L
 
 DAT=`date +%s`
-SAMPLE="me1ABmc"
 SAMPLE="me1Amc"
+SAMPLE="me1BGmc"
 
 TRAINSAMPLE="me1Amc"
+TRAINSAMPLE="me1BGmc"
 
 SHORT=""
 SHORT="--do_a_short_run"
@@ -37,6 +38,7 @@ PCODECAP=$(($NPLANECODES - 1))
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_${SAMPLE}"
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap${PCODECAP}_127x${IMGWX}x${IMGWUV}_xtxutuvtv_"
 FILEPAT="vtxfndingimgs_127x${IMGWX}_${SAMPLE}_"
+FILEPAT="vtxfndingimgs_127x${IMGWX}_"
 
 PLANECODES="--n_planecodes $NPLANECODES"
 TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
@@ -54,7 +56,7 @@ BATCHSIZE=1024
 BATCH="--batch_size $BATCHSIZE"
 
 GPU=`hostname`
-MODEL_CODE="20171128_${GPU}_batch${BATCHSIZE}_${OPTIMIZER}_train${TRAINSAMPLE}_test${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
+MODEL_CODE="20180105_${GPU}_batch${BATCHSIZE}_${OPTIMIZER}_train${TRAINSAMPLE}_valid${SAMPLE}_${BATCHF}_${TARGLABEL}${NCLASS}"
 
 # pick up singularity v2.2
 export PATH=/usr/local/singularity/bin:$PATH
@@ -68,8 +70,8 @@ VALIDATION="--nodo_validaton"
 TRAINING="--do_training"
 VALIDATION="--do_validaton"
 
-TESTING="--nodo_testing"
 TESTING="--do_testing"
+TESTING="--nodo_testing"
 
 SPECIAL=""
 SPECIAL="--use_all_for_test"
@@ -82,15 +84,14 @@ PREDICTIONS="--nodo_prediction"
 
 BASEP="/data/perdue/minerva/tensorflow"
 DBASE="${BASEP}/data/201710"
-DATADIR="${DBASE}/me1Amc,${DBASE}/me1Bmc"
 DATADIR="${DBASE}/${SAMPLE}"
+DATADIR="${DBASE}/me1Bmc,${DBASE}/me1Gmc"
 LOGDIR="${BASEP}/logs/201710/"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 
 
 # print identifying info for this job
-echo "Job ${PBS_JOBNAME} submitted from ${PBS_O_HOST} started "`date`" jobid ${PBS_JOBID}"
 cd /home/perdue/ANNMINERvA/TensorFlow/WilsonCluster
 echo "Workdir is `pwd`"
 GIT_VERSION=`git describe --abbrev=12 --dirty --always`
