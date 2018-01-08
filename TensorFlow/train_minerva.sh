@@ -2,7 +2,7 @@
 
 DAT=`date +%s`
 SAMPLE=me1ABmc
-SAMPLE=me1Bmc
+SAMPLE=me1Amc
 
 # targets - note, `n_planecodes` may be different than `nclass` - we need to
 # know the number of planecodes when unpacking even when targeting semgnets.
@@ -29,10 +29,10 @@ PLANECODES="--n_planecodes $NPLANECODES"
 TARGETS="--n_classes $NCLASS --targets_label ${TARGLABEL}"
 IMGPAR="--imgw_x $IMGWX --imgw_uv $IMGWUV"
 
-SHORT=""
 SHORT="--do_a_short_run"
-LOGLEVEL="--log_level INFO"
+SHORT=""
 LOGLEVEL="--log_level DEBUG --be_verbose"
+LOGLEVEL="--log_level INFO"
 LOGDEVS="--do_log_devices"
 LOGDEVS=""
 
@@ -48,6 +48,7 @@ FILEPAT="vtxfndingimgs_127x${IMGWX}_${SAMPLE}"
 
 BATCHSIZE=500
 BATCH="--batch_size $BATCHSIZE"
+BATCHSAVE="--save_every_n_batch 100"
 
 # OPTIMIZER="AdaGrad"
 OPTIMIZER="Adam"
@@ -83,27 +84,23 @@ MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
 LOGDIR="${BASEP}/logs"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 
+ARGS="--compression gz --data_dir $DATADIR --file_root $FILEPAT --model_dir $MODELDIR --log_name $LOGFILE $LOGLEVEL $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH $BATCHNORM $LOGDEVS $BATCHSAVE"
+
 # show what we will do...
 cat << EOF
-python mnv_run_st_epsilon.py \
-  --compression gz \
-  --data_dir $DATADIR \
-  --file_root $FILEPAT \
-  --model_dir $MODELDIR \
-  --log_name $LOGFILE $LOGLEVEL \
-  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH \
-  $BATCHNORM $LOGDEVS
+python mnv_run_st_epsilon.py $ARGS
 EOF
 
-python mnv_run_st_epsilon.py \
-  --compression gz \
-  --data_dir $DATADIR \
-  --file_root $FILEPAT \
-  --model_dir $MODELDIR \
-  --log_name $LOGFILE $LOGLEVEL \
-  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH \
-  $BATCHNORM $LOGDEVS
+python mnv_run_st_epsilon.py $ARGS
+
+# python mnv_run_st_epsilon.py \
+#   --compression gz \
+#   --data_dir $DATADIR \
+#   --file_root $FILEPAT \
+#   --model_dir $MODELDIR \
+#   --log_name $LOGFILE $LOGLEVEL \
+#   $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
+#   $SPECIAL $SHORT $PLANECODES $IMGPAR $NEPOCHS $STRATEGY $BATCH \
+#   $BATCHNORM $LOGDEVS $BATCHSAVE
 
 echo "Job finished "`date`""
