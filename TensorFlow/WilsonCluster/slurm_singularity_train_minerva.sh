@@ -19,8 +19,8 @@ LOGDEVS="--do_log_devices"
 LOGDEVS=""
 
 NEPOCHS="--num_epochs 5"
-NEPOCHS="--num_epochs 1"
 NEPOCHS="--num_epochs 10"
+NEPOCHS="--num_epochs 1"
 
 NCLASS=173
 NPLANECODES=173
