@@ -11,6 +11,8 @@ MAXTRIPS=1
 MAXTRIPS=1000
 TRAINFRAC=0.88
 VALIDFRAC=0.06
+TRAINFRAC=0.0
+VALIDFRAC=0.0
 TESTREAD="--test_read"
 TESTREAD=""
 
@@ -21,7 +23,7 @@ DAT=`date +%s`
 SNGLRTY="/data/perdue/singularity/tf_1_4.simg"
 
 # file logistics
-SAMPLE="me1Adata"
+SAMPLE="me1Ldata"
 # STARTIDX=89
 STARTIDX=0
 HDF5DIR="/data/perdue/minerva/hdf5/201710"
