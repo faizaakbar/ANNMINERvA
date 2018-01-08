@@ -50,6 +50,8 @@ tf.app.flags.DEFINE_integer('num_epochs', 1,
                             """Number of training epochs.""")
 tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Batch size.""")
+tf.app.flags.DEFINE_integer('save_every_n_batch', 500,
+                            """Save every N batches.""")
 tf.app.flags.DEFINE_string('strategy', 'Adam',
                            """Optimizer strategy.""")
 tf.app.flags.DEFINE_float('learning_rate', 0.001,
@@ -182,6 +184,7 @@ def main(argv=None):
     runpars_dict['TRAIN_READER_ARGS'] = datareader_dict(train_list, 'train')
     runpars_dict['VALID_READER_ARGS'] = datareader_dict(valid_list, 'valid')
     runpars_dict['TEST_READER_ARGS'] = datareader_dict(test_list, 'data')
+    runpars_dict['SAVE_EVRY_N_BATCHES'] = FLAGS.save_every_n_batch
 
     # set up training parameters
     train_params_dict = mnv_utils.make_train_params_dict(MNV_TYPE, FLAGS)
