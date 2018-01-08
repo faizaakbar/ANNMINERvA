@@ -36,7 +36,7 @@ LOGLEVEL="--log_level INFO"
 LOGDEVS="--do_log_devices"
 LOGDEVS=""
 
-NEPOCHS="--num_epochs 1"
+NEPOCHS="--num_epochs 2"
 
 PCODECAP=$(($NPLANECODES - 1))
 FILEPAT="vtxfndingimgs_127x${IMGWX}_${SAMPLE}"
@@ -47,8 +47,9 @@ FILEPAT="vtxfndingimgs_127x${IMGWX}_${SAMPLE}"
 # FILEPAT="minosmatch_nukecczdefs_genallzwitht_pcodecap172_127x94x47_xtxutuvtv_me1Amc_000000"
 
 BATCHSIZE=500
+BATCHSIZE=64
 BATCH="--batch_size $BATCHSIZE"
-BATCHSAVE="--save_every_n_batch 100"
+BATCHSAVE="--save_every_n_batch 10"
 
 # OPTIMIZER="AdaGrad"
 OPTIMIZER="Adam"
