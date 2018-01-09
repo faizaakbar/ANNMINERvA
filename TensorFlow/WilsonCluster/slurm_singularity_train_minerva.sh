@@ -18,9 +18,9 @@ LOGLEVEL="--log_level INFO"
 LOGDEVS="--do_log_devices"
 LOGDEVS=""
 
-NEPOCHS="--num_epochs 5"
 NEPOCHS="--num_epochs 10"
 NEPOCHS="--num_epochs 1"
+NEPOCHS="--num_epochs 5"
 
 NCLASS=173
 NPLANECODES=173
@@ -70,8 +70,8 @@ VALIDATION="--nodo_validaton"
 TRAINING="--do_training"
 VALIDATION="--do_validaton"
 
-TESTING="--do_testing"
 TESTING="--nodo_testing"
+TESTING="--do_testing"
 
 SPECIAL=""
 SPECIAL="--use_all_for_test"
@@ -120,28 +120,23 @@ do
   cp -v /home/perdue/ANNMINERvA/TensorFlow/$filename `pwd`
 done
 
+ARGSTR="--compression gz --data_dir $DATADIR --file_root $FILEPAT --model_dir $MODELDIR --log_name $LOGFILE $LOGLEVEL $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH $LOGDEVS $BATCHNORM"
+
 # show what we will do...
 cat << EOF
-singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
-  --compression gz \
-  --data_dir $DATADIR \
-  --file_root $FILEPAT \
-  --model_dir $MODELDIR \
-  --log_name $LOGFILE $LOGLEVEL \
-  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH \
-  $LOGDEVS $BATCHNORM
+singularity exec $SNGLRTY python mnv_run_st_epsilon.py $ARGSTR
 EOF
 
-singularity exec $SNGLRTY python mnv_run_st_epsilon.py \
-  --compression gz \
-  --data_dir $DATADIR \
-  --file_root $FILEPAT \
-  --model_dir $MODELDIR \
-  --log_name $LOGFILE $LOGLEVEL \
-  $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-  $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH \
-  $LOGDEVS $BATCHNORM
+singularity exec $SNGLRTY python mnv_run_st_epsilon.py $ARGSTR
+
+# --compression gz \
+# --data_dir $DATADIR \
+# --file_root $FILEPAT \
+# --model_dir $MODELDIR \
+# --log_name $LOGFILE $LOGLEVEL \
+# $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
+# $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH \
+# $LOGDEVS $BATCHNORM
 
 nvidia-smi -L >> $LOGFILE
 nvidia-smi >> $LOGFILE
