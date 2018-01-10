@@ -5,11 +5,18 @@ echo "started "`date`" "`date +%s`""
 nvidia-smi -L
 
 DAT=`date +%s`
-SAMPLE="me1Amc"
-SAMPLE="me1BGmc"
 
+# me1BG -> train a model for A using B,G
+# me1AG -> train a model for B using A,G
+# be sure to update 'DATADIR'!
+
+# "SAMPLE" -> here for the 'valid' label in the model code
+SAMPLE="me1Amc"
+SAMPLE="me1AGmc"
+
+# "TRAINSAMPLE" -> here for the 'train' label in the model code
 TRAINSAMPLE="me1Amc"
-TRAINSAMPLE="me1BGmc"
+TRAINSAMPLE="me1AGmc"
 
 SHORT="--do_a_short_run"
 SHORT=""
@@ -19,8 +26,8 @@ LOGDEVS="--do_log_devices"
 LOGDEVS=""
 
 NEPOCHS="--num_epochs 10"
-NEPOCHS="--num_epochs 1"
 NEPOCHS="--num_epochs 5"
+NEPOCHS="--num_epochs 1"
 
 NCLASS=173
 NPLANECODES=173
@@ -85,7 +92,7 @@ PREDICTIONS="--nodo_prediction"
 BASEP="/data/perdue/minerva/tensorflow"
 DBASE="${BASEP}/data/201710"
 DATADIR="${DBASE}/${SAMPLE}"
-DATADIR="${DBASE}/me1Bmc,${DBASE}/me1Gmc"
+DATADIR="${DBASE}/me1Amc,${DBASE}/me1Gmc"
 LOGDIR="${BASEP}/logs/201710/"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
