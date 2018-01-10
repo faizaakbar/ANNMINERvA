@@ -13,10 +13,15 @@ DAT=`date +%s`
 # "SAMPLE" -> here for the 'valid' label in the model code
 SAMPLE="me1Amc"
 SAMPLE="me1AGmc"
+SAMPLE="me1BGmc"
+
+# "TESTSAMPLE" -> here for the 'pred' label in the predictions file
+PREDSAMPLE="me1Amc"
 
 # "TRAINSAMPLE" -> here for the 'train' label in the model code
 TRAINSAMPLE="me1Amc"
 TRAINSAMPLE="me1AGmc"
+TRAINSAMPLE="me1BGmc"
 
 SHORT="--do_a_short_run"
 SHORT=""
@@ -81,18 +86,18 @@ TESTING="--nodo_testing"
 TESTING="--do_testing"
 
 SPECIAL=""
-SPECIAL="--use_all_for_test"
 SPECIAL="--use_test_for_train --use_valid_for_test"
+SPECIAL="--use_all_for_test"
 
 PREDPATH="/data/perdue/minerva/tensorflow/predictions/"
-PREDFILE="$PREDPATH/predictions_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}"
-PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
+PREDFILE="$PREDPATH/mnv_st_epsilon_predictions${PREDSAMPLE}_model_${MODEL_CODE}"
 PREDICTIONS="--nodo_prediction"
+PREDICTIONS="--do_prediction --pred_store_name $PREDFILE"
 
 BASEP="/data/perdue/minerva/tensorflow"
 DBASE="${BASEP}/data/201710"
-DATADIR="${DBASE}/${SAMPLE}"
 DATADIR="${DBASE}/me1Amc,${DBASE}/me1Gmc"
+DATADIR="${DBASE}/${PREDSAMPLE}"
 LOGDIR="${BASEP}/logs/201710/"
 LOGFILE=$LOGDIR/log_mnv_st_epsilon_${NCLASS}_${MODEL_CODE}_${DAT}.txt
 MODELDIR="${BASEP}/models/${NCLASS}/${MODEL_CODE}"
@@ -136,14 +141,6 @@ EOF
 
 singularity exec $SNGLRTY python mnv_run_st_epsilon.py $ARGSTR
 
-# --compression gz \
-# --data_dir $DATADIR \
-# --file_root $FILEPAT \
-# --model_dir $MODELDIR \
-# --log_name $LOGFILE $LOGLEVEL \
-# $TARGETS $TRAINING $VALIDATION $TESTING $PREDICTIONS \
-# $SPECIAL $SHORT $NEPOCHS $PLANECODES $IMGPAR $STRATEGY $BATCH \
-# $LOGDEVS $BATCHNORM
 
 nvidia-smi -L >> $LOGFILE
 nvidia-smi >> $LOGFILE
