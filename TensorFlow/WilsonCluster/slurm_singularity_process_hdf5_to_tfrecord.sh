@@ -23,7 +23,7 @@ DAT=`date +%s`
 SNGLRTY="/data/perdue/singularity/tf_1_4.simg"
 
 # file logistics
-SAMPLE="me1Adata"
+SAMPLE="me1Bdata"
 # STARTIDX=89
 STARTIDX=0
 HDF5DIR="/data/perdue/minerva/hdf5/201710"
