@@ -29,30 +29,17 @@ config.read('./mnv_st_epsilon.cfg')
 p = subprocess.Popen('hostname', shell=True, stdout=subprocess.PIPE)
 host_name = p.stdout.readlines()[0].strip()
 
-repo_info_string = """
-# print identifying info for this job
-cd /home/perdue/ANNMINERvA/TensorFlow/WilsonCluster
-echo "Workdir is `pwd`"
-GIT_VERSION=`git describe --abbrev=12 --dirty --always`
-echo "Git repo version is $GIT_VERSION"
-DIRTY=`echo $GIT_VERSION | perl -ne 'print if /dirty/'`
-if [[ $DIRTY != "" ]]; then
-  echo "Git repo contains uncomitted changes!"
-  echo ""
-  echo "Changed files:"
-  git diff --name-only
-  echo ""
-  # exit 0
-fi
-"""
-
 tstamp = str(int(time.time()))
-job_name = 'blah' + tstamp + '.sh'
+job_name = 'run' + tstamp + '.sh'
 arg_parts = []
 
 # run opts
 log_level = config.get('RunOpts', 'log_level')
 num_epochs = int(config.get('RunOpts', 'num_epochs'))
+run_base_dir = config.get('RunOpts', 'run_base_dir')
+run_dir = os.path.join(run_base_dir, 'run' + tstamp)
+if not os.path.exists(run_dir):
+    os.makedirs(run_dir)
 
 # data description
 n_classes = int(config.get('DataDescription', 'n_classes'))
@@ -87,19 +74,20 @@ data_basep = os.path.join(
     config.get('Paths', 'data_path_ext'),
     config.get('Paths', 'processing_version')
 )
-data_dirs = '--data_dir ' + ','.join(
+data_dirs_flag = '--data_dir ' + ','.join(
     [os.path.join(data_basep, pth)
      for pth in config.get('Paths', 'data_ext_dirs').split(',')]
 )
-log_dir = '--log_name ' + os.path.join(
+log_file = os.path.join(
     basep,
     config.get('Paths', 'log_path_ext'),
     config.get('Paths', 'processing_version'),
     'log_mnv_st_epsilon_' + model_code + '_' + tstamp + '.txt'
 )
-model_dir = '--model_dir ' + basep + '/models/' + str(n_classes) + \
+log_file_flag = '--log_name ' + log_file
+model_dir_flag = '--model_dir ' + basep + '/models/' + str(n_classes) + \
             '/' + model_code
-pred_file = '--pred_store_name ' + os.path.join(
+pred_store_flag = '--pred_store_name ' + os.path.join(
     basep,
     config.get('Paths', 'pred_path_ext'),
     'mnv_st_epsilon_predictions' + pred_sample + '_model_' + model_code
@@ -121,9 +109,9 @@ if optimizer is not '':
 arg_parts.append('--batch_size %d' % batch_size)
 arg_parts.append('--%s' % batchf)
 
-arg_parts.append(data_dirs)
-arg_parts.append(log_dir)
-arg_parts.append(model_dir)
+arg_parts.append(data_dirs_flag)
+arg_parts.append(log_file_flag)
+arg_parts.append(model_dir_flag)
 
 # run opt switches
 arg_parts.append('--log_level %s' % log_level)
@@ -138,18 +126,41 @@ for switch in switches:
         else '--nodo_{}'.format(switch)
     )
 if '--do_prediction' in arg_parts:
-    arg_parts.append(pred_file)
+    arg_parts.append(pred_store_flag)
 
 arg_string = ' '.join(arg_parts)
 
+code_source_dir = config.get('Code', 'code_source_dir')
 run_script = config.get('Code', 'run_script')
+framework_code = config.get('Code', 'framework').split(',')
 
-with open(job_name, 'w') as f:
+repo_info_string = """
+# print identifying info for this job
+cd {}
+echo "Workdir is `pwd`"
+GIT_VERSION=`git describe --abbrev=12 --dirty --always`
+echo "Git repo version is $GIT_VERSION"
+DIRTY=`echo $GIT_VERSION | perl -ne 'print if /dirty/'`
+if [[ $DIRTY != "" ]]; then
+  echo "Git repo contains uncomitted changes!"
+  echo ""
+  echo "Changed files:"
+  git diff --name-only
+  echo ""
+  # exit 0
+fi
+""".format(run_dir)
+
+with open(os.path.join(run_dir, job_name), 'w') as f:
     f.write('#!/bin/bash\n')
     f.write('echo "started "`date`" "`date +%s`""\n')
     if 'gpu' in host_name:
         f.write('nvidia-smi -L\n')
     f.write(repo_info_string)
+    for src_file in framework_code.append(run_script):
+        f.write('cp -v {}/{} {}'.format(
+            code_source_dir, src_file, run_dir
+        ))
     if container is not '':
         f.write('singularity exec {} python {} {}\n'.format(
             container, run_script, arg_string
@@ -158,5 +169,7 @@ with open(job_name, 'w') as f:
         f.write('python {} {}'.format(
             run_script, arg_string
         ))
-    f.write('nvidia-smi -L >> $LOGFILE\n')
-    f.write('nvidia-smi >> $LOGFILE\n')
+    f.write('nvidia-smi -L >> {}\n'.format(log_file))
+    f.write('nvidia-smi >> {}\n'.format(log_file))
+    f.write('echo "finished "`date`" "`date +%s`""')
+    f.write('exit 0')
