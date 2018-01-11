@@ -103,19 +103,19 @@ tf.app.flags.DEFINE_boolean('do_a_short_run', False,
 # (if no itnentions to use any of the data for training); use the 'validation'
 # dataset for testing also (if intending to keep the test set 'in reserve'
 # until the model is finalized.
-tf.app.flags.DEFINE_boolean('use_test_for_train', False,
+tf.app.flags.DEFINE_boolean('do_use_test_for_train', False,
                             """Use 'test' data for training also.""")
-tf.app.flags.DEFINE_boolean('use_all_for_test', False,
+tf.app.flags.DEFINE_boolean('do_use_all_for_test', False,
                             """Use all available data for testing/pred.""")
-tf.app.flags.DEFINE_boolean('use_valid_for_test', False,
+tf.app.flags.DEFINE_boolean('do_use_valid_for_test', False,
                             """Use validation data for testing/pred.""")
 
 
 def main(argv=None):
     # check flag logic - can we run?
-    if FLAGS.use_test_for_train and \
-       FLAGS.use_all_for_test and \
-       FLAGS.use_valid_for_test:
+    if FLAGS.do_use_test_for_train and \
+       FLAGS.do_use_all_for_test and \
+       FLAGS.do_use_valid_for_test:
         print('Impossible set of special run flags!')
         return
 
@@ -155,16 +155,16 @@ def main(argv=None):
             FLAGS.data_dir, FLAGS.file_root, FLAGS.compression
         )
     # fix lists if there are special options
-    if FLAGS.use_test_for_train:
+    if FLAGS.do_use_test_for_train:
         train_list.extend(test_list)
         test_list = valid_list
-    if FLAGS.use_all_for_test:
+    if FLAGS.do_use_all_for_test:
         do_training = False   # just in case, turn this off
         test_list.extend(train_list)
         test_list.extend(valid_list)
         train_list = []
         valid_list = []
-    if FLAGS.use_valid_for_test:
+    if FLAGS.do_use_valid_for_test:
         test_list = valid_list
 
     def datareader_dict(filenames_list, name):
