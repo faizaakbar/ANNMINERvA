@@ -184,7 +184,6 @@ def main(argv=None):
     runpars_dict['TRAIN_READER_ARGS'] = datareader_dict(train_list, 'train')
     runpars_dict['VALID_READER_ARGS'] = datareader_dict(valid_list, 'valid')
     runpars_dict['TEST_READER_ARGS'] = datareader_dict(test_list, 'data')
-    runpars_dict['SAVE_EVRY_N_BATCHES'] = FLAGS.save_every_n_batch
 
     # set up training parameters
     train_params_dict = mnv_utils.make_train_params_dict(MNV_TYPE, FLAGS)

@@ -46,7 +46,8 @@ def make_run_params_dict(mnv_type='st_epsilon', tf_flags=None):
     run_params_dict['MODEL_DIR'] = tf_flags.model_dir \
         if tf_flags else '/tmp/model'
     run_params_dict['LOAD_SAVED_MODEL'] = True
-    run_params_dict['SAVE_EVRY_N_BATCHES'] = 500
+    run_params_dict['SAVE_EVRY_N_BATCHES'] = tf_flags.save_every_n_batch \
+        if tf_flags else 500
     run_params_dict['BE_VERBOSE'] = tf_flags.be_verbose \
         if tf_flags else False
     run_params_dict['PREDICTION_STORE_NAME'] = tf_flags.pred_store_name \
