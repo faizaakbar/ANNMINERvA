@@ -21,7 +21,7 @@ print("\ngroups/datasets in the hdf5 file")
 print("-----------------------")
 for group in f:
     for dataset in f[group]:
-        print('{:>10} / {:<10}: {:>8}: shape = {}'.format(
+        print('{:>10} / {:<16}: {:>8}: shape = {}'.format(
             group,
             dataset,
             np.dtype(f[group][dataset]),
