@@ -1,40 +1,28 @@
 # MLMPR
 
-Draft started as of 2016/Feb/25. I will try to keep it current as things
-develop.
+To process deep learning codes using TensorFlow on the Wilson Cluster, see the
+[DLRunScripts](https://github.com/gnperdue/DLRunScripts) package. For legacy
+Theano and Caffe, see the scripts here, but note that they have not been
+updated for the new batch processing system on the Wilson Cluster.
 
-## Overview
-
-The general steps for running the classifier are:
-
-1. Generate ntuples. We are currently using the `NukeCCInclusive` analysis tool,
-CVS revision 1.92 or later (it must run the `MLVFTool`). Some samples are 
-already in existence (see below).
-2. Produce a skim. The skim code lives in `Personal/wospakrk/NuclearTargetVertexing/ana/make_hist`. The current preferred skimmer is `NukeCCSkimmer_chunked_zsegments.cxx`. TODO: update this skimmer so it takes a playlist name and keeps that in the file
-name string. There is a runner script for the skimmer. Some additional instructions
-may be found below.
-3. Use the skim files to produce a HDF5 file containing all the event data. (Yes,
-all of it - for now.) The script for processing the files is `fuel_up_nukecc.py`.
-The `minervagpvm` machines do _not_ have the needed Python packages installed
-as part of the MINERvA software framework. Either use [Anaconda](https://www.continuum.io/downloads) on the `minervagpvm` machines or on a local machine of your choice.
-More instructions are provided below.  
-
-## Existing ntuple samples
-
-NukeCC samples may be found in:
-
-* minervame1B (112200 -> 112201): `/minerva/data/users/perdue/mc_ana_minervame1B_some_date`
-* minervame1B (112202 -> 112205): `/minerva/data/users/perdue/mc_ana_minervame1B_some_other_date` (still in production)
-
-## Skimmer instructions
-
-Coming soon.
-
-## HDF5 file production
-
-Coming soon.
-
-## To run on Wilson
-
-    $ qsub job_mlp.sh
-    $ qstat
+* `Caffe/` - scripts and prototxts for running vertex finding using PBS and
+Slurm on the Wilson Cluster at Fermilab.
+* `Lasagne/` - Theano and Lasagne code for the MINERvA nuclear targets
+vertex finder and PBS scripts and some logs for runs on the Wilson Cluster at
+Fermilab
+* `TensorFlow/` - TensorFlow code for the MINERvA nuclear targets vertex
+finder and some legacy run scripts.
+* `archive/` - old code kept visible for reference.
+* `dset_visualize.py` - event display viewer that may consume HDF5 or TFRecord
+files.
+* `evtid_utils.py` - utilties for decoding the `eventid` fields in 64 bit or
+double-32 bit combos.
+* `examine_hdf5.py` - simple script to examine the structure and sizes of a
+MINERvA HDF5 file.
+* `make_hdf5_fuelfiles.py` - legacy script for converting text files to HDF5.
+* `perf_plots.py` - plotter that consumes the performance confusion matrices
+produced by the ML codes.
+* `plane_codes.py` - legacy utilities code for converting the 'old' MINERvA
+framework plane id numbers into sequential planecodes.
+* `processing_scripts/` - mostly legacy scripts for converting text files
+to HDF5.
