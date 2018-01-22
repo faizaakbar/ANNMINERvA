@@ -24,5 +24,5 @@ MINERvA HDF5 file.
 produced by the ML codes.
 * `plane_codes.py` - legacy utilities code for converting the 'old' MINERvA
 framework plane id numbers into sequential planecodes.
-* `processing_scripts/` - mostly legacy scripts for converting text files
+* `text_to_hdf5_processing_scripts/` - mostly legacy scripts for converting text files
 to HDF5.
