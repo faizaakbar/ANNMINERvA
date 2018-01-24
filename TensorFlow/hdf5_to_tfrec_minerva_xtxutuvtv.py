@@ -18,6 +18,7 @@ import mnv_utils
 from MnvHDF5 import MnvHDF5Reader
 from MnvHDF5 import make_mnv_data_dict
 from MnvDataReaders import MnvDataReaderVertexST
+from MnvDataReaders import MnvDataReaderHamultKineST
 from MnvDataConstants import EVENTIDS, PLANECODES, SEGMENTS, ZS
 from MnvDataConstants import HITIMESU, HITIMESV, HITIMESX
 from MnvDataConstants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
@@ -120,7 +121,8 @@ def write_tfrecord(
 
 
 def test_read_tfrecord(
-        tfrecord_file, compression, img_h, imgw_x, imgw_uv, img_depth,
+        tfrecord_file, hdf5_type, compression,
+        img_h, imgw_x, imgw_uv, img_depth,
         n_planecodes, data_format
 ):
     tf.reset_default_graph()
@@ -135,7 +137,8 @@ def test_read_tfrecord(
         data_format=data_format,
         n_planecodes=n_planecodes
     )
-    reader = MnvDataReaderVertexST(dd)
+    reader_class = get_reader_class(hdf5_type)
+    reader = reader_class(dd)
     batch_dict = reader.batch_generator()
 
     with tf.Session() as sess:
@@ -185,6 +188,15 @@ def get_groups_list(hdf5_type):
         return VTXFINDING_GROUPS_DICT.keys()
     elif hdf5_type == HADMULTKINE_TYPE:
         return HADMULTKINE_GROUPS_DICT.keys()
+    else:
+        raise ValueError('Unknown HDF5 grouping type!')
+
+
+def get_reader_class(hdf5_type):
+    if hdf5_type == VTXFINDING_TYPE:
+        return MnvDataReaderVertexST
+    elif hdf5_type == HADMULTKINE_TYPE:
+        return MnvDataReaderHamultKineST
     else:
         raise ValueError('Unknown HDF5 grouping type!')
 
@@ -288,8 +300,8 @@ def write_all(
 
 
 def read_all(
-        files_written, dry_run, compressed, imgw_x, imgw_uv, n_planecodes,
-        img_h=127, img_depth=2, data_format='NHWC'
+        files_written, hdf5_type, dry_run, compressed, imgw_x, imgw_uv,
+        n_planecodes, img_h=127, img_depth=2, data_format='NHWC'
 ):
     LOGGER.info('reading files...')
 
@@ -303,7 +315,8 @@ def read_all(
             if not dry_run:
                 compression = 'gz' if compressed else ''
                 test_read_tfrecord(
-                    filename, compression, img_h, imgw_x, imgw_uv, img_depth,
+                    filename, hdf5_type, compression,
+                    img_h, imgw_x, imgw_uv, img_depth,
                     n_planecodes, data_format
                 )
 
@@ -437,6 +450,7 @@ if __name__ == '__main__':
         if options.do_test:
             read_all(
                 files_written,
+                hdf5_type,
                 options.dry_run,
                 options.compress_to_gz,
                 options.imgw_x,
