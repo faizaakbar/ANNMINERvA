@@ -83,7 +83,7 @@ class MnvTFRecordReaderBase:
         )
 
     def _decode_hitimesv(self, tfrecord_features):
-        return self._proces_hitimes(
+        return self._process_hitimes(
             tfrecord_features[HITIMESV],
             [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
         )
