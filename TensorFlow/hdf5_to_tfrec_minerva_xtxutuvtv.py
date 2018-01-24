@@ -20,7 +20,8 @@ from MnvHDF5 import make_mnv_data_dict
 from MnvDataReaders import MnvDataReaderVertexST
 from MnvDataConstants import EVENTIDS, PLANECODES, SEGMENTS, ZS
 from MnvDataConstants import HITIMESU, HITIMESV, HITIMESX
-
+from MnvDataConstants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
+from MnvDataConstants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 
 LOGGER = logging.getLogger(__name__)
 
@@ -178,11 +179,20 @@ def test_read_tfrecord(
             coord.join(threads)
 
 
+def get_groups_list(hdf5_type):
+    if hdf5_type == VTXFINDING_TYPE:
+        return VTXFINDING_GROUPS_DICT.keys()
+    elif hdf5_type == HADMULTKINE_TYPE:
+        return HADMULTKINE_GROUPS_DICT.keys()
+    else:
+        raise ValueError('Unknown HDF5 grouping type!')
+
+
 def write_all(
         n_events_per_tfrecord_triplet, max_triplets, file_num_start,
         hdf5_file, train_file_pat, valid_file_pat, test_file_pat,
         train_fraction, valid_fraction, dry_run, compress_to_gz,
-        file_num_start_write
+        file_num_start_write, hdf5_type
 ):
     # todo, make this a while loop that keeps making tf record files
     # until we run out of events in the hdf5, then pass back the
@@ -190,7 +200,8 @@ def write_all(
     LOGGER.info('opening hdf5 file {} for file start number {}'.format(
         hdf5_file, file_num_start
     ))
-    data_dict = make_mnv_data_dict()
+    list_of_groups = get_groups_list(hdf5_type)
+    data_dict = make_mnv_data_dict(list_of_groups=list_of_groups)
     m = MnvHDF5Reader(hdf5_file, data_dict)
     m.open()
     n_total = m.get_nevents()
@@ -234,7 +245,7 @@ def write_all(
                 os.remove(filename)
 
         if not dry_run and file_num >= file_num_start_write:
-            data_dict = make_mnv_data_dict()
+            data_dict = make_mnv_data_dict(list_of_groups=list_of_groups)
             # events included are [start, stop)
             if n_train > 0:
                 LOGGER.info('creating train file...')
@@ -349,6 +360,9 @@ if __name__ == '__main__':
     parser.add_option('--n_planecodes', dest='n_planecodes', default=173,
                       help='Number (count) of planecodes', metavar='NPCODES',
                       type='int')
+    parser.add_option('--hdf5_type', dest='hdf5_type',
+                      default=VTXFINDING_TYPE, help='HDF5 groups set',
+                      metavar='HDF5TYPE', type='string')
 
     (options, args) = parser.parse_args()
 
@@ -411,7 +425,8 @@ if __name__ == '__main__':
             train_fraction=options.train_fraction,
             valid_fraction=options.valid_fraction,
             dry_run=options.dry_run, compress_to_gz=options.compress_to_gz,
-            file_num_start_write=options.start_idx
+            file_num_start_write=options.start_idx,
+            hdf5_type=options.hdf5_type
         )
         file_num = out_num
 
