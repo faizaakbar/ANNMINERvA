@@ -2,9 +2,9 @@
 import tensorflow as tf
 
 
-class MnvDataReaderVertexST:
+class MnvTFRecordReaderBase:
     """
-    Minerva Data Reader for (target) vertex-finder "SpaceTime" data
+    Minerva Data Reader for TFRecord files.
 
     name values are usually, e.g., 'train' or 'validation', etc.
 
@@ -13,10 +13,6 @@ class MnvDataReaderVertexST:
     * `tf.python_io.TFRecordCompressionType.GZIP`
     """
     def __init__(self, args_dict):
-        """
-        img_shp = (imgh, imgw_x, imgw_uv, img_depth)
-        TODO - get the img depth into this call also...
-        """
         self.filenames_list = args_dict['FILENAMES_LIST']
         self.batch_size = args_dict['BATCH_SIZE']
         self.name = args_dict['NAME']
@@ -25,6 +21,40 @@ class MnvDataReaderVertexST:
         self.imgdat_names = args_dict['FEATURE_STR_DICT']
         self.data_format = args_dict['DATA_FORMAT']
         self.compression = args_dict['FILE_COMPRESSION']
+
+    def _process_hitimes(self, inp, shape):
+        """ Start with a (N, C, H, W) structure, -> (N, H, W, C)? """
+        tnsr = tf.reshape(tf.decode_raw(inp, tf.float32), shape)
+        if self.data_format == 'NCHW':
+            return tnsr
+        elif self.data_format == 'NHWC':
+            return tf.transpose(tnsr, [0, 2, 3, 1])
+        else:
+            raise ValueError('Invalid data format in data reader!')
+
+    def _get_tfrecord_filequeue_and_reader(self):
+        file_queue = tf.train.string_input_producer(
+            self.filenames_list, name='file_queue', num_epochs=1
+        )
+        reader = tf.TFRecordReader(
+            options=tf.python_io.TFRecordOptions(
+                compression_type=self.compression
+            )
+        )
+        _, tfrecord = reader.read(file_queue)
+        return tfrecord
+
+
+class MnvDataReaderVertexST(MnvTFRecordReaderBase):
+    """
+    Minerva Data Reader for (target) vertex-finder "SpaceTime" data
+    """
+    def __init__(self, args_dict):
+        """
+        img_shp = (imgh, imgw_x, imgw_uv, img_depth)
+        TODO - get the img depth into this call also...
+        """
+        MnvTFRecordReaderBase.__init__(self, args_dict)
 
     def _make_mnv_vertex_finder_batch_dict(
             self, eventids_batch,
@@ -45,30 +75,8 @@ class MnvDataReaderVertexST:
         """
         specialize at the function name level ('_et' for 'engy+tm')
         """
-        def proces_hitimes(inp, shape):
-            """ Start with a (N, C, H, W) structure, -> (N, H, W, C)? """
-            tnsr = tf.reshape(tf.decode_raw(inp, tf.float32), shape)
-            if self.data_format == 'NCHW':
-                return tnsr
-            elif self.data_format == 'NHWC':
-                return tf.transpose(tnsr, [0, 2, 3, 1])
-            else:
-                raise ValueError('Invalid data format in data reader!')
-
         with tf.variable_scope(self.name + '_tfrec_to_graph_ops'):
-            file_queue = tf.train.string_input_producer(
-                self.filenames_list,
-                name=self.name+'_file_queue',
-                num_epochs=num_epochs
-            )
-            reader = tf.TFRecordReader(
-                options=tf.python_io.TFRecordOptions(
-                    compression_type=self.compression
-                ),
-                name=self.name+'_tfrecordreader'
-            )
-            _, tfrecord = reader.read(file_queue)
-
+            tfrecord = self._get_tfrecord_filequeue_and_reader()
             tfrecord_features = tf.parse_single_example(
                 tfrecord,
                 features={
@@ -85,15 +93,15 @@ class MnvDataReaderVertexST:
             with tf.variable_scope(self.name + '_eventids'):
                 evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
             with tf.variable_scope(self.name + '_hitimes'):
-                hitimesx = proces_hitimes(
+                hitimesx = self._process_hitimes(
                     tfrecord_features[self.imgdat_names['x']],
                     [-1, self.img_shp[3], self.img_shp[0], self.img_shp[1]]
                 )
-                hitimesu = proces_hitimes(
+                hitimesu = self._process_hitimes(
                     tfrecord_features[self.imgdat_names['u']],
                     [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
                 )
-                hitimesv = proces_hitimes(
+                hitimesv = self._proces_hitimes(
                     tfrecord_features[self.imgdat_names['v']],
                     [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
                 )

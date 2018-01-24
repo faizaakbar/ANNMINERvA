@@ -5,7 +5,6 @@ format.
 """
 from __future__ import print_function
 from six.moves import range
-import h5py
 import tensorflow as tf
 import numpy as np
 import sys
@@ -14,48 +13,13 @@ import logging
 import gzip
 import shutil
 import glob
+from MnvHDF5 import MnvHDF5Reader
+from MnvHDF5 import make_mnv_data_dict
+from MnvDataConstants import HADMULTKINE_GROUPS_DICT
+from MnvDataConstants import VTXFINDING_GROUPS_DICT
+
 
 LOGGER = logging.getLogger(__name__)
-
-
-class minerva_hdf5_reader:
-    """
-    the `minerva_hdf5_reader` will return numpy ndarrays of data for given
-    ranges. user should call `open()` and `close()` to start/finish.
-    """
-    def __init__(self, hdf5_file, data_dict):
-        self.file = hdf5_file
-        self._f = None
-        self._dd = data_dict
-
-    def open(self):
-        LOGGER.info("Opening hdf5 file {}".format(self.file))
-        self._f = h5py.File(self.file, 'r')
-        for group in self._f:
-            for dset in self._f[group]:
-                LOGGER.info('{:>12}/{:>12}: {:>8}: shape = {}'.format(
-                    group, dset,
-                    np.dtype(self._f[group][dset]),
-                    np.shape(self._f[group][dset])
-                ))
-
-    def close(self):
-        try:
-            self._f.close()
-        except AttributeError:
-            LOGGER.info('hdf5 file is not open yet.')
-
-    def get_data(self, name, start_idx, stop_idx):
-        group = self._dd[name]['group']
-        return self._f[group][name][start_idx: stop_idx]
-
-    def get_nevents(self, g='event_data'):
-        sizes = [self._f[g][d].shape[0] for d in self._f[g]]
-        if min(sizes) != max(sizes):
-            msg = "All dsets must have the same size!"
-            LOGGER.error(msg)
-            raise ValueError(msg)
-        return sizes[0]
 
 
 def slices_maker(n, slice_size=100000):
@@ -80,31 +44,6 @@ def slices_maker(n, slice_size=100000):
         slices.append((counter, counter + remainder))
 
     return slices
-
-
-def make_mnv_data_dict():
-    """ create a dict of fields to extract from the hdf5 with target dtypes """
-    # eventids are really (in the hdf5) uint64, planecodes are really uint16;
-    # use tf.{int64,int32,uint8} because these are the dtypes that one-hot
-    # supports (_not_ int16 or uint16, at least in TF v1.2); use int64 instead
-    # of unit64 because reshape supports int64 (and not uint64).
-    data_list = [
-        ('eventids', tf.int64, 'event_data'),
-        ('hitimes-u', tf.float32, 'img_data'),
-        ('hitimes-v', tf.float32, 'img_data'),
-        ('hitimes-x', tf.float32, 'img_data'),
-        ('planecodes', tf.int32, 'event_data'),
-        ('segments', tf.uint8, 'event_data'),
-        ('zs', tf.float32, 'event_data')
-    ]
-    mnv_data = {}
-    for datum in data_list:
-        mnv_data[datum[0]] = {}
-        mnv_data[datum[0]]['dtype'] = datum[1]
-        mnv_data[datum[0]]['byte_data'] = None
-        mnv_data[datum[0]]['group'] = datum[2]
-
-    return mnv_data
 
 
 def make_mnv_vertex_finder_batch_dict(
@@ -160,11 +99,12 @@ def write_tfrecord(
             data_dict[k]['byte_data'] = get_binary_data(
                 reader, k, idx, idx + 1
             )
-            features_dict[k] = tf.train.Feature(
-                bytes_list=tf.train.BytesList(
-                    value=[data_dict[k]['byte_data']]
+            if len(data_dict[k]['byte_data']) > 0:
+                features_dict[k] = tf.train.Feature(
+                    bytes_list=tf.train.BytesList(
+                        value=[data_dict[k]['byte_data']]
+                    )
                 )
-            )
         example = tf.train.Example(
             features=tf.train.Features(feature=features_dict)
         )
@@ -173,6 +113,56 @@ def write_tfrecord(
 
     if compress_to_gz:
         gz_compress(tfrecord_file)
+
+
+def process_hitimes(inp, shape, dtyp):
+    """
+    *Note* - Minerva HDF5's are packed (N, C, H, W), so we must transpose
+    them to (N, H, W, C) here.
+    """
+    hitimes = tf.decode_raw(inp, dtyp)
+    hitimes = tf.reshape(hitimes, shape)
+    hitimes = tf.transpose(hitimes, [0, 2, 3, 1])
+    return hitimes
+
+
+def get_tfrecord_filequeue_and_reader(filenames, compressed):
+    file_queue = tf.train.string_input_producer(
+        filenames, name='file_queue', num_epochs=1
+    )
+    if compressed:
+        compression_type = tf.python_io.TFRecordCompressionType.GZIP
+    else:
+        compression_type = tf.python_io.TFRecordCompressionType.NONE
+    reader = tf.TFRecordReader(
+        options=tf.python_io.TFRecordOptions(
+            compression_type=compression_type
+        )
+    )
+    _, tfrecord = reader.read(file_queue)
+    return tfrecord
+
+
+def make_tfrecord_feaures(tfrecord, data_field_list):
+    tfrecord_features = tf.parse_single_example(
+        tfrecord,
+        features={
+            field: tf.FixedLenFeature([], tf.string)
+            for field in data_field_list
+        },
+        name='data'
+    )
+    return tfrecord_features
+
+
+def tfrecord_to_graph_ops(
+        filenames, compressed, imgw_x, imgw_uv, n_planecodes, groups_dict
+):
+    groups_list = groups_dict.keys()
+    dtype_dict = make_mnv_data_dict(groups_list)
+    data_field_list = dtype_dict.keys()
+    tfrecord = get_tfrecord_filequeue_and_reader(filenames, compressed)
+    tfrecord_features = make_tfrecord_feaures(tfrecord, data_field_list)
 
 
 def tfrecord_to_graph_ops_xtxutuvtv(
@@ -332,7 +322,7 @@ def write_all(
         hdf5_file, file_num_start
     ))
     data_dict = make_mnv_data_dict()
-    m = minerva_hdf5_reader(hdf5_file, data_dict)
+    m = MnvHDF5Reader(hdf5_file, data_dict)
     m.open()
     n_total = m.get_nevents()
     slcs = slices_maker(n_total, n_events_per_tfrecord_triplet)
