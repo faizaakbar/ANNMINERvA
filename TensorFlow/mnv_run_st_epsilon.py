@@ -175,10 +175,9 @@ def main(argv=None):
             name=name,
             compression=FLAGS.compression,
             img_shp=img_shp,
-            data_format=FLAGS.data_format
+            data_format=FLAGS.data_format,
+            n_planecodes=FLAGS.n_planecodes
         )
-        dd['N_PLANECODES'] = FLAGS.n_planecodes
-        dd['FEATURE_STR_DICT'] = feature_targ_dict['FEATURE_STR_DICT']
         return dd
 
     runpars_dict['TRAIN_READER_ARGS'] = datareader_dict(train_list, 'train')

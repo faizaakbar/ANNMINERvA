@@ -3,6 +3,8 @@ import tensorflow as tf
 
 from MnvDataConstants import EVENT_DATA
 from MnvDataConstants import EVENTIDS, PLANECODES, SEGMENTS, ZS
+from MnvDataConstants import IMG_DATA
+from MnvDataConstants import HITIMESU, HITIMESV, HITIMESX
 
 
 class MnvTFRecordReaderBase:
@@ -21,7 +23,6 @@ class MnvTFRecordReaderBase:
         self.name = args_dict['NAME']
         self.img_shp = args_dict['IMG_SHP']
         self.n_planecodes = args_dict['N_PLANECODES']
-        self.imgdat_names = args_dict['FEATURE_STR_DICT']
         self.data_format = args_dict['DATA_FORMAT']
         self.compression = args_dict['FILE_COMPRESSION']
 
@@ -69,6 +70,24 @@ class MnvTFRecordReaderBase:
         zs = tf.decode_raw(tfrecord_features[ZS], tf.float32)
         return zs
 
+    def _decode_hitimesx(self, tfrecord_features):
+        return self._process_hitimes(
+            tfrecord_features[HITIMESX],
+            [-1, self.img_shp[3], self.img_shp[0], self.img_shp[1]]
+        )
+
+    def _decode_hitimesu(self, tfrecord_features):
+        return self._process_hitimes(
+            tfrecord_features[HITIMESU],
+            [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
+        )
+
+    def _decode_hitimesv(self, tfrecord_features):
+        return self._proces_hitimes(
+            tfrecord_features[HITIMESV],
+            [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
+        )
+
 
 class MnvDataReaderVertexST(MnvTFRecordReaderBase):
     """
@@ -88,9 +107,9 @@ class MnvDataReaderVertexST(MnvTFRecordReaderBase):
     ):
         batch_dict = {}
         batch_dict[EVENTIDS] = eventids_batch
-        batch_dict[self.imgdat_names['x']] = hitimesx_batch
-        batch_dict[self.imgdat_names['u']] = hitimesu_batch
-        batch_dict[self.imgdat_names['v']] = hitimesv_batch
+        batch_dict[HITIMESX] = hitimesx_batch
+        batch_dict[HITIMESU] = hitimesu_batch
+        batch_dict[HITIMESV] = hitimesv_batch
         batch_dict[PLANECODES] = planecodes_batch
         batch_dict[SEGMENTS] = segments_batch
         batch_dict[ZS] = zs_batch
@@ -106,9 +125,9 @@ class MnvDataReaderVertexST(MnvTFRecordReaderBase):
                 tfrecord,
                 features={
                     EVENTIDS: tf.FixedLenFeature([], tf.string),
-                    self.imgdat_names['x']: tf.FixedLenFeature([], tf.string),
-                    self.imgdat_names['u']: tf.FixedLenFeature([], tf.string),
-                    self.imgdat_names['v']: tf.FixedLenFeature([], tf.string),
+                    HITIMESX: tf.FixedLenFeature([], tf.string),
+                    HITIMESU: tf.FixedLenFeature([], tf.string),
+                    HITIMESV: tf.FixedLenFeature([], tf.string),
                     PLANECODES: tf.FixedLenFeature([], tf.string),
                     SEGMENTS: tf.FixedLenFeature([], tf.string),
                     ZS: tf.FixedLenFeature([], tf.string),
@@ -120,20 +139,10 @@ class MnvDataReaderVertexST(MnvTFRecordReaderBase):
                 pcodes = self._decode_planecodes(tfrecord_features)
                 segs = self._decode_segments(tfrecord_features)
                 zs = self._decode_zs(tfrecord_features)
-            with tf.variable_scope(self.name + '_hitimes'):
-                hitimesx = self._process_hitimes(
-                    tfrecord_features[self.imgdat_names['x']],
-                    [-1, self.img_shp[3], self.img_shp[0], self.img_shp[1]]
-                )
-                hitimesu = self._process_hitimes(
-                    tfrecord_features[self.imgdat_names['u']],
-                    [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
-                )
-                hitimesv = self._proces_hitimes(
-                    tfrecord_features[self.imgdat_names['v']],
-                    [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
-                )
-
+            with tf.variable_scope(self.name + '_' + IMG_DATA):
+                hitimesx = self._decode_hitimesx(tfrecord_features)
+                hitimesu = self._decode_hitimesu(tfrecord_features)
+                hitimesv = self._decode_hitimesv(tfrecord_features)
         return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
 
     def batch_generator(self, num_epochs=1):

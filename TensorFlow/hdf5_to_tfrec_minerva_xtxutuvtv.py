@@ -13,10 +13,13 @@ import logging
 import gzip
 import shutil
 import glob
+
+import mnv_utils
 from MnvHDF5 import MnvHDF5Reader
 from MnvHDF5 import make_mnv_data_dict
-from MnvDataConstants import HADMULTKINE_GROUPS_DICT
-from MnvDataConstants import VTXFINDING_GROUPS_DICT
+from MnvDataReaders import MnvDataReaderVertexST
+from MnvDataConstants import EVENTIDS, PLANECODES, SEGMENTS, ZS
+from MnvDataConstants import HITIMESU, HITIMESV, HITIMESX
 
 
 LOGGER = logging.getLogger(__name__)
@@ -51,13 +54,13 @@ def make_mnv_vertex_finder_batch_dict(
         planecodes_batch, segments_batch, zs_batch
 ):
     batch_dict = {}
-    batch_dict['eventids'] = eventids_batch
-    batch_dict['hitimes-x'] = hitimesx_batch
-    batch_dict['hitimes-u'] = hitimesu_batch
-    batch_dict['hitimes-v'] = hitimesv_batch
-    batch_dict['planecodes'] = planecodes_batch
-    batch_dict['segments'] = segments_batch
-    batch_dict['zs'] = zs_batch
+    batch_dict[EVENTIDS] = eventids_batch
+    batch_dict[HITIMESX] = hitimesx_batch
+    batch_dict[HITIMESU] = hitimesu_batch
+    batch_dict[HITIMESV] = hitimesv_batch
+    batch_dict[PLANECODES] = planecodes_batch
+    batch_dict[SEGMENTS] = segments_batch
+    batch_dict[ZS] = zs_batch
     return batch_dict
 
 
@@ -73,7 +76,7 @@ def get_binary_data(reader, name, start_idx, stop_idx):
     _prior_ to byte conversion.
     """
     dta = reader.get_data(name, start_idx, stop_idx)
-    if name == 'planecodes':
+    if name == PLANECODES:
         # we must cast the 16 bit values into 32 bit values
         dta = dta.astype(np.int32)
     return dta.tobytes()
@@ -115,158 +118,24 @@ def write_tfrecord(
         gz_compress(tfrecord_file)
 
 
-def process_hitimes(inp, shape, dtyp):
-    """
-    *Note* - Minerva HDF5's are packed (N, C, H, W), so we must transpose
-    them to (N, H, W, C) here.
-    """
-    hitimes = tf.decode_raw(inp, dtyp)
-    hitimes = tf.reshape(hitimes, shape)
-    hitimes = tf.transpose(hitimes, [0, 2, 3, 1])
-    return hitimes
-
-
-def get_tfrecord_filequeue_and_reader(filenames, compressed):
-    file_queue = tf.train.string_input_producer(
-        filenames, name='file_queue', num_epochs=1
-    )
-    if compressed:
-        compression_type = tf.python_io.TFRecordCompressionType.GZIP
-    else:
-        compression_type = tf.python_io.TFRecordCompressionType.NONE
-    reader = tf.TFRecordReader(
-        options=tf.python_io.TFRecordOptions(
-            compression_type=compression_type
-        )
-    )
-    _, tfrecord = reader.read(file_queue)
-    return tfrecord
-
-
-def make_tfrecord_feaures(tfrecord, data_field_list):
-    tfrecord_features = tf.parse_single_example(
-        tfrecord,
-        features={
-            field: tf.FixedLenFeature([], tf.string)
-            for field in data_field_list
-        },
-        name='data'
-    )
-    return tfrecord_features
-
-
-def tfrecord_to_graph_ops(
-        filenames, compressed, imgw_x, imgw_uv, n_planecodes, groups_dict
-):
-    groups_list = groups_dict.keys()
-    dtype_dict = make_mnv_data_dict(groups_list)
-    data_field_list = dtype_dict.keys()
-    tfrecord = get_tfrecord_filequeue_and_reader(filenames, compressed)
-    tfrecord_features = make_tfrecord_feaures(tfrecord, data_field_list)
-
-
-def tfrecord_to_graph_ops_xtxutuvtv(
-        filenames, compressed, imgw_x, imgw_uv, n_planecodes
-):
-    def proces_hitimes(inp, shape, dtyp):
-        """
-        *Note* - Minerva HDF5's are packed (N, C, H, W), so we must transpose
-        them to (N, H, W, C) here.
-        """
-        hitimes = tf.decode_raw(inp, dtyp)
-        hitimes = tf.reshape(hitimes, shape)
-        hitimes = tf.transpose(hitimes, [0, 2, 3, 1])
-        return hitimes
-    dtype_dict = make_mnv_data_dict()
-
-    file_queue = tf.train.string_input_producer(
-        filenames, name='file_queue', num_epochs=1
-    )
-    if compressed:
-        compression_type = tf.python_io.TFRecordCompressionType.GZIP
-    else:
-        compression_type = tf.python_io.TFRecordCompressionType.NONE
-    reader = tf.TFRecordReader(
-        options=tf.python_io.TFRecordOptions(
-            compression_type=compression_type
-        )
-    )
-    _, tfrecord = reader.read(file_queue)
-
-    tfrecord_features = tf.parse_single_example(
-        tfrecord,
-        features={
-            'eventids': tf.FixedLenFeature([], tf.string),
-            'hitimes-x': tf.FixedLenFeature([], tf.string),
-            'hitimes-u': tf.FixedLenFeature([], tf.string),
-            'hitimes-v': tf.FixedLenFeature([], tf.string),
-            'planecodes': tf.FixedLenFeature([], tf.string),
-            'segments': tf.FixedLenFeature([], tf.string),
-            'zs': tf.FixedLenFeature([], tf.string),
-        },
-        name='data'
-    )
-    evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
-    hitimesx = proces_hitimes(
-        tfrecord_features['hitimes-x'],
-        [-1, 2, 127, imgw_x],
-        dtype_dict['hitimes-x']['dtype']
-    )
-    hitimesu = proces_hitimes(
-        tfrecord_features['hitimes-u'],
-        [-1, 2, 127, imgw_uv],
-        dtype_dict['hitimes-u']['dtype']
-    )
-    hitimesv = proces_hitimes(
-        tfrecord_features['hitimes-v'],
-        [-1, 2, 127, imgw_uv],
-        dtype_dict['hitimes-v']['dtype']
-    )
-    pcodes = tf.decode_raw(
-        tfrecord_features['planecodes'], dtype_dict['planecodes']['dtype']
-    )
-    pcodes = tf.one_hot(
-        indices=pcodes, depth=n_planecodes, on_value=1, off_value=0
-    )
-    segs = tf.decode_raw(
-        tfrecord_features['segments'], dtype_dict['segments']['dtype']
-    )
-    segs = tf.one_hot(indices=segs, depth=11, on_value=1, off_value=0)
-    zs = tf.decode_raw(
-        tfrecord_features['zs'], dtype_dict['zs']['dtype']
-    )
-    return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
-
-
-def batch_generator(
-        tfrecord_filelist, compressed, imgw_x, imgw_uv, n_planecodes,
-        num_epochs=1
-):
-    es, x, u, v, ps, sg, zs = tfrecord_to_graph_ops_xtxutuvtv(
-        tfrecord_filelist, compressed, imgw_x, imgw_uv, n_planecodes
-    )
-    capacity = 10 * 100
-    es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b = tf.train.batch(
-        [es, x, u, v, ps, sg, zs],
-        batch_size=64,
-        capacity=capacity,
-        enqueue_many=True,
-        allow_smaller_final_batch=True,
-        name='generator_batch'
-    )
-    return make_mnv_vertex_finder_batch_dict(
-        es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b
-    )
-
-
 def test_read_tfrecord(
         tfrecord_file, compressed, imgw_x, imgw_uv, n_planecodes
 ):
     tf.reset_default_graph()
     LOGGER.info('opening {} for reading'.format(tfrecord_file))
-    batch_dict = batch_generator(
-        [tfrecord_file], compressed, imgw_x, imgw_uv, n_planecodes
+
+    dd = mnv_utils.make_data_reader_dict(
+        filenames_list=[tfrecord_file],
+        batch_size=64,
+        name='test_read',
+        compression=tf.python_io.TFRecordCompressionType.GZIP,
+        img_shp=(127, 94, 47, 2),
+        data_format='NHWC',
+        n_planecodes=173
     )
+    reader = MnvDataReaderVertexST(dd)
+    batch_dict = reader.batch_generator()
+
     with tf.Session() as sess:
         # have to run local variable init for `string_input_producer`
         sess.run(tf.local_variables_initializer())
@@ -275,13 +144,13 @@ def test_read_tfrecord(
         try:
             for batch_num in range(10):
                 evtids, hitsx, hitsu, hitsv, pcodes, segs, zs = sess.run([
-                    batch_dict['eventids'],
-                    batch_dict['hitimes-x'],
-                    batch_dict['hitimes-u'],
-                    batch_dict['hitimes-v'],
-                    batch_dict['planecodes'],
-                    batch_dict['segments'],
-                    batch_dict['zs'],
+                    batch_dict[EVENTIDS],
+                    batch_dict[HITIMESX],
+                    batch_dict[HITIMESU],
+                    batch_dict[HITIMESV],
+                    batch_dict[PLANECODES],
+                    batch_dict[SEGMENTS],
+                    batch_dict[ZS],
                 ])
                 LOGGER.info('batch = {}'.format(batch_num))
                 LOGGER.info('evtids shape = {}'.format(evtids.shape))

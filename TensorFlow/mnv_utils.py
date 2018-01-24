@@ -15,7 +15,8 @@ def make_data_reader_dict(
         name='reader',
         compression=None,
         img_shp=(127, 50, 25, 2),
-        data_format='NHWC'
+        data_format='NHWC',
+        n_planecodes=67
 ):
     """
     NOTE: `img_shp` is not a regular TF 4-tensor.
@@ -37,6 +38,7 @@ def make_data_reader_dict(
         raise ValueError(msg)
     data_reader_dict['IMG_SHP'] = img_shp
     data_reader_dict['DATA_FORMAT'] = data_format
+    data_reader_dict['N_PLANECODES'] = n_planecodes
     return data_reader_dict
 
 
@@ -60,19 +62,9 @@ def make_run_params_dict(mnv_type='st_epsilon', tf_flags=None):
     return run_params_dict
 
 
-def make_hitimes_feature_str_dict():
-    dd = {}
-    dd['x'] = 'hitimes-x'
-    dd['u'] = 'hitimes-u'
-    dd['v'] = 'hitimes-v'
-    return dd
-
-
 def make_feature_targ_dict(mnv_type='st_epsilon', tf_flags=None):
     feature_targ_dict = {}
     if mnv_type == 'st_epsilon':
-        feature_targ_dict['FEATURE_STR_DICT'] = \
-            make_hitimes_feature_str_dict()
         feature_targ_dict['TARGETS_LABEL'] = tf_flags.targets_label \
             if tf_flags else None
         feature_targ_dict['BUILD_KBD_FUNCTION'] = None
