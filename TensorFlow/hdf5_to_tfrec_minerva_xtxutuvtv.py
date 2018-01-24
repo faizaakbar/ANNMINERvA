@@ -120,7 +120,8 @@ def write_tfrecord(
 
 
 def test_read_tfrecord(
-        tfrecord_file, compressed, imgw_x, imgw_uv, n_planecodes
+        tfrecord_file, compression, img_h, imgw_x, imgw_uv, img_depth,
+        n_planecodes, data_format
 ):
     tf.reset_default_graph()
     LOGGER.info('opening {} for reading'.format(tfrecord_file))
@@ -129,10 +130,10 @@ def test_read_tfrecord(
         filenames_list=[tfrecord_file],
         batch_size=64,
         name='test_read',
-        compression=tf.python_io.TFRecordCompressionType.GZIP,
-        img_shp=(127, 94, 47, 2),
-        data_format='NHWC',
-        n_planecodes=173
+        compression=compression,
+        img_shp=(img_h, imgw_x, imgw_uv, img_depth),
+        data_format=data_format,
+        n_planecodes=n_planecodes
     )
     reader = MnvDataReaderVertexST(dd)
     batch_dict = reader.batch_generator()
@@ -287,7 +288,8 @@ def write_all(
 
 
 def read_all(
-        files_written, dry_run, compressed, imgw_x, imgw_uv, n_planecodes
+        files_written, dry_run, compressed, imgw_x, imgw_uv, n_planecodes,
+        img_h=127, img_depth=2, data_format='NHWC'
 ):
     LOGGER.info('reading files...')
 
@@ -299,8 +301,10 @@ def read_all(
                 )
             )
             if not dry_run:
+                compression = 'gz' if compressed else ''
                 test_read_tfrecord(
-                    filename, compressed, imgw_x, imgw_uv, n_planecodes
+                    filename, compression, img_h, imgw_x, imgw_uv, img_depth,
+                    n_planecodes, data_format
                 )
 
 
