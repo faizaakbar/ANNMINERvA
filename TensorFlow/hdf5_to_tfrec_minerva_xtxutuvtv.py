@@ -450,7 +450,7 @@ if __name__ == '__main__':
         if options.do_test:
             read_all(
                 files_written,
-                hdf5_type,
+                options.hdf5_type,
                 options.dry_run,
                 options.compress_to_gz,
                 options.imgw_x,

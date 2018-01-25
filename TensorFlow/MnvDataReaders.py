@@ -251,7 +251,7 @@ class MnvDataReaderHamultKineST(MnvTFRecordReaderBase):
                 allow_smaller_final_batch=True,
                 name=self.name+'_batch'
             )
-        return self._make_mnv_vertex_finder_batch_dict(
+        return self._make_mnv_hadmultkine_batch_dict(
             es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b
         )
 
@@ -270,6 +270,6 @@ class MnvDataReaderHamultKineST(MnvTFRecordReaderBase):
                 allow_smaller_final_batch=True,
                 name=self.name+'_shuffle_batch'
             )
-        return self._make_mnv_vertex_finder_batch_dict(
+        return self._make_mnv_hadmultkine_batch_dict(
             es_b, x_b, u_b, v_b, ps_b, sg_b, zs_b
         )
