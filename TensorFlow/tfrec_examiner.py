@@ -4,11 +4,7 @@ from __future__ import print_function
 from six.moves import range
 import tensorflow as tf
 import logging
-import os
-import gzip
-import shutil
 
-from MnvDataReaders import MnvDataReaderVertexST
 import mnv_utils
 
 LOGGER = logging.getLogger(__name__)
@@ -27,6 +23,8 @@ tf.app.flags.DEFINE_string('log_name', 'temp_log.txt',
                            """Logfile name.""")
 tf.app.flags.DEFINE_string('out_pattern', 'temp_out',
                            """Logfile name.""")
+tf.app.flags.DEFINE_string('tfrec_type', 'hadmultkineimgs',
+                           """TFRecord file type.""")
 tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Batch size.""")
 tf.app.flags.DEFINE_integer('imgh', 127,
@@ -41,17 +39,7 @@ tf.app.flags.DEFINE_integer('n_planecodes', 67,
                             """Number of planecodes.""")
 
 
-def compress(out_file):
-    gzfile = out_file + '.gz'
-    with open(out_file, 'rb') as f_in, gzip.open(gzfile, 'wb') as f_out:
-        shutil.copyfileobj(f_in, f_out)
-    if os.path.isfile(gzfile) and (os.stat(gzfile).st_size > 0):
-        os.remove(out_file)
-    else:
-        raise IOError('Compressed file not produced!')
-
-
-def read_all_evtids(datareader_dict, typ):
+def read_all_evtids(datareader_dict, typ, tfrec_type):
     LOGGER.info('read all eventids for {}...'.format(typ))
     out_file = FLAGS.out_pattern + typ + '.txt'
     tf.reset_default_graph()
@@ -59,8 +47,11 @@ def read_all_evtids(datareader_dict, typ):
 
     with tf.Graph().as_default() as g:
         with tf.Session(graph=g) as sess:
-            data_reader = MnvDataReaderVertexST(datareader_dict)
-            batch_dict = data_reader.batch_generator(num_epochs=1)
+
+            reader_class = mnv_utils.get_reader_class(tfrec_type)
+            reader = reader_class(datareader_dict)
+            # get an ordered dict
+            batch_dict = reader.batch_generator(num_epochs=1)
             eventids = batch_dict['eventids']
 
             sess.run(tf.local_variables_initializer())
@@ -82,7 +73,7 @@ def read_all_evtids(datareader_dict, typ):
                 coord.join(threads)
 
     LOGGER.info('found {} {} events'.format(n_evt, typ))
-    compress(out_file)
+    mnv_utils.gz_compress(out_file)
 
 
 def main(argv=None):
@@ -112,10 +103,9 @@ def main(argv=None):
             name=name,
             compression=FLAGS.compression,
             img_shp=img_shp,
-            data_format=FLAGS.data_format
+            data_format=FLAGS.data_format,
+            n_planecodes=FLAGS.n_planecodes
         )
-        dd['N_PLANECODES'] = FLAGS.n_planecodes
-        dd['FEATURE_STR_DICT'] = mnv_utils.make_hitimes_feature_str_dict()
         return dd
 
     LOGGER.info(' run_params_dict = {}'.format(repr(runpars_dict)))
@@ -125,7 +115,7 @@ def main(argv=None):
         LOGGER.info(' data reader dict for {} = {}'.format(
             typ, repr(dd)
         ))
-        read_all_evtids(dd, typ)
+        read_all_evtids(dd, typ, FLAGS.tfrec_type)
 
 
 if __name__ == '__main__':

@@ -11,18 +11,12 @@ import numpy as np
 import sys
 import os
 import logging
-import gzip
-import shutil
 import glob
 
 import mnv_utils
 from MnvHDF5 import MnvHDF5Reader
-from MnvDataReaders import MnvDataReaderVertexST
-from MnvDataReaders import MnvDataReaderHamultKineST
 from MnvDataConstants import make_mnv_data_dict
 from MnvDataConstants import PLANECODES, SEGMENTS
-from MnvDataConstants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
-from MnvDataConstants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 
 LOGGER = logging.getLogger(__name__)
 
@@ -69,16 +63,6 @@ def get_binary_data(reader, name, start_idx, stop_idx):
     return dta.tobytes()
 
 
-def gz_compress(infile):
-    outfile = infile + '.gz'
-    with open(infile, 'rb') as f_in, gzip.open(outfile, 'wb') as f_out:
-        shutil.copyfileobj(f_in, f_out)
-    if os.path.isfile(outfile) and (os.stat(outfile).st_size > 0):
-        os.remove(infile)
-    else:
-        raise IOError('Compressed file not produced!')
-
-
 def write_tfrecord(
         reader, data_dict, start_idx, stop_idx, tfrecord_file, compress_to_gz
 ):
@@ -102,7 +86,7 @@ def write_tfrecord(
     writer.close()
 
     if compress_to_gz:
-        gz_compress(tfrecord_file)
+        mnv_utils.gz_compress(tfrecord_file)
 
 
 def test_read_tfrecord(
@@ -122,7 +106,7 @@ def test_read_tfrecord(
         data_format=data_format,
         n_planecodes=n_planecodes
     )
-    reader_class = get_reader_class(hdf5_type)
+    reader_class = mnv_utils.get_reader_class(hdf5_type)
     reader = reader_class(dd)
     # get an ordered dict
     batch_dict = reader.batch_generator()
@@ -153,24 +137,6 @@ def test_read_tfrecord(
         finally:
             coord.request_stop()
             coord.join(threads)
-
-
-def get_groups_list(hdf5_type):
-    if hdf5_type == VTXFINDING_TYPE:
-        return VTXFINDING_GROUPS_DICT.keys()
-    elif hdf5_type == HADMULTKINE_TYPE:
-        return HADMULTKINE_GROUPS_DICT.keys()
-    else:
-        raise ValueError('Unknown HDF5 grouping type!')
-
-
-def get_reader_class(hdf5_type):
-    if hdf5_type == VTXFINDING_TYPE:
-        return MnvDataReaderVertexST
-    elif hdf5_type == HADMULTKINE_TYPE:
-        return MnvDataReaderHamultKineST
-    else:
-        raise ValueError('Unknown HDF5 grouping type!')
 
 
 def write_all(
@@ -228,7 +194,7 @@ def write_all(
                 os.remove(filename)
 
         if not dry_run and file_num >= file_num_start_write:
-            list_of_groups = get_groups_list(hdf5_type)
+            list_of_groups = mnv_utils.get_groups_list(hdf5_type)
             data_dict = make_mnv_data_dict(list_of_groups=list_of_groups)
             # events included are [start, stop)
             if n_train > 0:
@@ -349,7 +315,7 @@ if __name__ == '__main__':
                       help='Number (count) of planecodes', metavar='NPCODES',
                       type='int')
     parser.add_option('--hdf5_type', dest='hdf5_type',
-                      default=VTXFINDING_TYPE, help='HDF5 groups set',
+                      default=None, help='HDF5 groups set',
                       metavar='HDF5TYPE', type='string')
 
     (options, args) = parser.parse_args()

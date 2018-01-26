@@ -1,6 +1,14 @@
 #!/usr/bin/env python
 import tensorflow as tf
 import logging
+import os
+import shutil
+import gzip
+
+from MnvDataReaders import MnvDataReaderVertexST
+from MnvDataReaders import MnvDataReaderHamultKineST
+from MnvDataConstants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
+from MnvDataConstants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 
 LOGGER = logging.getLogger(__name__)
 
@@ -162,6 +170,37 @@ def get_number_of_trainable_parameters():
         total_parameters += variable_parameters
     LOGGER.debug('Total parameters = %d' % total_parameters)
     return total_parameters
+
+
+def gz_compress(out_file):
+    gzfile = out_file + '.gz'
+    with open(out_file, 'rb') as f_in, gzip.open(gzfile, 'wb') as f_out:
+        shutil.copyfileobj(f_in, f_out)
+    if os.path.isfile(gzfile) and (os.stat(gzfile).st_size > 0):
+        os.remove(out_file)
+    else:
+        raise IOError('Compressed file not produced!')
+
+
+def get_groups_list(hdf5_type):
+    """
+    get the list of HDF5 'groups' for a given ROOT->HDF5 conversion
+    """
+    if hdf5_type == VTXFINDING_TYPE:
+        return VTXFINDING_GROUPS_DICT.keys()
+    elif hdf5_type == HADMULTKINE_TYPE:
+        return HADMULTKINE_GROUPS_DICT.keys()
+    else:
+        raise ValueError('Unknown HDF5 grouping type!')
+
+
+def get_reader_class(data_file_type):
+    if data_file_type == VTXFINDING_TYPE:
+        return MnvDataReaderVertexST
+    elif data_file_type == HADMULTKINE_TYPE:
+        return MnvDataReaderHamultKineST
+    else:
+        raise ValueError('Unknown TFRec data file type!')
 
 
 def decode_eventid(eventid):
