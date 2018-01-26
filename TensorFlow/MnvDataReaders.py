@@ -117,8 +117,10 @@ class MnvTFRecordReaderBase:
             return self._decode_planecodes(tfrecord_features)
         elif field == SEGMENTS:
             return self._decode_segments(tfrecord_features)
-        elif field == ZS:
+        elif field in self._basic_float32_fields:
             return self._decode_basic(tfrecord_features, field, tf.float32)
+        elif field in self._basic_int32_fields:
+            return self._decode_basic(tfrecord_features, field, tf.int32)
 
     def _tfrecord_to_graph_ops(self, num_epochs):
         od = OrderedDict()
