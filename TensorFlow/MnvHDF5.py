@@ -54,8 +54,9 @@ class MnvHDF5Reader:
             LOGGER.info('{} data is not available in this HDF5 file.')
             return []
 
-    def get_nevents(self, group):
-        sizes = [self._f[group][d].shape[0] for d in self._f[group]]
+    def get_nevents(self):
+        test_grp = self._groups[0]
+        sizes = [self._f[test_grp][d].shape[0] for d in self._f[test_grp]]
         if min(sizes) != max(sizes):
             msg = "All dsets must have the same size!"
             LOGGER.error(msg)
