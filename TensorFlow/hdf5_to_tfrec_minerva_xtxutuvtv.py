@@ -4,6 +4,7 @@ Convert a list of hdf5s file to a list of tfrecords files of the basic types
 format.
 """
 from __future__ import print_function
+from collections import OrderedDict
 from six.moves import range
 import tensorflow as tf
 import numpy as np
@@ -19,8 +20,7 @@ from MnvHDF5 import MnvHDF5Reader
 from MnvDataReaders import MnvDataReaderVertexST
 from MnvDataReaders import MnvDataReaderHamultKineST
 from MnvDataConstants import make_mnv_data_dict
-from MnvDataConstants import EVENTIDS, PLANECODES, SEGMENTS, ZS
-from MnvDataConstants import HITIMESU, HITIMESV, HITIMESX
+from MnvDataConstants import PLANECODES, SEGMENTS
 from MnvDataConstants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from MnvDataConstants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 
@@ -124,6 +124,7 @@ def test_read_tfrecord(
     )
     reader_class = get_reader_class(hdf5_type)
     reader = reader_class(dd)
+    # get an ordered dict
     batch_dict = reader.batch_generator()
 
     with tf.Session() as sess:
@@ -133,32 +134,18 @@ def test_read_tfrecord(
         threads = tf.train.start_queue_runners(coord=coord)
         try:
             for batch_num in range(10):
-                evtids, hitsx, hitsu, hitsv, pcodes, segs, zs = sess.run([
-                    batch_dict[EVENTIDS],
-                    batch_dict[HITIMESX],
-                    batch_dict[HITIMESU],
-                    batch_dict[HITIMESV],
-                    batch_dict[PLANECODES],
-                    batch_dict[SEGMENTS],
-                    batch_dict[ZS],
-                ])
+                tensor_list = sess.run(batch_dict.values())
+                results = OrderedDict(zip(batch_dict.keys(), tensor_list))
                 LOGGER.info('batch = {}'.format(batch_num))
-                LOGGER.info('evtids shape = {}'.format(evtids.shape))
-                LOGGER.info('  evtids = {}'.format(
-                    evtids
-                ))
-                LOGGER.info('hitimes x shape = {}'.format(hitsx.shape))
-                LOGGER.info('hitimes u shape = {}'.format(hitsu.shape))
-                LOGGER.info('hitimes v shape = {}'.format(hitsv.shape))
-                LOGGER.info('planecodes shape = {}'.format(pcodes.shape))
-                LOGGER.info('  planecodes = {}'.format(
-                    np.argmax(pcodes, axis=1)
-                ))
-                LOGGER.info('segments shape = {}'.format(segs.shape))
-                LOGGER.info('  segments = {}'.format(
-                    np.argmax(segs, axis=1)
-                ))
-                LOGGER.info('zs shape = {}'.format(zs.shape))
+                for k, v in results.items():
+                    LOGGER.info('{} shape = {}'.format(k, v.shape))
+                    if 'hitimes' not in k:
+                        if k == PLANECODES or k == SEGMENTS:
+                            LOGGER.info('  {} = {}'.format(
+                                k, np.argmax(v, axis=1)
+                            ))
+                        else:
+                            LOGGER.info('  {} = {}'.format(k, v))
         except tf.errors.OutOfRangeError:
             LOGGER.info('Reading stopped - queue is empty.')
         except Exception as e:
