@@ -16,9 +16,9 @@ import glob
 
 import mnv_utils
 from MnvHDF5 import MnvHDF5Reader
-from MnvHDF5 import make_mnv_data_dict
 from MnvDataReaders import MnvDataReaderVertexST
 from MnvDataReaders import MnvDataReaderHamultKineST
+from MnvDataConstants import make_mnv_data_dict
 from MnvDataConstants import EVENTIDS, PLANECODES, SEGMENTS, ZS
 from MnvDataConstants import HITIMESU, HITIMESV, HITIMESX
 from MnvDataConstants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
@@ -49,21 +49,6 @@ def slices_maker(n, slice_size=100000):
         slices.append((counter, counter + remainder))
 
     return slices
-
-
-def make_mnv_vertex_finder_batch_dict(
-        eventids_batch, hitimesx_batch, hitimesu_batch, hitimesv_batch,
-        planecodes_batch, segments_batch, zs_batch
-):
-    batch_dict = {}
-    batch_dict[EVENTIDS] = eventids_batch
-    batch_dict[HITIMESX] = hitimesx_batch
-    batch_dict[HITIMESU] = hitimesu_batch
-    batch_dict[HITIMESV] = hitimesv_batch
-    batch_dict[PLANECODES] = planecodes_batch
-    batch_dict[SEGMENTS] = segments_batch
-    batch_dict[ZS] = zs_batch
-    return batch_dict
 
 
 def get_binary_data(reader, name, start_idx, stop_idx):
@@ -213,9 +198,7 @@ def write_all(
     LOGGER.info('opening hdf5 file {} for file start number {}'.format(
         hdf5_file, file_num_start
     ))
-    list_of_groups = get_groups_list(hdf5_type)
-    data_dict = make_mnv_data_dict(list_of_groups=list_of_groups)
-    m = MnvHDF5Reader(hdf5_file, data_dict)
+    m = MnvHDF5Reader(hdf5_file)
     m.open()
     n_total = m.get_nevents()
     slcs = slices_maker(n_total, n_events_per_tfrecord_triplet)
@@ -258,6 +241,7 @@ def write_all(
                 os.remove(filename)
 
         if not dry_run and file_num >= file_num_start_write:
+            list_of_groups = get_groups_list(hdf5_type)
             data_dict = make_mnv_data_dict(list_of_groups=list_of_groups)
             # events included are [start, stop)
             if n_train > 0:
