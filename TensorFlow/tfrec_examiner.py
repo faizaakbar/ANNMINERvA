@@ -6,6 +6,7 @@ import tensorflow as tf
 import logging
 
 import mnv_utils
+from MnvDataConstants import EVENTIDS
 
 LOGGER = logging.getLogger(__name__)
 FLAGS = tf.app.flags.FLAGS
@@ -52,7 +53,7 @@ def read_all_evtids(datareader_dict, typ, tfrec_type):
             reader = reader_class(datareader_dict)
             # get an ordered dict
             batch_dict = reader.batch_generator(num_epochs=1)
-            eventids = batch_dict['eventids']
+            eventids = batch_dict[EVENTIDS]
 
             sess.run(tf.local_variables_initializer())
             coord = tf.train.Coordinator()
