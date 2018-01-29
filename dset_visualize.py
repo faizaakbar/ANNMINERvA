@@ -238,11 +238,11 @@ class MnvDataReader:
         if 'eventids' in data_dict.keys():
             extract_data('event_data', 'eventids', data_dict, None, 'uint64')
         if 'planecodes' in data_dict.keys():
-            extract_data('event_data', 'planecodes', data_dict, None, 'uint16')
+            extract_data('vtx_data', 'planecodes', data_dict, None, 'uint16')
         if 'segments' in data_dict.keys():
-            extract_data('event_data', 'segments', data_dict, None, 'uint8')
+            extract_data('vtx_data', 'segments', data_dict, None, 'uint8')
         if 'zs' in data_dict.keys():
-            extract_data('event_data', 'zs', data_dict, None)
+            extract_data('vtx_data', 'zs', data_dict, None)
 
         self._f.close()
         
