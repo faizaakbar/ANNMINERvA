@@ -5,8 +5,8 @@ from six.moves import range
 import tensorflow as tf
 import logging
 
-import mnv_utils
-from MnvDataConstants import EVENTIDS
+import mnvtf.mnv_utils as mnv_utils
+from mnvtf.MnvDataConstants import EVENTIDS
 
 LOGGER = logging.getLogger(__name__)
 FLAGS = tf.app.flags.FLAGS
