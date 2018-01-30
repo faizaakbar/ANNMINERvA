@@ -3,6 +3,7 @@ import tensorflow as tf
 EVENT_DATA = 'event_data'
 EVENTIDS = 'eventids'
 PLANECODES = 'planecodes'
+VTX_DATA = 'vtx_data'
 SEGMENTS = 'segments'
 ZS = 'zs'
 GEN_DATA = 'gen_data'
@@ -45,7 +46,8 @@ N_TAUS = 'n_taus'
 # the TFRecord file by inspection - we must unpack with foreknowledge of
 # what is there to parse the raw bytes.
 HADMULTKINE_GROUPS_DICT = {
-    EVENT_DATA: [EVENTIDS, PLANECODES, SEGMENTS, ZS],
+    EVENT_DATA: [EVENTIDS],
+    VTX_DATA: [PLANECODES, SEGMENTS, ZS],
     GEN_DATA: [QSQRD, WINV, XBJ, YBJ, CURRENT, INT_TYPE, TARGETZ],
     HADRO_DATA: [
         ESUM_CHGDKAONS, ESUM_CHGDPIONS, ESUM_HADMULTMEAS,
@@ -62,13 +64,23 @@ HADMULTKINE_GROUPS_DICT = {
 HADMULTKINE_TYPE = 'hadmultkineimgs'
 
 VTXFINDING_GROUPS_DICT = {
-    EVENT_DATA: [EVENTIDS, PLANECODES, SEGMENTS, ZS],
+    EVENT_DATA: [EVENTIDS],
+    VTX_DATA: [PLANECODES, SEGMENTS, ZS],
     IMG_DATA: [HITIMESU, HITIMESV, HITIMESX]
 }
 VTXFINDING_TYPE = 'vtxfndingimgs'
 
+IMGING_GROUPS_DICT = {
+    EVENT_DATA: [EVENTIDS],
+    VTX_DATA: [PLANECODES, SEGMENTS, ZS],
+    IMG_DATA: [HITIMESU, HITIMESV, HITIMESX]
+}
+IMGING_TYPE = 'mnvimgs'
+
 VALID_SET_OF_GROUPS = set(
-    HADMULTKINE_GROUPS_DICT.keys() + VTXFINDING_GROUPS_DICT.keys()
+    HADMULTKINE_GROUPS_DICT.keys() +
+    VTXFINDING_GROUPS_DICT.keys() +
+    IMGING_GROUPS_DICT.keys()
 )
 
 
@@ -86,6 +98,9 @@ def make_mnv_data_dict(list_of_groups):
             if g == EVENT_DATA:
                 data_list.extend([
                     (EVENTIDS, tf.int64, g),
+                ])
+            if g == VTX_DATA:
+                data_list.extend([
                     (PLANECODES, tf.int32, g),
                     (SEGMENTS, tf.uint8, g),
                     (ZS, tf.float32, g),
