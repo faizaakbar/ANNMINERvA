@@ -3,11 +3,19 @@
 Usage:
     python dset_visualize.py -f [file name] -n [optional: # of evts, def==10]
 """
-import pylab
 import sys
+from collections import OrderedDict
+import pylab
 import h5py
 import tensorflow as tf
 import numpy as np
+
+from mnvtf.mnv_utils import get_reader_class
+from mnvtf.mnv_utils import make_data_reader_dict
+from mnvtf.MnvDataConstants import HITIMESU, HITIMESV, HITIMESX
+from mnvtf.MnvDataConstants import EVENT_DATA, EVENTIDS
+from mnvtf.MnvDataConstants import PLANECODES, SEGMENTS, ZS
+from mnvtf.MnvHDF5 import MnvHDF5Reader
 
 
 def decode_eventid(eventid):
@@ -25,158 +33,89 @@ def decode_eventid(eventid):
     return (run, subrun, gate, phys_evt)
 
 
-def make_mnv_vertex_finder_data_dict():
-    data_dict = {}
-    data_dict['energies+times'] = {}
-    data_dict['energies'] = {}
-    data_dict['times'] = {}
-    data_dict['eventids'] = {}
-    data_dict['planecodes'] = {}
-    data_dict['segments'] = {}
-    data_dict['zs'] = {}
-    return data_dict
-
-
 class MnvDataReader:
     def __init__(
             self,
             filename,
             n_events=10,
             views=['x', 'u', 'v'],
-            img_sizes=(50, 25),
-            n_planecodes=67
+            img_sizes=(94, 47),
+            n_planecodes=173,
+            tfrecord_reader_type=None,
+            data_format='NHWC'
     ):
         """
         currently, only work with compressed tfrecord files; assume compression
         for hdf5 is inside, etc.
         """
+        self._f = None
         self.filename = filename
         self.n_events = n_events
         self.views = views
-        self.filetype = filename.split('.')[-1]
         self.img_sizes = img_sizes
         self.n_planecodes = n_planecodes
+        self.img_shp = (127, img_sizes[0], img_sizes[1], 2)
+        self.data_format = data_format
 
-        self.compression = tf.python_io.TFRecordCompressionType.NONE
-        if self.filetype == 'gz':
-            self.compression = tf.python_io.TFRecordCompressionType.GZIP
+        ext = self.filename.split('.')[-1]
+        self.compression = ext if ext in ['zz', 'gz'] else ''
+        if self.compression in ['zz', 'gz']:
             self.filetype = filename.split('.')[-2]
-        elif self.filetype == 'zz':
-            self.compression = tf.python_io.TFRecordCompressionType.ZLIB
-            self.filetype = filename.split('.')[-2]
+        else:
+            self.filetype = ext
 
         self.hdf5_extensions = ['hdf5', 'h5']
         self.tfr_extensions = ['tfrecord']
-        self.all_extensions = self.hdf5_extensions + self.tfr_extensions
 
-        if self.filetype not in self.all_extensions:
-            msg = 'Invalid file type extension! '
-            msg += 'Valid extensions: ' + ','.join(self.all_extensions)
-            raise ValueError(msg)
-        self._f = None
+        if tfrecord_reader_type is None:
+            # attempt to infer the reader type from the filename.
+            tfrecord_reader_type = filename.split('/')[-1]
+            tfrecord_reader_type = tfrecord_reader_type.split('_')[0]
+        self.tfrecord_reader = get_reader_class(tfrecord_reader_type)
 
-        self.times_names = ['times-x', 'times-u', 'times-v']
-        self.energies_names = ['hits-x', 'hits-u', 'hits-v']
-        self.energiestimes_names = ['hitimes-x', 'hitimes-u', 'hitimes-v']
-
-    def _tfrecord_to_graph_ops_et(self):
-        """
-        TODO - handle cases with just energy or time tensors; this is a bit
-        tricky - TFRecords are not super-flexible about missing dsets the way
-        hdf5 files are. Options are to carefully build the TFRrecod reader to
-        be robust against missing values (not sure how to do this yet), or
-        use an argument key to pick which values are expected. For now,
-        specialize at the function name level ('_et' for 'engy+tm')
-        """
-        def proces_hitimes(inp, shape):
-            """ Keep (N, C, H, W) structure """
-            return tf.reshape(tf.decode_raw(inp, tf.float32), shape)
-
-        file_queue = tf.train.string_input_producer(
-            [self.filename], name='file_queue', num_epochs=1
-        )
-        reader = tf.TFRecordReader(
-            options=tf.python_io.TFRecordOptions(
-                compression_type=self.compression
-            )
-        )
-        _, tfrecord = reader.read(file_queue)
-
-        tfrecord_features = tf.parse_single_example(
-            tfrecord,
-            features={
-                'eventids': tf.FixedLenFeature([], tf.string),
-                'hitimes-x': tf.FixedLenFeature([], tf.string),
-                'hitimes-u': tf.FixedLenFeature([], tf.string),
-                'hitimes-v': tf.FixedLenFeature([], tf.string),
-                'planecodes': tf.FixedLenFeature([], tf.string),
-                'segments': tf.FixedLenFeature([], tf.string),
-                'zs': tf.FixedLenFeature([], tf.string),
-            },
-            name='data'
-        )
-        evtids = tf.decode_raw(tfrecord_features['eventids'], tf.int64)
-        hitimesx = proces_hitimes(
-            tfrecord_features['hitimes-x'], [-1, 2, 127, self.img_sizes[0]]
-        )
-        hitimesu = proces_hitimes(
-            tfrecord_features['hitimes-u'], [-1, 2, 127, self.img_sizes[1]]
-        )
-        hitimesv = proces_hitimes(
-            tfrecord_features['hitimes-v'], [-1, 2, 127, self.img_sizes[1]]
-        )
-        pcodes = tf.decode_raw(tfrecord_features['planecodes'], tf.int32)
-        pcodes = tf.one_hot(
-            indices=pcodes, depth=self.n_planecodes, on_value=1, off_value=0
-        )
-        segs = tf.decode_raw(tfrecord_features['segments'], tf.uint8)
-        zs = tf.decode_raw(tfrecord_features['zs'], tf.float32)
-        return evtids, hitimesx, hitimesu, hitimesv, pcodes, segs, zs
-
-    def _batch_generator_et(self):
-        es, hx, hu, hv, ps, sg, zs = self._tfrecord_to_graph_ops_et()
-        capacity = 2 * self.n_events
-        es_b, hx_b, hu_b, hv_b, ps_b, sg_b, zs_b = tf.train.batch(
-            [es, hx, hu, hv, ps, sg, zs],
-            batch_size=self.n_events,
-            capacity=capacity,
-            allow_smaller_final_batch=True,
-            enqueue_many=True
-        )
-        return es_b, hx_b, hu_b, hv_b, ps_b, sg_b, zs_b
-    
     def _read_tfr(self):
         data_dict = {}
         data_dict['energies+times'] = {}
-        data_dict['energies'] = {}
-        data_dict['times'] = {}
 
-        es_b, hx_b, hu_b, hv_b, ps_b, sg_b, zs_b = self._batch_generator_et()
+        dd = make_data_reader_dict(
+            filenames_list=[self.filename],
+            batch_size=self.n_events,
+            name='test_read',
+            compression=self.compression,
+            img_shp=self.img_shp,
+            data_format=self.data_format,
+            n_planecodes=self.n_planecodes
+        )
+        reader = self.tfrecord_reader(dd)
+        # get an ordered dict
+        batch_dict = reader.batch_generator()
+
+        def tp_tnsr(tnsr):
+            return np.transpose(tnsr, [0, 3, 1, 2])
+
         with tf.Session() as sess:
-            # have to run local variable init for `string_input_producer`
             sess.run(tf.local_variables_initializer())
             coord = tf.train.Coordinator()
             threads = tf.train.start_queue_runners(coord=coord)
             try:
-                # TODO - also get and return evtids, pcodes
-                evts, hx, hu, hv, pcds, segs, zs = sess.run(
-                    [es_b, hx_b, hu_b, hv_b, ps_b, sg_b, zs_b]
-                )
-                data_dict['energies+times']['x'] = hx
-                data_dict['energies+times']['u'] = hu
-                data_dict['energies+times']['v'] = hv
-                data_dict['eventids'] = evts
-                data_dict['planecodes'] = np.argmax(
-                    pcds, axis=1
-                ).reshape(pcds.shape[0], 1)  # pcds
-                data_dict['segments'] = segs
-                data_dict['zs'] = zs
-            # specifically catch `tf.errors.OutOfRangeError` or we won't handle
-            # the exception correctly.
+                tensor_list = sess.run(batch_dict.values())
+                results = OrderedDict(zip(batch_dict.keys(), tensor_list))
+                data_dict['energies+times']['x'] = tp_tnsr(results[HITIMESX])
+                data_dict['energies+times']['u'] = tp_tnsr(results[HITIMESU])
+                data_dict['energies+times']['v'] = tp_tnsr(results[HITIMESV])
+                data_dict['eventids'] = results[EVENTIDS]
+                if PLANECODES in results.keys():
+                    data_dict['planecodes'] = np.argmax(
+                        results[PLANECODES], axis=1
+                    ).reshape(results[PLANECODES].shape[0], 1)
+                if SEGMENTS in results.keys():
+                    data_dict['segments'] = np.argmax(
+                        results[SEGMENTS], axis=1
+                    ).reshape(results[SEGMENTS].shape[0], 1)
+                if ZS in results.keys():
+                    data_dict['zs'] = results[ZS]
             except tf.errors.OutOfRangeError:
-                print('Training stopped - queue is empty.')
-            except Exception as e:
-                print(e)
+                print('Reading stopped - queue is empty.')
             finally:
                 coord.request_stop()
                 coord.join(threads)
@@ -189,63 +128,22 @@ class MnvDataReader:
         (2-deep). get everything there into a dictionary keyed by type,
         and then by view.
         """
-        def extract_data(
-                group_name, dset_name, data_dict, tensor_type, dtype='f'
-        ):
-            view = dset_name[-1]
-            try:
-                shp = pylab.shape(self._f[group_name][dset_name])
-            except KeyError:
-                print("'{}/{}' does not exist.".format(
-                    group_name, dset_name
-                ))
-                shp = None
-            if shp is not None:
-                if len(shp) == 4:
-                    shp = (self.n_events, shp[1], shp[2], shp[3])
-                    data_dict[tensor_type][view] = \
-                        pylab.zeros(shp, dtype=dtype)
-                    data_dict[tensor_type][view] = \
-                        self._f[group_name][dset_name][:self.n_events]
-                elif len(shp) == 2:
-                    shp = (self.n_events, 1)
-                    data_dict[dset_name] = pylab.zeros(shp, dtype=dtype)
-                    data_dict[dset_name] = \
-                        self._f[group_name][dset_name][:self.n_events]
-                elif len(shp) == 1:
-                    shp = (self.n_events,)
-                    data_dict[dset_name] = pylab.zeros(shp, dtype=dtype)
-                    data_dict[dset_name] = \
-                        self._f[group_name][dset_name][:self.n_events]
-                else:
-                    raise ValueError('Data shape has a bad length!')
+        data_dict = {}
+        data_dict['energies+times'] = {}
 
-        self._f = h5py.File(self.filename, 'r')
-        
-        data_dict = make_mnv_vertex_finder_data_dict()
+        m = MnvHDF5Reader(self.filename)
+        m.open()
+        n_events = m.get_nevents(group=EVENT_DATA)
+        n_read = min(n_events, self.n_events)
+        data_dict['energies+times']['x'] = m.get_data(HITIMESX, 0, n_read)
+        data_dict['energies+times']['u'] = m.get_data(HITIMESU, 0, n_read)
+        data_dict['energies+times']['v'] = m.get_data(HITIMESV, 0, n_read)
+        data_dict['eventids'] = m.get_data(EVENTIDS, 0, n_read)
+        data_dict['planecodes'] = m.get_data(PLANECODES, 0, n_read)
+        data_dict['segments'] = m.get_data(SEGMENTS, 0, n_read)
+        data_dict['zs'] = m.get_data(ZS, 0, n_read)
+        m.close()
 
-        if 'energies+times' in data_dict.keys():
-            for dset_name in self.energiestimes_names:
-                extract_data(
-                    'img_data', dset_name, data_dict, 'energies+times'
-                )
-        if 'energies' in data_dict.keys():
-            for dset_name in self.energies_names:
-                extract_data('img_data', dset_name, data_dict, 'energies')
-        if 'times' in data_dict.keys():
-            for dset_name in self.times_names:
-                extract_data('img_data', dset_name, data_dict, 'times')
-        if 'eventids' in data_dict.keys():
-            extract_data('event_data', 'eventids', data_dict, None, 'uint64')
-        if 'planecodes' in data_dict.keys():
-            extract_data('vtx_data', 'planecodes', data_dict, None, 'uint16')
-        if 'segments' in data_dict.keys():
-            extract_data('vtx_data', 'segments', data_dict, None, 'uint8')
-        if 'zs' in data_dict.keys():
-            extract_data('vtx_data', 'zs', data_dict, None)
-
-        self._f.close()
-        
         return data_dict
 
     def read_data(self):
@@ -276,47 +174,11 @@ def make_plots(data_dict, max_events, normed_img):
             pkeys.append(k)
     print('Data dictionary present keys: {}'.format(pkeys))
 
-    def combine_et(e_tensor, t_tensor):
-        base_shape = e_tensor.shape
-        base_shape[1] = 2
-        new_tensor = pylab.zeros(base_shape)
-        new_tensor[:, 0, :, :] = e_tensor[:, 0, :, :]
-        new_tensor[:, 1, :, :] = t_tensor[:, 1, :, :]
-        return new_tensor
-
     types = ['energy', 'time']
     views = ['x', 'u', 'v']   # TODO? build dynamically?
 
-    plotting_two_tensors = False
-    if data_dict['energies+times']:
-        plotting_two_tensors = True
-    elif data_dict['energies'] or data_dict['times']:
-        if data_dict['energies'] and data_dict['times']:
-            plotting_two_tensors = True
-            for view in views:
-                data_dict['energies+times'][view] = combine_et(
-                    data_dict['energies'][view], data_dict['times'][view]
-                )
-            data_dict['energies'] = {}
-            data_dict['times'] = {}
-        else:
-            data_dict['oned'] = {}
-            data_dict['oned']['type'] = None
-            if data_dict['energies']:
-                data_dict['oned']['type'] = 'energies'
-                types = ['energy']
-            else:
-                data_dict['oned']['type'] = 'times'
-                types = ['time']
-            for view in views:
-                if data_dict['energies']:
-                    data_dict['oned'][view] = data_dict['energies'][view]
-                elif data_dict['times']:
-                    data_dict['oned'][view] = data_dict['times'][view]
-                else:
-                    raise ValueError('Mal-formed values tensor!')
-
-    print('  Plotting 2D tensors? {}'.format(plotting_two_tensors))
+    # only working with two-deep imgs these days
+    # plotting_two_tensors = True
 
     evt_plotted = 0
     for counter in range(len(data_dict['eventids'])):
@@ -334,8 +196,8 @@ def make_plots(data_dict, max_events, normed_img):
 
         # run, subrun, gate, phys_evt = decode_eventid(evtid)
         fig_wid = 9
-        fig_height = 6 if plotting_two_tensors else 3
-        grid_height = 2 if plotting_two_tensors else 1
+        fig_height = 6
+        grid_height = 2
         fig = pylab.figure(figsize=(fig_wid, fig_height))
         if planecode in target_plane_codes.keys():
             fig.suptitle('{}/{}/{}/{}: seg {} / pcode {} / targ {}'.format(
@@ -349,10 +211,7 @@ def make_plots(data_dict, max_events, normed_img):
         gs = pylab.GridSpec(grid_height, 3)
 
         for i, t in enumerate(types):
-            if plotting_two_tensors:
-                datatyp = 'energies+times'
-            else:
-                datatyp = 'energies' if t == 'energy' else 'times'
+            datatyp = 'energies+times'
             # set the bounds on the color scale
             if normed_img:
                 minv = 0 if t == 'energy' else -1
@@ -410,13 +269,13 @@ if __name__ == '__main__':
     parser.add_option('-n', '--nevents', dest='n_events', default=10,
                       help='Number of events', metavar='N_EVENTS',
                       type='int')
-    parser.add_option('--imgw_x', dest='imgw_x', default=50,
+    parser.add_option('--imgw_x', dest='imgw_x', default=94,
                       help='Image width (x)', metavar='IMG_WIDTHX',
                       type='int')
-    parser.add_option('--imgw_uv', dest='imgw_uv', default=25,
+    parser.add_option('--imgw_uv', dest='imgw_uv', default=47,
                       help='Image width (uv)', metavar='IMG_WIDTHUV',
                       type='int')
-    parser.add_option('--n_planecodes', dest='n_planecodes', default=67,
+    parser.add_option('--n_planecodes', dest='n_planecodes', default=173,
                       help='Number of planecodes (onehot)',
                       metavar='N_PLANECODES', type='int')
     parser.add_option('--normed_img', dest='normed_img', default=False,
