@@ -9,6 +9,12 @@ class MnvHDF5Reader:
     """
     the `minerva_hdf5_reader` will return numpy ndarrays of data for given
     ranges. user should call `open()` and `close()` to start/finish.
+
+    Note that this class assumes a file structure like:
+    f[group_1][dataset_1]
+    f[group_1][dataset_2]
+    ...
+    f[group_n][dataset_m]
     """
     def __init__(self, hdf5_file):
         self.file = hdf5_file
@@ -54,9 +60,8 @@ class MnvHDF5Reader:
             LOGGER.info('{} data is not available in this HDF5 file.')
             return []
 
-    def get_nevents(self):
-        test_grp = self._groups[0]
-        sizes = [self._f[test_grp][d].shape[0] for d in self._f[test_grp]]
+    def get_nevents(self, group):
+        sizes = [self._f[group][d].shape[0] for d in self._f[group]]
         if min(sizes) != max(sizes):
             msg = "All dsets must have the same size!"
             LOGGER.error(msg)
