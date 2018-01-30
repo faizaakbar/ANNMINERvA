@@ -5,10 +5,12 @@ import os
 import shutil
 import gzip
 
+from MnvDataReaders import MnvDataReaderImageST
 from MnvDataReaders import MnvDataReaderVertexST
 from MnvDataReaders import MnvDataReaderHamultKineST
 from MnvDataConstants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from MnvDataConstants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
+from MnvDataConstants import IMGING_GROUPS_DICT, IMGING_TYPE
 
 LOGGER = logging.getLogger(__name__)
 
@@ -190,6 +192,8 @@ def get_groups_list(hdf5_type):
         return VTXFINDING_GROUPS_DICT.keys()
     elif hdf5_type == HADMULTKINE_TYPE:
         return HADMULTKINE_GROUPS_DICT.keys()
+    elif hdf5_type == IMGING_TYPE:
+        return IMGING_GROUPS_DICT.keys()
     else:
         raise ValueError('Unknown HDF5 grouping type!')
 
@@ -199,6 +203,8 @@ def get_reader_class(data_file_type):
         return MnvDataReaderVertexST
     elif data_file_type == HADMULTKINE_TYPE:
         return MnvDataReaderHamultKineST
+    elif data_file_type == IMGING_TYPE:
+        return MnvDataReaderImageST
     else:
         raise ValueError('Unknown TFRec data file type!')
 
