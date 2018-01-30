@@ -16,6 +16,7 @@ import glob
 import mnv_utils
 from MnvHDF5 import MnvHDF5Reader
 from MnvDataConstants import make_mnv_data_dict
+from MnvDataConstants import EVENT_DATA
 from MnvDataConstants import PLANECODES, SEGMENTS
 
 LOGGER = logging.getLogger(__name__)
@@ -153,7 +154,7 @@ def write_all(
     ))
     m = MnvHDF5Reader(hdf5_file)
     m.open()
-    n_total = m.get_nevents()
+    n_total = m.get_nevents(group=EVENT_DATA)
     slcs = slices_maker(n_total, n_events_per_tfrecord_triplet)
     n_processed = 0
     new_files = []
