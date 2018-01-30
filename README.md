@@ -19,7 +19,6 @@ files.
 double-32 bit combos.
 * `examine_hdf5.py` - simple script to examine the structure and sizes of a
 MINERvA HDF5 file.
-* `make_hdf5_fuelfiles.py` - legacy script for converting text files to HDF5.
 * `perf_plots.py` - plotter that consumes the performance confusion matrices
 produced by the ML codes.
 * `plane_codes.py` - legacy utilities code for converting the 'old' MINERvA
