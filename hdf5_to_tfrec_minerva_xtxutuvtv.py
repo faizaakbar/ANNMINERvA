@@ -13,11 +13,11 @@ import os
 import logging
 import glob
 
-import mnv_utils
-from MnvHDF5 import MnvHDF5Reader
-from MnvDataConstants import make_mnv_data_dict
-from MnvDataConstants import EVENT_DATA
-from MnvDataConstants import PLANECODES, SEGMENTS
+import mnvtf.mnv_utils as mnv_utils
+from mnvtf.MnvHDF5 import MnvHDF5Reader
+from mnvtf.MnvDataConstants import make_mnv_data_dict
+from mnvtf.MnvDataConstants import EVENT_DATA
+from mnvtf.MnvDataConstants import PLANECODES, SEGMENTS
 
 LOGGER = logging.getLogger(__name__)
 
