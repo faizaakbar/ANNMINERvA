@@ -171,6 +171,24 @@ class MnvTFRecordReaderBase:
         return rd
 
 
+class MnvDataReaderImageST(MnvTFRecordReaderBase):
+    """
+    Minerva Data Reader for plain image "SpaceTime" data
+    """
+    def __init__(self, args_dict):
+        """
+        img_shp = (imgh, imgw_x, imgw_uv, img_depth)
+        TODO - get the img depth into this call also...
+        """
+        MnvTFRecordReaderBase.__init__(self, args_dict)
+        self.data_fields = sorted([
+            EVENTIDS, HITIMESU, HITIMESV, HITIMESX
+        ])
+        self._features_dict = {
+            f: tf.FixedLenFeature([], tf.string) for f in self.data_fields
+        }
+
+
 class MnvDataReaderVertexST(MnvTFRecordReaderBase):
     """
     Minerva Data Reader for (target) vertex-finder "SpaceTime" data
