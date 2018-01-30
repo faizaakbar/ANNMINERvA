@@ -5,12 +5,8 @@ To process deep learning codes using TensorFlow on the Wilson Cluster, see the
 Theano and Caffe, see the scripts here, but note that they have not been
 updated for the new batch processing system on the Wilson Cluster.
 
-* `Caffe/` - scripts and prototxts for running vertex finding using PBS and
-Slurm on the Wilson Cluster at Fermilab.
-* `Lasagne/` - Theano and Lasagne code for the MINERvA nuclear targets
-vertex finder and PBS scripts and some logs for runs on the Wilson Cluster at
-Fermilab
-* `TensorFlow/` - TensorFlow code for the MINERvA nuclear targets vertex
+* `Caffe/` - scripts and prototxts for running vertex finding.
+* `mnvtf/` - TensorFlow code for the MINERvA nuclear targets vertex
 finder and some legacy run scripts.
 * `archive/` - old code kept visible for reference.
 * `dset_visualize.py` - event display viewer that may consume HDF5 or TFRecord
