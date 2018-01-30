@@ -8,11 +8,11 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-from MnvModelsTricolumnar import TriColSTEpsilon
-from MnvModelsTricolumnar import make_default_convpooldict
-from MnvTFRunners import MnvTFRunnerCategorical
-from MnvDataReaders import MnvDataReaderVertexST
-import mnv_utils
+from mnvtf.MnvModelsTricolumnar import TriColSTEpsilon
+from mnvtf.MnvModelsTricolumnar import make_default_convpooldict
+from mnvtf.MnvTFRunners import MnvTFRunnerCategorical
+from mnvtf.MnvDataReaders import MnvDataReaderVertexST
+import mnvtf.mnv_utils as mnv_utils
 
 MNV_TYPE = 'st_epsilon'
 FLAGS = tf.app.flags.FLAGS
