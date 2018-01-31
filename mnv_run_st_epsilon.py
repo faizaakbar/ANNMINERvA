@@ -30,6 +30,8 @@ tf.app.flags.DEFINE_string('compression', '',
                            """pigz (zz) or gzip (gz).""")
 tf.app.flags.DEFINE_string('data_format', 'NHWC',
                            """Tensor packing structure.""")
+tf.app.flags.DEFINE_string('tfrec_type', 'hadmultkineimgs',
+                           """TFRecord file type.""")
 #
 # logs and special outputs (models, predictions, etc.)
 #
@@ -62,22 +64,22 @@ tf.app.flags.DEFINE_boolean('do_batch_norm', False,
 #
 # classification goal specification
 #
-tf.app.flags.DEFINE_string('targets_label', 'segments',
+tf.app.flags.DEFINE_string('targets_label', 'planecodes',
                            """Name of targets tensor.""")
-tf.app.flags.DEFINE_integer('n_classes', 11,
+tf.app.flags.DEFINE_integer('n_classes', 173,
                             """Name of target classes.""")
 #
 # img and data features
 #
 tf.app.flags.DEFINE_integer('imgh', 127,
                             """Img height.""")
-tf.app.flags.DEFINE_integer('imgw_x', 50,
+tf.app.flags.DEFINE_integer('imgw_x', 94,
                             """X-view img width.""")
-tf.app.flags.DEFINE_integer('imgw_uv', 25,
+tf.app.flags.DEFINE_integer('imgw_uv', 47,
                             """U/V-view img width.""")
 tf.app.flags.DEFINE_integer('img_depth', 2,
                             """Img depth.""")
-tf.app.flags.DEFINE_integer('n_planecodes', 67,
+tf.app.flags.DEFINE_integer('n_planecodes', 173,
                             """Number of planecodes.""")
 #
 # action flags
@@ -142,7 +144,8 @@ def main(argv=None):
 
     # set up run parameters
     runpars_dict = mnv_utils.make_run_params_dict(MNV_TYPE, FLAGS)
-    runpars_dict['DATA_READER_CLASS'] = MnvDataReaderVertexST
+    reader_class = mnv_utils.get_reader_class(FLAGS.tfrec_type)
+    runpars_dict['DATA_READER_CLASS'] = reader_class
 
     # do a short test run?
     short = FLAGS.do_a_short_run
