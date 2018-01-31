@@ -17,9 +17,15 @@ double-32 bit combos.
 MINERvA HDF5 file.
 * `hdf5_to_tfrec_minerva_xtxutuvtv.py` - script for converting HDF5 files to
 TensorFlow TFRecord.
-* `perf_plots.py` - plotter that consumes the performance confusion matrices
-produced by the ML codes.
+* `horovod_mnist.py` - script from Uber to run MNIST classification using
+Horovod.
+* `horovod_test.py` - test to see if we can initialize Horovod.
+* `mnv_run_st_epsilon.py` - run classification using the "space-time" version
+of the "epsilon" network architecture for vertex finding in the target
+analysis. 
 * `plane_codes.py` - legacy utilities code for converting the 'old' MINERvA
 framework plane id numbers into sequential planecodes.
-* `text_to_hdf5_processing_scripts/` - mostly legacy scripts for converting text files
-to HDF5.
+* `tfrec_examiner.py` - script that checks the number of records in a TFRecord
+file and prints the `eventid` values to a log.
+* `txt_to_sqlite.py` - converter script for writing text-based prediction
+files into SQLite files.
