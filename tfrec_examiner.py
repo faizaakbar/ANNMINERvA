@@ -92,9 +92,16 @@ def main(argv=None):
             FLAGS.data_dir, FLAGS.file_root, FLAGS.compression
         )
     flist_dict = {}
-    flist_dict['train'] = train_list
-    flist_dict['valid'] = valid_list
-    flist_dict['test'] = test_list
+    read_types_list = []
+    if len(train_list) > 0:
+        flist_dict['train'] = train_list
+        read_types_list.append('train')
+    if len(valid_list) > 0:
+        flist_dict['valid'] = valid_list
+        read_types_list.append('valid')
+    if len(test_list) > 0:
+        flist_dict['test'] = test_list
+        read_types_list.append('test')
 
     def datareader_dict(filenames_list, name):
         img_shp = (FLAGS.imgh, FLAGS.imgw_x, FLAGS.imgw_uv, FLAGS.img_depth)
@@ -111,7 +118,7 @@ def main(argv=None):
 
     LOGGER.info(' run_params_dict = {}'.format(repr(runpars_dict)))
 
-    for typ in ['train', 'valid', 'test']:
+    for typ in read_types_list:
         dd = datareader_dict(flist_dict[typ], typ)
         LOGGER.info(' data reader dict for {} = {}'.format(
             typ, repr(dd)
