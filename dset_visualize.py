@@ -6,7 +6,6 @@ Usage:
 import sys
 from collections import OrderedDict
 import pylab
-import h5py
 import tensorflow as tf
 import numpy as np
 
