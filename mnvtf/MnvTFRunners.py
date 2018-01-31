@@ -106,6 +106,15 @@ class MnvTFRunnerCategorical:
         eventids = batch_dict['eventids']
         return targets, features, eventids
 
+    def _prep_features_minerva(self, generator, num_epochs=1):
+        batch_dict = generator(num_epochs=num_epochs)
+        X = batch_dict[self.features['x']]
+        U = batch_dict[self.features['u']]
+        V = batch_dict[self.features['v']]
+        features = [X, U, V]
+        eventids = batch_dict['eventids']
+        return features, eventids
+
     def _log_confusion_maxtr(self, conf_mat):
         conf_mat_filename = self.save_model_directory + \
             '/confusion_matrix.npy'
@@ -458,8 +467,8 @@ class MnvTFRunnerCategorical:
             with tf.Session(graph=g, config=self.config_proto) as sess:
                 with tf.variable_scope('pipeline_queue'):
                     data_reader = self.data_reader(self.test_reader_args)
-                    targets, features, eventids = \
-                        self._prep_targets_and_features_minerva(
+                    features, eventids = \
+                        self._prep_features_minerva(
                             data_reader.batch_generator
                         )
 
