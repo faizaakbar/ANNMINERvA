@@ -199,7 +199,7 @@ def main(argv=None):
         logger.info('   N {} = {}'.format(
             typ, len(runpars_dict[dkey]['FILENAMES_LIST'])
         ))
-    model_class = mnv_utils.get_network_model_class(FLAGS.model_type)
+    model_class = mnv_utils.get_network_model_class(FLAGS.network_model)
     model = model_class(
         n_classes=FLAGS.n_classes,
         data_format=FLAGS.data_format,
