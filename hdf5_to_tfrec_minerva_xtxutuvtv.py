@@ -56,6 +56,8 @@ def get_binary_data(reader, name, start_idx, stop_idx):
     NOTE: we must treat the 'planecodes' dataset as special - TF has some
     issues with 16bit dtypes as of TF 1.2, so we must cast planecodes as 32-bit
     _prior_ to byte conversion.
+
+    Note: syntax to cap a numpy array: `b[np.where(b > 5)] = 5`
     """
     dta = reader.get_data(name, start_idx, stop_idx)
     if name == PLANECODES:
