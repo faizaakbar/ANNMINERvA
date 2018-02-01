@@ -8,7 +8,6 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-from mnvtf.MnvModelsTricolumnar import TriColSTEpsilon
 from mnvtf.MnvModelsTricolumnar import make_default_convpooldict
 from mnvtf.MnvTFRunners import MnvTFRunnerCategorical
 import mnvtf.mnv_utils as mnv_utils
@@ -200,7 +199,8 @@ def main(argv=None):
         logger.info('   N {} = {}'.format(
             typ, len(runpars_dict[dkey]['FILENAMES_LIST'])
         ))
-    model = TriColSTEpsilon(
+    model_class = mnv_utils.get_network_model_class(FLAGS.model_type)
+    model = model_class(
         n_classes=FLAGS.n_classes,
         data_format=FLAGS.data_format,
         use_batch_norm=FLAGS.do_batch_norm
