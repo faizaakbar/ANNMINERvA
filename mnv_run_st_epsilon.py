@@ -11,7 +11,6 @@ import tensorflow as tf
 from mnvtf.MnvModelsTricolumnar import TriColSTEpsilon
 from mnvtf.MnvModelsTricolumnar import make_default_convpooldict
 from mnvtf.MnvTFRunners import MnvTFRunnerCategorical
-from mnvtf.MnvDataReaders import MnvDataReaderVertexST
 import mnvtf.mnv_utils as mnv_utils
 
 MNV_TYPE = 'st_epsilon'
@@ -56,6 +55,8 @@ tf.app.flags.DEFINE_integer('save_every_n_batch', 500,
                             """Save every N batches.""")
 tf.app.flags.DEFINE_string('strategy', 'Adam',
                            """Optimizer strategy.""")
+tf.app.flags.DEFINE_string('network_model', 'TriColSTEpsilon',
+                           """Nework model.""")
 tf.app.flags.DEFINE_float('learning_rate', 0.001,
                           """Learning rate.""")
 tf.app.flags.DEFINE_boolean('do_batch_norm', False,
@@ -64,9 +65,9 @@ tf.app.flags.DEFINE_boolean('do_batch_norm', False,
 #
 # classification goal specification
 #
-tf.app.flags.DEFINE_string('targets_label', 'planecodes',
+tf.app.flags.DEFINE_string('targets_label', 'n_hadmultmeas',
                            """Name of targets tensor.""")
-tf.app.flags.DEFINE_integer('n_classes', 173,
+tf.app.flags.DEFINE_integer('n_classes', 21,
                             """Name of target classes.""")
 #
 # img and data features
