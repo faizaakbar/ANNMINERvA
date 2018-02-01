@@ -11,6 +11,7 @@ from MnvDataReaders import MnvDataReaderHamultKineST
 from MnvDataConstants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from MnvDataConstants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 from MnvDataConstants import IMGING_GROUPS_DICT, IMGING_TYPE
+from MnvModelsTricolumnar import TriColSTEpsilon
 
 LOGGER = logging.getLogger(__name__)
 
@@ -207,6 +208,13 @@ def get_reader_class(data_file_type):
         return MnvDataReaderImageST
     else:
         raise ValueError('Unknown TFRec data file type!')
+
+
+def get_network_model_class(model_type):
+    if model_type == 'TriColSTEpsilon':
+        return TriColSTEpsilon
+    else:
+        raise ValueError('Unknown NN model type!')
 
 
 def decode_eventid(eventid):
