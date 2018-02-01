@@ -36,9 +36,8 @@ class MnvTFRecordReaderBase:
         self.data_fields = None
         self._basic_int32_fields = set([
             CURRENT, INT_TYPE, TARGETZ,
-            N_CHGDKAONS, N_CHGDPIONS, N_HADMULTMEAS,
-            N_NEUTPIONS, N_NEUTRONS, N_OTHERS, N_PROTONS,
-            N_ELECTRONS, N_MUONS, N_TAUS,
+            N_CHGDKAONS, N_CHGDPIONS, N_NEUTPIONS, N_NEUTRONS, N_OTHERS,
+            N_PROTONS, N_ELECTRONS, N_MUONS, N_TAUS,
         ])
         self._basic_float32_fields = set([
             ZS, QSQRD, WINV, XBJ, YBJ,
@@ -69,20 +68,6 @@ class MnvTFRecordReaderBase:
         _, tfrecord = reader.read(file_queue)
         return tfrecord
 
-    def _decode_planecodes(self, tfrecord_features):
-        pcodes = tf.decode_raw(
-            tfrecord_features[PLANECODES], tf.int32
-        )
-        pcodes = tf.one_hot(
-            indices=pcodes, depth=self.n_planecodes, on_value=1, off_value=0
-        )
-        return pcodes
-
-    def _decode_segments(self, tfrecord_features):
-        segs = tf.decode_raw(tfrecord_features[SEGMENTS], tf.uint8)
-        segs = tf.one_hot(indices=segs, depth=11, on_value=1, off_value=0)
-        return segs
-
     def _decode_hitimesx(self, tfrecord_features):
         return self._process_hitimes(
             tfrecord_features[HITIMESX],
@@ -104,6 +89,13 @@ class MnvTFRecordReaderBase:
     def _decode_basic(self, tfrecord_features, field, tf_dtype):
         return tf.decode_raw(tfrecord_features[field], tf_dtype)
 
+    def _decode_onehot(
+            self, tfrecord_features, field, depth, tf_dtype=tf.int32
+    ):
+        v = tf.decode_raw(tfrecord_features[field], tf_dtype)
+        v = tf.one_hot(indices=v, depth=depth, on_value=1, off_value=0)
+        return v
+
     def _decode_tfrecord_feature(self, tfrecord_features, field):
         if field == EVENTIDS:
             return self._decode_basic(tfrecord_features, field, tf.int64)
@@ -114,9 +106,13 @@ class MnvTFRecordReaderBase:
         elif field == HITIMESX:
             return self._decode_hitimesx(tfrecord_features)
         elif field == PLANECODES:
-            return self._decode_planecodes(tfrecord_features)
+            return self._decode_onehot(
+                tfrecord_features, field, self.n_planecodes
+            )
         elif field == SEGMENTS:
-            return self._decode_segments(tfrecord_features)
+            return self._decode_onehot(tfrecord_features, field, 11, tf.uint8)
+        elif field == N_HADMULTMEAS:
+            return self._decode_onehot(tfrecord_features, field, 21)
         elif field in self._basic_float32_fields:
             return self._decode_basic(tfrecord_features, field, tf.float32)
         elif field in self._basic_int32_fields:
