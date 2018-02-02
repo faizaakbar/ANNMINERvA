@@ -11,7 +11,7 @@ from data_readers import MnvDataReaderHamultKineST
 from data_constants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from data_constants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 from data_constants import IMGING_GROUPS_DICT, IMGING_TYPE
-from MnvModelsTricolumnar import TriColSTEpsilon
+from models_tricolumnar import TriColSTEpsilon
 
 LOGGER = logging.getLogger(__name__)
 
