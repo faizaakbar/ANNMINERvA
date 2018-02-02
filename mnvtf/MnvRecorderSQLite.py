@@ -15,7 +15,7 @@ from sqlalchemy import UniqueConstraint
 from sqlalchemy import MetaData
 from sqlalchemy import select
 
-import mnv_utils
+import utils
 
 LOGGER = logging.getLogger(__name__)
 
@@ -98,7 +98,7 @@ class MnvCategoricalSQLiteRecorder:
         shape (batch?, ?, probability)
         """
         result = None
-        run, sub, gate, pevt = mnv_utils.decode_eventid(eventid)
+        run, sub, gate, pevt = utils.decode_eventid(eventid)
         if len(probs) == 11:
             ins = self.table.insert().values(
                 run=run,

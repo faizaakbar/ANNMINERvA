@@ -44,7 +44,7 @@ def make_data_reader_dict(
     elif compression == 'gz':
         data_reader_dict['FILE_COMPRESSION'] = GZIP_COMP
     else:
-        msg = 'Invalid compression type in mnv_utils!'
+        msg = 'Invalid compression type in utils!'
         LOGGER.error(msg)
         raise ValueError(msg)
     data_reader_dict['IMG_SHP'] = img_shp

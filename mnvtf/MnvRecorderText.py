@@ -7,7 +7,7 @@ import logging
 import gzip
 import shutil
 
-import mnv_utils
+import utils
 
 LOGGER = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class MnvCategoricalTextRecorder:
 
     def write_data(self, eventid, pred, probs):
         with open(self.db_name, 'ab+') as f:
-            evtid_string = ','.join(mnv_utils.decode_eventid(eventid))
+            evtid_string = ','.join(utils.decode_eventid(eventid))
             probs_string = ','.join([str(i) for i in probs])
             msg = evtid_string + ',' + str(pred) + ',' + probs_string + '\n'
             f.write(msg)

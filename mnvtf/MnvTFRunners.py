@@ -11,7 +11,7 @@ import tensorflow as tf
 import numpy as np
 from six.moves import range
 
-import mnv_utils
+import utils
 
 LOGGER = logging.getLogger(__name__)
 
@@ -223,7 +223,7 @@ class MnvTFRunnerCategorical:
                     strategy=self.strategy
                 )
                 LOGGER.info('Preparing to train model with %d parameters' %
-                            mnv_utils.get_number_of_trainable_parameters())
+                            utils.get_number_of_trainable_parameters())
 
                 writer = tf.summary.FileWriter(run_dest_dir)
                 saver = tf.train.Saver(
@@ -325,7 +325,7 @@ class MnvTFRunnerCategorical:
 
             writer.close()
 
-        out_graph = mnv_utils.freeze_graph(
+        out_graph = utils.freeze_graph(
             self.save_model_directory, self.model.get_output_nodes()
         )
         LOGGER.info(' Saved graph {}'.format(out_graph))
@@ -356,7 +356,7 @@ class MnvTFRunnerCategorical:
                 self.model.prepare_for_inference(features, d)
                 self.model.prepare_for_loss_computation(targets)
                 LOGGER.info('Preparing to test model with %d parameters' %
-                            mnv_utils.get_number_of_trainable_parameters())
+                            utils.get_number_of_trainable_parameters())
 
                 saver = tf.train.Saver()
                 start_time = time.time()
@@ -475,7 +475,7 @@ class MnvTFRunnerCategorical:
                 d = self.build_kbd_function(img_depth=self.img_depth)
                 self.model.prepare_for_inference(features, d)
                 LOGGER.info('Predictions with model with %d parameters' %
-                            mnv_utils.get_number_of_trainable_parameters())
+                            utils.get_number_of_trainable_parameters())
 
                 saver = tf.train.Saver()
                 start_time = time.time()
@@ -582,7 +582,7 @@ class MnvTFRunnerCategorical:
             self.model.prepare_for_inference(f, d)
             self.model.prepare_for_loss_computation(targ)
             LOGGER.info('Preparing to check model with %d parameters' %
-                        mnv_utils.get_number_of_trainable_parameters())
+                        utils.get_number_of_trainable_parameters())
 
             saver = tf.train.Saver()
             init = tf.global_variables_initializer()
