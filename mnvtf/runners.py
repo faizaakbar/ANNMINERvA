@@ -75,7 +75,7 @@ class MnvTFRunnerCategorical:
 
         self.data_recorder = None
         try:
-            from MnvRecorderSQLite import MnvCategoricalSQLiteRecorder
+            from recorder_sqlite import MnvCategoricalSQLiteRecorder
             self.data_recorder = MnvCategoricalSQLiteRecorder(
                 self.model.n_classes, self.pred_store_name
             )
