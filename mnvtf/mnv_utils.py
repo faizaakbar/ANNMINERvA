@@ -5,9 +5,9 @@ import os
 import shutil
 import gzip
 
-from MnvDataReaders import MnvDataReaderImageST
-from MnvDataReaders import MnvDataReaderVertexST
-from MnvDataReaders import MnvDataReaderHamultKineST
+from data_readers import MnvDataReaderImageST
+from data_readers import MnvDataReaderVertexST
+from data_readers import MnvDataReaderHamultKineST
 from data_constants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from data_constants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 from data_constants import IMGING_GROUPS_DICT, IMGING_TYPE
