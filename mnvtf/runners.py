@@ -81,13 +81,13 @@ class MnvTFRunnerCategorical:
             )
         except ImportError as e:
             LOGGER.error('Cannot store prediction in sqlite: {}'.format(e))
-            from MnvRecorderText import MnvCategoricalTextRecorder
+            from recorder_text import MnvCategoricalTextRecorder
             self.data_recorder = MnvCategoricalTextRecorder(
                 self.pred_store_name
             )
         except ValueError as e:
             LOGGER.error('{}'.format(e))
-            from MnvRecorderText import MnvCategoricalTextRecorder
+            from recorder_text import MnvCategoricalTextRecorder
             self.data_recorder = MnvCategoricalTextRecorder(
                 self.pred_store_name
             )            
