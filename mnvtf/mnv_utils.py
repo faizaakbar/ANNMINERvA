@@ -8,9 +8,9 @@ import gzip
 from MnvDataReaders import MnvDataReaderImageST
 from MnvDataReaders import MnvDataReaderVertexST
 from MnvDataReaders import MnvDataReaderHamultKineST
-from MnvDataConstants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
-from MnvDataConstants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
-from MnvDataConstants import IMGING_GROUPS_DICT, IMGING_TYPE
+from data_constants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
+from data_constants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
+from data_constants import IMGING_GROUPS_DICT, IMGING_TYPE
 from MnvModelsTricolumnar import TriColSTEpsilon
 
 LOGGER = logging.getLogger(__name__)
