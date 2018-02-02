@@ -9,12 +9,12 @@ import pylab
 import tensorflow as tf
 import numpy as np
 
-from mnvtf.mnv_utils import get_reader_class
-from mnvtf.mnv_utils import make_data_reader_dict
-from mnvtf.MnvDataConstants import HITIMESU, HITIMESV, HITIMESX
-from mnvtf.MnvDataConstants import EVENT_DATA, EVENTIDS
-from mnvtf.MnvDataConstants import PLANECODES, SEGMENTS, ZS
-from mnvtf.MnvHDF5 import MnvHDF5Reader
+from mnvtf.utils import get_reader_class
+from mnvtf.utils import make_data_reader_dict
+from mnvtf.data_constants import HITIMESU, HITIMESV, HITIMESX
+from mnvtf.data_constants import EVENT_DATA, EVENTIDS
+from mnvtf.data_constants import PLANECODES, SEGMENTS, ZS
+from mnvtf.hdf5_readers import MnvHDF5Reader
 
 
 def decode_eventid(eventid):

@@ -13,11 +13,11 @@ import os
 import logging
 import glob
 
-import mnvtf.mnv_utils as mnv_utils
-from mnvtf.MnvHDF5 import MnvHDF5Reader
-from mnvtf.MnvDataConstants import make_mnv_data_dict
-from mnvtf.MnvDataConstants import EVENT_DATA
-from mnvtf.MnvDataConstants import PLANECODES, SEGMENTS
+import mnvtf.utils as utils
+from mnvtf.hdf5_readers import MnvHDF5Reader
+from mnvtf.data_constants import make_mnv_data_dict
+from mnvtf.data_constants import EVENT_DATA
+from mnvtf.data_constants import PLANECODES, SEGMENTS
 
 LOGGER = logging.getLogger(__name__)
 
@@ -89,7 +89,7 @@ def write_tfrecord(
     writer.close()
 
     if compress_to_gz:
-        mnv_utils.gz_compress(tfrecord_file)
+        utils.gz_compress(tfrecord_file)
 
 
 def test_read_tfrecord(
@@ -100,7 +100,7 @@ def test_read_tfrecord(
     tf.reset_default_graph()
     LOGGER.info('opening {} for reading'.format(tfrecord_file))
 
-    dd = mnv_utils.make_data_reader_dict(
+    dd = utils.make_data_reader_dict(
         filenames_list=[tfrecord_file],
         batch_size=64,
         name='test_read',
@@ -109,7 +109,7 @@ def test_read_tfrecord(
         data_format=data_format,
         n_planecodes=n_planecodes
     )
-    reader_class = mnv_utils.get_reader_class(hdf5_type)
+    reader_class = utils.get_reader_class(hdf5_type)
     reader = reader_class(dd)
     # get an ordered dict
     batch_dict = reader.batch_generator()
@@ -197,7 +197,7 @@ def write_all(
                 os.remove(filename)
 
         if not dry_run and file_num >= file_num_start_write:
-            list_of_groups = mnv_utils.get_groups_list(hdf5_type)
+            list_of_groups = utils.get_groups_list(hdf5_type)
             data_dict = make_mnv_data_dict(list_of_groups=list_of_groups)
             # events included are [start, stop)
             if n_train > 0:

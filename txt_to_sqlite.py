@@ -16,11 +16,11 @@ Valid formats: 'ghosh', 'perdue'
 """
 from __future__ import print_function
 try:
-    from mnvtf.MnvRecorderSQLite import MnvCategoricalSQLiteRecorder
+    from mnvtf.recorder_sqlite import MnvCategoricalSQLiteRecorder
 except ImportError as e:
-    print('Cannot import MnvRecorderSQLite')
+    print('Cannot import recorder_sqlite')
     raise e
-from mnvtf.mnv_utils import encode_eventid
+from mnvtf.utils import encode_eventid
 
 VALID_FORMATS = ['ghosh', 'perdue']
 

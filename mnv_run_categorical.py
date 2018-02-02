@@ -8,9 +8,9 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-from mnvtf.MnvModelsTricolumnar import make_default_convpooldict
-from mnvtf.MnvTFRunners import MnvTFRunnerCategorical
-import mnvtf.mnv_utils as mnv_utils
+from mnvtf.models_tricolumnar import make_default_convpooldict
+from mnvtf.runners import MnvTFRunnerCategorical
+import mnvtf.utils as utils
 
 MNV_TYPE = 'st_epsilon'
 FLAGS = tf.app.flags.FLAGS
@@ -129,7 +129,7 @@ def main(argv=None):
     # set up logger
     import logging
     logfilename = FLAGS.log_name
-    logging_level = mnv_utils.get_logging_level(FLAGS.log_level)
+    logging_level = utils.get_logging_level(FLAGS.log_level)
     logging.basicConfig(
         filename=logfilename, level=logging_level,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -139,12 +139,12 @@ def main(argv=None):
     logger.info(__file__)
 
     # set up features parameters
-    feature_targ_dict = mnv_utils.make_feature_targ_dict(MNV_TYPE, FLAGS)
+    feature_targ_dict = utils.make_feature_targ_dict(MNV_TYPE, FLAGS)
     feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
 
     # set up run parameters
-    runpars_dict = mnv_utils.make_run_params_dict(MNV_TYPE, FLAGS)
-    reader_class = mnv_utils.get_reader_class(FLAGS.tfrec_type)
+    runpars_dict = utils.make_run_params_dict(MNV_TYPE, FLAGS)
+    reader_class = utils.get_reader_class(FLAGS.tfrec_type)
     runpars_dict['DATA_READER_CLASS'] = reader_class
 
     # do a short test run?
@@ -154,7 +154,7 @@ def main(argv=None):
     # file_root are both comma-separated lists - we will make every possible
     # combinaton of them, so be careful, etc.
     train_list, valid_list, test_list = \
-        mnv_utils.get_trainvalidtest_file_lists(
+        utils.get_trainvalidtest_file_lists(
             FLAGS.data_dir, FLAGS.file_root, FLAGS.compression
         )
     # fix lists if there are special options
@@ -172,7 +172,7 @@ def main(argv=None):
 
     def datareader_dict(filenames_list, name):
         img_shp = (FLAGS.imgh, FLAGS.imgw_x, FLAGS.imgw_uv, FLAGS.img_depth)
-        dd = mnv_utils.make_data_reader_dict(
+        dd = utils.make_data_reader_dict(
             filenames_list=filenames_list,
             batch_size=FLAGS.batch_size,
             name=name,
@@ -188,7 +188,7 @@ def main(argv=None):
     runpars_dict['TEST_READER_ARGS'] = datareader_dict(test_list, 'data')
 
     # set up training parameters
-    train_params_dict = mnv_utils.make_train_params_dict(MNV_TYPE, FLAGS)
+    train_params_dict = utils.make_train_params_dict(MNV_TYPE, FLAGS)
 
     logger.info(' run_params_dict = {}'.format(repr(runpars_dict)))
     logger.info(' feature_targ_dict = {}'.format(repr(feature_targ_dict)))
@@ -199,7 +199,7 @@ def main(argv=None):
         logger.info('   N {} = {}'.format(
             typ, len(runpars_dict[dkey]['FILENAMES_LIST'])
         ))
-    model_class = mnv_utils.get_network_model_class(FLAGS.network_model)
+    model_class = utils.get_network_model_class(FLAGS.network_model)
     model = model_class(
         n_classes=FLAGS.n_classes,
         data_format=FLAGS.data_format,

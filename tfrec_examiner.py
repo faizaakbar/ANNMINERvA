@@ -5,8 +5,8 @@ from six.moves import range
 import tensorflow as tf
 import logging
 
-import mnvtf.mnv_utils as mnv_utils
-from mnvtf.MnvDataConstants import EVENTIDS
+import mnvtf.utils as utils
+from mnvtf.data_constants import EVENTIDS
 
 LOGGER = logging.getLogger(__name__)
 FLAGS = tf.app.flags.FLAGS
@@ -49,7 +49,7 @@ def read_all_evtids(datareader_dict, typ, tfrec_type):
     with tf.Graph().as_default() as g:
         with tf.Session(graph=g) as sess:
 
-            reader_class = mnv_utils.get_reader_class(tfrec_type)
+            reader_class = utils.get_reader_class(tfrec_type)
             reader = reader_class(datareader_dict)
             # get an ordered dict
             batch_dict = reader.batch_generator(num_epochs=1)
@@ -74,7 +74,7 @@ def read_all_evtids(datareader_dict, typ, tfrec_type):
                 coord.join(threads)
 
     LOGGER.info('found {} {} events'.format(n_evt, typ))
-    mnv_utils.gz_compress(out_file)
+    utils.gz_compress(out_file)
 
 
 def main(argv=None):
@@ -86,9 +86,9 @@ def main(argv=None):
     LOGGER.info("Starting...")
     LOGGER.info(__file__)
 
-    runpars_dict = mnv_utils.make_run_params_dict()
+    runpars_dict = utils.make_run_params_dict()
     train_list, valid_list, test_list = \
-        mnv_utils.get_trainvalidtest_file_lists(
+        utils.get_trainvalidtest_file_lists(
             FLAGS.data_dir, FLAGS.file_root, FLAGS.compression
         )
     flist_dict = {}
@@ -105,7 +105,7 @@ def main(argv=None):
 
     def datareader_dict(filenames_list, name):
         img_shp = (FLAGS.imgh, FLAGS.imgw_x, FLAGS.imgw_uv, FLAGS.img_depth)
-        dd = mnv_utils.make_data_reader_dict(
+        dd = utils.make_data_reader_dict(
             filenames_list=filenames_list,
             batch_size=FLAGS.batch_size,
             name=name,
