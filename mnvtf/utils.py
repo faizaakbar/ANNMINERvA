@@ -196,10 +196,11 @@ def get_groups_list(hdf5_type):
     elif hdf5_type == IMGING_TYPE:
         return IMGING_GROUPS_DICT.keys()
     else:
-        raise ValueError('Unknown HDF5 grouping type!')
+        raise ValueError('Unknown HDF5 grouping type {}!'.format(hdf5_type))
 
 
 def get_reader_class(data_file_type):
+    """ get TFRecord reader class """
     if data_file_type == VTXFINDING_TYPE:
         return MnvDataReaderVertexST
     elif data_file_type == HADMULTKINE_TYPE:
