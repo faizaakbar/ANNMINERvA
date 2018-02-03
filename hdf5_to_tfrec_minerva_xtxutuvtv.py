@@ -93,7 +93,7 @@ def write_tfrecord(
 
 
 def test_read_tfrecord(
-        tfrecord_file, hdf5_type, compression,
+        tfrecord_file, tfrec_struct, compression,
         img_h, imgw_x, imgw_uv, img_depth,
         n_planecodes, data_format
 ):
@@ -109,7 +109,7 @@ def test_read_tfrecord(
         data_format=data_format,
         n_planecodes=n_planecodes
     )
-    reader_class = utils.get_reader_class(hdf5_type)
+    reader_class = utils.get_reader_class(tfrec_struct)
     reader = reader_class(dd)
     # get an ordered dict
     batch_dict = reader.batch_generator()
@@ -146,7 +146,7 @@ def write_all(
         n_events_per_tfrecord_triplet, max_triplets, file_num_start,
         hdf5_file, train_file_pat, valid_file_pat, test_file_pat,
         train_fraction, valid_fraction, dry_run, compress_to_gz,
-        file_num_start_write, hdf5_type
+        file_num_start_write, tfrec_struct
 ):
     # todo, make this a while loop that keeps making tf record files
     # until we run out of events in the hdf5, then pass back the
@@ -197,7 +197,7 @@ def write_all(
                 os.remove(filename)
 
         if not dry_run and file_num >= file_num_start_write:
-            list_of_groups = utils.get_groups_list(hdf5_type)
+            list_of_groups = utils.get_groups_list(tfrec_struct)
             data_dict = make_mnv_data_dict(list_of_groups=list_of_groups)
             # events included are [start, stop)
             if n_train > 0:
@@ -240,7 +240,7 @@ def write_all(
 
 
 def read_all(
-        files_written, hdf5_type, dry_run, compressed, imgw_x, imgw_uv,
+        files_written, tfrec_struct, dry_run, compressed, imgw_x, imgw_uv,
         n_planecodes, img_h=127, img_depth=2, data_format='NHWC'
 ):
     LOGGER.info('reading files...')
@@ -255,7 +255,7 @@ def read_all(
             if not dry_run:
                 compression = 'gz' if compressed else ''
                 test_read_tfrecord(
-                    filename, hdf5_type, compression,
+                    filename, tfrec_struct, compression,
                     img_h, imgw_x, imgw_uv, img_depth,
                     n_planecodes, data_format
                 )
@@ -272,8 +272,8 @@ if __name__ == '__main__':
                       help='HDF5 file list (csv, full paths)',
                       metavar='FILELIST', type='string', action='callback',
                       callback=arg_list_split)
-    parser.add_option('-p', '--file_pattern', dest='file_pattern',
-                      help='File pattern', metavar='FILEPATTERN',
+    parser.add_option('-p', '--input_file_pattern', dest='input_file_pattern',
+                      help='Input file pattern', metavar='FILEPATTERN',
                       default=None, type='string')
     parser.add_option('-i', '--in_dir', dest='in_dir',
                       help='In directory (for file patterns)',
@@ -317,14 +317,16 @@ if __name__ == '__main__':
     parser.add_option('--n_planecodes', dest='n_planecodes', default=173,
                       help='Number (count) of planecodes', metavar='NPCODES',
                       type='int')
-    parser.add_option('--hdf5_type', dest='hdf5_type',
-                      default=None, help='HDF5 groups set',
-                      metavar='HDF5TYPE', type='string')
+    parser.add_option('--tfrec_struct', dest='tfrec_struct',
+                      default=None, help='TFRecord structure',
+                      metavar='TFRECSTRUCT', type='string')
+    parser.add_option('--playlist', dest='playlist',
+                      default='UNK', help='Playlist label',
+                      metavar='PLAYLIST', type='string')
 
     (options, args) = parser.parse_args()
 
-    # TODO - add `file_pattern` option (make it work)
-    if (not options.file_list) and (not options.file_pattern):
+    if (not options.file_list) and (not options.input_file_pattern):
         print("\nSpecify file list or file pattern:\n\n")
         print(__doc__)
         sys.exit(1)
@@ -346,7 +348,7 @@ if __name__ == '__main__':
     files = options.file_list or []
     for ext in ['*.hdf5', '*.h5']:
         extra_files = glob.glob(
-                options.in_dir + '/' + options.file_pattern + ext
+                options.in_dir + '/' + options.input_file_pattern + ext
         )
         files.extend(extra_files)
     # kill any repeats
@@ -365,9 +367,13 @@ if __name__ == '__main__':
     # tfrecord files of specified size, putting remainders in new files.
     file_num = 0
     for i, hdf5_file in enumerate(files):
+        # base name for output files:
         # NOTE - this includes the path, so don't put '.' or '..' in the dirs!
-        base_name = hdf5_file.split('/')[-1]
-        base_name = options.out_dir + '/' + base_name.split('.')[0]
+        base_name = options.tfrec_struct + '_127x' + str(options.imgw_x) + \
+                    '_' + options.playlist
+        # base_name = hdf5_file.split('/')[-1]
+        # base_name = options.out_dir + '/' + base_name.split('.')[0]
+        base_name = options.out_dir + '/' + base_name
         # create file patterns to fill tfrecord files by number
         train_file_pat = base_name + '_%06d_train.tfrecord'
         valid_file_pat = base_name + '_%06d_valid.tfrecord'
@@ -383,14 +389,14 @@ if __name__ == '__main__':
             valid_fraction=options.valid_fraction,
             dry_run=options.dry_run, compress_to_gz=options.compress_to_gz,
             file_num_start_write=options.start_idx,
-            hdf5_type=options.hdf5_type
+            tfrec_struct=options.tfrec_struct
         )
         file_num = out_num
 
         if options.do_test:
             read_all(
                 files_written,
-                options.hdf5_type,
+                options.tfrec_struct,
                 options.dry_run,
                 options.compress_to_gz,
                 options.imgw_x,
