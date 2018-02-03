@@ -56,9 +56,11 @@ class MnvTFRecordReaderBase:
         else:
             raise ValueError('Invalid data format in data reader!')
 
-    def _get_tfrecord_filequeue_and_reader(self):
+    def _get_tfrecord_filequeue_and_reader(self, num_epochs):
         file_queue = tf.train.string_input_producer(
-            self.filenames_list, name='file_queue', num_epochs=1
+            self.filenames_list,
+            name=self.name + '_file_queue',
+            num_epochs=num_epochs
         )
         reader = tf.TFRecordReader(
             options=tf.python_io.TFRecordOptions(
@@ -121,7 +123,7 @@ class MnvTFRecordReaderBase:
     def _tfrecord_to_graph_ops(self, num_epochs):
         od = OrderedDict()
         with tf.variable_scope(self.name + '_tfrec_to_graph_ops'):
-            tfrecord = self._get_tfrecord_filequeue_and_reader()
+            tfrecord = self._get_tfrecord_filequeue_and_reader(num_epochs)
             tfrecord_features = tf.parse_single_example(
                 tfrecord,
                 features=self._features_dict,
