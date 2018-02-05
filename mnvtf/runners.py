@@ -157,6 +157,7 @@ class MnvTFRunnerCategorical:
             ))
 
             with tf.Session(graph=g, config=self.config_proto) as sess:
+                tfil = open('evtids.txt', 'w')
 
                 with tf.variable_scope('pipeline_queue'):
                     train_reader = self.data_reader(self.train_reader_args)
@@ -254,9 +255,10 @@ class MnvTFRunnerCategorical:
                             initial_batch, initial_batch + n_batches
                     ):
                         LOGGER.debug('  processing batch {}'.format(b_num))
-                        _, loss, summary_t = sess.run(
+                        _, loss, evtids, summary_t = sess.run(
                             [self.model.optimizer,
                              self.model.loss,
+                             eventids,
                              self.model.train_summary_op],
                             feed_dict={
                                 use_valid: False,
@@ -270,6 +272,11 @@ class MnvTFRunnerCategorical:
                                 b_num, loss
                             )
                         )
+                        LOGGER.debug('  eventids[:10] = \n{}'.format(
+                            evtids[:10]
+                        ))
+                        for evt in evtids:
+                            tfil.write('{}\n'.format(evt))
                         if (b_num) % save_every_n_batch == 0:
                             writer.add_summary(summary_t, global_step=b_num)
                         if (b_num + 1) % save_every_n_batch == 0:
@@ -324,6 +331,7 @@ class MnvTFRunnerCategorical:
                     coord.join(threads)
 
             writer.close()
+            tfil.close()
 
         out_graph = utils.freeze_graph(
             self.save_model_directory, self.model.get_output_nodes()
@@ -347,7 +355,7 @@ class MnvTFRunnerCategorical:
             with tf.Session(graph=g, config=self.config_proto) as sess:
                 with tf.variable_scope('pipeline_queue'):
                     data_reader = self.data_reader(self.test_reader_args)
-                    targets, features, _ = \
+                    targets, features, eventids = \
                         self._prep_targets_and_features_minerva(
                             data_reader.batch_generator
                         )
@@ -391,8 +399,8 @@ class MnvTFRunnerCategorical:
                 n_processed = 0
                 try:
                     for i in range(n_batches):
-                        loss_batch, logits_batch, Y_batch = sess.run(
-                            [self.model.loss, self.model.logits, targets],
+                        loss_batch, logits_batch, Y_batch, evtids = sess.run(
+                            [self.model.loss, self.model.logits, targets, eventids],
                             feed_dict={
                                 self.model.dropout_keep_prob: 1.0,
                                 self.model.is_training: False
@@ -411,6 +419,9 @@ class MnvTFRunnerCategorical:
                         total_correct_preds += sess.run(accuracy)
                         evald_preds = tf.argmax(preds, 1).eval()
                         evald_ysbatch = tf.argmax(Y_batch, 1).eval()
+                        LOGGER.debug('  eventids[:10] = \n{}'.format(
+                            evtids[:10]
+                        ))
                         for t, p in zip(evald_ysbatch, evald_preds):
                             confusion_matrix[p][t] += 1.0
                         if self.be_verbose:
