@@ -130,6 +130,234 @@ class MnvTFRunnerCategorical:
                 i, acc_by_class[i]
             ))
 
+    def orchestrate_training(self, do_validation=False, short=False):
+        LOGGER.info('staring run_training...')
+        LOGGER.info('tensorboard command:')
+        LOGGER.info('\ttensorboard --logdir {}'.format(
+            self.save_model_directory
+        ))
+        n_epochs = 1 if short else self.num_epochs
+        start_time = time.time()
+        run_dest_dir = self.save_model_directory + '/%d' % start_time
+        for ep in range(1, n_epochs + 1):
+            LOGGER.info(' train epoch {}'.format(ep))
+            self._train_one_epoch(ep, short, run_dest_dir)
+            if do_validation:
+                LOGGER.info(' validation epoch {}'.format(ep))
+                self._validate(short, run_dest_dir)
+
+        LOGGER.info('Total training time = {}'.format(
+            time.time() - start_time
+        ))
+
+    def _train_one_epoch(self, epoch, short, run_dest_dir):
+        start_time = time.time()
+        tf.reset_default_graph()
+        initial_batch = 0
+        ckpt_dir = self.save_model_directory + '/checkpoints'
+        n_batches = 20 if short else int(1e9)
+        save_every_n_batch = 5 if short else self.save_freq
+        if epoch == 1:
+            LOGGER.info('  Saving every {} batches...'.format(
+                save_every_n_batch
+            ))
+
+        with tf.Graph().as_default() as g:
+
+            with tf.Session(graph=g, config=self.config_proto) as sess:
+
+                with tf.variable_scope('pipeline_queue'):
+                    reader = self.data_reader(self.train_reader_args)
+                    targets, features, eventids = \
+                        self._prep_targets_and_features_minerva(
+                            reader.shuffle_batch_generator, 1
+                        )
+
+                d = self.build_kbd_function(img_depth=self.img_depth)
+                self.model.prepare_for_inference(features, d)
+                self.model.prepare_for_training(
+                    targets,
+                    learning_rate=self.learning_rate,
+                    strategy=self.strategy
+                )
+                if epoch == 1:
+                    LOGGER.info(
+                        '  Preparing to train model with %d parameters' %
+                        utils.get_number_of_trainable_parameters()
+                    )
+
+                writer = tf.summary.FileWriter(run_dest_dir)
+                saver = tf.train.Saver(save_relative_paths=True)
+                sess.run(tf.global_variables_initializer())
+                # have to run local variable init for `string_input_producer`
+                sess.run(tf.local_variables_initializer())
+                ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+                if ckpt and ckpt.model_checkpoint_path:
+                    saver.restore(sess, ckpt.model_checkpoint_path)
+                    LOGGER.info('  Restored session from {}'.format(ckpt_dir))
+
+                if epoch == 1:
+                    writer.add_graph(sess.graph)
+                initial_batch = self.model.global_step.eval()
+                LOGGER.info('  Epoch initial batch = %d' % initial_batch)
+
+                coord = tf.train.Coordinator()
+                threads = tf.train.start_queue_runners(coord=coord)
+                try:
+                    for b_num in range(
+                            initial_batch, initial_batch + n_batches
+                    ):
+                        LOGGER.debug('  Processing batch {}'.format(b_num))
+                        _, loss, evtids, summary_t = sess.run(
+                            [self.model.optimizer,
+                             self.model.loss,
+                             eventids,
+                             self.model.train_summary_op],
+                            feed_dict={
+                                self.model.dropout_keep_prob:
+                                self.dropout_keep_prob,
+                                self.model.is_training: True
+                            }
+                        )
+                        LOGGER.debug(
+                            '   Train loss at batch {}: {:6.5f}'.format(
+                                b_num, loss
+                            )
+                        )
+                        LOGGER.debug('   eventids[:10] = \n{}'.format(
+                            evtids[:10]
+                        ))
+                        if (b_num + 1) % save_every_n_batch == 0:
+                            writer.add_summary(summary_t, global_step=b_num)
+                            saver.save(sess, ckpt_dir, b_num)
+                except tf.errors.OutOfRangeError:
+                    LOGGER.info('Training stopped - queue is empty.')
+                    LOGGER.info(
+                        'Executing final save at batch {}'.format(b_num)
+                    )
+                    saver.save(sess, ckpt_dir, b_num)
+                except Exception as e:
+                    LOGGER.error(e)
+                finally:
+                    coord.request_stop()
+                    coord.join(threads)
+            
+            writer.close()
+                
+        LOGGER.info(' Epoch {} elapsed time = {}'.format(
+            epoch, time.time() - start_time
+        ))
+
+    def _validate(self, short, run_dest_dir):
+        start_time = time.time()
+        tf.reset_default_graph()
+        initial_batch = 0
+        ckpt_dir = self.save_model_directory + '/checkpoints'
+        n_batches = 20 if short else int(1e9)
+
+        with tf.Graph().as_default() as g:
+
+            with tf.Session(graph=g, config=self.config_proto) as sess:
+
+                with tf.variable_scope('pipeline_queue'):
+                    reader = self.data_reader(self.valid_reader_args)
+                    targets, features, eventids = \
+                        self._prep_targets_and_features_minerva(
+                            reader.batch_generator, 1
+                        )
+
+                d = self.build_kbd_function(img_depth=self.img_depth)
+                self.model.prepare_for_inference(features, d)
+                self.model.prepare_for_loss_computation(targets)
+                writer = tf.summary.FileWriter(run_dest_dir)
+                saver = tf.train.Saver(save_relative_paths=True)
+                sess.run(tf.global_variables_initializer())
+                # have to run local variable init for `string_input_producer`
+                sess.run(tf.local_variables_initializer())
+                ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
+                if ckpt and ckpt.model_checkpoint_path:
+                    saver.restore(sess, ckpt.model_checkpoint_path)
+                    LOGGER.info('  Restored session from {}'.format(ckpt_dir))
+                last_train_batch = self.model.global_step.eval()
+                LOGGER.info('  train batch = %d' % last_train_batch)
+                average_loss = 0.0
+                total_correct_preds = 0
+                n_processed, n_batches_processed = 0, 0
+
+                coord = tf.train.Coordinator()
+                threads = tf.train.start_queue_runners(coord=coord)
+                try:
+                    for b_num in range(n_batches):
+                        loss_batch, logits_batch, targs_batch, \
+                            summary_v, evtids_batch, acc_batch = \
+                            sess.run(
+                                [self.model.loss,
+                                 self.model.logits,
+                                 self.model.targets,
+                                 self.model.valid_summary_op,
+                                 eventids,
+                                 self.model.accuracy],
+                                feed_dict={
+                                    self.model.dropout_keep_prob: 1.0,
+                                    self.model.is_training: False
+                                }
+                            )
+                        batch_sz = logits_batch.shape[0]
+                        n_processed += batch_sz
+                        n_batches_processed += 1.0
+                        average_loss += loss_batch
+                        preds = tf.nn.softmax(logits_batch)
+                        total_correct_preds += tf.reduce_sum(
+                            tf.cast(
+                                tf.equal(
+                                    tf.argmax(preds, 1),
+                                    tf.argmax(targs_batch, 1)
+                                ),
+                                tf.float32
+                            )
+                        ).eval()
+                        LOGGER.debug('   preds   = \n{}'.format(
+                            tf.argmax(preds, 1).eval()
+                        ))
+                        LOGGER.debug('   Y_batch = \n{}'.format(
+                            np.argmax(targs_batch, 1)
+                        ))
+                        LOGGER.debug('   eventids[:10] = \n{}'.format(
+                            evtids_batch[:10]
+                        ))
+                        LOGGER.info(
+                            '    Valid loss at batch {}: {:6.5f}'.format(
+                                b_num, loss_batch
+                            )
+                        )
+                        LOGGER.info('     accuracy = {}'.format(
+                            acc_batch
+                        ))
+                except tf.errors.OutOfRangeError:
+                    LOGGER.info('Validation stopped - queue is empty.')
+                except Exception as e:
+                    LOGGER.error(e)
+                finally:
+                    if n_processed > 0:
+                        if summary_v:
+                            writer.add_summary(
+                                summary_v, global_step=last_train_batch
+                            )
+                        LOGGER.info("  Accuracy: {}".format(
+                            total_correct_preds / n_processed
+                        ))
+                        LOGGER.info('  Average loss: {}'.format(
+                            average_loss / n_batches_processed
+                        ))
+                    coord.request_stop()
+                    coord.join(threads)
+
+            writer.close()
+
+        LOGGER.info('   Elapsed time = {}'.format(
+            time.time() - start_time
+        ))
+
     def run_training(
             self, do_validation=False, short=False
     ):
