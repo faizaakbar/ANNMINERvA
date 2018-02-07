@@ -136,15 +136,14 @@ class MnvTFRunnerCategorical:
         LOGGER.info('\ttensorboard --logdir {}'.format(
             self.save_model_directory
         ))
-        n_epochs = 1 if short else self.num_epochs
         start_time = time.time()
         run_dest_dir = self.save_model_directory + '/%d' % start_time
-        for ep in range(1, n_epochs + 1):
+        for ep in range(1, self.num_epochs + 1):
             LOGGER.info(' train epoch {}'.format(ep))
             self._train_one_epoch(ep, short, run_dest_dir)
             if do_validation:
                 LOGGER.info(' validation epoch {}'.format(ep))
-                self._validate(short, run_dest_dir)
+                self._validate_one_epoch(short, run_dest_dir)
 
         LOGGER.info('Total training time = {}'.format(
             time.time() - start_time
@@ -165,6 +164,7 @@ class MnvTFRunnerCategorical:
         with tf.Graph().as_default() as g:
 
             with tf.Session(graph=g, config=self.config_proto) as sess:
+                tfil = open('evtids.txt', 'w')
 
                 with tf.variable_scope('pipeline_queue'):
                     reader = self.data_reader(self.train_reader_args)
@@ -227,6 +227,8 @@ class MnvTFRunnerCategorical:
                         LOGGER.debug('   eventids[:10] = \n{}'.format(
                             evtids[:10]
                         ))
+                        for evt in evtids:
+                            tfil.write('{}\n'.format(evt))
                         if (b_num + 1) % save_every_n_batch == 0:
                             writer.add_summary(summary_t, global_step=b_num)
                             saver.save(sess, ckpt_dir, b_num)
@@ -243,15 +245,15 @@ class MnvTFRunnerCategorical:
                     coord.join(threads)
             
             writer.close()
-                
+            tfil.close()
+
         LOGGER.info(' Epoch {} elapsed time = {}'.format(
             epoch, time.time() - start_time
         ))
 
-    def _validate(self, short, run_dest_dir):
+    def _validate_one_epoch(self, short, run_dest_dir):
         start_time = time.time()
         tf.reset_default_graph()
-        initial_batch = 0
         ckpt_dir = self.save_model_directory + '/checkpoints'
         n_batches = 20 if short else int(1e9)
 
@@ -325,12 +327,12 @@ class MnvTFRunnerCategorical:
                         LOGGER.debug('   eventids[:10] = \n{}'.format(
                             evtids_batch[:10]
                         ))
-                        LOGGER.info(
+                        LOGGER.debug(
                             '    Valid loss at batch {}: {:6.5f}'.format(
                                 b_num, loss_batch
                             )
                         )
-                        LOGGER.info('     accuracy = {}'.format(
+                        LOGGER.debug('     accuracy = {}'.format(
                             acc_batch
                         ))
                 except tf.errors.OutOfRangeError:
@@ -343,10 +345,10 @@ class MnvTFRunnerCategorical:
                             writer.add_summary(
                                 summary_v, global_step=last_train_batch
                             )
-                        LOGGER.info("  Accuracy: {}".format(
+                        LOGGER.info("  Validation accuracy: {}".format(
                             total_correct_preds / n_processed
                         ))
-                        LOGGER.info('  Average loss: {}'.format(
+                        LOGGER.info('  Validation avg loss/batch: {}'.format(
                             average_loss / n_batches_processed
                         ))
                     coord.request_stop()
@@ -385,7 +387,6 @@ class MnvTFRunnerCategorical:
             ))
 
             with tf.Session(graph=g, config=self.config_proto) as sess:
-                tfil = open('evtids.txt', 'w')
 
                 with tf.variable_scope('pipeline_queue'):
                     train_reader = self.data_reader(self.train_reader_args)
@@ -503,8 +504,6 @@ class MnvTFRunnerCategorical:
                         LOGGER.debug('  eventids[:10] = \n{}'.format(
                             evtids[:10]
                         ))
-                        for evt in evtids:
-                            tfil.write('{}\n'.format(evt))
                         if (b_num) % save_every_n_batch == 0:
                             writer.add_summary(summary_t, global_step=b_num)
                         if (b_num + 1) % save_every_n_batch == 0:
@@ -559,7 +558,6 @@ class MnvTFRunnerCategorical:
                     coord.join(threads)
 
             writer.close()
-            tfil.close()
 
         out_graph = utils.freeze_graph(
             self.save_model_directory, self.model.get_output_nodes()
