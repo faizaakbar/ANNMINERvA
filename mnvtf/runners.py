@@ -164,7 +164,6 @@ class MnvTFRunnerCategorical:
         with tf.Graph().as_default() as g:
 
             with tf.Session(graph=g, config=self.config_proto) as sess:
-                tfil = open('evtids.txt', 'w')
 
                 with tf.variable_scope('pipeline_queue'):
                     reader = self.data_reader(self.train_reader_args)
@@ -194,7 +193,7 @@ class MnvTFRunnerCategorical:
                 ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
-                    LOGGER.info('  Restored session from {}'.format(ckpt_dir))
+                    LOGGER.debug('  Restored session from {}'.format(ckpt_dir))
 
                 if epoch == 1:
                     writer.add_graph(sess.graph)
@@ -227,8 +226,6 @@ class MnvTFRunnerCategorical:
                         LOGGER.debug('   eventids[:10] = \n{}'.format(
                             evtids[:10]
                         ))
-                        for evt in evtids:
-                            tfil.write('{}\n'.format(evt))
                         if (b_num + 1) % save_every_n_batch == 0:
                             writer.add_summary(summary_t, global_step=b_num)
                             saver.save(sess, ckpt_dir, b_num)
@@ -245,9 +242,8 @@ class MnvTFRunnerCategorical:
                     coord.join(threads)
             
             writer.close()
-            tfil.close()
 
-        LOGGER.info(' Epoch {} elapsed time = {}'.format(
+        LOGGER.info(' Epoch {} elapsed time for training = {}'.format(
             epoch, time.time() - start_time
         ))
 
@@ -279,7 +275,7 @@ class MnvTFRunnerCategorical:
                 ckpt = tf.train.get_checkpoint_state(os.path.dirname(ckpt_dir))
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
-                    LOGGER.info('  Restored session from {}'.format(ckpt_dir))
+                    LOGGER.debug('  Restored session from {}'.format(ckpt_dir))
                 last_train_batch = self.model.global_step.eval()
                 LOGGER.info('  train batch = %d' % last_train_batch)
                 average_loss = 0.0
@@ -356,7 +352,7 @@ class MnvTFRunnerCategorical:
 
             writer.close()
 
-        LOGGER.info('   Elapsed time = {}'.format(
+        LOGGER.info('   Elapsed time for validation = {}'.format(
             time.time() - start_time
         ))
 

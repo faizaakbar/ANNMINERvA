@@ -311,7 +311,7 @@ class TriColSTEpsilon:
         features_list[0] == X, [1] == U, [2] == V;
         kbd = kernels-biases-dict (convpooldict)
         """
-        LOGGER.info('Building network from structure: %s' % str(kbd))
+        LOGGER.debug('Building network from structure: %s' % str(kbd))
         self.dropout_keep_prob, self.global_step, self.is_training = \
             make_standard_placeholders()
         lc = self.layer_creator
@@ -424,8 +424,8 @@ class TriColSTEpsilon:
             compute_categorical_loss_and_accuracy(self.logits, self.targets)
 
     def _define_train_op(self, learning_rate, strategy):
-        LOGGER.info('Building train op with learning_rate = %f' %
-                    learning_rate)
+        LOGGER.debug('Building train op with learning_rate = %f' %
+                     learning_rate)
         if strategy in self._allowed_strategies:
             with tf.variable_scope('training'):
                 # need update_ops for batch normalization
