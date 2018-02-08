@@ -98,6 +98,16 @@ class MnvTFRecordReaderBase:
         v = tf.one_hot(indices=v, depth=depth, on_value=1, off_value=0)
         return v
 
+    def _decode_onehot_capped(
+            self, tfrecord_features, field, depth, tf_dtype=tf.int32
+    ):
+        """depth becomes the cap value - should be ~ range(depth)"""
+        v = tf.decode_raw(tfrecord_features[field], tf_dtype)
+        m = (depth - 1) * tf.ones_like(v)
+        z = tf.where(v < depth, x=v, y=m)
+        z = tf.one_hot(indices=z, depth=depth, on_value=1, off_value=0)
+        return z
+
     def _decode_tfrecord_feature(self, tfrecord_features, field):
         if field == EVENTIDS:
             return self._decode_basic(tfrecord_features, field, tf.int64)
@@ -114,7 +124,8 @@ class MnvTFRecordReaderBase:
         elif field == SEGMENTS:
             return self._decode_onehot(tfrecord_features, field, 11, tf.uint8)
         elif field == N_HADMULTMEAS:
-            return self._decode_onehot(tfrecord_features, field, 21)
+            # cap at 5 means we get {0, 1, 2, 3, 4+} hadrons
+            return self._decode_onehot_capped(tfrecord_features, field, 5)
         elif field in self._basic_float32_fields:
             return self._decode_basic(tfrecord_features, field, tf.float32)
         elif field in self._basic_int32_fields:
