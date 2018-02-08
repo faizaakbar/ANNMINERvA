@@ -7,6 +7,7 @@ import logging
 
 import mnvtf.utils as utils
 from mnvtf.data_constants import EVENTIDS
+from mnvtf.data_constants import N_HADMULTMEAS
 
 LOGGER = logging.getLogger(__name__)
 FLAGS = tf.app.flags.FLAGS
@@ -77,6 +78,43 @@ def read_all_evtids(datareader_dict, typ, tfrec_type):
     utils.gz_compress(out_file)
 
 
+def read_all_field(datareader_dict, typ, tfrec_type, field=N_HADMULTMEAS):
+    LOGGER.info('read all {}s for {}...'.format(field, typ))
+    out_file = FLAGS.out_pattern + typ + '_' + field + '.txt'
+    tf.reset_default_graph()
+    n_evt = 0
+
+    with tf.Graph().as_default() as g:
+        with tf.Session(graph=g) as sess:
+
+            reader_class = utils.get_reader_class(tfrec_type)
+            reader = reader_class(datareader_dict)
+            # get an ordered dict
+            batch_dict = reader.batch_generator(num_epochs=1)
+            vals = batch_dict[field]
+
+            sess.run(tf.local_variables_initializer())
+            coord = tf.train.Coordinator()
+            threads = tf.train.start_queue_runners(coord=coord)
+            try:
+                with open(out_file, 'ab+') as f:
+                    for batch_num in range(1000000):
+                        vs = sess.run(vals)
+                        n_evt += len(vs)
+                        for v in vs:
+                            f.write('{}\n'.format(v))
+            except tf.errors.OutOfRangeError:
+                LOGGER.info('Reading stopped - queue is empty.')
+            except Exception as e:
+                LOGGER.info(e)
+            finally:
+                coord.request_stop()
+                coord.join(threads)
+
+    LOGGER.info('found {} {} events'.format(n_evt, typ))
+    utils.gz_compress(out_file)
+
+
 def main(argv=None):
     logfilename = FLAGS.log_name
     logging.basicConfig(
@@ -123,7 +161,8 @@ def main(argv=None):
         LOGGER.info(' data reader dict for {} = {}'.format(
             typ, repr(dd)
         ))
-        read_all_evtids(dd, typ, FLAGS.tfrec_type)
+        # read_all_evtids(dd, typ, FLAGS.tfrec_type)
+        read_all_field(dd, typ, FLAGS.tfrec_type)
 
 
 if __name__ == '__main__':
