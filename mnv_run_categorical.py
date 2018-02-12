@@ -43,6 +43,8 @@ tf.app.flags.DEFINE_string('model_dir', '/tmp/minerva/models',
                            """Directory where models are stored.""")
 tf.app.flags.DEFINE_string('pred_store_name', 'temp_store',
                            """Predictions store name.""")
+tf.app.flags.DEFINE_boolean('do_pred_store_use_db', False,
+                            """Write predictions to sqlite (vs text)""")
 #
 # training description
 #
@@ -186,6 +188,7 @@ def main(argv=None):
     runpars_dict['TRAIN_READER_ARGS'] = datareader_dict(train_list, 'train')
     runpars_dict['VALID_READER_ARGS'] = datareader_dict(valid_list, 'valid')
     runpars_dict['TEST_READER_ARGS'] = datareader_dict(test_list, 'data')
+    runpars_dict['PRED_STORE_USE_DB'] = FLAGS.do_pred_store_use_db
 
     # set up training parameters
     train_params_dict = utils.make_train_params_dict(MNV_TYPE, FLAGS)

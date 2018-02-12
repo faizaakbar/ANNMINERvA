@@ -70,6 +70,7 @@ def make_run_params_dict(mnv_type='st_epsilon', tf_flags=None):
         run_params_dict['CONFIG_PROTO'] = tf.ConfigProto(
             log_device_placement=True
         )
+    run_params_dict['PRED_STORE_USE_DB'] = False
     return run_params_dict
 
 

@@ -12,6 +12,7 @@ import numpy as np
 from six.moves import range
 
 import utils
+from recorder_text import MnvCategoricalTextRecorder
 
 LOGGER = logging.getLogger(__name__)
 
@@ -43,6 +44,7 @@ class MnvTFRunnerCategorical:
             self.save_freq = run_params_dict['SAVE_EVRY_N_BATCHES']
             self.be_verbose = run_params_dict['BE_VERBOSE']
             self.pred_store_name = run_params_dict['PREDICTION_STORE_NAME']
+            self.pred_store_use_db = run_params_dict['PRED_STORE_USE_DB']
             self.config_proto = run_params_dict['CONFIG_PROTO']
         except KeyError as e:
             print(e)
@@ -74,23 +76,21 @@ class MnvTFRunnerCategorical:
         self.views = ['x', 'u', 'v']
 
         self.data_recorder = None
-        try:
-            from recorder_sqlite import MnvCategoricalSQLiteRecorder
-            self.data_recorder = MnvCategoricalSQLiteRecorder(
-                self.model.n_classes, self.pred_store_name
-            )
-        except ImportError as e:
-            LOGGER.error('Cannot store prediction in sqlite: {}'.format(e))
-            from recorder_text import MnvCategoricalTextRecorder
+        if self.pred_store_use_db:
+            try:
+                from recorder_sqlite import MnvCategoricalSQLiteRecorder
+                self.data_recorder = MnvCategoricalSQLiteRecorder(
+                    self.model.n_classes, self.pred_store_name
+                )
+            except ImportError as e:
+                LOGGER.error('Cannot store prediction in sqlite: {}'.format(e))
+                self.data_recorder = MnvCategoricalTextRecorder(
+                    self.pred_store_name
+                )
+        else:
             self.data_recorder = MnvCategoricalTextRecorder(
                 self.pred_store_name
             )
-        except ValueError as e:
-            LOGGER.error('{}'.format(e))
-            from recorder_text import MnvCategoricalTextRecorder
-            self.data_recorder = MnvCategoricalTextRecorder(
-                self.pred_store_name
-            )            
 
     def _get_img_shp(self):
         img_shp = self.train_reader_args['IMG_SHP']
