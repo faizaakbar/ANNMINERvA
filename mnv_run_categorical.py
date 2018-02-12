@@ -43,8 +43,8 @@ tf.app.flags.DEFINE_string('model_dir', '/tmp/minerva/models',
                            """Directory where models are stored.""")
 tf.app.flags.DEFINE_string('pred_store_name', 'temp_store',
                            """Predictions store name.""")
-tf.app.flags.DEFINE_boolean('do_pred_store_use_db', False,
-                            """Write predictions to sqlite (vs text)""")
+tf.app.flags.DEFINE_boolean('do_pred_store_use_db', True,
+                            """Write predictions to db (vs text)""")
 #
 # training description
 #
