@@ -1,5 +1,10 @@
 """
-minerva test. NOTE, this script assumes data is available in the form of
+Runner script for categorical classification work using the `mnvtf` module.
+Run `python mnv_run_categorical.py --help` for usage. The number of flags
+is quite large though - users might prefer to use a wrapper script to
+call the classifier. See: https://github.com/gnperdue/DLRunScripts
+
+NOTE, this script assumes data is available in the form of
 TFRecords, with groups of files with extensions like `..._train.tfrecord`,
 `..._valid.tfrecord`, and `..._test.tfrecord` (possibly with .zz or .gz
 compression extension markers).
@@ -173,6 +178,7 @@ def main(argv=None):
         test_list = valid_list
 
     def datareader_dict(filenames_list, name):
+        """use `FLAGS` as a global var to make the datareader class init"""
         img_shp = (FLAGS.imgh, FLAGS.imgw_x, FLAGS.imgw_uv, FLAGS.img_depth)
         dd = utils.make_data_reader_dict(
             filenames_list=filenames_list,
