@@ -14,6 +14,7 @@ from mnvtf.utils import make_data_reader_dict
 from mnvtf.data_constants import HITIMESU, HITIMESV, HITIMESX
 from mnvtf.data_constants import EVENT_DATA, EVENTIDS
 from mnvtf.data_constants import PLANECODES, SEGMENTS, ZS
+from mnvtf.data_constants import N_HADMULTMEAS
 from mnvtf.hdf5_readers import MnvHDF5Reader
 
 
@@ -102,17 +103,15 @@ class MnvDataReader:
                 data_dict['energies+times']['x'] = tp_tnsr(results[HITIMESX])
                 data_dict['energies+times']['u'] = tp_tnsr(results[HITIMESU])
                 data_dict['energies+times']['v'] = tp_tnsr(results[HITIMESV])
-                data_dict['eventids'] = results[EVENTIDS]
-                if PLANECODES in results.keys():
-                    data_dict['planecodes'] = np.argmax(
-                        results[PLANECODES], axis=1
-                    ).reshape(results[PLANECODES].shape[0], 1)
-                if SEGMENTS in results.keys():
-                    data_dict['segments'] = np.argmax(
-                        results[SEGMENTS], axis=1
-                    ).reshape(results[SEGMENTS].shape[0], 1)
+                data_dict[EVENTIDS] = results[EVENTIDS]
                 if ZS in results.keys():
-                    data_dict['zs'] = results[ZS]
+                    data_dict[ZS] = results[ZS]
+                # need to 'de-one-hot' these...
+                for k in [PLANECODES, SEGMENTS, N_HADMULTMEAS]:
+                    if k in results.keys():
+                        data_dict[k] = np.argmax(
+                            results[k], axis=1
+                        ).reshape(results[k].shape[0], 1)
             except tf.errors.OutOfRangeError:
                 print('Reading stopped - queue is empty.')
             finally:
@@ -137,10 +136,16 @@ class MnvDataReader:
         data_dict['energies+times']['x'] = m.get_data(HITIMESX, 0, n_read)
         data_dict['energies+times']['u'] = m.get_data(HITIMESU, 0, n_read)
         data_dict['energies+times']['v'] = m.get_data(HITIMESV, 0, n_read)
-        data_dict['eventids'] = m.get_data(EVENTIDS, 0, n_read)
-        data_dict['planecodes'] = m.get_data(PLANECODES, 0, n_read)
-        data_dict['segments'] = m.get_data(SEGMENTS, 0, n_read)
-        data_dict['zs'] = m.get_data(ZS, 0, n_read)
+        data_dict[EVENTIDS] = m.get_data(EVENTIDS, 0, n_read)
+        
+        def get_hdf_dat(hdf_key):
+            v = m.get_data(hdf_key, 0, n_read)
+            return v if len(v) else None
+        for d in [PLANECODES, SEGMENTS, ZS, N_HADMULTMEAS]:
+            v = get_hdf_dat(d)
+            if len(v):
+                data_dict[d] = v
+
         m.close()
 
         return data_dict
@@ -179,34 +184,42 @@ def make_plots(data_dict, max_events, normed_img):
     # only working with two-deep imgs these days
     # plotting_two_tensors = True
 
+    def get_maybe_missing(data_dict, key, counter):
+        try:
+            return data_dict[key][counter]
+        except KeyError:
+            pass
+        return -1
+
     evt_plotted = 0
-    for counter in range(len(data_dict['eventids'])):
-        evtid = data_dict['eventids'][counter]
-        segment = data_dict['segments'][counter] \
-            if len(data_dict['segments']) > 0 else -1
-        planecode = data_dict['planecodes'][counter] \
-            if len(data_dict['planecodes']) > 0 else -1
+    for counter in range(len(data_dict[EVENTIDS])):
+        evtid = data_dict[EVENTIDS][counter]
+        segment = get_maybe_missing(data_dict, SEGMENTS, counter)
+        planecode = get_maybe_missing(data_dict, PLANECODES, counter)
+        n_hadmultmeas = get_maybe_missing(data_dict, N_HADMULTMEAS, counter)
         (run, subrun, gate, phys_evt) = decode_eventid(evtid)
         if evt_plotted > max_events:
             break
-        print('Plotting entry {}: {}: {} - {} - {} - {} for segment {} / planecode {}'.format(
-                  counter, evtid, run, subrun, gate, phys_evt, segment, planecode
-              ))
+        status_string = 'Plotting entry %d: %d: ' % (counter, evtid)
+        title_string = '{}/{}/{}/{}'
+        title_elems = [run, subrun, gate, phys_evt]
+        if segment != -1 and planecode != -1:
+            title_string = title_string + ', segment {}, planecode {}'
+            title_elems.extend([segment, planecode])
+            if planecode in target_plane_codes.keys():
+                title_string = title_string + ', targ {}'
+                title_elems.append(target_plane_codes[planecode[0]])
+        if n_hadmultmeas != -1:
+            title_string = title_string + ', n_chghad {}'
+            title_elems.append(n_hadmultmeas)
+        print(status_string + title_string.format(*title_elems))
 
         # run, subrun, gate, phys_evt = decode_eventid(evtid)
         fig_wid = 9
         fig_height = 6
         grid_height = 2
         fig = pylab.figure(figsize=(fig_wid, fig_height))
-        if planecode in target_plane_codes.keys():
-            fig.suptitle('{}/{}/{}/{}: seg {} / pcode {} / targ {}'.format(
-                run, subrun, gate, phys_evt,
-                segment, planecode, target_plane_codes[planecode[0]]
-            ))
-        else:
-            fig.suptitle('{}/{}/{}/{}: seg {} / pcode {}'.format(
-                run, subrun, gate, phys_evt, segment, planecode
-            ))
+        fig.suptitle(title_string.format(*title_elems))
         gs = pylab.GridSpec(grid_height, 3)
 
         for i, t in enumerate(types):
