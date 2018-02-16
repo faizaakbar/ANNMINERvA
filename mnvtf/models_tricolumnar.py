@@ -1,5 +1,5 @@
 """
-MINERvA Tri-columnar "spacetime" (energy+time tensors) epsilon network
+MINERvA Tri-columnar models
 """
 import tensorflow as tf
 from tensorflow.contrib.layers import xavier_initializer as xavier_init
@@ -43,16 +43,21 @@ def make_default_convpooldict(
     convpooldict_x['conv4'] = {}
     convpooldict_x['conv1']['kernels'] = [8, 3, img_depth, 12]
     convpooldict_x['conv1']['biases'] = [12]
+    convpooldict_x['conv1']['strides'] = [1, 1, 1, 1]
     # after 8x3 filters -> 120x(N-2) image, then maxpool -> 60x(N-2)
     convpooldict_x['conv2']['kernels'] = [7, 3, 12, 20]
     convpooldict_x['conv2']['biases'] = [20]
+    convpooldict_x['conv2']['strides'] = [1, 1, 1, 1]
     # after 7x3 filters -> 54x(N-4) image, then maxpool -> 27x(N-4)
     convpooldict_x['conv3']['kernels'] = [6, 3, 20, 28]
     convpooldict_x['conv3']['biases'] = [28]
+    convpooldict_x['conv3']['strides'] = [1, 1, 1, 1]
     # after 6x3 filters -> 22x(N-6) image, then maxpool -> 11x(N-6)
     convpooldict_x['conv4']['kernels'] = [6, 3, 28, 36]
     convpooldict_x['conv4']['biases'] = [36]
+    convpooldict_x['conv4']['strides'] = [1, 1, 1, 1]
     # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
+    convpooldict_x['n_layers'] = 4
     convpooldict['x'] = convpooldict_x
 
     # assume 127x(N) images
@@ -63,16 +68,21 @@ def make_default_convpooldict(
     convpooldict_u['conv4'] = {}
     convpooldict_u['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_u['conv1']['biases'] = [12]
+    convpooldict_u['conv1']['strides'] = [1, 1, 1, 1]
     # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
     convpooldict_u['conv2']['kernels'] = [7, 3, 12, 20]
     convpooldict_u['conv2']['biases'] = [20]
+    convpooldict_u['conv2']['strides'] = [1, 1, 1, 1]
     # after 7x3 filters -> 54x(N-6) image, then maxpool -> 27x(N-6)
     convpooldict_u['conv3']['kernels'] = [6, 3, 20, 28]
     convpooldict_u['conv3']['biases'] = [28]
+    convpooldict_u['conv3']['strides'] = [1, 1, 1, 1]
     # after 6x3 filters -> 22x(N-8) image, then maxpool -> 11x(N-8)
     convpooldict_u['conv4']['kernels'] = [6, 3, 28, 36]
     convpooldict_u['conv4']['biases'] = [36]
+    convpooldict_u['conv4']['strides'] = [1, 1, 1, 1]
     # after 6x3 filters -> 6x(N-10) image, then maxpool -> 3x(N-10)
+    convpooldict_u['n_layers'] = 4
     convpooldict['u'] = convpooldict_u
 
     # assume 127x(N) images
@@ -83,16 +93,21 @@ def make_default_convpooldict(
     convpooldict_v['conv4'] = {}
     convpooldict_v['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_v['conv1']['biases'] = [12]
+    convpooldict_v['conv1']['strides'] = [1, 1, 1, 1]
     # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
     convpooldict_v['conv2']['kernels'] = [7, 3, 12, 20]
     convpooldict_v['conv2']['biases'] = [20]
+    convpooldict_v['conv2']['strides'] = [1, 1, 1, 1]
     # after 7x3 filters -> 54x(N-6) image, then maxpool -> 27x(N-6)
     convpooldict_v['conv3']['kernels'] = [6, 3, 20, 28]
     convpooldict_v['conv3']['biases'] = [28]
+    convpooldict_v['conv3']['strides'] = [1, 1, 1, 1]
     # after 6x3 filters -> 22x(N-8) image, then maxpool -> 11x(N-8)
     convpooldict_v['conv4']['kernels'] = [6, 3, 28, 36]
     convpooldict_v['conv4']['biases'] = [36]
+    convpooldict_v['conv4']['strides'] = [1, 1, 1, 1]
     # after 6x3 filters -> 6x(N-10) image, then maxpool -> 3x(N-10)
+    convpooldict_v['n_layers'] = 4
     convpooldict['v'] = convpooldict_v
 
     convpooldict['nfeat_dense_tower'] = 196
@@ -322,7 +337,7 @@ class TriColSTEpsilon:
             self.U_img = tf.cast(features_list[1], tf.float32)
             self.V_img = tf.cast(features_list[2], tf.float32)
 
-        def make_convolutional_tower(view, input_layer, kbd, n_layers=4):
+        def make_convolutional_tower(view, input_layer, kbd):
             """
             input_layer == e.g., self.X_img, etc. corresponding to 'view'
             """
@@ -332,6 +347,7 @@ class TriColSTEpsilon:
             # scope the tower
             twr = view + '_tower'
             with tf.variable_scope(twr):
+                n_layers = kbd[view]['n_layers']
 
                 for i in range(n_layers):
                     layer = str(i + 1)
@@ -349,7 +365,10 @@ class TriColSTEpsilon:
                         b = lc.make_wbkernels(
                             'biases', kbd[view][nm]['biases']
                         )
-                        conv = lc.make_active_conv(inp_lyr, nm+'_conv', k, b)
+                        conv = lc.make_active_conv(
+                            inp_lyr, nm+'_conv', k, b,
+                            strides=kbd[view][nm]['strides']
+                        )
 
                     # scope the pooling layer
                     scope_name = 'pool' + layer
