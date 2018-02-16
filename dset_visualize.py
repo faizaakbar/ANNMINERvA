@@ -143,7 +143,7 @@ class MnvDataReader:
             return v if len(v) else None
         for d in [PLANECODES, SEGMENTS, ZS, N_HADMULTMEAS]:
             v = get_hdf_dat(d)
-            if v:
+            if len(v):
                 data_dict[d] = v
 
         m.close()
