@@ -72,6 +72,8 @@ def make_default_convpooldict(
     convpooldict_x['pool4']['strides'] = pool_strides
     # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
     convpooldict_x['n_layers'] = 4
+    convpooldict_x['n_dense_layers'] = 1
+    convpooldict_x['dense_n_output1'] = 196
     convpooldict['x'] = convpooldict_x
 
     # assume 127x(N) images
@@ -109,6 +111,8 @@ def make_default_convpooldict(
     convpooldict_u['pool4']['strides'] = pool_strides
     # after 6x3 filters -> 6x(N-10) image, then maxpool -> 3x(N-10)
     convpooldict_u['n_layers'] = 4
+    convpooldict_u['n_dense_layers'] = 1
+    convpooldict_u['dense_n_output1'] = 196
     convpooldict['u'] = convpooldict_u
 
     # assume 127x(N) images
@@ -146,13 +150,13 @@ def make_default_convpooldict(
     convpooldict_v['pool4']['strides'] = pool_strides
     # after 6x3 filters -> 6x(N-10) image, then maxpool -> 3x(N-10)
     convpooldict_v['n_layers'] = 4
+    convpooldict_v['n_dense_layers'] = 1
+    convpooldict_v['dense_n_output1'] = 196
     convpooldict['v'] = convpooldict_v
 
-    # TODO - allow for more than one dense layer in tower and/or in
-    # final MLP section.
-
-    convpooldict['nfeat_dense_tower'] = 196
-    convpooldict['nfeat_concat_dense'] = 98
+    convpooldict['final_mlp'] = {}
+    convpooldict['final_mlp']['n_dense_layers'] = 1
+    convpooldict['final_mlp']['dense_n_output1'] = 98
 
     convpooldict['regularizer'] = tf.contrib.layers.l2_regularizer(
         scale=0.0001
@@ -427,17 +431,24 @@ class TriColSTEpsilon:
                 out_lyr = tf.reshape(out_lyr, [-1, nfeat_tower])
 
                 # make final active dense layer
-                with tf.variable_scope('fully_connected'):
-                    out_lyr = lc.make_active_fc_layer(
-                        out_lyr, 'fc_relu',
-                        'dense_weights',
-                        [nfeat_tower, kbd['nfeat_dense_tower']],
-                        'dense_biases',
-                        [kbd['nfeat_dense_tower']]
-                    )
-                    out_lyr = tf.nn.dropout(
-                        out_lyr, self.dropout_keep_prob, name='relu_dropout'
-                    )
+                n_dense_layers = kbd[view]['n_dense_layers']
+                for i in range(n_dense_layers):
+                    layer = str(i + 1)
+                    dns_key = 'dense_n_output' + layer
+                    nm_key = '' if layer == '1' else layer
+                    with tf.variable_scope('fully_connected' + nm_key):
+                        out_lyr = lc.make_active_fc_layer(
+                            out_lyr, 'fc_relu',
+                            'dense_weights',
+                            [nfeat_tower, kbd[view][dns_key]],
+                            'dense_biases',
+                            [kbd[view][dns_key]]
+                        )
+                        out_lyr = tf.nn.dropout(
+                            out_lyr,
+                            self.dropout_keep_prob,
+                            name='relu_dropout'
+                        )
 
             return out_lyr
 
@@ -447,24 +458,31 @@ class TriColSTEpsilon:
             out_v = make_convolutional_tower('v', self.V_img, kbd)
 
             # next, concat, then 'final' fc...
+            n_dense_layers = kbd['final_mlp']['n_dense_layers']
             with tf.variable_scope('fully_connected'):
-                tower_joined = tf.concat(
+                fc_lyr = tf.concat(
                     [out_x, out_u, out_v], axis=1, name='concat'
                 )
-                joined_shp = tower_joined.shape.as_list()
+                joined_shp = fc_lyr.shape.as_list()
                 nfeatures_joined = joined_shp[1]
-                fc_lyr = lc.make_active_fc_layer(
-                    tower_joined, 'fc_relu',
-                    'weights', [nfeatures_joined, kbd['nfeat_concat_dense']],
-                    'biases', [kbd['nfeat_concat_dense']]
-                )
+                final_n_output = nfeatures_joined
+                for i in range(n_dense_layers):
+                    layer = str(i + 1)
+                    dns_key = 'dense_n_output' + layer
+                    nm_key = '' if layer == '1' else layer
+                    final_n_output = kbd['final_mlp'][dns_key]
+                    fc_lyr = lc.make_active_fc_layer(
+                        fc_lyr, 'fc_relu' + nm_key,
+                        'weights', [nfeatures_joined, final_n_output],
+                        'biases', [final_n_output]
+                    )
                 self.fc = tf.nn.dropout(
                     fc_lyr, self.dropout_keep_prob, name='relu_dropout'
                 )
 
             with tf.variable_scope('softmax_linear'):
                 self.weights_softmax = lc.make_wbkernels(
-                    'weights', [kbd['nfeat_concat_dense'], self.n_classes]
+                    'weights', [final_n_output, self.n_classes]
                 )
                 self.biases_softmax = lc.make_wbkernels(
                     'biases', [self.n_classes],
