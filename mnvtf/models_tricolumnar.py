@@ -19,8 +19,11 @@ def make_default_convpooldict(
 
     conv kernel shape is [filt_h, filt_w, in_nch, out_nch]
     pool kernel shape is [N, H, W, C] for 'NHWC', etc.
+    
+    TODO - pass in regularizer type (l1, l2) and scale
     """
     convpooldict = {}
+    convpooldict['use_batch_norm'] = use_batch_norm
 
     if data_format == 'NHWC':
         pool_ksize = [1, 2, 1, 1]
@@ -31,9 +34,8 @@ def make_default_convpooldict(
     else:
         raise Exception('Invalid data format!')
 
-    convpooldict['pool_ksize'] = pool_ksize
-    convpooldict['pool_strides'] = pool_strides
-    convpooldict['use_batch_norm'] = use_batch_norm
+    # build 3 convolutional towers. turn off pooling at any given
+    # layer by setting `convpooldict_view['poolLayerNumber'] = None`
 
     # assume 127x(N) images
     convpooldict_x = {}
@@ -41,21 +43,33 @@ def make_default_convpooldict(
     convpooldict_x['conv2'] = {}
     convpooldict_x['conv3'] = {}
     convpooldict_x['conv4'] = {}
+    convpooldict_x['pool1'] = {}
+    convpooldict_x['pool2'] = {}
+    convpooldict_x['pool3'] = {}
+    convpooldict_x['pool4'] = {}
     convpooldict_x['conv1']['kernels'] = [8, 3, img_depth, 12]
     convpooldict_x['conv1']['biases'] = [12]
     convpooldict_x['conv1']['strides'] = [1, 1, 1, 1]
+    convpooldict_x['pool1']['ksize'] = pool_ksize
+    convpooldict_x['pool1']['strides'] = pool_strides
     # after 8x3 filters -> 120x(N-2) image, then maxpool -> 60x(N-2)
     convpooldict_x['conv2']['kernels'] = [7, 3, 12, 20]
     convpooldict_x['conv2']['biases'] = [20]
     convpooldict_x['conv2']['strides'] = [1, 1, 1, 1]
+    convpooldict_x['pool2']['ksize'] = pool_ksize
+    convpooldict_x['pool2']['strides'] = pool_strides
     # after 7x3 filters -> 54x(N-4) image, then maxpool -> 27x(N-4)
     convpooldict_x['conv3']['kernels'] = [6, 3, 20, 28]
     convpooldict_x['conv3']['biases'] = [28]
     convpooldict_x['conv3']['strides'] = [1, 1, 1, 1]
+    convpooldict_x['pool3']['ksize'] = pool_ksize
+    convpooldict_x['pool3']['strides'] = pool_strides
     # after 6x3 filters -> 22x(N-6) image, then maxpool -> 11x(N-6)
     convpooldict_x['conv4']['kernels'] = [6, 3, 28, 36]
     convpooldict_x['conv4']['biases'] = [36]
     convpooldict_x['conv4']['strides'] = [1, 1, 1, 1]
+    convpooldict_x['pool4']['ksize'] = pool_ksize
+    convpooldict_x['pool4']['strides'] = pool_strides
     # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
     convpooldict_x['n_layers'] = 4
     convpooldict['x'] = convpooldict_x
@@ -66,21 +80,33 @@ def make_default_convpooldict(
     convpooldict_u['conv2'] = {}
     convpooldict_u['conv3'] = {}
     convpooldict_u['conv4'] = {}
+    convpooldict_u['pool1'] = {}
+    convpooldict_u['pool2'] = {}
+    convpooldict_u['pool3'] = {}
+    convpooldict_u['pool4'] = {}
     convpooldict_u['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_u['conv1']['biases'] = [12]
     convpooldict_u['conv1']['strides'] = [1, 1, 1, 1]
+    convpooldict_u['pool1']['ksize'] = pool_ksize
+    convpooldict_u['pool1']['strides'] = pool_strides
     # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
     convpooldict_u['conv2']['kernels'] = [7, 3, 12, 20]
     convpooldict_u['conv2']['biases'] = [20]
     convpooldict_u['conv2']['strides'] = [1, 1, 1, 1]
+    convpooldict_u['pool2']['ksize'] = pool_ksize
+    convpooldict_u['pool2']['strides'] = pool_strides
     # after 7x3 filters -> 54x(N-6) image, then maxpool -> 27x(N-6)
     convpooldict_u['conv3']['kernels'] = [6, 3, 20, 28]
     convpooldict_u['conv3']['biases'] = [28]
     convpooldict_u['conv3']['strides'] = [1, 1, 1, 1]
+    convpooldict_u['pool3']['ksize'] = pool_ksize
+    convpooldict_u['pool3']['strides'] = pool_strides
     # after 6x3 filters -> 22x(N-8) image, then maxpool -> 11x(N-8)
     convpooldict_u['conv4']['kernels'] = [6, 3, 28, 36]
     convpooldict_u['conv4']['biases'] = [36]
     convpooldict_u['conv4']['strides'] = [1, 1, 1, 1]
+    convpooldict_u['pool4']['ksize'] = pool_ksize
+    convpooldict_u['pool4']['strides'] = pool_strides
     # after 6x3 filters -> 6x(N-10) image, then maxpool -> 3x(N-10)
     convpooldict_u['n_layers'] = 4
     convpooldict['u'] = convpooldict_u
@@ -91,24 +117,39 @@ def make_default_convpooldict(
     convpooldict_v['conv2'] = {}
     convpooldict_v['conv3'] = {}
     convpooldict_v['conv4'] = {}
+    convpooldict_v['pool1'] = {}
+    convpooldict_v['pool2'] = {}
+    convpooldict_v['pool3'] = {}
+    convpooldict_v['pool4'] = {}
     convpooldict_v['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_v['conv1']['biases'] = [12]
     convpooldict_v['conv1']['strides'] = [1, 1, 1, 1]
+    convpooldict_v['pool1']['ksize'] = pool_ksize
+    convpooldict_v['pool1']['strides'] = pool_strides
     # after 8x3 filters -> 120x(N-4) image, then maxpool -> 60x(N-4)
     convpooldict_v['conv2']['kernels'] = [7, 3, 12, 20]
     convpooldict_v['conv2']['biases'] = [20]
     convpooldict_v['conv2']['strides'] = [1, 1, 1, 1]
+    convpooldict_v['pool2']['ksize'] = pool_ksize
+    convpooldict_v['pool2']['strides'] = pool_strides
     # after 7x3 filters -> 54x(N-6) image, then maxpool -> 27x(N-6)
     convpooldict_v['conv3']['kernels'] = [6, 3, 20, 28]
     convpooldict_v['conv3']['biases'] = [28]
     convpooldict_v['conv3']['strides'] = [1, 1, 1, 1]
+    convpooldict_v['pool3']['ksize'] = pool_ksize
+    convpooldict_v['pool3']['strides'] = pool_strides
     # after 6x3 filters -> 22x(N-8) image, then maxpool -> 11x(N-8)
     convpooldict_v['conv4']['kernels'] = [6, 3, 28, 36]
     convpooldict_v['conv4']['biases'] = [36]
     convpooldict_v['conv4']['strides'] = [1, 1, 1, 1]
+    convpooldict_v['pool4']['ksize'] = pool_ksize
+    convpooldict_v['pool4']['strides'] = pool_strides
     # after 6x3 filters -> 6x(N-10) image, then maxpool -> 3x(N-10)
     convpooldict_v['n_layers'] = 4
     convpooldict['v'] = convpooldict_v
+
+    # TODO - allow for more than one dense layer in tower and/or in
+    # final MLP section.
 
     convpooldict['nfeat_dense_tower'] = 196
     convpooldict['nfeat_concat_dense'] = 98
@@ -372,11 +413,13 @@ class TriColSTEpsilon:
 
                     # scope the pooling layer
                     scope_name = 'pool' + layer
-                    with tf.variable_scope(scope_name):
-                        out_lyr = lc.make_pool(
-                            conv, scope_name+'_pool',
-                            kbd['pool_ksize'], kbd['pool_strides']
-                        )
+                    if kbd[view][scope_name] is not None:
+                        with tf.variable_scope(scope_name):
+                            out_lyr = lc.make_pool(
+                                conv, scope_name+'_pool',
+                                kbd[view][scope_name]['ksize'],
+                                kbd[view][scope_name]['strides']
+                            )
 
                 # reshape pool/out_lyr to 2 dimensional
                 out_lyr_shp = out_lyr.shape.as_list()
@@ -385,18 +428,18 @@ class TriColSTEpsilon:
 
                 # make final active dense layer
                 with tf.variable_scope('fully_connected'):
-                    fc = lc.make_active_fc_layer(
+                    out_lyr = lc.make_active_fc_layer(
                         out_lyr, 'fc_relu',
                         'dense_weights',
                         [nfeat_tower, kbd['nfeat_dense_tower']],
                         'dense_biases',
                         [kbd['nfeat_dense_tower']]
                     )
-                    fc = tf.nn.dropout(
-                        fc, self.dropout_keep_prob, name='relu_dropout'
+                    out_lyr = tf.nn.dropout(
+                        out_lyr, self.dropout_keep_prob, name='relu_dropout'
                     )
 
-            return fc
+            return out_lyr
 
         with tf.variable_scope('model'):
             out_x = make_convolutional_tower('x', self.X_img, kbd)
