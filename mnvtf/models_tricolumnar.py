@@ -15,7 +15,12 @@ def make_default_convpooldict(
         img_depth=1, data_format='NHWC', use_batch_norm=False
 ):
     """
-    return the default network structure dictionary
+    return the default network structure dictionary for an "epsilon" network,
+    where epsilon networks are characterized by 3 parallel convolutional
+    towers that contain sequences of conolution and pooling layers, followed
+    by zero or more dense layers; at the end of the convolutional towers,
+    they are concatenated and followed by zero or more additional dense
+    layers.
 
     conv kernel shape is [filt_h, filt_w, in_nch, out_nch]
     pool kernel shape is [N, H, W, C] for 'NHWC', etc.
@@ -345,6 +350,12 @@ def make_standard_placeholders():
 class TriColSTEpsilon:
     """
     Tri-Columnar SpaceTime Epsilon
+
+    epsilon networks are characterized by 3 parallel convolutional
+    towers that contain sequences of conolution and pooling layers, followed
+    by zero or more dense layers; at the end of the convolutional towers,
+    they are concatenated and followed by zero or more additional dense
+    layers.
     """
     _allowed_strategies = ['Adam', 'AdaGrad']
     
