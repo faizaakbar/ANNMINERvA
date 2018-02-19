@@ -42,16 +42,15 @@ def make_default_convpooldict(
     # build 3 convolutional towers. turn off pooling at any given
     # layer by setting `convpooldict_view['poolLayerNumber'] = None`
 
+    conv_layers = ['conv1', 'conv2', 'conv3', 'conv4']
+    pool_layers = ['pool1', 'pool2', 'pool3', 'pool4']
+
     # assume 127x(N) images
     convpooldict_x = {}
-    convpooldict_x['conv1'] = {}
-    convpooldict_x['conv2'] = {}
-    convpooldict_x['conv3'] = {}
-    convpooldict_x['conv4'] = {}
-    convpooldict_x['pool1'] = {}
-    convpooldict_x['pool2'] = {}
-    convpooldict_x['pool3'] = {}
-    convpooldict_x['pool4'] = {}
+    for lyr in conv_layers + pool_layers:
+        convpooldict_x[lyr] = {}
+    for lyr in conv_layers:
+        convpooldict_x[lyr]['apply_dropout'] = False
     convpooldict_x['conv1']['kernels'] = [8, 3, img_depth, 12]
     convpooldict_x['conv1']['biases'] = [12]
     convpooldict_x['conv1']['strides'] = [1, 1, 1, 1]
@@ -76,21 +75,17 @@ def make_default_convpooldict(
     convpooldict_x['pool4']['ksize'] = pool_ksize
     convpooldict_x['pool4']['strides'] = pool_strides
     # after 6x3 filters -> 6x(N-6) image, then maxpool -> 3x(N-6)
-    convpooldict_x['n_layers'] = 4
+    convpooldict_x['n_layers'] = len(conv_layers)
     convpooldict_x['n_dense_layers'] = 1
     convpooldict_x['dense_n_output1'] = 196
     convpooldict['x'] = convpooldict_x
 
     # assume 127x(N) images
     convpooldict_u = {}
-    convpooldict_u['conv1'] = {}
-    convpooldict_u['conv2'] = {}
-    convpooldict_u['conv3'] = {}
-    convpooldict_u['conv4'] = {}
-    convpooldict_u['pool1'] = {}
-    convpooldict_u['pool2'] = {}
-    convpooldict_u['pool3'] = {}
-    convpooldict_u['pool4'] = {}
+    for lyr in conv_layers + pool_layers:
+        convpooldict_u[lyr] = {}
+    for lyr in conv_layers:
+        convpooldict_u[lyr]['apply_dropout'] = False
     convpooldict_u['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_u['conv1']['biases'] = [12]
     convpooldict_u['conv1']['strides'] = [1, 1, 1, 1]
@@ -115,21 +110,17 @@ def make_default_convpooldict(
     convpooldict_u['pool4']['ksize'] = pool_ksize
     convpooldict_u['pool4']['strides'] = pool_strides
     # after 6x3 filters -> 6x(N-10) image, then maxpool -> 3x(N-10)
-    convpooldict_u['n_layers'] = 4
+    convpooldict_u['n_layers'] = len(conv_layers)
     convpooldict_u['n_dense_layers'] = 1
     convpooldict_u['dense_n_output1'] = 196
     convpooldict['u'] = convpooldict_u
 
     # assume 127x(N) images
     convpooldict_v = {}
-    convpooldict_v['conv1'] = {}
-    convpooldict_v['conv2'] = {}
-    convpooldict_v['conv3'] = {}
-    convpooldict_v['conv4'] = {}
-    convpooldict_v['pool1'] = {}
-    convpooldict_v['pool2'] = {}
-    convpooldict_v['pool3'] = {}
-    convpooldict_v['pool4'] = {}
+    for lyr in conv_layers + pool_layers:
+        convpooldict_v[lyr] = {}
+    for lyr in conv_layers:
+        convpooldict_v[lyr]['apply_dropout'] = False
     convpooldict_v['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_v['conv1']['biases'] = [12]
     convpooldict_v['conv1']['strides'] = [1, 1, 1, 1]
@@ -421,10 +412,16 @@ class TriColSTEpsilon:
                         b = lc.make_wbkernels(
                             'biases', kbd[view][nm]['biases']
                         )
+                        # TODO - check apply droput
                         conv = lc.make_active_conv(
                             inp_lyr, nm+'_conv', k, b,
                             strides=kbd[view][nm]['strides']
                         )
+                        if kbd[view][nm]['apply_dropout']:
+                            conv = tf.nn.dropout(
+                                conv, self.dropout_keep_prob,
+                                name='act_dropout'
+                            )
 
                     # scope the pooling layer
                     scope_name = 'pool' + layer
@@ -456,8 +453,7 @@ class TriColSTEpsilon:
                             [kbd[view][dns_key]]
                         )
                         out_lyr = tf.nn.dropout(
-                            out_lyr,
-                            self.dropout_keep_prob,
+                            out_lyr, self.dropout_keep_prob,
                             name='relu_dropout'
                         )
 
