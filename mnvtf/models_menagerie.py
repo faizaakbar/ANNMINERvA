@@ -1,9 +1,9 @@
 import tensorflow as tf
 
 
-def make_menndl_633167():
+def make_menndl_633167(img_depth=2):
     """
-    assume NHWC data format exclusively
+    epsilon topology compatible; assume NHWC data format exclusively
     """
     convpooldict = {}
     convpooldict['use_batch_norm'] = False
@@ -20,10 +20,10 @@ def make_menndl_633167():
     convpooldict_x['conv3'] = {}  # conv4_0
     convpooldict_x['pool3'] = {}  # pool5_0
     # conv1_0
-    h, w, fin, fout = 8, 3, 2, 32
+    h, w, fin, fout = 8, 3, img_depth, 32
     c1_stride_h, c1_stride_w = 2, 1
     convpooldict_x['conv1']['kernels'] = [h, w, fin, fout]
-    convpooldict_x['conv1']['biases'] = convpooldict_x['conv1']['kernels'][-1]
+    convpooldict_x['conv1']['biases'] = [32]
     convpooldict_x['conv1']['strides'] = [1, c1_stride_h, c1_stride_w, 1]
     convpooldict_x['conv1']['apply_dropout'] = True
     # pool2_0
@@ -32,13 +32,13 @@ def make_menndl_633167():
     # conv3_0
     h, w, fin, fout = 6, 7, 32, 20
     convpooldict_x['conv2']['kernels'] = [h, w, fin, fout]
-    convpooldict_x['conv2']['biases'] = convpooldict_x['conv2']['kernels'][-1]
+    convpooldict_x['conv2']['biases'] = [20]
     convpooldict_x['conv2']['strides'] = [1, 1, 1, 1]
     convpooldict_x['conv2']['apply_dropout'] = False
     # conv4_0
     h, w, fin, fout = 12, 39, 20, 28
     convpooldict_x['conv3']['kernels'] = [h, w, fin, fout]
-    convpooldict_x['conv3']['biases'] = convpooldict_x['conv3']['kernels'][-1]
+    convpooldict_x['conv3']['biases'] = [28]
     convpooldict_x['conv3']['strides'] = [1, 1, 1, 1]
     convpooldict_x['conv3']['apply_dropout'] = False
     # pool5_0
@@ -57,10 +57,10 @@ def make_menndl_633167():
     convpooldict_u['conv3'] = {}  # conv4_1
     convpooldict_u['pool3'] = {}  # pool5_1
     # conv1_1
-    h, w, fin, fout = 8, 3, 2, 32
+    h, w, fin, fout = 8, 3, img_depth, 32
     c1_stride_h, c1_stride_w = 2, 1
     convpooldict_u['conv1']['kernels'] = [h, w, fin, fout]
-    convpooldict_u['conv1']['biases'] = convpooldict_u['conv1']['kernels'][-1]
+    convpooldict_u['conv1']['biases'] = [32]
     convpooldict_u['conv1']['strides'] = [1, c1_stride_h, c1_stride_w, 1]
     convpooldict_u['conv1']['apply_dropout'] = True
     # pool2_1
@@ -69,13 +69,13 @@ def make_menndl_633167():
     # conv3_1
     h, w, fin, fout = 6, 7, 32, 20
     convpooldict_u['conv2']['kernels'] = [h, w, fin, fout]
-    convpooldict_u['conv2']['biases'] = convpooldict_u['conv2']['kernels'][-1]
+    convpooldict_u['conv2']['biases'] = [20]
     convpooldict_u['conv2']['strides'] = [1, 1, 1, 1]
     convpooldict_u['conv2']['apply_dropout'] = False
     # conv4_1
     h, w, fin, fout = 12, 39, 20, 28
     convpooldict_u['conv3']['kernels'] = [h, w, fin, fout]
-    convpooldict_u['conv3']['biases'] = convpooldict_u['conv3']['kernels'][-1]
+    convpooldict_u['conv3']['biases'] = [28]
     convpooldict_u['conv3']['strides'] = [1, 1, 1, 1]
     convpooldict_u['conv3']['apply_dropout'] = False
     # pool5_1
@@ -94,10 +94,10 @@ def make_menndl_633167():
     convpooldict_v['conv3'] = {}  # conv4_2
     convpooldict_v['pool3'] = {}  # pool5_2
     # conv1_2
-    h, w, fin, fout = 8, 3, 2, 32
+    h, w, fin, fout = 8, 3, img_depth, 32
     c1_stride_h, c1_stride_w = 2, 1
     convpooldict_v['conv1']['kernels'] = [h, w, fin, fout]
-    convpooldict_v['conv1']['biases'] = convpooldict_v['conv1']['kernels'][-1]
+    convpooldict_v['conv1']['biases'] = [32]
     convpooldict_v['conv1']['strides'] = [1, c1_stride_h, c1_stride_w, 1]
     convpooldict_v['conv1']['apply_dropout'] = True
     # pool2_2
@@ -106,13 +106,13 @@ def make_menndl_633167():
     # conv3_2
     h, w, fin, fout = 6, 7, 32, 20
     convpooldict_v['conv2']['kernels'] = [h, w, fin, fout]
-    convpooldict_v['conv2']['biases'] = convpooldict_v['conv2']['kernels'][-1]
+    convpooldict_v['conv2']['biases'] = [20]
     convpooldict_v['conv2']['strides'] = [1, 1, 1, 1]
     convpooldict_v['conv2']['apply_dropout'] = False
     # conv4_2
     h, w, fin, fout = 12, 39, 20, 28
     convpooldict_v['conv3']['kernels'] = [h, w, fin, fout]
-    convpooldict_v['conv3']['biases'] = convpooldict_v['conv3']['kernels'][-1]
+    convpooldict_v['conv3']['biases'] = [28]
     convpooldict_v['conv3']['strides'] = [1, 1, 1, 1]
     convpooldict_v['conv3']['apply_dropout'] = False
     # pool5_2

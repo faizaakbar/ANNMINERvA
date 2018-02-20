@@ -12,6 +12,8 @@ from data_constants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from data_constants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 from data_constants import IMGING_GROUPS_DICT, IMGING_TYPE
 from models_tricolumnar import TriColSTEpsilon
+from models_tricolumnar import make_default_convpooldict
+from models_menagerie import make_menndl_633167
 
 LOGGER = logging.getLogger(__name__)
 
@@ -217,6 +219,15 @@ def get_network_model_class(model_type):
         return TriColSTEpsilon
     else:
         raise ValueError('Unknown NN model type!')
+
+
+def get_kbd_function(network_type):
+    if network_type == 'default':
+        return make_default_convpooldict
+    elif network_type == 'menndl_633167':
+        return make_menndl_633167
+    else:
+        raise ValueError('Unknown NN network type!')
 
 
 def decode_eventid(eventid):

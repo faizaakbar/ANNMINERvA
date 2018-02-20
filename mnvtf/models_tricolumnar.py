@@ -432,6 +432,8 @@ class TriColSTEpsilon:
                                 kbd[view][scope_name]['ksize'],
                                 kbd[view][scope_name]['strides']
                             )
+                    else:
+                        out_lyr = conv
 
                 # reshape pool/out_lyr to 2 dimensional
                 out_lyr_shp = out_lyr.shape.as_list()
@@ -439,7 +441,7 @@ class TriColSTEpsilon:
                 out_lyr = tf.reshape(out_lyr, [-1, nfeat_tower])
 
                 # make final active dense layer
-                n_dense_layers = kbd[view]['n_dense_layers']
+                n_dense_layers = kbd[view].get('n_dense_layers', 0)
                 for i in range(n_dense_layers):
                     layer = str(i + 1)
                     dns_key = 'dense_n_output' + layer
@@ -472,24 +474,26 @@ class TriColSTEpsilon:
                 )
                 joined_shp = fc_lyr.shape.as_list()
                 nfeatures_joined = joined_shp[1]
-                final_n_output = nfeatures_joined
+                n_output = nfeatures_joined
                 for i in range(n_dense_layers):
                     layer = str(i + 1)
                     dns_key = 'dense_n_output' + layer
                     nm_key = '' if layer == '1' else layer
-                    final_n_output = kbd['final_mlp'][dns_key]
+                    n_input = nfeatures_joined if layer == '1' else n_output
+                    n_output = kbd['final_mlp'][dns_key]
                     fc_lyr = lc.make_active_fc_layer(
                         fc_lyr, 'fc_relu' + nm_key,
-                        'weights', [nfeatures_joined, final_n_output],
-                        'biases', [final_n_output]
+                        'weights' + nm_key, [n_input, n_output],
+                        'biases' + nm_key, [n_output]
                     )
-                self.fc = tf.nn.dropout(
-                    fc_lyr, self.dropout_keep_prob, name='relu_dropout'
-                )
+                    self.fc = tf.nn.dropout(
+                        fc_lyr, self.dropout_keep_prob,
+                        name='relu_dropout' + nm_key
+                    )
 
             with tf.variable_scope('softmax_linear'):
                 self.weights_softmax = lc.make_wbkernels(
-                    'weights', [final_n_output, self.n_classes]
+                    'weights', [n_output, self.n_classes]
                 )
                 self.biases_softmax = lc.make_wbkernels(
                     'biases', [self.n_classes],

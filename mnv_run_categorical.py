@@ -13,7 +13,6 @@ from __future__ import print_function
 
 import tensorflow as tf
 
-from mnvtf.models_tricolumnar import make_default_convpooldict
 from mnvtf.runners import MnvTFRunnerCategorical
 import mnvtf.utils as utils
 
@@ -62,7 +61,9 @@ tf.app.flags.DEFINE_integer('save_every_n_batch', 500,
 tf.app.flags.DEFINE_string('strategy', 'Adam',
                            """Optimizer strategy.""")
 tf.app.flags.DEFINE_string('network_model', 'TriColSTEpsilon',
-                           """Nework model.""")
+                           """Nework model class.""")
+tf.app.flags.DEFINE_string('network_creator', 'default',
+                           """Nework structure creation function.""")
 tf.app.flags.DEFINE_float('learning_rate', 0.001,
                           """Learning rate.""")
 tf.app.flags.DEFINE_boolean('do_batch_norm', False,
@@ -147,7 +148,9 @@ def main(argv=None):
 
     # set up features parameters
     feature_targ_dict = utils.make_feature_targ_dict(MNV_TYPE, FLAGS)
-    feature_targ_dict['BUILD_KBD_FUNCTION'] = make_default_convpooldict
+    feature_targ_dict['BUILD_KBD_FUNCTION'] = utils.get_kbd_function(
+        FLAGS.network_creator
+    )
 
     # set up run parameters
     runpars_dict = utils.make_run_params_dict(MNV_TYPE, FLAGS)
