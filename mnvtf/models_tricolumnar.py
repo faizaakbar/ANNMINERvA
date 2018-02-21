@@ -228,29 +228,34 @@ class LayerCreator:
             self, input_lyr, name, kernels,
             biases=None, act=tf.nn.relu, strides=[1, 1, 1, 1]
     ):
-        """ TODO - regularize batch norm params? biases? """
-        conv = tf.nn.conv2d(
-            input_lyr, kernels, strides=strides,
-            padding=self.padding, data_format=self.data_format,
-            name=name
-        )
-        if self.use_batch_norm:
-            # TODO - test `activation_fun` argument
-            return act(
-                tf.contrib.layers.batch_norm(
+        with tf.variable_scope('active_conv'):
+            conv = tf.nn.conv2d(
+                input_lyr, kernels, strides=strides,
+                padding=self.padding, data_format=self.data_format,
+                name=name
+            )
+            if self.use_batch_norm:
+                # TODO - test `activation_fun` argument
+                return act(
+                    tf.contrib.layers.batch_norm(
+                        tf.nn.bias_add(
+                            conv, biases, data_format=self.data_format,
+                            name=name+'_plus_biases'
+                        ), decay=self.batch_norm_decay,
+                        center=True, scale=True,
+                        data_format=self.data_format,
+                        is_training=self.is_training
+                    ),
+                    name=name+'_act'
+                )
+            else:
+                return act(
                     tf.nn.bias_add(
                         conv, biases, data_format=self.data_format,
                         name=name+'_plus_biases'
-                    ), decay=self.batch_norm_decay,
-                    center=True, scale=True,
-                    data_format=self.data_format, is_training=self.is_training
-                ),
-                name=name+'_act'
-            )
-        else:
-            return act(tf.nn.bias_add(
-                conv, biases, data_format=self.data_format, name=name+'_act'
-            ))
+                    ),
+                    name=name+'_act'
+                )
 
     def make_pool(
             self, input_lyr, name, ksize, strides, padding=None
@@ -445,8 +450,7 @@ class TriColSTEpsilon:
                 for i in range(n_dense_layers):
                     layer = str(i + 1)
                     dns_key = 'dense_n_output' + layer
-                    nm_key = '' if layer == '1' else layer
-                    with tf.variable_scope('fully_connected' + nm_key):
+                    with tf.variable_scope('fully_connected' + layer):
                         out_lyr = lc.make_active_fc_layer(
                             out_lyr, 'fc_relu',
                             'dense_weights',
@@ -478,32 +482,29 @@ class TriColSTEpsilon:
                 for i in range(n_dense_layers):
                     layer = str(i + 1)
                     dns_key = 'dense_n_output' + layer
-                    nm_key = '' if layer == '1' else layer
                     n_input = nfeatures_joined if layer == '1' else n_output
                     n_output = kbd['final_mlp'][dns_key]
                     fc_lyr = lc.make_active_fc_layer(
-                        fc_lyr, 'fc_relu' + nm_key,
-                        'weights' + nm_key, [n_input, n_output],
-                        'biases' + nm_key, [n_output]
+                        fc_lyr, 'fc_relu' + layer,
+                        'weights' + layer, [n_input, n_output],
+                        'biases' + layer, [n_output]
                     )
-                    self.fc = tf.nn.dropout(
+                    fc_lyr = tf.nn.dropout(
                         fc_lyr, self.dropout_keep_prob,
-                        name='relu_dropout' + nm_key
+                        name='relu_dropout' + layer
                     )
 
             with tf.variable_scope('softmax_linear'):
-                self.weights_softmax = lc.make_wbkernels(
+                weights_softmax = lc.make_wbkernels(
                     'weights', [n_output, self.n_classes]
                 )
-                self.biases_softmax = lc.make_wbkernels(
+                biases_softmax = lc.make_wbkernels(
                     'biases', [self.n_classes],
                     initializer=tf.zeros_initializer()
                 )
                 self.logits = tf.nn.bias_add(
-                    tf.matmul(self.fc, self.weights_softmax),
-                    self.biases_softmax,
-                    data_format=self.data_format,
-                    name='logits'
+                    tf.matmul(fc_lyr, weights_softmax), biases_softmax,
+                    data_format=self.data_format, name='logits'
                 )
 
     def _set_targets(self, targets):
