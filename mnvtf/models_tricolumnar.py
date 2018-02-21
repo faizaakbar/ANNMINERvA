@@ -205,7 +205,7 @@ class LayerCreator:
         )
         fc_lyr = tf.nn.bias_add(
             tf.matmul(inp_lyr, W, name=name_fc_lyr+'_matmul'), b,
-            data_format=self.data_format, name=name_fc_lyr,
+            data_format=self.data_format, name=name_fc_lyr+'_plus_biases',
         )
         if self.use_batch_norm:
             fc_lyr = tf.contrib.layers.batch_norm(
@@ -219,10 +219,14 @@ class LayerCreator:
             name_w, shp_w, name_b=None, shp_b=None,
             act=tf.nn.relu, initializer=xavier_init(uniform=False)
     ):
-        return act(self.make_fc_layer(
-            inp_lyr, name_fc_lyr, name_w, shp_w, name_b, shp_b,
-            initializer=initializer
-        ), name=name_fc_lyr+'_act')
+        with tf.variable_scope('active_fc_layer'):
+            return act(
+                self.make_fc_layer(
+                    inp_lyr, name_fc_lyr, name_w, shp_w, name_b, shp_b,
+                    initializer=initializer
+                ),
+                name=name_fc_lyr+'_act'
+            )
 
     def make_active_conv(
             self, input_lyr, name, kernels,
@@ -466,16 +470,17 @@ class TriColSTEpsilon:
             return out_lyr
 
         with tf.variable_scope('model'):
-            out_x = make_convolutional_tower('x', self.X_img, kbd)
-            out_u = make_convolutional_tower('u', self.U_img, kbd)
-            out_v = make_convolutional_tower('v', self.V_img, kbd)
-
-            # next, concat, then 'final' fc...
-            n_dense_layers = kbd['final_mlp']['n_dense_layers']
-            with tf.variable_scope('fully_connected'):
+            with tf.variable_scope('feature_creation'):
+                out_x = make_convolutional_tower('x', self.X_img, kbd)
+                out_u = make_convolutional_tower('u', self.U_img, kbd)
+                out_v = make_convolutional_tower('v', self.V_img, kbd)
                 fc_lyr = tf.concat(
                     [out_x, out_u, out_v], axis=1, name='concat'
                 )
+
+            # next, concat, then 'final' fc...
+            n_dense_layers = kbd['final_mlp']['n_dense_layers']
+            with tf.variable_scope('feature_selection'):
                 joined_shp = fc_lyr.shape.as_list()
                 nfeatures_joined = joined_shp[1]
                 n_output = nfeatures_joined
