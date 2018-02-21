@@ -198,7 +198,8 @@ class LayerCreator:
             name_w, shp_w, name_b=None, shp_b=None,
             initializer=xavier_init(uniform=False)
     ):
-        """ TODO - regularize batch norm params? """
+        """ Note: `name_fc_lyr` is a _basename_ for the ops """
+        # TODO - regularize batch norm params?
         W = self.make_wbkernels(name_w, shp_w, initializer=initializer)
         b = self.make_wbkernels(
             name_b, shp_b, initializer=tf.zeros_initializer()
@@ -219,7 +220,7 @@ class LayerCreator:
             name_w, shp_w, name_b=None, shp_b=None,
             act=tf.nn.relu, initializer=xavier_init(uniform=False)
     ):
-        with tf.variable_scope('active_fc_layer'):
+        with tf.variable_scope(name_fc_lyr):
             return act(
                 self.make_fc_layer(
                     inp_lyr, name_fc_lyr, name_w, shp_w, name_b, shp_b,
