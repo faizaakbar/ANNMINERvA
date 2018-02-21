@@ -224,7 +224,7 @@ def main(argv=None):
         train_params_dict=train_params_dict
     )
     if do_training:
-        runner.orchestrate_training(do_validation=do_validation, short=short)
+        runner.run_training(do_validation=do_validation, short=short)
     if do_testing:
         runner.run_testing(short=short)
     if do_prediction:

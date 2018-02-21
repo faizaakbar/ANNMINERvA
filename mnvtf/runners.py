@@ -130,7 +130,7 @@ class MnvTFRunnerCategorical:
                 i, acc_by_class[i]
             ))
 
-    def orchestrate_training(self, do_validation=False, short=False):
+    def run_training(self, do_validation=False, short=False):
         LOGGER.info('staring run_training...')
         LOGGER.info('tensorboard command:')
         LOGGER.info('\ttensorboard --logdir {}'.format(
