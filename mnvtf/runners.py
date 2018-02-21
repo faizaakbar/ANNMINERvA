@@ -115,7 +115,7 @@ class MnvTFRunnerCategorical:
         eventids = batch_dict['eventids']
         return features, eventids
 
-    def _log_confusion_maxtr(self, conf_mat):
+    def _log_confusion_matrix(self, conf_mat):
         conf_mat_filename = self.save_model_directory + \
             '/confusion_matrix.npy'
         if os.path.isfile(conf_mat_filename):
@@ -474,7 +474,7 @@ class MnvTFRunnerCategorical:
                     coord.request_stop()
                     coord.join(threads)
 
-            self._log_confusion_maxtr(confusion_matrix)
+            self._log_confusion_matrix(confusion_matrix)
             LOGGER.info('  Elapsed time = {}'.format(time.time() - start_time))
 
         LOGGER.info('Finished testing...')
