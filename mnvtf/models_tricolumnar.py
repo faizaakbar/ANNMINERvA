@@ -29,6 +29,8 @@ def make_default_convpooldict(
     """
     convpooldict = {}
     convpooldict['use_batch_norm'] = use_batch_norm
+    conv_padding_scheme = 'SAME'
+    pool_padding_scheme = 'VALID'
 
     if data_format == 'NHWC':
         pool_ksize = [1, 2, 1, 1]
@@ -51,6 +53,9 @@ def make_default_convpooldict(
         convpooldict_x[lyr] = {}
     for lyr in conv_layers:
         convpooldict_x[lyr]['apply_dropout'] = False
+        convpooldict_x[lyr]['padding'] = conv_padding_scheme
+    for lyr in pool_layers:
+        convpooldict_x[lyr]['padding'] = pool_padding_scheme
     convpooldict_x['conv1']['kernels'] = [8, 3, img_depth, 12]
     convpooldict_x['conv1']['biases'] = [12]
     convpooldict_x['conv1']['strides'] = [1, 1, 1, 1]
@@ -86,6 +91,9 @@ def make_default_convpooldict(
         convpooldict_u[lyr] = {}
     for lyr in conv_layers:
         convpooldict_u[lyr]['apply_dropout'] = False
+        convpooldict_u[lyr]['padding'] = conv_padding_scheme
+    for lyr in pool_layers:
+        convpooldict_u[lyr]['padding'] = pool_padding_scheme
     convpooldict_u['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_u['conv1']['biases'] = [12]
     convpooldict_u['conv1']['strides'] = [1, 1, 1, 1]
@@ -121,6 +129,9 @@ def make_default_convpooldict(
         convpooldict_v[lyr] = {}
     for lyr in conv_layers:
         convpooldict_v[lyr]['apply_dropout'] = False
+        convpooldict_v[lyr]['padding'] = conv_padding_scheme
+    for lyr in pool_layers:
+        convpooldict_v[lyr]['padding'] = pool_padding_scheme
     convpooldict_v['conv1']['kernels'] = [8, 5, img_depth, 12]
     convpooldict_v['conv1']['biases'] = [12]
     convpooldict_v['conv1']['strides'] = [1, 1, 1, 1]
@@ -231,12 +242,14 @@ class LayerCreator:
 
     def make_active_conv(
             self, input_lyr, name, kernels,
-            biases=None, act=tf.nn.relu, strides=[1, 1, 1, 1]
+            biases=None, act=tf.nn.relu, strides=[1, 1, 1, 1],
+            padding=None
     ):
+        padding = padding or self.padding
         with tf.variable_scope('active_conv'):
             conv = tf.nn.conv2d(
                 input_lyr, kernels, strides=strides,
-                padding=self.padding, data_format=self.data_format,
+                padding=padding, data_format=self.data_format,
                 name=name
             )
             if self.use_batch_norm:
@@ -423,9 +436,11 @@ class TriColSTEpsilon:
                             'biases', kbd[view][nm]['biases']
                         )
                         # TODO - check apply droput
+                        pd = kbd[view][nm].get('padding', self.padding)
                         conv = lc.make_active_conv(
                             inp_lyr, nm+'_conv', k, b,
-                            strides=kbd[view][nm]['strides']
+                            strides=kbd[view][nm]['strides'],
+                            padding=pd
                         )
                         if kbd[view][nm]['apply_dropout']:
                             conv = tf.nn.dropout(
@@ -436,11 +451,13 @@ class TriColSTEpsilon:
                     # scope the pooling layer
                     scope_name = 'pool' + layer
                     if kbd[view][scope_name] is not None:
+                        pd = kbd[view][scope_name].get('padding', self.padding)
                         with tf.variable_scope(scope_name):
                             out_lyr = lc.make_pool(
                                 conv, scope_name+'_pool',
                                 kbd[view][scope_name]['ksize'],
-                                kbd[view][scope_name]['strides']
+                                kbd[view][scope_name]['strides'],
+                                padding=pd
                             )
                     else:
                         out_lyr = conv

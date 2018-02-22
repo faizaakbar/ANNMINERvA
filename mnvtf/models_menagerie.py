@@ -7,6 +7,8 @@ def make_menndl_633167(img_depth=2):
     """
     convpooldict = {}
     convpooldict['use_batch_norm'] = False
+    conv_padding_scheme = 'SAME'
+    pool_padding_scheme = 'SAME'
 
     # build 3 convolutional towers. turn off pooling at any given
     # layer by setting `convpooldict_view['poolLayerNumber'] = None`
@@ -26,24 +28,29 @@ def make_menndl_633167(img_depth=2):
     convpooldict_x['conv1']['biases'] = [32]
     convpooldict_x['conv1']['strides'] = [1, c1_stride_h, c1_stride_w, 1]
     convpooldict_x['conv1']['apply_dropout'] = True
+    convpooldict_x['conv1']['padding'] = conv_padding_scheme
     # pool2_0
     convpooldict_x['pool1']['ksize'] = [1, 1, 1, 1]
     convpooldict_x['pool1']['strides'] = [1, 1, 1, 1]
+    convpooldict_x['pool1']['padding'] = pool_padding_scheme
     # conv3_0
     h, w, fin, fout = 6, 7, 32, 20
     convpooldict_x['conv2']['kernels'] = [h, w, fin, fout]
     convpooldict_x['conv2']['biases'] = [20]
     convpooldict_x['conv2']['strides'] = [1, 1, 1, 1]
     convpooldict_x['conv2']['apply_dropout'] = False
+    convpooldict_x['conv2']['padding'] = conv_padding_scheme
     # conv4_0
     h, w, fin, fout = 12, 39, 20, 28
     convpooldict_x['conv3']['kernels'] = [h, w, fin, fout]
     convpooldict_x['conv3']['biases'] = [28]
     convpooldict_x['conv3']['strides'] = [1, 1, 1, 1]
     convpooldict_x['conv3']['apply_dropout'] = False
+    convpooldict_x['conv3']['padding'] = conv_padding_scheme
     # pool5_0
     convpooldict_x['pool3']['ksize'] = [1, 2, 1, 1]
     convpooldict_x['pool3']['strides'] = [1, 2, 1, 1]
+    convpooldict_x['pool3']['padding'] = pool_padding_scheme
     convpooldict_x['n_layers'] = 3
     # at the end of the tower, flatten and possibly add dense layers...
     convpooldict['x'] = convpooldict_x
@@ -63,24 +70,29 @@ def make_menndl_633167(img_depth=2):
     convpooldict_u['conv1']['biases'] = [32]
     convpooldict_u['conv1']['strides'] = [1, c1_stride_h, c1_stride_w, 1]
     convpooldict_u['conv1']['apply_dropout'] = True
+    convpooldict_u['conv1']['padding'] = conv_padding_scheme
     # pool2_1
     convpooldict_u['pool1']['ksize'] = [1, 1, 1, 1]
     convpooldict_u['pool1']['strides'] = [1, 1, 1, 1]
+    convpooldict_u['pool1']['padding'] = pool_padding_scheme
     # conv3_1
     h, w, fin, fout = 6, 7, 32, 20
     convpooldict_u['conv2']['kernels'] = [h, w, fin, fout]
     convpooldict_u['conv2']['biases'] = [20]
     convpooldict_u['conv2']['strides'] = [1, 1, 1, 1]
     convpooldict_u['conv2']['apply_dropout'] = False
+    convpooldict_u['conv2']['padding'] = conv_padding_scheme
     # conv4_1
     h, w, fin, fout = 12, 39, 20, 28
     convpooldict_u['conv3']['kernels'] = [h, w, fin, fout]
     convpooldict_u['conv3']['biases'] = [28]
     convpooldict_u['conv3']['strides'] = [1, 1, 1, 1]
     convpooldict_u['conv3']['apply_dropout'] = False
+    convpooldict_u['conv3']['padding'] = conv_padding_scheme
     # pool5_1
     convpooldict_u['pool3']['ksize'] = [1, 2, 1, 1]
     convpooldict_u['pool3']['strides'] = [1, 2, 1, 1]
+    convpooldict_u['pool3']['padding'] = pool_padding_scheme
     convpooldict_u['n_layers'] = 3
     # at the end of the tower, flatten and possibly add dense layers...
     convpooldict['u'] = convpooldict_u
@@ -100,24 +112,29 @@ def make_menndl_633167(img_depth=2):
     convpooldict_v['conv1']['biases'] = [32]
     convpooldict_v['conv1']['strides'] = [1, c1_stride_h, c1_stride_w, 1]
     convpooldict_v['conv1']['apply_dropout'] = True
+    convpooldict_v['conv1']['padding'] = conv_padding_scheme
     # pool2_2
     convpooldict_v['pool1']['ksize'] = [1, 1, 1, 1]
     convpooldict_v['pool1']['strides'] = [1, 1, 1, 1]
+    convpooldict_v['pool1']['padding'] = pool_padding_scheme
     # conv3_2
     h, w, fin, fout = 6, 7, 32, 20
     convpooldict_v['conv2']['kernels'] = [h, w, fin, fout]
     convpooldict_v['conv2']['biases'] = [20]
     convpooldict_v['conv2']['strides'] = [1, 1, 1, 1]
     convpooldict_v['conv2']['apply_dropout'] = False
+    convpooldict_v['conv2']['padding'] = conv_padding_scheme
     # conv4_2
     h, w, fin, fout = 12, 39, 20, 28
     convpooldict_v['conv3']['kernels'] = [h, w, fin, fout]
     convpooldict_v['conv3']['biases'] = [28]
     convpooldict_v['conv3']['strides'] = [1, 1, 1, 1]
     convpooldict_v['conv3']['apply_dropout'] = False
+    convpooldict_v['conv3']['padding'] = conv_padding_scheme
     # pool5_2
     convpooldict_v['pool3']['ksize'] = [1, 2, 1, 1]
     convpooldict_v['pool3']['strides'] = [1, 2, 1, 1]
+    convpooldict_v['pool3']['padding'] = pool_padding_scheme
     convpooldict_v['n_layers'] = 3
     # at the end of the tower, flatten and possibly add dense layers...
     convpooldict['v'] = convpooldict_v
