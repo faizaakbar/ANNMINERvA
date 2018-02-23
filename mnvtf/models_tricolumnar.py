@@ -29,7 +29,7 @@ def make_default_convpooldict(
     """
     convpooldict = {}
     convpooldict['use_batch_norm'] = use_batch_norm
-    conv_padding_scheme = 'SAME'
+    conv_padding_scheme = 'VALID'
     pool_padding_scheme = 'VALID'
 
     if data_format == 'NHWC':
