@@ -138,7 +138,10 @@ def make_menndl_633167(img_depth=2):
     convpooldict['final_mlp']['dense_n_output2'] = 64  # ip7_0
     # finalip == logits layer
 
-    # TODO - check regularization
-    convpooldict['regularizer'] = None
+    convpooldict['regularizer'] = {}
+    convpooldict['regularizer']['type'] = None
+    convpooldict['regularizer']['scale'] = 0.0001
+
+    convpooldict['use_batch_norm'] = False
 
     return convpooldict

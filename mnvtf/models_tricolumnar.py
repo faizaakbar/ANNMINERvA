@@ -165,9 +165,11 @@ def make_default_convpooldict(
     convpooldict['final_mlp']['n_dense_layers'] = 1
     convpooldict['final_mlp']['dense_n_output1'] = 98
 
-    convpooldict['regularizer'] = tf.contrib.layers.l2_regularizer(
-        scale=0.0001
-    )
+    convpooldict['regularizer'] = {}
+    convpooldict['regularizer']['type'] = 'l2'
+    convpooldict['regularizer']['scale'] = 0.0001
+
+    convpooldict['use_batch_norm'] = False
 
     return convpooldict
 
@@ -181,6 +183,8 @@ class LayerCreator:
             self.reg = tf.contrib.layers.l2_regularizer(
                 scale=regularization_scale
             )
+        elif regularization_strategy is None:
+            self.reg = None
         else:
             raise NotImplementedError(
                 'Regularization strategy ' + regularization_strategy + ' \
@@ -381,11 +385,8 @@ class TriColSTEpsilon:
         self.dropout_keep_prob = None
         self.global_step = None
         self.is_training = None
-        self.padding = 'VALID'
+        self.padding = 'VALID'  # default padding choice
         self.data_format = data_format
-        self.layer_creator = LayerCreator(
-            'l2', 0.0001, use_batch_norm, self.data_format, self.padding
-        )
 
     def _build_network(self, features_list, kbd):
         """
@@ -399,7 +400,13 @@ class TriColSTEpsilon:
         LOGGER.debug('Building network from structure: %s' % str(kbd))
         self.dropout_keep_prob, self.global_step, self.is_training = \
             make_standard_placeholders()
-        lc = self.layer_creator
+        lc = LayerCreator(
+            kbd['regularizer']['type'],
+            kbd['regularizer']['scale'],
+            kbd['use_batch_norm'],
+            self.data_format,
+            self.padding
+        )
         lc.set_is_training_placeholder(self.is_training)
 
         with tf.variable_scope('input_images'):
