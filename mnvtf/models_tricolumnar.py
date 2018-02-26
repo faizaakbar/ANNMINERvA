@@ -377,7 +377,7 @@ class TriColSTEpsilon:
     """
     _allowed_strategies = ['Adam', 'AdaGrad']
     
-    def __init__(self, n_classes, data_format='NHWC', use_batch_norm=False):
+    def __init__(self, n_classes, data_format='NHWC'):
         """ note, 'NCHW' is only supported on GPUs """
         self.n_classes = n_classes
         self.loss = None

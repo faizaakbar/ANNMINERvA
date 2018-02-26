@@ -66,8 +66,6 @@ tf.app.flags.DEFINE_string('network_creator', 'default',
                            """Nework structure creation function.""")
 tf.app.flags.DEFINE_float('learning_rate', 0.001,
                           """Learning rate.""")
-tf.app.flags.DEFINE_boolean('do_batch_norm', False,
-                            """Do batch normalization.""")
 # TODO - add l2 reg params, etc.
 #
 # classification goal specification
@@ -214,8 +212,7 @@ def main(argv=None):
     model_class = utils.get_network_model_class(FLAGS.network_model)
     model = model_class(
         n_classes=FLAGS.n_classes,
-        data_format=FLAGS.data_format,
-        use_batch_norm=FLAGS.do_batch_norm
+        data_format=FLAGS.data_format
     )
     runner = MnvTFRunnerCategorical(
         model,
