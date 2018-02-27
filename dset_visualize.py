@@ -17,20 +17,7 @@ from mnvtf.data_constants import PLANECODES, SEGMENTS, ZS
 from mnvtf.data_constants import N_HADMULTMEAS
 from mnvtf.hdf5_readers import MnvHDF5Reader
 
-
-def decode_eventid(eventid):
-    """
-    assume encoding from fuel_up_nukecc.py, etc.
-    """
-    eventid = str(eventid)
-    phys_evt = eventid[-2:]
-    eventid = eventid[:-2]
-    gate = eventid[-4:]
-    eventid = eventid[:-4]
-    subrun = eventid[-4:]
-    eventid = eventid[:-4]
-    run = eventid
-    return (run, subrun, gate, phys_evt)
+from evtid_utils import decode_eventid
 
 
 class MnvDataReader:
@@ -163,7 +150,7 @@ class MnvDataReader:
             raise ValueError('Invalid file type extension!')
 
 
-def make_plots(data_dict, max_events, normed_img):
+def make_plots(data_dict, max_events, normed_img, pred_dict):
     """
     cases:
     * 'energies+times',
@@ -212,6 +199,13 @@ def make_plots(data_dict, max_events, normed_img):
         if n_hadmultmeas != -1:
             title_string = title_string + ', n_chghad {}'
             title_elems.append(n_hadmultmeas)
+        if pred_dict is not None:
+            try:
+                prediction = pred_dict[str(evtid)]
+                title_string = title_string + ', pred={}'
+                title_elems.append(prediction)
+            except KeyError:
+                pass
         print(status_string + title_string.format(*title_elems))
 
         # run, subrun, gate, phys_evt = decode_eventid(evtid)
@@ -271,6 +265,18 @@ def make_plots(data_dict, max_events, normed_img):
         evt_plotted += 1
 
 
+def get_predictions(pred_filename, n_items=200):
+    pd = {}
+    with open(pred_filename, 'r') as f:
+        for _ in range(n_items):
+            l = f.readline()
+            its = l.split(',')
+            evtid = its[0] + its[1] + its[2] + its[3]
+            pred = its[4]
+            pd[evtid] = pred
+    return pd
+
+
 if __name__ == '__main__':
 
     from optparse import OptionParser
@@ -293,6 +299,9 @@ if __name__ == '__main__':
     parser.add_option('--normed_img', dest='normed_img', default=False,
                       help='Image from normalized source',
                       metavar='NORMED_IMG', action='store_true')
+    parser.add_option('-p', '--predictions', dest='predictions_file',
+                      help='Predictions file name', metavar='PREDICTIONS',
+                      default=None, type='string')
 
     (options, args) = parser.parse_args()
 
@@ -310,4 +319,9 @@ if __name__ == '__main__':
     )
     dd = reader.read_data()
 
-    make_plots(dd, options.n_events, options.normed_img)
+    if options.predictions_file:
+        pd = get_predictions(options.predictions_file)
+    else:
+        pd = None
+
+    make_plots(dd, options.n_events, options.normed_img, pd)
