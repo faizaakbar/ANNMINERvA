@@ -320,7 +320,7 @@ if __name__ == '__main__':
     dd = reader.read_data()
 
     if options.predictions_file:
-        pd = get_predictions(options.predictions_file)
+        pd = get_predictions(options.predictions_file, options.n_events)
     else:
         pd = None
 
