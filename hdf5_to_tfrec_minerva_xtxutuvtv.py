@@ -187,16 +187,20 @@ def write_all(
                 i, n_test, test_start, test_stop, test_file)
         )
 
-        for filename in [train_file, valid_file, test_file]:
-            if os.path.isfile(filename):
-                LOGGER.info(
-                    'found existing tfrecord file {}, removing...'.format(
-                        filename
-                    )
-                )
-                os.remove(filename)
-
         if not dry_run and file_num >= file_num_start_write:
+
+            # clean up existing files in the slice
+            for filename in [train_file, valid_file, test_file]:
+                if compress_to_gz:
+                    check_file = filename + '.gz'
+                if os.path.isfile(check_file):
+                    LOGGER.info(
+                        'found existing tfrecord file {}, removing...'.format(
+                            check_file
+                        )
+                    )
+                    os.remove(check_file)
+
             list_of_groups = utils.get_groups_list(tfrec_struct)
             data_dict = make_mnv_data_dict(list_of_groups=list_of_groups)
             # events included are [start, stop)
