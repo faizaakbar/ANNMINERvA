@@ -69,8 +69,8 @@ def compare_evtid_encodings(evtid64, evtid32a, evtid32b):
 
 if __name__ == '__main__':
 
-    HDF5_DIR = '/Users/perdue/Documents/MINERvA/AI/hdf5'
-    f = h5py.File(HDF5_DIR + '/vtxfndingimgs_127x94_me1Adata.hdf5', 'r')
+    HDF5_DIR = '/Users/perdue/Documents/MINERvA/AI/hdf5/201801'
+    f = h5py.File(HDF5_DIR + '/hadmultkineimgs_127x94_me1Amc.hdf5', 'r')
     n_events = f['event_data']['eventids'].shape[0]
 
     for i in range(n_events):

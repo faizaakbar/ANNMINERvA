@@ -1,4 +1,5 @@
 """
+count up the total number of events in a set of TFRecord files
 """
 from __future__ import print_function
 from six.moves import range
@@ -77,6 +78,8 @@ def read_all_evtids(datareader_dict, typ, tfrec_type):
     LOGGER.info('found {} {} events'.format(n_evt, typ))
     utils.gz_compress(out_file)
 
+    return n_evt
+
 
 def read_all_field(datareader_dict, typ, tfrec_type, field=N_HADMULTMEAS):
     LOGGER.info('read all {}s for {}...'.format(field, typ))
@@ -154,15 +157,21 @@ def main(argv=None):
         )
         return dd
 
-    LOGGER.info(' run_params_dict = {}'.format(repr(runpars_dict)))
+    LOGGER.debug(' run_params_dict = {}'.format(repr(runpars_dict)))
 
+    n_total = 0
     for typ in read_types_list:
         dd = datareader_dict(flist_dict[typ], typ)
         LOGGER.info(' data reader dict for {} = {}'.format(
             typ, repr(dd)
         ))
-        # read_all_evtids(dd, typ, FLAGS.tfrec_type)
-        read_all_field(dd, typ, FLAGS.tfrec_type)
+        # TODO - make switch between read eventids and field an option at
+        # the command line (really, make the field read an option); maybe
+        # even make logging values optional...
+        n_total += read_all_evtids(dd, typ, FLAGS.tfrec_type)
+        # read_all_field(dd, typ, FLAGS.tfrec_type)
+
+    LOGGER.info('Total events = {}'.format(n_total))
 
 
 if __name__ == '__main__':
