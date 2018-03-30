@@ -26,6 +26,9 @@ def encode(module, plane, target):
     """
     if module == -999 or plane == -999 or target == -999:
         return 0
+    if module == 0 and plane == 0 and target == 6:
+        # the water target is downstream of module 14
+        return target + (2 << 3) + ((14 + 5) << 5)
 
     return target + (plane << 3) + ((module + 5) << 5)
 
@@ -67,6 +70,9 @@ def build_planecode_dict():
             # hcal only has plane 2
             encoded = encode(i, 2, 0)
             planecodes[encoded] = (i, 2, 0)
+
+    # the water target is special
+    planecodes[6] = (0, 0, 6)
 
     return planecodes
 
