@@ -158,7 +158,7 @@ def make_plots(data_dict, max_events, normed_img, pred_dict):
     * or 'energies' or 'times'
     If 2-deep tensor, assume energy is index 0, time is index 1
     """
-    target_plane_codes = {9: 1, 18: 2, 27: 3, 44: 4, 49: 5}
+    target_plane_codes = {9: 1, 18: 2, 27: 3, 36: 6, 45: 4, 50: 5}
     pkeys = []
     for k in data_dict.keys():
         if len(data_dict[k]) > 0:
