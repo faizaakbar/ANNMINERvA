@@ -46,7 +46,7 @@ def make_conf_mat_plots_rowcolnormonly(
     
     * arr - the confusion matrix
     """
-    target_plane_codes = {9: 1, 18: 2, 27: 3, 44: 4, 49: 5}
+    target_plane_codes = {9: 1, 18: 2, 27: 3, 36: 6, 45: 4, 50: 5}
     fig = plt.figure(figsize=(16, 16))
     gs = plt.GridSpec(2, 2)
 
