@@ -237,7 +237,7 @@ def write_all(
         n_processed += n_slc
 
     LOGGER.info("Processed {} events, finished with file number {}".format(
-        n_processed, (file_num - 1)
+        n_processed, file_num
     ))
     m.close()
     return file_num, new_files
@@ -395,7 +395,7 @@ if __name__ == '__main__':
             file_num_start_write=options.start_idx,
             tfrec_struct=options.tfrec_struct
         )
-        file_num = out_num
+        file_num = out_num + 1
 
         if options.do_test:
             read_all(
