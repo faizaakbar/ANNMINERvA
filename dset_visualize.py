@@ -411,7 +411,7 @@ def make_plots_seg(data_dict, max_events, normed_img, pred_dict):
                                          'oth'])
                 cbar.set_label("pid", size=9)
                 cbar.ax.tick_params(labelsize=6)
-                pylab.title(t + ' - ' + view, fontsize=12)
+                pylab.title("pid" + ' - ' + view, fontsize=12)
                 pylab.xlabel('plane', fontsize=10)
                 pylab.ylabel('strip', fontsize=10)
             
