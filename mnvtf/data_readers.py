@@ -36,8 +36,8 @@ class MnvTFRecordReaderBase:
         self.data_fields = None
         self._basic_int32_fields = set([
             CURRENT, INT_TYPE, TARGETZ,
-            N_CHGDKAONS, N_CHGDPIONS, N_NEUTPIONS, N_NEUTRONS, N_OTHERS,
-            N_PROTONS, N_ELECTRONS, N_MUONS, N_TAUS,
+            N_CHGDKAONS, N_CHGDPIONS, N_NEUTPIONS,
+            N_NEUTRONS, N_OTHERS, N_PROTONS,
         ])
         self._basic_float32_fields = set([
             ZS, QSQRD, WINV, XBJ, YBJ,
@@ -126,6 +126,9 @@ class MnvTFRecordReaderBase:
         elif field == N_HADMULTMEAS:
             # cap at 5 means we get {0, 1, 2, 3, 4+} hadrons
             return self._decode_onehot_capped(tfrecord_features, field, 5)
+        elif field == N_ELECTRONS or field == N_MUONS or field == N_TAUS:
+            # cap at 3 means we get {0, 1, 2+}
+            return self._decode_onehot_capped(tfrecord_features, field, 3)
         elif field in self._basic_float32_fields:
             return self._decode_basic(tfrecord_features, field, tf.float32)
         elif field in self._basic_int32_fields:
