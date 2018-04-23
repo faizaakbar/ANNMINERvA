@@ -12,9 +12,11 @@ import numpy as np
 from mnvtf.utils import get_reader_class
 from mnvtf.utils import make_data_reader_dict
 from mnvtf.data_constants import HITIMESU, HITIMESV, HITIMESX
+from mnvtf.data_constants import PIDU, PIDV, PIDX
 from mnvtf.data_constants import EVENT_DATA, EVENTIDS
 from mnvtf.data_constants import PLANECODES, SEGMENTS, ZS
 from mnvtf.data_constants import N_HADMULTMEAS
+from mnvtf.data_constants import SEGMENTATION_TYPE
 from mnvtf.hdf5_readers import MnvHDF5Reader
 
 from evtid_utils import decode_eventid
@@ -29,7 +31,8 @@ class MnvDataReader:
             img_sizes=(94, 47),
             n_planecodes=173,
             tfrecord_reader_type=None,
-            data_format='NHWC'
+            data_format='NHWC',
+            seg_data=False
     ):
         """
         currently, only work with compressed tfrecord files; assume compression
@@ -43,6 +46,7 @@ class MnvDataReader:
         self.n_planecodes = n_planecodes
         self.img_shp = (127, img_sizes[0], img_sizes[1], 2)
         self.data_format = data_format
+        self.seg_data = seg_data
 
         ext = self.filename.split('.')[-1]
         self.compression = ext if ext in ['zz', 'gz'] else ''
@@ -125,6 +129,12 @@ class MnvDataReader:
         data_dict['energies+times']['v'] = m.get_data(HITIMESV, 0, n_read)
         data_dict[EVENTIDS] = m.get_data(EVENTIDS, 0, n_read)
         
+        if self.seg_data:
+            data_dict['pid'] = {}
+            data_dict['pid']['x'] = m.get_data(PIDX, 0, n_read)
+            data_dict['pid']['u'] = m.get_data(PIDU, 0, n_read)
+            data_dict['pid']['v'] = m.get_data(PIDV, 0, n_read)
+
         def get_hdf_dat(hdf_key):
             v = m.get_data(hdf_key, 0, n_read)
             return v if len(v) else None
@@ -319,7 +329,8 @@ if __name__ == '__main__':
         n_events=options.n_events,
         img_sizes=img_sizes,
         n_planecodes=options.n_planecodes,
-        tfrecord_reader_type=options.reader_type
+        tfrecord_reader_type=options.reader_type,
+        seg_data=(options.reader_type == SEGMENTATION_TYPE)
     )
     dd = reader.read_data()
 

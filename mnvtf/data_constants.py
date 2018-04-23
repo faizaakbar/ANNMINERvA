@@ -33,6 +33,10 @@ IMG_DATA = 'img_data'
 HITIMESU = 'hitimes-u'
 HITIMESV = 'hitimes-v'
 HITIMESX = 'hitimes-x'
+PID_DATA = 'pid_data'
+PIDU = 'pid-u'
+PIDV = 'pid-v'
+PIDX = 'pid-x'
 LEPTO_DATA = 'lepto_data'
 ESUM_ELECTRONS = 'esum_electrons'
 ESUM_MUONS = 'esum_muons'
@@ -79,7 +83,8 @@ IMGING_TYPE = 'mnvimgs'
 
 SEGMENTATION_GROUPS_DICT = {
     EVENT_DATA: [EVENTIDS],
-    IMG_DATA: [HITIMESU, HITIMESV, HITIMESX]
+    IMG_DATA: [HITIMESU, HITIMESV, HITIMESX],
+    PID_DATA: [PIDU, PIDV, PIDX]
 }
 SEGMENTATION_TYPE = "segmentation"
 
