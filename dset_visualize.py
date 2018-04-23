@@ -6,6 +6,7 @@ Usage:
 import sys
 from collections import OrderedDict
 import pylab
+from matplotlib.backends.backend_pdf import PdfPages
 import tensorflow as tf
 import numpy as np
 
@@ -275,6 +276,149 @@ def make_plots(data_dict, max_events, normed_img, pred_dict):
         evt_plotted += 1
 
 
+def make_plots_seg(data_dict, max_events, normed_img, pred_dict):
+    """
+    Copy of make_plots adapted for pid plots
+    """
+    target_plane_codes = {9: 1, 18: 2, 27: 3, 36: 6, 45: 4, 50: 5}
+    pkeys = []
+    for k in data_dict.keys():
+        if len(data_dict[k]) > 0:
+            pkeys.append(k)
+    print('Data dictionary present keys: {}'.format(pkeys))
+
+    types = ['energy', 'time']
+    views = ['x', 'u', 'v']   # TODO? build dynamically?
+
+    # only working with two-deep imgs these days
+    # plotting_two_tensors = True
+
+    def get_maybe_missing(data_dict, key, counter):
+        try:
+            return data_dict[key][counter]
+        except KeyError:
+            pass
+        return -1
+
+    evt_plotted = 0
+
+    with PdfPages("evt_all.pdf") as pdf:
+        for counter in range(len(data_dict[EVENTIDS])):
+            evtid = data_dict[EVENTIDS][counter]
+            segment = get_maybe_missing(data_dict, SEGMENTS, counter)
+            planecode = get_maybe_missing(data_dict, PLANECODES, counter)
+            n_hadmultmeas = get_maybe_missing(data_dict, N_HADMULTMEAS, counter)
+            (run, subrun, gate, phys_evt) = decode_eventid(evtid)
+            if evt_plotted > max_events:
+                break
+            status_string = 'Plotting entry %d: %d: ' % (counter, evtid)
+            title_string = '{}/{}/{}/{}'
+            title_elems = [run, subrun, gate, phys_evt]
+            if segment != -1 and planecode != -1:
+                title_string = title_string + ', segment {}, planecode {}'
+                title_elems.extend([segment, planecode])
+                if planecode in target_plane_codes.keys():
+                    title_string = title_string + ', targ {}'
+                    title_elems.append(target_plane_codes[planecode[0]])
+            if n_hadmultmeas != -1:
+                title_string = title_string + ', n_chghad {}'
+                title_elems.append(n_hadmultmeas)
+            if pred_dict is not None:
+                try:
+                    prediction = pred_dict[str(evtid)]
+                    title_string = title_string + ', pred={}'
+                    title_elems.append(prediction)
+                except KeyError:
+                    pass
+            print(status_string + title_string.format(*title_elems))
+
+            # run, subrun, gate, phys_evt = decode_eventid(evtid)
+            fig_wid = 9
+            fig_height = 9
+            grid_height = 3
+            fig = pylab.figure(figsize=(fig_wid, fig_height))
+            fig.suptitle(title_string.format(*title_elems))
+            gs = pylab.GridSpec(grid_height, 3)
+
+            for i, t in enumerate(types):
+                datatyp = 'energies+times'
+                # set the bounds on the color scale
+                if normed_img:
+                    minv = 0 if t == 'energy' else -1
+                    maxv = 1
+                else:
+                    maxes = []
+                    mins = []
+                    for v in views:
+                        maxes.append(
+                            np.abs(np.max(data_dict[datatyp][v][counter, i, :, :]))
+                        )
+                        mins.append(
+                            np.abs(np.max(data_dict[datatyp][v][counter, i, :, :]))
+                        )
+                    minv = np.max(mins)
+                    maxv = np.max(maxes)
+                    maxex = maxv if maxv > minv else minv
+                    minv = 0 if minv < 0.0001 else 0 if t == 'energy' else -maxv
+                    maxv = maxex
+                for j, view in enumerate(views):
+                    gs_pos = i * 3 + j
+                    ax = pylab.subplot(gs[gs_pos])
+                    ax.axis('on')
+                    ax.xaxis.set_major_locator(pylab.NullLocator())
+                    ax.yaxis.set_major_locator(pylab.NullLocator())
+                    cmap = 'Reds' if t == 'energy' else 'bwr'
+                    cbt = 'energy' if t == 'energy' else 'times'
+                    datap = data_dict[datatyp][view][counter, i, :, :]
+                    # make the plot
+                    im = ax.imshow(
+                        datap,
+                        cmap=pylab.get_cmap(cmap),
+                        interpolation='nearest',
+                        vmin=minv, vmax=maxv
+                    )
+                    cbar = pylab.colorbar(im, fraction=0.04)
+                    cbar.set_label(cbt, size=9)
+                    cbar.ax.tick_params(labelsize=6)
+                    pylab.title(t + ' - ' + view, fontsize=12)
+                    pylab.xlabel('plane', fontsize=10)
+                    pylab.ylabel('strip', fontsize=10)
+            # plot pid
+            for j, view in enumerate(views):
+                gs_pos = 6 + j
+                ax = pylab.subplot(gs[gs_pos])
+                ax.axis('on')
+                ax.xaxis.set_major_locator(pylab.NullLocator())
+                ax.yaxis.set_major_locator(pylab.NullLocator())
+                cmap = 'tab10'
+                cbt = 'pid'
+                datap = data_dict["pid"][view][counter, 0, :, :]
+                # make the plot                
+                im = ax.imshow(
+                    datap,
+                    cmap=pylab.get_cmap(cmap),
+                    interpolation='nearest',
+                    vmin=0, vmax=7
+                )
+                cbar = pylab.colorbar(im, fraction=0.04, ticks=[0, 1, 2, 3, 4, 5, 6, 7])
+                cbar.ax.set_yticklabels(['nth', 
+                                         'EM',
+                                         'mu',
+                                         'pi+',
+                                         'pi-',
+                                         'n',
+                                         'p',
+                                         'oth'])
+                cbar.set_label("pid", size=9)
+                cbar.ax.tick_params(labelsize=6)
+                pylab.title(t + ' - ' + view, fontsize=12)
+                pylab.xlabel('plane', fontsize=10)
+                pylab.ylabel('strip', fontsize=10)
+            
+            pdf.savefig()
+            evt_plotted += 1
+
+
 def get_predictions(pred_filename, n_items=200):
     pd = {}
     with open(pred_filename, 'r') as f:
@@ -339,4 +483,7 @@ if __name__ == '__main__':
     else:
         pd = None
 
-    make_plots(dd, options.n_events, options.normed_img, pd)
+    if options.reader_type == SEGMENTATION_TYPE:
+        make_plots_seg(dd, options.n_events, options.normed_img, pd)
+    else:
+        make_plots(dd, options.n_events, options.normed_img, pd)
