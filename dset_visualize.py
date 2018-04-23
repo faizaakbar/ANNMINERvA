@@ -302,6 +302,9 @@ if __name__ == '__main__':
     parser.add_option('-p', '--predictions', dest='predictions_file',
                       help='Predictions file name', metavar='PREDICTIONS',
                       default=None, type='string')
+    parser.add_option('-t', '--reader_type', dest='reader_type',
+                      help='Reader type (see mnvtf.utils.get_reader_class for available options', metavar='READER',
+                      default=None, type='string')
 
     (options, args) = parser.parse_args()
 
@@ -315,7 +318,8 @@ if __name__ == '__main__':
         filename=options.filename,
         n_events=options.n_events,
         img_sizes=img_sizes,
-        n_planecodes=options.n_planecodes
+        n_planecodes=options.n_planecodes,
+        tfrecord_reader_type=options.reader_type
     )
     dd = reader.read_data()
 
