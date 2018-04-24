@@ -16,7 +16,7 @@ def compute_purity_via_row_norm(arr):
         epsilon = npass / ntotal
         pur_arr[i, :] = epsilon
         pur_arr_err[i, :] = np.sqrt(epsilon * (1 - epsilon) / ntotal)
-        
+
     return pur_arr, pur_arr_err
 
 
@@ -33,20 +33,26 @@ def compute_effic_via_col_norm(arr):
         epsilon = npass / ntotal
         eff_arr[:, i] = epsilon
         eff_arr_err[i, :] = np.sqrt(epsilon * (1 - epsilon) / ntotal)
-        
+
     return eff_arr, eff_arr_err
 
 
 def make_conf_mat_plots_rowcolnormonly(
         arr, plot_type, top_title='Purity', bottom_title='Efficiency',
-        colormap='Reds', print_arrays=False, print_targets=True
+        colormap='Reds', print_arrays=False, print_targets=True,
+        n_targets=6
 ):
     """
     plots and text for row and column normalized confusion matrices
-    
+
     * arr - the confusion matrix
     """
-    target_plane_codes = {9: 1, 18: 2, 27: 3, 36: 6, 45: 4, 50: 5}
+    if n_targets == 5:
+        target_plane_codes = {9: 1, 18: 2, 27: 3, 44: 4, 49: 5}
+    elif n_targets == 6:
+        target_plane_codes = {9: 1, 18: 2, 27: 3, 36: 6, 45: 4, 50: 5}
+    else:
+        raise ValueError('Illegal number of targets.')
     fig = plt.figure(figsize=(16, 16))
     gs = plt.GridSpec(2, 2)
 
@@ -63,7 +69,7 @@ def make_conf_mat_plots_rowcolnormonly(
             print(
                 'segment {:2d}: efficiency = {:.3f}'.format(i, eff_arr[i, i])
             )
-    
+
     if print_targets:
         print("purity (row-normalized diagonal values)")
         for i in target_plane_codes.keys():
@@ -80,7 +86,7 @@ def make_conf_mat_plots_rowcolnormonly(
         title = title_base.format(title_mod)
         title = r'Log$_{10}$ ' + title if logscale else title
         return title
-    
+
     def make_subplot(ax, show_arr, colormap, title):
         im = ax.imshow(
             show_arr, cmap=plt.get_cmap(colormap),
@@ -90,7 +96,7 @@ def make_conf_mat_plots_rowcolnormonly(
         plt.title(title)
         plt.xlabel('True z-segment')
         plt.ylabel('Reconstructed z-segment')
-        
+
     # purity linear plots
     ax = plt.subplot(gs[0])
     show_arr = pur_arr
@@ -108,7 +114,7 @@ def make_conf_mat_plots_rowcolnormonly(
             'Purity (row normalized)\n{}', top_title, True
         )
     )
-    
+
     # efficiency linear plots
     ax = plt.subplot(gs[2])
     show_arr = eff_arr
@@ -145,7 +151,7 @@ def make_conf_mat_plots_raw(arr, plot_type, colormap='Reds'):
     def make_title_string(title, logscale):
         title = r'Log$_{10}$ ' + title if logscale else title
         return title
-    
+
     def make_subplot(ax, show_arr, colormap, title):
         im = ax.imshow(
             show_arr, cmap=plt.get_cmap(colormap),
@@ -155,7 +161,7 @@ def make_conf_mat_plots_raw(arr, plot_type, colormap='Reds'):
         plt.title(title)
         plt.xlabel('True z-segment')
         plt.ylabel('Reconstructed z-segment')
-        
+
     # linear plots
     ax = plt.subplot(gs[0])
     show_arr = arr
@@ -171,7 +177,7 @@ def make_conf_mat_plots_raw(arr, plot_type, colormap='Reds'):
         ax, show_arr, colormap,
         make_title_string('Confustion matrix', True)
     )
-    
+
     fig.savefig(
         'confusion_matrices_raw_{}.pdf'.format(plot_type),
         bbox_inches='tight'
