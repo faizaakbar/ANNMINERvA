@@ -15,7 +15,8 @@ from mnvtf.data_constants import HITIMESU, HITIMESV, HITIMESX
 from mnvtf.data_constants import EVENT_DATA, EVENTIDS
 from mnvtf.data_constants import PLANECODES, SEGMENTS, ZS
 from mnvtf.data_constants import N_HADMULTMEAS
-from mnvtf.hdf5_readers import MnvHDF5Reader
+from mnvtf.hdf5_readers import MnvHDF5Reader as HDF5Reader
+# from mnvtf.hdf5_readers import MnvHDF5LegacyReader as HDF5Reader
 
 from evtid_utils import decode_eventid
 
@@ -43,6 +44,7 @@ class MnvDataReader:
         self.n_planecodes = n_planecodes
         self.img_shp = (127, img_sizes[0], img_sizes[1], 2)
         self.data_format = data_format
+        self.tfrecord_reader = tfrecord_reader_type
 
         ext = self.filename.split('.')[-1]
         self.compression = ext if ext in ['zz', 'gz'] else ''
@@ -54,13 +56,14 @@ class MnvDataReader:
         self.hdf5_extensions = ['hdf5', 'h5']
         self.tfr_extensions = ['tfrecord']
 
-        if tfrecord_reader_type is None:
-            # attempt to infer the reader type from the filename.
-            tfrecord_reader_type = filename.split('/')[-1]
-            tfrecord_reader_type = tfrecord_reader_type.split('_')[0]
-        self.tfrecord_reader = get_reader_class(tfrecord_reader_type)
-
     def _read_tfr(self):
+
+        if self.tfrecord_reader_type is None:
+            # attempt to infer the reader type from the filename.
+            tfrecord_reader_type = self.filename.split('/')[-1]
+            tfrecord_reader_type = tfrecord_reader_type.split('_')[0]
+            self.tfrecord_reader = get_reader_class(tfrecord_reader_type)
+
         data_dict = {}
         data_dict['energies+times'] = {}
 
@@ -116,7 +119,7 @@ class MnvDataReader:
         data_dict = {}
         data_dict['energies+times'] = {}
 
-        m = MnvHDF5Reader(self.filename)
+        m = HDF5Reader(self.filename)
         m.open()
         n_events = m.get_nevents(group=EVENT_DATA)
         n_read = min(n_events, self.n_events)
@@ -126,8 +129,12 @@ class MnvDataReader:
         data_dict[EVENTIDS] = m.get_data(EVENTIDS, 0, n_read)
         
         def get_hdf_dat(hdf_key):
-            v = m.get_data(hdf_key, 0, n_read)
-            return v if len(v) else None
+            try:
+                v = m.get_data(hdf_key, 0, n_read)
+                return v if len(v) else None
+            except ValueError as e:
+                print(e)
+                return []
         for d in [PLANECODES, SEGMENTS, ZS, N_HADMULTMEAS]:
             v = get_hdf_dat(d)
             if v is not None and len(v):
@@ -150,7 +157,7 @@ class MnvDataReader:
             raise ValueError('Invalid file type extension!')
 
 
-def make_plots(data_dict, max_events, normed_img, pred_dict):
+def make_plots(data_dict, max_events, normed_img, pred_dict, n_targets=6):
     """
     cases:
     * 'energies+times',
@@ -158,7 +165,12 @@ def make_plots(data_dict, max_events, normed_img, pred_dict):
     * or 'energies' or 'times'
     If 2-deep tensor, assume energy is index 0, time is index 1
     """
-    target_plane_codes = {9: 1, 18: 2, 27: 3, 36: 6, 45: 4, 50: 5}
+    if n_targets == 5:
+        target_plane_codes = {9: 1, 18: 2, 27: 3, 44: 4, 49: 5}
+    elif n_targets == 6:
+        target_plane_codes = {9: 1, 18: 2, 27: 3, 36: 6, 45: 4, 50: 5}
+    else:
+        raise ValueError('Impossible number of targets!')
     pkeys = []
     for k in data_dict.keys():
         if len(data_dict[k]) > 0:
@@ -195,7 +207,11 @@ def make_plots(data_dict, max_events, normed_img, pred_dict):
             title_elems.extend([segment, planecode])
             if planecode in target_plane_codes.keys():
                 title_string = title_string + ', targ {}'
-                title_elems.append(target_plane_codes[planecode[0]])
+                try:
+                    title_elems.append(target_plane_codes[planecode[0]])
+                except IndexError:
+                    # legacy HDF5 will return a scalar
+                    title_elems.append(target_plane_codes[planecode])
         if n_hadmultmeas != -1:
             title_string = title_string + ', n_chghad {}'
             title_elems.append(n_hadmultmeas)
@@ -209,11 +225,11 @@ def make_plots(data_dict, max_events, normed_img, pred_dict):
         print(status_string + title_string.format(*title_elems))
 
         # run, subrun, gate, phys_evt = decode_eventid(evtid)
-        fig_wid = 9
+        fig_wid = 4
         fig_height = 6
         grid_height = 2
         fig = pylab.figure(figsize=(fig_wid, fig_height))
-        fig.suptitle(title_string.format(*title_elems))
+        #fig.suptitle(title_string.format(*title_elems))
         gs = pylab.GridSpec(grid_height, 3)
 
         for i, t in enumerate(types):
@@ -253,12 +269,22 @@ def make_plots(data_dict, max_events, normed_img, pred_dict):
                     interpolation='nearest',
                     vmin=minv, vmax=maxv
                 )
+                # this shows planecode and not position in x-img
+                # if i == 0 and j == 0:
+                #     for targ in target_plane_codes.keys():
+                #         ax.vlines(
+                #             targ, 0, 126,
+                #             linestyle='--', linewidth=0.1, alpha=0.8
+                #         )
                 cbar = pylab.colorbar(im, fraction=0.04)
-                cbar.set_label(cbt, size=9)
+                if j == (len(views) - 1):
+                    cbar.set_label(cbt, size=9)
                 cbar.ax.tick_params(labelsize=6)
                 pylab.title(t + ' - ' + view, fontsize=12)
-                pylab.xlabel('plane', fontsize=10)
-                pylab.ylabel('strip', fontsize=10)
+                if i == (len(types) - 1):
+                    pylab.xlabel('plane', fontsize=10)
+                if j == 0:
+                    pylab.ylabel('strip', fontsize=10)
         figname = 'evt_%d.pdf' % (counter)
         pylab.savefig(figname, bbox_inches='tight')
         pylab.close()
@@ -302,6 +328,9 @@ if __name__ == '__main__':
     parser.add_option('-p', '--predictions', dest='predictions_file',
                       help='Predictions file name', metavar='PREDICTIONS',
                       default=None, type='string')
+    parser.add_option('--n_targets', dest='n_targets', default=6,
+                      help='Number of targets (5 or 6)',
+                      metavar='N_TARGETS', type='int')
 
     (options, args) = parser.parse_args()
 
@@ -324,4 +353,6 @@ if __name__ == '__main__':
     else:
         pd = None
 
-    make_plots(dd, options.n_events, options.normed_img, pd)
+    make_plots(
+        dd, options.n_events, options.normed_img, pd, options.n_targets
+    )
