@@ -57,11 +57,61 @@ class MnvHDF5Reader:
                 )
             return self._f[group][name][start_idx: stop_idx]
         except KeyError:
-            LOGGER.info('{} data is not available in this HDF5 file.')
-            return []
+            msg = '{} data is not available in this HDF5 file.'.format(name)
+            LOGGER.info(msg)
+            raise ValueError(msg)
 
-    def get_nevents(self, group):
+    def get_nevents(self, group=None):
         sizes = [self._f[group][d].shape[0] for d in self._f[group]]
+        if min(sizes) != max(sizes):
+            msg = "All dsets must have the same size!"
+            LOGGER.error(msg)
+            raise ValueError(msg)
+        return sizes[0]
+
+
+class MnvHDF5LegacyReader:
+    """
+    the `minerva_hdf5_reader` will return numpy ndarrays of data for given
+    ranges. user should call `open()` and `close()` to start/finish.
+
+    Note that this class assumes a file structure like:
+    f[dataset_1]
+    f[dataset_2]
+    ...
+    f[dataset_m]
+
+    (This is the "legacy" HDF5 structure - from the old ROOT->txt->HDF5
+    workflow.)
+    """
+    def __init__(self, hdf5_file):
+        self.file = hdf5_file
+        self._f = None
+
+    def open(self):
+        LOGGER.info("Opening hdf5 file {}".format(self.file))
+        self._f = h5py.File(self.file, 'r')
+        for dset in self._f:
+            LOGGER.info('{:>12}: {:>8}: shape = {}'.format(
+                dset, np.dtype(self._f[dset]), np.shape(self._f[dset])
+            ))
+
+    def close(self):
+        try:
+            self._f.close()
+        except AttributeError:
+            LOGGER.info('hdf5 file is not open yet.')
+
+    def get_data(self, name, start_idx, stop_idx):
+        try:
+            return self._f[name][start_idx: stop_idx]
+        except KeyError:
+            msg = '{} data is not available in this HDF5 file.'.format(name)
+            LOGGER.info(msg)
+            raise ValueError(msg)
+
+    def get_nevents(self, group=None):
+        sizes = [self._f[d].shape[0] for d in self._f]
         if min(sizes) != max(sizes):
             msg = "All dsets must have the same size!"
             LOGGER.error(msg)
@@ -89,5 +139,26 @@ def test():
         print 'hdf5 file not found'
 
 
+def test_legacy():
+    path = '/Users/perdue/Documents/MINERvA/AI/hdf5/201600/'
+    filen = 'minosmatch_nukecczdefs_genallzwitht_pcodecap66_127x50x25' \
+            '_xtxutuvtv_me1Bmc.hdf5'
+    reader = MnvHDF5LegacyReader(path + filen)
+    try:
+        reader.open()
+        print reader.get_data('eventids', 0, 10)
+        try:
+            print reader.get_data('planecodes', 0, 10)
+        except ValueError:
+            print 'planecodes are not stored here.'
+        try:
+            print reader.get_data('n_rainbow_unicorns', 0, 10)
+        except ValueError:
+            print 'of course there are no unicorns here.'
+        reader.close()
+    except IOError:
+        print 'hdf5 file not found'
+    
+
 if __name__ == '__main__':
-    test()
+    test_legacy()
