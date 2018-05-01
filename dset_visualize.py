@@ -280,13 +280,12 @@ def make_plots(data_dict, max_events, normed_img, pred_dict, n_targets=6):
                     interpolation='nearest',
                     vmin=minv, vmax=maxv
                 )
-                # this shows planecode and not position in x-img
-                # if i == 0 and j == 0:
-                #     for targ in target_plane_codes.keys():
-                #         ax.vlines(
-                #             targ, 0, 126,
-                #             linestyle='--', linewidth=0.1, alpha=0.8
-                #         )
+                if i == 0 and j == 0:
+                    for targ in [3, 7, 11, 15, 19, 21]:
+                        ax.vlines(
+                            targ, 0, 126,
+                            linestyle='--', linewidth=0.1, alpha=0.8
+                        )
                 cbar = pylab.colorbar(im, fraction=0.04)
                 if j == (len(views) - 1):
                     cbar.set_label(cbt, size=9)
