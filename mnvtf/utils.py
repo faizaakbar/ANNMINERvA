@@ -8,9 +8,11 @@ import gzip
 from data_readers import MnvDataReaderImageST
 from data_readers import MnvDataReaderVertexST
 from data_readers import MnvDataReaderHamultKineST
+from data_readers import MnvDataReaderSegmentST
 from data_constants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from data_constants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 from data_constants import IMGING_GROUPS_DICT, IMGING_TYPE
+from data_constants import SEGMENTATION_GROUPS_DICT, SEGMENTATION_TYPE
 from models_tricolumnar import TriColSTEpsilon
 from models_tricolumnar import make_default_convpooldict
 from models_menagerie import make_menndl_633167
@@ -198,6 +200,8 @@ def get_groups_list(hdf5_type):
         return HADMULTKINE_GROUPS_DICT.keys()
     elif hdf5_type == IMGING_TYPE:
         return IMGING_GROUPS_DICT.keys()
+    elif hdf5_type == SEGMENTATION_TYPE:
+        return SEGMENTATION_GROUPS_DICT.keys()
     else:
         raise ValueError('Unknown HDF5 grouping type {}!'.format(hdf5_type))
 
@@ -210,6 +214,8 @@ def get_reader_class(data_file_type):
         return MnvDataReaderHamultKineST
     elif data_file_type == IMGING_TYPE:
         return MnvDataReaderImageST
+    elif data_file_type == SEGMENTATION_TYPE:
+        return MnvDataReaderSegmentST
     else:
         raise ValueError('Unknown TFRec data file type!')
 
