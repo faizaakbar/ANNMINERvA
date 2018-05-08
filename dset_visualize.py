@@ -236,12 +236,13 @@ def make_plots(data_dict, max_events, normed_img, pred_dict, n_targets=6):
         print(status_string + title_string.format(*title_elems))
 
         # run, subrun, gate, phys_evt = decode_eventid(evtid)
-        fig_wid = 4
-        fig_height = 6
-        grid_height = 2
-        fig = pylab.figure(figsize=(fig_wid, fig_height))
-        #fig.suptitle(title_string.format(*title_elems))
-        gs = pylab.GridSpec(grid_height, 3)
+        fig_height = len(types) * 2
+        fig_width = len(views) * 2
+        grid_height = len(types)
+        grid_width = len(views)
+        fig = pylab.figure(figsize=(fig_width, fig_height))
+        fig.suptitle(title_string.format(*title_elems))
+        gs = pylab.GridSpec(grid_height, grid_width)
 
         for i, t in enumerate(types):
             datatyp = 'energies+times'
@@ -265,7 +266,7 @@ def make_plots(data_dict, max_events, normed_img, pred_dict, n_targets=6):
                 minv = 0 if minv < 0.0001 else 0 if t == 'energy' else -maxv
                 maxv = maxex
             for j, view in enumerate(views):
-                gs_pos = i * 3 + j
+                gs_pos = i * len(views) + j
                 ax = pylab.subplot(gs[gs_pos])
                 ax.axis('on')
                 ax.xaxis.set_major_locator(pylab.NullLocator())
@@ -280,12 +281,13 @@ def make_plots(data_dict, max_events, normed_img, pred_dict, n_targets=6):
                     interpolation='nearest',
                     vmin=minv, vmax=maxv
                 )
-                if i == 0 and j == 0:
-                    for targ in [3, 7, 11, 15, 19, 21]:
-                        ax.vlines(
-                            targ, 0, 126,
-                            linestyle='--', linewidth=0.1, alpha=0.8
-                        )
+                # draw dashed lines in target locations
+                # if i == 0 and j == 0:
+                #     for targ in [3, 7, 11, 15, 19, 21]:
+                #         ax.vlines(
+                #             targ, 0, 126,
+                #             linestyle='--', linewidth=0.1, alpha=0.8
+                #         )
                 cbar = pylab.colorbar(im, fraction=0.04)
                 if j == (len(views) - 1):
                     cbar.set_label(cbt, size=9)
@@ -421,7 +423,7 @@ def make_plots_seg(data_dict, max_events, normed_img, pred_dict):
                 cmap = 'tab10'
                 cbt = 'pid'
                 datap = data_dict["pid"][view][counter, 0, :, :]
-                # make the plot                
+                # make the plot
                 im = ax.imshow(
                     datap,
                     cmap=pylab.get_cmap(cmap),
