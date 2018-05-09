@@ -8,10 +8,12 @@ import gzip
 from data_readers import MnvDataReaderImageST
 from data_readers import MnvDataReaderVertexST
 from data_readers import MnvDataReaderHamultKineST
+from data_readers import MnvDataReaderWholevtST
 from data_readers import MnvDataReaderSegmentST
 from data_constants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from data_constants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 from data_constants import IMGING_GROUPS_DICT, IMGING_TYPE
+from data_constants import WHOLEVT_GROUPS_DICT, WHOLEVT_TYPE
 from data_constants import SEGMENTATION_GROUPS_DICT, SEGMENTATION_TYPE
 from models_tricolumnar import TriColSTEpsilon
 from models_tricolumnar import make_default_convpooldict
@@ -190,18 +192,31 @@ def gz_compress(out_file):
         raise IOError('Compressed file not produced!')
 
 
-def get_groups_list(hdf5_type):
+def get_fields_list(hdf5_type):
     """
-    get the list of HDF5 'groups' for a given ROOT->HDF5 conversion
+    get the list of HDF5 'fields' for a given ROOT->HDF5 conversion
     """
+    fields_list = []
     if hdf5_type == VTXFINDING_TYPE:
-        return VTXFINDING_GROUPS_DICT.keys()
+        for k in VTXFINDING_GROUPS_DICT.keys():
+            fields_list.extend(VTXFINDING_GROUPS_DICT[k])
+        return fields_list
     elif hdf5_type == HADMULTKINE_TYPE:
-        return HADMULTKINE_GROUPS_DICT.keys()
+        for k in HADMULTKINE_GROUPS_DICT.keys():
+            fields_list.extend(HADMULTKINE_GROUPS_DICT[k])
+        return fields_list
     elif hdf5_type == IMGING_TYPE:
-        return IMGING_GROUPS_DICT.keys()
+        for k in IMGING_GROUPS_DICT.keys():
+            fields_list.extend(IMGING_GROUPS_DICT[k])
+        return fields_list
+    elif hdf5_type == WHOLEVT_TYPE:
+        for k in WHOLEVT_GROUPS_DICT.keys():
+            fields_list.extend(WHOLEVT_GROUPS_DICT[k])
+        return fields_list
     elif hdf5_type == SEGMENTATION_TYPE:
-        return SEGMENTATION_GROUPS_DICT.keys()
+        for k in SEGMENTATION_GROUPS_DICT.keys():
+            fields_list.extend(SEGMENTATION_GROUPS_DICT[k])
+        return fields_list
     else:
         raise ValueError('Unknown HDF5 grouping type {}!'.format(hdf5_type))
 
@@ -214,6 +229,8 @@ def get_reader_class(data_file_type):
         return MnvDataReaderHamultKineST
     elif data_file_type == IMGING_TYPE:
         return MnvDataReaderImageST
+    elif data_file_type == WHOLEVT_TYPE:
+        return MnvDataReaderWholevtST
     elif data_file_type == SEGMENTATION_TYPE:
         return MnvDataReaderSegmentST
     else:

@@ -15,7 +15,7 @@ import glob
 
 import mnvtf.utils as utils
 from mnvtf.hdf5_readers import MnvHDF5Reader
-from mnvtf.data_constants import make_mnv_data_dict
+from mnvtf.data_constants import make_mnv_data_dict_from_fields
 from mnvtf.data_constants import EVENT_DATA
 from mnvtf.data_constants import PLANECODES, SEGMENTS
 
@@ -201,8 +201,10 @@ def write_all(
                     )
                     os.remove(check_file)
 
-            list_of_groups = utils.get_groups_list(tfrec_struct)
-            data_dict = make_mnv_data_dict(list_of_groups=list_of_groups)
+            list_of_fields = utils.get_fields_list(tfrec_struct)
+            data_dict = make_mnv_data_dict_from_fields(
+                list_of_fields=list_of_fields
+            )
             # events included are [start, stop)
             if n_train > 0:
                 LOGGER.info('creating train file...')

@@ -4,7 +4,8 @@ import tensorflow as tf
 
 from data_constants import EVENTIDS, PLANECODES, SEGMENTS, ZS
 from data_constants import HITIMESU, HITIMESV, HITIMESX
-from data_constants import QSQRD, WINV, XBJ, YBJ, CURRENT, INT_TYPE, TARGETZ
+from data_constants import QSQRD, WINV, XBJ, YBJ, ENRGY, LEP_ENRGY 
+from data_constants import CURRENT, SIG_TYPE, INT_TYPE, TARGETZ
 from data_constants import ESUM_CHGDKAONS, ESUM_CHGDPIONS, ESUM_HADMULTMEAS
 from data_constants import ESUM_NEUTPIONS, ESUM_NEUTRONS
 from data_constants import ESUM_OTHERS, ESUM_PROTONS
@@ -40,7 +41,7 @@ class MnvTFRecordReaderBase:
             N_NEUTRONS, N_OTHERS, N_PROTONS,
         ])
         self._basic_float32_fields = set([
-            ZS, QSQRD, WINV, XBJ, YBJ,
+            ZS, QSQRD, WINV, XBJ, YBJ, ENRGY, LEP_ENRGY,
             ESUM_CHGDKAONS, ESUM_CHGDPIONS, ESUM_HADMULTMEAS,
             ESUM_NEUTPIONS, ESUM_NEUTRONS, ESUM_OTHERS, ESUM_PROTONS,
             ESUM_ELECTRONS, ESUM_MUONS, ESUM_TAUS,
@@ -123,6 +124,8 @@ class MnvTFRecordReaderBase:
             )
         elif field == SEGMENTS:
             return self._decode_onehot(tfrecord_features, field, 11, tf.uint8)
+        elif field == SIG_TYPE:
+            return self._decode_onehot(tfrecord_features, field, 4)
         elif field == N_HADMULTMEAS:
             # cap at 5 means we get {0, 1, 2, 3, 4+} hadrons
             return self._decode_onehot_capped(tfrecord_features, field, 5)
@@ -240,6 +243,29 @@ class MnvDataReaderHamultKineST(MnvTFRecordReaderBase):
             N_NEUTPIONS, N_NEUTRONS, N_OTHERS, N_PROTONS,
             ESUM_ELECTRONS, ESUM_MUONS, ESUM_TAUS,
             N_ELECTRONS, N_MUONS, N_TAUS,
+        ])
+        self._features_dict = {
+            f: tf.FixedLenFeature([], tf.string) for f in self.data_fields
+        }
+
+
+class MnvDataReaderWholevtST(MnvTFRecordReaderBase):
+    """
+    Minerva Data Reader for whole event "SpaceTime" data
+    """
+    def __init__(self, args_dict):
+        """
+        img_shp = (imgh, imgw_x, imgw_uv, img_depth)
+        """
+        MnvTFRecordReaderBase.__init__(self, args_dict)
+        self.data_fields = sorted([
+            EVENTIDS, ZS, HITIMESU, HITIMESV, HITIMESX,
+            QSQRD, WINV, XBJ, YBJ, ENRGY, LEP_ENRGY,
+            CURRENT, SIG_TYPE, INT_TYPE, TARGETZ,
+            ESUM_CHGDKAONS, ESUM_CHGDPIONS, ESUM_HADMULTMEAS,
+            ESUM_NEUTPIONS, ESUM_NEUTRONS, ESUM_OTHERS, ESUM_PROTONS,
+            N_CHGDKAONS, N_CHGDPIONS, N_HADMULTMEAS,
+            N_NEUTPIONS, N_NEUTRONS, N_OTHERS, N_PROTONS,
         ])
         self._features_dict = {
             f: tf.FixedLenFeature([], tf.string) for f in self.data_fields

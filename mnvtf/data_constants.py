@@ -7,11 +7,14 @@ VTX_DATA = 'vtx_data'
 SEGMENTS = 'segments'
 ZS = 'zs'
 GEN_DATA = 'gen_data'
+ENRGY = 'E'
+LEP_ENRGY = 'leptE'
 QSQRD = 'Q2'
 WINV = 'W'
 XBJ = 'x'
 YBJ = 'y'
 CURRENT = 'current'
+SIG_TYPE = 'sig_type'
 INT_TYPE = 'int_type'
 TARGETZ = 'targetZ'
 HADRO_DATA = 'hadro_data'
@@ -45,6 +48,55 @@ N_ELECTRONS = 'n_electrons'
 N_MUONS = 'n_muons'
 N_TAUS = 'n_taus'
 
+
+def make_master_dset_dict():
+    d = {}
+    d[EVENTIDS] = (EVENTIDS, tf.int64, EVENT_DATA)
+    d[PLANECODES] = (PLANECODES, tf.int32, VTX_DATA)
+    d[SEGMENTS] = (SEGMENTS, tf.uint8, VTX_DATA)
+    d[ZS] = (ZS, tf.float32, VTX_DATA)
+    d[HITIMESU] = (HITIMESU, tf.float32, IMG_DATA)
+    d[HITIMESV] = (HITIMESV, tf.float32, IMG_DATA)
+    d[HITIMESX] = (HITIMESX, tf.float32, IMG_DATA)
+    d[TARGETZ] = (TARGETZ, tf.int32, GEN_DATA)
+    d[QSQRD] = (QSQRD, tf.float32, GEN_DATA)
+    d[WINV] = (WINV, tf.float32, GEN_DATA)
+    d[XBJ] = (XBJ, tf.float32, GEN_DATA)
+    d[YBJ] = (YBJ, tf.float32, GEN_DATA)
+    d[CURRENT] = (CURRENT, tf.int32, GEN_DATA)
+    d[INT_TYPE] = (INT_TYPE, tf.int32, GEN_DATA)
+    d[SIG_TYPE] = (SIG_TYPE, tf.int32, GEN_DATA)
+    d[ENRGY] = (ENRGY, tf.float32, GEN_DATA)
+    d[LEP_ENRGY] = (LEP_ENRGY, tf.float32, GEN_DATA)
+    d[ESUM_CHGDKAONS] = (ESUM_CHGDKAONS, tf.float32, HADRO_DATA)
+    d[ESUM_CHGDPIONS] = (ESUM_CHGDPIONS, tf.float32, HADRO_DATA)
+    d[ESUM_HADMULTMEAS] = (ESUM_HADMULTMEAS, tf.float32, HADRO_DATA)
+    d[ESUM_NEUTPIONS] = (ESUM_NEUTPIONS, tf.float32, HADRO_DATA)
+    d[ESUM_NEUTRONS] = (ESUM_NEUTRONS, tf.float32, HADRO_DATA)
+    d[ESUM_OTHERS] = (ESUM_OTHERS, tf.float32, HADRO_DATA)
+    d[ESUM_PROTONS] = (ESUM_PROTONS, tf.float32, HADRO_DATA)
+    d[N_CHGDKAONS] = (N_CHGDKAONS, tf.int32, HADRO_DATA)
+    d[N_CHGDPIONS] = (N_CHGDPIONS, tf.int32, HADRO_DATA)
+    d[N_HADMULTMEAS] = (N_HADMULTMEAS, tf.int32, HADRO_DATA)
+    d[N_NEUTPIONS] = (N_NEUTPIONS, tf.int32, HADRO_DATA)
+    d[N_NEUTRONS] = (N_NEUTRONS, tf.int32, HADRO_DATA)
+    d[N_OTHERS] = (N_OTHERS, tf.int32, HADRO_DATA)
+    d[N_PROTONS] = (N_PROTONS, tf.int32, HADRO_DATA)
+    d[ESUM_ELECTRONS] = (ESUM_ELECTRONS, tf.float32, LEPTO_DATA)
+    d[ESUM_MUONS] = (ESUM_MUONS, tf.float32, LEPTO_DATA)
+    d[ESUM_TAUS] = (ESUM_TAUS, tf.float32, LEPTO_DATA)
+    d[N_ELECTRONS] = (N_ELECTRONS, tf.int32, LEPTO_DATA)
+    d[N_MUONS] = (N_MUONS, tf.int32, LEPTO_DATA)
+    d[N_TAUS] = (N_TAUS, tf.int32, LEPTO_DATA)
+    d[PIDU] = (PIDU, tf.int32, PID_DATA)
+    d[PIDV] = (PIDV, tf.int32, PID_DATA)
+    d[PIDX] = (PIDX, tf.int32, PID_DATA)
+
+    return d
+
+
+MASTER_DSET_DICT = make_master_dset_dict()
+
 # groups in the HDF5 file marked for translation to TFRecord; ultimately, we
 # can't build this list dynamically because there is no way to get it from
 # the TFRecord file by inspection - we must unpack with foreknowledge of
@@ -67,6 +119,23 @@ HADMULTKINE_GROUPS_DICT = {
 }
 HADMULTKINE_TYPE = 'hadmultkineimgs'
 
+WHOLEVT_GROUPS_DICT = {
+    EVENT_DATA: [EVENTIDS],
+    VTX_DATA: [ZS],
+    GEN_DATA: [
+        ENRGY, LEP_ENRGY, QSQRD, WINV, XBJ, YBJ,
+        CURRENT, INT_TYPE, SIG_TYPE, TARGETZ
+    ],
+    HADRO_DATA: [
+        ESUM_CHGDKAONS, ESUM_CHGDPIONS, ESUM_HADMULTMEAS,
+        ESUM_NEUTPIONS, ESUM_NEUTRONS, ESUM_OTHERS, ESUM_PROTONS,
+        N_CHGDKAONS, N_CHGDPIONS, N_HADMULTMEAS, N_NEUTPIONS,
+        N_NEUTRONS, N_OTHERS, N_PROTONS
+    ],
+    IMG_DATA: [HITIMESU, HITIMESV, HITIMESX],
+}
+WHOLEVT_TYPE = 'wholevtimgs'
+
 VTXFINDING_GROUPS_DICT = {
     EVENT_DATA: [EVENTIDS],
     VTX_DATA: [PLANECODES, SEGMENTS, ZS],
@@ -88,79 +157,11 @@ SEGMENTATION_GROUPS_DICT = {
 }
 SEGMENTATION_TYPE = "segmentation"
 
-VALID_SET_OF_GROUPS = set(
-    HADMULTKINE_GROUPS_DICT.keys() +
-    VTXFINDING_GROUPS_DICT.keys() +
-    IMGING_GROUPS_DICT.keys() +
-    SEGMENTATION_GROUPS_DICT.keys()
-)
 
-
-def make_mnv_data_dict(list_of_groups):
-    """
-    create a dict of fields to extract from the hdf5 with target dtypes.
-    """
-    # eventids are really (in the hdf5) uint64, planecodes are really uint16;
-    # use tf.{int64,int32,uint8} because these are the dtypes that one-hot
-    # supports (_not_ int16 or uint16, at least in TF v1.2); use int64 instead
-    # of unit64 because reshape supports int64 (and not uint64).
+def make_mnv_data_dict_from_fields(list_of_fields):
     data_list = []
-    for g in list_of_groups:
-        if g in VALID_SET_OF_GROUPS:
-            if g == EVENT_DATA:
-                data_list.extend([
-                    (EVENTIDS, tf.int64, g),
-                ])
-            if g == VTX_DATA:
-                data_list.extend([
-                    (PLANECODES, tf.int32, g),
-                    (SEGMENTS, tf.uint8, g),
-                    (ZS, tf.float32, g),
-                ])
-            if g == IMG_DATA:
-                data_list.extend([
-                    (HITIMESU, tf.float32, g),
-                    (HITIMESV, tf.float32, g),
-                    (HITIMESX, tf.float32, g),
-                ])
-            if g == GEN_DATA:
-                data_list.extend([
-                    (QSQRD, tf.float32, g),
-                    (WINV, tf.float32, g),
-                    (XBJ, tf.float32, g),
-                    (YBJ, tf.float32, g),
-                    (CURRENT, tf.int32, g),
-                    (INT_TYPE, tf.int32, g),
-                    (TARGETZ, tf.int32, g),
-                ])
-            if g == HADRO_DATA:
-                data_list.extend([
-                    (ESUM_CHGDKAONS, tf.float32, g),
-                    (ESUM_CHGDPIONS, tf.float32, g),
-                    (ESUM_HADMULTMEAS, tf.float32, g),
-                    (ESUM_NEUTPIONS, tf.float32, g),
-                    (ESUM_NEUTRONS, tf.float32, g),
-                    (ESUM_OTHERS, tf.float32, g),
-                    (ESUM_PROTONS, tf.float32, g),
-                    (N_CHGDKAONS, tf.int32, g),
-                    (N_CHGDPIONS, tf.int32, g),
-                    (N_HADMULTMEAS, tf.int32, g),
-                    (N_NEUTPIONS, tf.int32, g),
-                    (N_NEUTRONS, tf.int32, g),
-                    (N_OTHERS, tf.int32, g),
-                    (N_PROTONS, tf.int32, g),
-                ])
-            if g == LEPTO_DATA:
-                data_list.extend([
-                    (ESUM_ELECTRONS, tf.float32, g),
-                    (ESUM_MUONS, tf.float32, g),
-                    (ESUM_TAUS, tf.float32, g),
-                    (N_ELECTRONS, tf.int32, g),
-                    (N_MUONS, tf.int32, g),
-                    (N_TAUS, tf.int32, g),
-                ])
-        else:
-            raise ValueError('Unrecognized group')
+    for f in list_of_fields:
+        data_list.extend([MASTER_DSET_DICT[f]])
     mnv_data = {}
     for datum in data_list:
         mnv_data[datum[0]] = {}
