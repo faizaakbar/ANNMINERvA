@@ -245,6 +245,7 @@ class MnvDataReaderHamultKineST(MnvTFRecordReaderBase):
             f: tf.FixedLenFeature([], tf.string) for f in self.data_fields
         }
 
+
 class MnvDataReaderSegmentST(MnvTFRecordReaderBase):
     """
     Minerva Data Reader for segmentation "SpaceTime" data
