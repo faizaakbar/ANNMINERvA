@@ -135,6 +135,9 @@ def get_trainvalidtest_file_lists(data_dir_str, file_root_str, compression):
     train_list = []
     valid_list = []
     test_list = []
+    LOGGER.debug('Searching path {} for root {} with compression {}'.format(
+        data_dir_str, file_root_str, compression
+    ))
     for data_dir in data_dir_str.split(','):
         for file_root in file_root_str.split(','):
             train_list.extend(
@@ -157,7 +160,7 @@ def get_trainvalidtest_file_lists(data_dir_str, file_root_str, compression):
     if len(train_list) == 0 and \
        len(valid_list) == 0 and \
        len(test_list) == 0:
-        LOGGER.error('No files found at specified path!')
+        LOGGER.error('No files found at {}'.format(data_dir_str))
         return None, None, None
     return train_list, valid_list, test_list
 
