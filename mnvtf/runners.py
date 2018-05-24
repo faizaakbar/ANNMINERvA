@@ -115,6 +115,20 @@ class MnvTFRunnerCategorical:
         eventids = batch_dict['eventids']
         return features, eventids
 
+    def _prep_targets_and_features_minerva_dset(self, num_epochs=1):
+        X, U, V, eventids, targets = \
+            self.reader.shuffle_batch_generator(num_epochs)
+        features = [X, U, V]
+        return targets, features, eventids
+
+    def _prep_features_minerva_dset(self, num_epochs=1):
+        # TODO - pick up here - can we return dictionaries from TF
+        # iterators? or only tuples? - need to know this to know if
+        # we need another class and/or some method flags to run a
+        # version that only returns the features and event ids, etc.
+        # w/o labels
+        pass
+
     def _log_confusion_matrix(self, conf_mat):
         conf_mat_filename = self.save_model_directory + \
             '/confusion_matrix.npy'
