@@ -289,4 +289,3 @@ class MnvDataReaderSegmentST(MnvTFRecordReaderBase):
         self._features_dict = {
             f: tf.FixedLenFeature([], tf.string) for f in self.data_fields
         }
-
