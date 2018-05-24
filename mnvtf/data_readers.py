@@ -4,7 +4,7 @@ import tensorflow as tf
 
 from data_constants import EVENTIDS, PLANECODES, SEGMENTS, ZS
 from data_constants import HITIMESU, HITIMESV, HITIMESX
-from data_constants import QSQRD, WINV, XBJ, YBJ, ENRGY, LEP_ENRGY 
+from data_constants import QSQRD, WINV, XBJ, YBJ, ENRGY, LEP_ENRGY
 from data_constants import CURRENT, SIG_TYPE, INT_TYPE, TARGETZ
 from data_constants import ESUM_CHGDKAONS, ESUM_CHGDPIONS, ESUM_HADMULTMEAS
 from data_constants import ESUM_NEUTPIONS, ESUM_NEUTRONS
