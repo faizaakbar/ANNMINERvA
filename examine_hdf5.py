@@ -17,16 +17,26 @@ if '-h' in sys.argv or '--help' in sys.argv:
 filename = sys.argv[1]
 f = h5py.File(filename, 'r')
 
+pstr = '{:>10} / {:<16} - {:>8}, min = {:>10}, max = {:>10}, shape = {}'
+
 print("\ngroups/datasets in the hdf5 file")
+print(" (min and max are _samples_, not exact)")
 print("-----------------------")
 for group in f:
     for dataset in f[group]:
-        print('{:>10} / {:<16}: {:>8}: shape = {}'.format(
-            group,
-            dataset,
-            np.dtype(f[group][dataset]),
-            np.shape(f[group][dataset])
-        ))
+        try:
+            print(pstr.format(
+                group,
+                dataset,
+                np.dtype(f[group][dataset]),
+                np.min(f[group][dataset][:100]),
+                np.max(f[group][dataset][:100]),
+                np.shape(f[group][dataset])
+            ))
+        except ValueError:
+            print('{:>10} / {:<16} is zero size'.format(
+                group, dataset
+            ))
     
 print("\nto examine data, type things like:")
 print("----------------------------------")
