@@ -238,6 +238,9 @@ def make_plots(data_dict, max_events, normed_img, pred_dict, n_targets=6):
         # run, subrun, gate, phys_evt = decode_eventid(evtid)
         fig_height = len(types) * 2
         fig_width = len(views) * 2
+        # use 6 & 4 in the DANN paper
+        # fig_height = 6
+        # fig_width = 4
         grid_height = len(types)
         grid_width = len(views)
         fig = pylab.figure(figsize=(fig_width, fig_height))
@@ -271,7 +274,7 @@ def make_plots(data_dict, max_events, normed_img, pred_dict, n_targets=6):
                 ax.axis('on')
                 ax.xaxis.set_major_locator(pylab.NullLocator())
                 ax.yaxis.set_major_locator(pylab.NullLocator())
-                cmap = 'Reds' if t == 'energy' else 'bwr'
+                cmap = 'gist_heat_r' if t == 'energy' else 'bwr'
                 cbt = 'energy' if t == 'energy' else 'times'
                 datap = data_dict[datatyp][view][counter, i, :, :]
                 # make the plot
