@@ -98,6 +98,10 @@ class MnvTFRunnerCategorical:
         return img_shp
 
     def _prep_targets_and_features_minerva(self, generator, num_epochs=1):
+        '''
+        typical generator = self.data_reader.shuffle_batch_generator or
+        self.data_reader.batch_generator
+        '''
         batch_dict = generator(num_epochs=num_epochs)
         X = batch_dict[self.features['x']]
         U = batch_dict[self.features['u']]
@@ -108,6 +112,10 @@ class MnvTFRunnerCategorical:
         return targets, features, eventids
 
     def _prep_features_minerva(self, generator, num_epochs=1):
+        '''
+        typical generator = self.data_reader.shuffle_batch_generator or
+        self.data_reader.batch_generator
+        '''
         batch_dict = generator(num_epochs=num_epochs)
         X = batch_dict[self.features['x']]
         U = batch_dict[self.features['u']]
@@ -116,19 +124,29 @@ class MnvTFRunnerCategorical:
         eventids = batch_dict['eventids']
         return features, eventids
 
-    def _prep_targets_and_features_minerva_dset(self, num_epochs=1):
-        X, U, V, eventids, targets = \
-            self.reader.shuffle_batch_generator(num_epochs)
+    def _prep_targets_and_features_minerva_dset(self, generator, num_epochs=1):
+        '''
+        for `_dset` readers we don't pass back a dictionary (from an iterator),
+        so use tuple positions for return value parsing.
+
+        typical generator = self.data_reader.shuffle_batch_generator or
+        self.data_reader.batch_generator
+        '''
+        X, U, V, eventids, targets = generator(num_epochs=num_epochs)
         features = [X, U, V]
         return targets, features, eventids
 
-    def _prep_features_minerva_dset(self, num_epochs=1):
-        # TODO - pick up here - can we return dictionaries from TF
-        # iterators? or only tuples? - need to know this to know if
-        # we need another class and/or some method flags to run a
-        # version that only returns the features and event ids, etc.
-        # w/o labels
-        pass
+    def _prep_features_minerva_dset(self, generator, num_epochs=1):
+        '''
+        for `_dset` readers we don't pass back a dictionary (from an iterator),
+        so use tuple positions for return value parsing.
+
+        typical generator = self.data_reader.shuffle_batch_generator or
+        self.data_reader.batch_generator
+        '''
+        X, U, V, eventids, _ = generator(num_epochs=num_epochs)
+        features = [X, U, V]
+        return features, eventids
 
     def _log_confusion_matrix(self, conf_mat):
         conf_mat_filename = self.save_model_directory + \
