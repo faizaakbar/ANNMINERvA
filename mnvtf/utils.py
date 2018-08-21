@@ -10,6 +10,7 @@ from data_readers import MnvDataReaderVertexST
 from data_readers import MnvDataReaderHamultKineST
 from data_readers import MnvDataReaderWholevtST
 from data_readers import MnvDataReaderSegmentST
+from dset_data_readers import DsetMnvTFRecReaderPlanecodes
 from data_constants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from data_constants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 from data_constants import IMGING_GROUPS_DICT, IMGING_TYPE
@@ -224,20 +225,24 @@ def get_fields_list(hdf5_type):
         raise ValueError('Unknown HDF5 grouping type {}!'.format(hdf5_type))
 
 
-def get_reader_class(data_file_type):
+def get_reader_class(data_file_type, use_dataset=True):
     """ get TFRecord reader class """
-    if data_file_type == VTXFINDING_TYPE:
-        return MnvDataReaderVertexST
-    elif data_file_type == HADMULTKINE_TYPE:
-        return MnvDataReaderHamultKineST
-    elif data_file_type == IMGING_TYPE:
-        return MnvDataReaderImageST
-    elif data_file_type == WHOLEVT_TYPE:
-        return MnvDataReaderWholevtST
-    elif data_file_type == SEGMENTATION_TYPE:
-        return MnvDataReaderSegmentST
+    if use_dataset:
+        return DsetMnvTFRecReaderPlanecodes
     else:
-        raise ValueError('Unknown TFRec data file type!')
+        # batch-queue pipeline API
+        if data_file_type == VTXFINDING_TYPE:
+            return MnvDataReaderVertexST
+        elif data_file_type == HADMULTKINE_TYPE:
+            return MnvDataReaderHamultKineST
+        elif data_file_type == IMGING_TYPE:
+            return MnvDataReaderImageST
+        elif data_file_type == WHOLEVT_TYPE:
+            return MnvDataReaderWholevtST
+        elif data_file_type == SEGMENTATION_TYPE:
+            return MnvDataReaderSegmentST
+        else:
+            raise ValueError('Unknown TFRec data file type!')
 
 
 def get_network_model_class(model_type):
