@@ -54,8 +54,7 @@ def read_all_field(datareader_dict, typ, tfrec_type, field):
             reader_class = utils.get_reader_class(tfrec_type)
             reader = reader_class(datareader_dict)
             # get an ordered dict
-            batch_dict = reader.batch_generator(num_epochs=1)
-            vals = batch_dict[field]
+            X, U, V, eventids, targets = reader.batch_generator(num_epochs=1)
 
             sess.run(tf.local_variables_initializer())
             coord = tf.train.Coordinator()
@@ -63,7 +62,7 @@ def read_all_field(datareader_dict, typ, tfrec_type, field):
             try:
                 with open(out_file, 'ab+') as f:
                     for batch_num in range(1000000):
-                        vs = sess.run(vals)
+                        vs = sess.run(eventids)
                         n_evt += len(vs)
                         for v in vs:
                             f.write('{}\n'.format(v))
