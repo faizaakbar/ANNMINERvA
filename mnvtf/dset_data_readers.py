@@ -5,7 +5,7 @@ from data_constants import HITIMESU, HITIMESV, HITIMESX
 from data_constants import EVENTIDS, PLANECODES
 
 
-class DsetMnvTFRecReaderBase:
+class DsetMnvTFRecReaderBase(object):
     """
     Minerva data reader for TFRecord files using the dataset API.
 
@@ -77,9 +77,10 @@ class DsetMnvTFRecReaderBase:
         return z
 
 
-class DsetMnvTFRecReaderPlanecodes:
+class DsetMnvTFRecReaderPlanecodes(DsetMnvTFRecReaderBase):
+
     def __init__(self, args_dict):
-        DsetMnvTFRecReaderBase.__init__(self, args_dict)
+        super(DsetMnvTFRecReaderPlanecodes, self).__init__(args_dict)
         self.data_fields = [
             HITIMESU, HITIMESV, HITIMESX, EVENTIDS, PLANECODES
         ]

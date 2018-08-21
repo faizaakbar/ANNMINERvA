@@ -16,7 +16,7 @@ from data_constants import ESUM_ELECTRONS, ESUM_MUONS, ESUM_TAUS
 from data_constants import N_ELECTRONS, N_MUONS, N_TAUS
 
 
-class MnvTFRecordReaderBase:
+class MnvTFRecordReaderBase(object):
     """
     Minerva Data Reader for TFRecord files.
 
@@ -197,7 +197,7 @@ class MnvDataReaderImageST(MnvTFRecordReaderBase):
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
         TODO - get the img depth into this call also...
         """
-        MnvTFRecordReaderBase.__init__(self, args_dict)
+        super(MnvDataReaderImageST, self).__init__(args_dict)
         self.data_fields = sorted([
             EVENTIDS, HITIMESU, HITIMESV, HITIMESX
         ])
@@ -216,7 +216,7 @@ class MnvDataReaderVertexST(MnvTFRecordReaderBase):
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
         TODO - get the img depth into this call also...
         """
-        MnvTFRecordReaderBase.__init__(self, args_dict)
+        super(MnvDataReaderVertexST, self).__init__(args_dict)
         self.data_fields = sorted([
             EVENTIDS, PLANECODES, SEGMENTS, ZS,
             HITIMESU, HITIMESV, HITIMESX
@@ -236,7 +236,7 @@ class MnvDataReaderHamultKineST(MnvTFRecordReaderBase):
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
         TODO - get the img depth into this call also...
         """
-        MnvTFRecordReaderBase.__init__(self, args_dict)
+        super(MnvDataReaderHamultKineST, self).__init__(args_dict)
         self.data_fields = sorted([
             EVENTIDS, PLANECODES, SEGMENTS, ZS,
             HITIMESU, HITIMESV, HITIMESX,
@@ -262,7 +262,7 @@ class MnvDataReaderWholevtST(MnvTFRecordReaderBase):
         """
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
         """
-        MnvTFRecordReaderBase.__init__(self, args_dict)
+        super(MnvDataReaderWholevtST, self).__init__(args_dict)
         self.data_fields = sorted([
             EVENTIDS, ZS, HITIMESU, HITIMESV, HITIMESX,
             QSQRD, WINV, XBJ, YBJ, ENRGY, LEP_ENRGY,
@@ -287,7 +287,7 @@ class MnvDataReaderSegmentST(MnvTFRecordReaderBase):
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
         TODO - get the img depth into this call also...
         """
-        MnvTFRecordReaderBase.__init__(self, args_dict)
+        super(MnvDataReaderSegmentST, self).__init__(args_dict)
         self.data_fields = sorted([
             EVENTIDS,
             HITIMESU, HITIMESV, HITIMESX,
