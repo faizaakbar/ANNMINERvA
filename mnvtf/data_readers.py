@@ -26,6 +26,7 @@ class MnvTFRecordReaderBase:
     * `tf.python_io.TFRecordCompressionType.ZLIB`
     * `tf.python_io.TFRecordCompressionType.GZIP`
     """
+
     def __init__(self, args_dict):
         self.filenames_list = args_dict['FILENAMES_LIST']
         self.batch_size = args_dict['BATCH_SIZE']
@@ -190,6 +191,7 @@ class MnvDataReaderImageST(MnvTFRecordReaderBase):
     """
     Minerva Data Reader for plain image "SpaceTime" data
     """
+
     def __init__(self, args_dict):
         """
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
@@ -208,6 +210,7 @@ class MnvDataReaderVertexST(MnvTFRecordReaderBase):
     """
     Minerva Data Reader for (target) vertex-finder "SpaceTime" data
     """
+
     def __init__(self, args_dict):
         """
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
@@ -227,6 +230,7 @@ class MnvDataReaderHamultKineST(MnvTFRecordReaderBase):
     """
     Minerva Data Reader for hadmult-kine "SpaceTime" data
     """
+
     def __init__(self, args_dict):
         """
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
@@ -253,6 +257,7 @@ class MnvDataReaderWholevtST(MnvTFRecordReaderBase):
     """
     Minerva Data Reader for whole event "SpaceTime" data
     """
+
     def __init__(self, args_dict):
         """
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
@@ -276,6 +281,7 @@ class MnvDataReaderSegmentST(MnvTFRecordReaderBase):
     """
     Minerva Data Reader for segmentation "SpaceTime" data
     """
+
     def __init__(self, args_dict):
         """
         img_shp = (imgh, imgw_x, imgw_uv, img_depth)
