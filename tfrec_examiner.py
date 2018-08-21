@@ -51,7 +51,9 @@ def read_all_field(datareader_dict, typ, tfrec_type, field):
     with tf.Graph().as_default() as g:
         with tf.Session(graph=g) as sess:
 
-            reader_class = utils.get_reader_class(tfrec_type)
+            reader_class = utils.get_reader_class(
+                tfrec_type, use_dataset=False
+            )
             reader = reader_class(datareader_dict)
             # get an ordered dict
             batch_dict = reader.batch_generator(num_epochs=1)
