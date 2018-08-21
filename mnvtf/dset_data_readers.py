@@ -15,6 +15,7 @@ class DsetMnvTFRecReaderBase:
     * compression should be 'GZIP' (or 'ZLIB?')
     * img shape is (img_h, img_w_x, img_w_uv, img_depth)
     """
+
     def __init__(self, args_dict):
         self.filenames_list = args_dict['FILENAMES_LIST']
         self.batch_size = args_dict['BATCH_SIZE']

@@ -141,16 +141,16 @@ def get_trainvalidtest_file_lists(data_dir_str, file_root_str, compression):
     for data_dir in data_dir_str.split(','):
         for file_root in file_root_str.split(','):
             train_list.extend(
-                glob.glob(data_dir + '/' + file_root +
-                          '*_train.tfrecord' + comp_ext)
+                glob.glob(data_dir + '/' + file_root
+                          + '*_train.tfrecord' + comp_ext)
             )
             valid_list.extend(
-                glob.glob(data_dir + '/' + file_root +
-                          '*_valid.tfrecord' + comp_ext)
+                glob.glob(data_dir + '/' + file_root
+                          + '*_valid.tfrecord' + comp_ext)
             )
             test_list.extend(
-                glob.glob(data_dir + '/' + file_root +
-                          '*_test.tfrecord' + comp_ext)
+                glob.glob(data_dir + '/' + file_root
+                          + '*_test.tfrecord' + comp_ext)
             )
     for t, l in zip(['training', 'validation', 'test'],
                     [train_list, valid_list, test_list]):

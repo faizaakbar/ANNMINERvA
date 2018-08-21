@@ -22,6 +22,7 @@ class MnvTFRunnerCategorical:
     Minerva runner class for categorical classification
     (not sure we need to make this distinction here)
     """
+
     def __init__(
             self,
             model,
@@ -254,7 +255,7 @@ class MnvTFRunnerCategorical:
                 finally:
                     coord.request_stop()
                     coord.join(threads)
-            
+
             writer.close()
 
         LOGGER.info(' Epoch {} elapsed time for training = {}'.format(
@@ -431,7 +432,8 @@ class MnvTFRunnerCategorical:
                 try:
                     for i in range(n_batches):
                         loss_batch, logits_batch, Y_batch, evtids = sess.run(
-                            [self.model.loss, self.model.logits, targets, eventids],
+                            [self.model.loss, self.model.logits,
+                             targets, eventids],
                             feed_dict={
                                 self.model.dropout_keep_prob: 1.0,
                                 self.model.is_training: False
