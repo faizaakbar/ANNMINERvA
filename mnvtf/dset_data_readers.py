@@ -34,26 +34,26 @@ class DsetMnvTFRecReaderBase(object):
         if self.data_format == 'NCHW':
             return tnsr
         elif self.data_format == 'NHWC':
-            return tf.transpose(tnsr, [0, 2, 3, 1])
+            return tf.transpose(tnsr, [1, 2, 0])
         else:
             raise ValueError('Invalid data format in data reader!')
 
     def _decode_hitimesx(self, tfrecord_features):
         return self._process_hitimes(
             tfrecord_features[HITIMESX],
-            [-1, self.img_shp[3], self.img_shp[0], self.img_shp[1]]
+            [self.img_shp[3], self.img_shp[0], self.img_shp[1]]
         )
 
     def _decode_hitimesu(self, tfrecord_features):
         return self._process_hitimes(
             tfrecord_features[HITIMESU],
-            [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
+            [self.img_shp[3], self.img_shp[0], self.img_shp[2]]
         )
 
     def _decode_hitimesv(self, tfrecord_features):
         return self._process_hitimes(
             tfrecord_features[HITIMESV],
-            [-1, self.img_shp[3], self.img_shp[0], self.img_shp[2]]
+            [self.img_shp[3], self.img_shp[0], self.img_shp[2]]
         )
 
     def _decode_basic(self, tfrecord_features, field, tf_dtype):
@@ -64,6 +64,7 @@ class DsetMnvTFRecReaderBase(object):
     ):
         v = tf.decode_raw(tfrecord_features[field], tf_dtype)
         v = tf.one_hot(indices=v, depth=depth, on_value=1, off_value=0)
+        v = tf.reshape(v, [depth])
         return v
 
     def _decode_onehot_capped(
@@ -74,6 +75,7 @@ class DsetMnvTFRecReaderBase(object):
         m = (depth - 1) * tf.ones_like(v)
         z = tf.where(v < depth, x=v, y=m)
         z = tf.one_hot(indices=z, depth=depth, on_value=1, off_value=0)
+        z = tf.reshape(z, [depth])
         return z
 
 
