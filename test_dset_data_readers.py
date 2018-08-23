@@ -73,9 +73,12 @@ def test_graph_one_shot_iterator(generator):
 
 def test_hdf5(batch_size):
     logger.info('hdf5s')
-    # filenames_list = [get_test_hdf5()]
-    # dd = datareader_dict(filenames_list)
-    pass
+    from mnvtf.dset_data_readers import DsetMnvHDF5ReaderPlanecodes
+
+    filenames_list = [get_test_hdf5()]
+    dd = datareader_dict(filenames_list)
+    reader = DsetMnvHDF5ReaderPlanecodes(dd)
+    test_graph_one_shot_iterator(reader.batch_generator)
 
 
 def test_tfrecord(batch_size):
@@ -99,8 +102,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--hdf5', type=bool, default=False,
-        help='Batch size'
+        '--hdf5', default=False, action='store_true',
+        help='Use HDF5 instead of TFRecord'
     )
     parser.add_argument(
         '--batch-size', type=int, default=10,
