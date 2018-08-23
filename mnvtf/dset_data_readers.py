@@ -3,6 +3,7 @@ import tensorflow as tf
 
 from data_constants import HITIMESU, HITIMESV, HITIMESX
 from data_constants import EVENTIDS, PLANECODES
+from hdf5_readers import MnvHDF5Reader as HDF5Reader
 
 
 class DsetMnvTFRecReaderBase(object):
@@ -114,6 +115,45 @@ class DsetMnvTFRecReaderPlanecodes(DsetMnvTFRecReaderBase):
         if shuffle:
             dataset = dataset.shuffle(buffer_size=self.batch_size*10)
         return dataset
+
+    def batch_generator(self, num_epochs=1, shuffle=False):
+        ds = self.make_dataset(num_epochs, shuffle)
+        iterator = ds.make_one_shot_iterator()
+        hitimesx, hitimesu, hitimesv, eventids, planecodes = \
+            iterator.get_next()
+        return hitimesx, hitimesu, hitimesv, eventids, planecodes
+
+    def shuffle_batch_generator(self, num_epochs=1):
+        return self.batch_generator(num_epochs, shuffle=True)
+
+
+class DsetMnvHDF5ReaderBase(object):
+    '''
+    Minerva data reader for HDF5 files using the dataset API
+
+    Notes:
+    * initially, this API will only fully support _inference_ - the changes
+    needed in the overall structure to better support training (and validation)
+    are too extensive to be pursued.
+    * right now, the filenames_list must be only one file long.
+    '''
+
+    def __init__(self, args_dict):
+        self.filenames_list = args_dict['FILENAMES_LIST']
+        self.batch_size = args_dict['BATCH_SIZE']
+        self.name = args_dict['NAME']
+
+
+class DsetMnvHDF5ReaderPlanecodes(DsetMnvHDF5ReaderBase):
+    '''
+    Minerva data reader for the vertex finding in the targets problem.
+    '''
+
+    def __init__(self, args_dict):
+        super(DsetMnvHDF5ReaderPlanecodes, self).__init__(args_dict)
+
+    def make_dataset(self, num_epochs=1, shuffle=False):
+        return None
 
     def batch_generator(self, num_epochs=1, shuffle=False):
         ds = self.make_dataset(num_epochs, shuffle)
