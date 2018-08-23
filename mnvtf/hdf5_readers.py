@@ -16,6 +16,7 @@ class MnvHDF5Reader:
     ...
     f[group_n][dataset_m]
     """
+
     def __init__(self, hdf5_file):
         self.file = hdf5_file
         self._f = None
@@ -84,6 +85,7 @@ class MnvHDF5LegacyReader:
     (This is the "legacy" HDF5 structure - from the old ROOT->txt->HDF5
     workflow.)
     """
+
     def __init__(self, hdf5_file):
         self.file = hdf5_file
         self._f = None
@@ -158,7 +160,7 @@ def test_legacy():
         reader.close()
     except IOError:
         print 'hdf5 file not found'
-    
+
 
 if __name__ == '__main__':
     test_legacy()
