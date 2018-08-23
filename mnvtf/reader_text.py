@@ -7,7 +7,7 @@ from mnvtf.evtid_utils import encode_eventid
 
 class MnvCategoricalTextReader:
     """
-    record segments or planecodes in a sqlite db
+    read segments or planecodes from a text store
     """
 
     def __init__(self, db_name):

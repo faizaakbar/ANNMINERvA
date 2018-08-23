@@ -24,7 +24,7 @@ def make_default_convpooldict(
 
     conv kernel shape is [filt_h, filt_w, in_nch, out_nch]
     pool kernel shape is [N, H, W, C] for 'NHWC', etc.
-    
+
     TODO - pass in regularizer type (l1, l2) and scale
     """
     convpooldict = {}
@@ -229,7 +229,7 @@ class LayerCreator:
                 data_format=self.data_format, is_training=self.is_training
             )
         return fc_lyr
-            
+
     def make_active_fc_layer(
             self, inp_lyr, name_fc_lyr,
             name_w, shp_w, name_b=None, shp_b=None,
@@ -363,7 +363,7 @@ def make_standard_placeholders():
     )
     is_training = tf.placeholder(tf.bool, name='is_training')
     return dropout_keep_prob, global_step, is_training
-    
+
 
 class TriColSTEpsilon:
     """
@@ -376,7 +376,7 @@ class TriColSTEpsilon:
     layers.
     """
     _allowed_strategies = ['Adam', 'AdaGrad']
-    
+
     def __init__(self, n_classes, data_format='NHWC'):
         """ note, 'NCHW' is only supported on GPUs """
         self.n_classes = n_classes

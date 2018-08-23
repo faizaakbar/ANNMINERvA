@@ -1,6 +1,3 @@
-import tensorflow as tf
-
-
 def make_menndl_633167(img_depth=2):
     """
     epsilon topology compatible; assume NHWC data format exclusively

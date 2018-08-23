@@ -13,9 +13,12 @@ from sqlalchemy import and_
 
 class MnvCategoricalSQLiteReader:
     """
-    record segments or planecodes in a sqlite db
+    read segments or planecodes from a sqlite db
     """
-    def __init__(self, n_classes, db_base_name, db_prob_column_format='prob%03d'):
+
+    def __init__(
+        self, n_classes, db_base_name, db_prob_column_format='prob%03d'
+    ):
         self.n_classes = n_classes
         self.db_name = db_base_name + '.db'
         self._db_prob_columns_format = db_prob_column_format
