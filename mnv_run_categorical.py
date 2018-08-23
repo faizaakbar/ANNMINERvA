@@ -85,7 +85,7 @@ tf.app.flags.DEFINE_integer('imgw_uv', 47,
                             """U/V-view img width.""")
 tf.app.flags.DEFINE_integer('img_depth', 2,
                             """Img depth.""")
-tf.app.flags.DEFINE_integer('n_planecodes', 173,
+tf.app.flags.DEFINE_integer('n_planecodes', 174,
                             """Number of planecodes.""")
 #
 # action flags
