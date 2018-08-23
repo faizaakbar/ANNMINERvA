@@ -142,6 +142,9 @@ class DsetMnvHDF5ReaderBase(object):
         self.filenames_list = args_dict['FILENAMES_LIST']
         self.batch_size = args_dict['BATCH_SIZE']
         self.name = args_dict['NAME']
+        if len(self.filenames_list) != 1:
+            raise ValueError('hdf5 datasets work with filelist of lenght 1.')
+        self.filename = self.filenames_list[0]
 
 
 class DsetMnvHDF5ReaderPlanecodes(DsetMnvHDF5ReaderBase):
@@ -152,8 +155,48 @@ class DsetMnvHDF5ReaderPlanecodes(DsetMnvHDF5ReaderBase):
     def __init__(self, args_dict):
         super(DsetMnvHDF5ReaderPlanecodes, self).__init__(args_dict)
 
+    def _make_generator_fn(self):
+        '''
+        make a generator function that we can query for batches
+        '''
+        reader = HDF5Reader(self.filename)
+        reader.open()
+        nevents = reader.get_nevents(group='event_data')
+
+        def example_generator_fn():
+            idx = 0
+            while True:
+                if idx >= nevents:
+                    reader.close()
+                    return
+                yield reader.get_vtxfinder_data(idx)
+                idx += 1
+
+        return example_generator_fn
+
     def make_dataset(self, num_epochs=1, shuffle=False):
-        return None
+        # make a generator function
+        dgen = self._make_generator_fn()
+        x_shape = [127, 94, 2]
+        uv_shape = [127, 47, 2]
+        evtid_shape = [1]
+        pcode_shape = [174]
+        ds = tf.data.Dataset.from_generator(
+            dgen,
+            (tf.float32, tf.float32, tf.float32, tf.int64, tf.int32),
+            (tf.TensorShape(x_shape),
+             tf.TensorShape(uv_shape),
+             tf.TensorShape(uv_shape),
+             tf.TensorShape(evtid_shape),
+             tf.TensorShape(pcode_shape))
+        )
+        ds = ds.repeat(num_epochs)
+        ds = ds.prefetch(self.batch_size*10)
+        ds = ds.batch(self.batch_size)
+        if shuffle:
+            ds = ds.shuffle(buffer_size=self.batch_size*10)
+
+        return ds
 
     def batch_generator(self, num_epochs=1, shuffle=False):
         ds = self.make_dataset(num_epochs, shuffle)

@@ -5,7 +5,7 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 
-class MnvHDF5Reader:
+class MnvHDF5Reader(object):
     """
     the `minerva_hdf5_reader` will return numpy ndarrays of data for given
     ranges. user should call `open()` and `close()` to start/finish.
@@ -62,6 +62,19 @@ class MnvHDF5Reader:
             LOGGER.info(msg)
             raise ValueError(msg)
 
+    def get_vtxfinder_data(self, idx):
+        x = self._f['img_data']['hitimes-x'][idx]
+        x = np.moveaxis(x, 0, -1)
+        u = self._f['img_data']['hitimes-u'][idx]
+        u = np.moveaxis(u, 0, -1)
+        v = self._f['img_data']['hitimes-v'][idx]
+        v = np.moveaxis(v, 0, -1)
+        evtids = self._f['event_data']['eventids'][idx]
+        pcodes = self._f['vtx_data']['planecodes'][idx].reshape([-1])
+        oh_pcodes = np.zeros((1, 174))
+        oh_pcodes[0, pcodes] = 1
+        return x, u, v, evtids, oh_pcodes.reshape(174,)
+
     def get_nevents(self, group=None):
         sizes = [self._f[group][d].shape[0] for d in self._f[group]]
         if min(sizes) != max(sizes):
@@ -71,7 +84,7 @@ class MnvHDF5Reader:
         return sizes[0]
 
 
-class MnvHDF5LegacyReader:
+class MnvHDF5LegacyReader(object):
     """
     the `minerva_hdf5_reader` will return numpy ndarrays of data for given
     ranges. user should call `open()` and `close()` to start/finish.
