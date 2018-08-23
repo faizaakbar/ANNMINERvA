@@ -261,29 +261,6 @@ def get_kbd_function(network_type):
         raise ValueError('Unknown NN network type!')
 
 
-def decode_eventid(eventid):
-    """
-    assume "standard" encoding
-    """
-    evtid = str(eventid)
-    phys_evt = evtid[-2:]
-    evtid = evtid[:-2]
-    gate = evtid[-4:]
-    evtid = evtid[:-4]
-    subrun = evtid[-4:]
-    evtid = evtid[:-4]
-    run = evtid
-    return (run, subrun, gate, phys_evt)
-
-
-def encode_eventid(run, subrun, gate, phys_evt):
-    run = '{0:06d}'.format(int(run))
-    subrun = '{0:04d}'.format(int(subrun))
-    gate = '{0:04d}'.format(int(gate))
-    phys_evt = '{0:02d}'.format(int(phys_evt))
-    return run + subrun + gate + phys_evt
-
-
 def freeze_graph(
         model_dir, output_nodes_list, output_graph_name='frozen_model.pb'
 ):

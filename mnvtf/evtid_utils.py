@@ -67,6 +67,14 @@ def compare_evtid_encodings(evtid64, evtid32a, evtid32b):
     return False
 
 
+def encode_eventid(run, subrun, gate, phys_evt):
+    run = '{0:06d}'.format(int(run))
+    subrun = '{0:04d}'.format(int(subrun))
+    gate = '{0:04d}'.format(int(gate))
+    phys_evt = '{0:02d}'.format(int(phys_evt))
+    return run + subrun + gate + phys_evt
+
+
 if __name__ == '__main__':
 
     HDF5_DIR = '/Users/perdue/Documents/MINERvA/AI/hdf5/201801'

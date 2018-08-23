@@ -19,9 +19,8 @@ from mnvtf.data_constants import PLANECODES, SEGMENTS, ZS
 from mnvtf.data_constants import N_HADMULTMEAS
 from mnvtf.data_constants import SEGMENTATION_TYPE
 from mnvtf.hdf5_readers import MnvHDF5Reader as HDF5Reader
+from mnvtf.evtid_utils import decode_eventid
 # from mnvtf.hdf5_readers import MnvHDF5LegacyReader as HDF5Reader
-
-from evtid_utils import decode_eventid
 
 
 class MnvDataReader:

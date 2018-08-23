@@ -4,7 +4,7 @@ those numbers to a file.
 """
 import h5py
 import sys
-from evtid_utils import decode_eventid
+from mnvtf.evtid_utils import decode_eventid
 from mnvtf.utils import gz_compress
 
 fname = sys.argv[1]

@@ -2,13 +2,14 @@
 """
 """
 import gzip
-from utils import encode_eventid
+from mnvtf.evtid_utils import encode_eventid
 
 
 class MnvCategoricalTextReader:
     """
     record segments or planecodes in a sqlite db
     """
+
     def __init__(self, db_name):
         self.db_name = db_name
         self.is_zipped = db_name[-3:] == '.gz'
@@ -31,4 +32,3 @@ class MnvCategoricalTextReader:
         with self.open_fn(self.db_name, 'r') as fp:
             for line in fp:
                 yield self._parse_line_perdue(line)
-

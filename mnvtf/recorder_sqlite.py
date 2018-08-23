@@ -15,7 +15,7 @@ from sqlalchemy import UniqueConstraint
 from sqlalchemy import MetaData
 from sqlalchemy import select
 
-import utils
+from mnvtf.evtid_utils import decode_eventid
 
 LOGGER = logging.getLogger(__name__)
 
@@ -25,7 +25,7 @@ class MnvCategoricalSQLiteRecorder:
     record segments or planecodes in a sqlite db
     """
     _allowed_number_of_classes = [11, 67, 173]
-    
+
     def __init__(self, n_classes, db_base_name):
         LOGGER.info('Setting up {}...'.format(
             self.__class__.__name__
@@ -34,8 +34,8 @@ class MnvCategoricalSQLiteRecorder:
             self.n_classes = n_classes
         else:
             raise ValueError(
-                'Unsupported number of classes in ' +
-                self.__class__.__name__ + '!'
+                'Unsupported number of classes in '
+                + self.__class__.__name__ + '!'
             )
         if db_base_name[-3:] == '.db':
             self.db_name = db_base_name
@@ -98,7 +98,7 @@ class MnvCategoricalSQLiteRecorder:
         shape (batch?, ?, probability)
         """
         result = None
-        run, sub, gate, pevt = utils.decode_eventid(eventid)
+        run, sub, gate, pevt = decode_eventid(eventid)
         if len(probs) == 11:
             ins = self.table.insert().values(
                 run=run,
