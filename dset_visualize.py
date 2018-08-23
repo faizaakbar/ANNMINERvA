@@ -132,7 +132,7 @@ class MnvDataReader:
         data_dict['energies+times']['u'] = m.get_data(HITIMESU, 0, n_read)
         data_dict['energies+times']['v'] = m.get_data(HITIMESV, 0, n_read)
         data_dict[EVENTIDS] = m.get_data(EVENTIDS, 0, n_read)
-        
+
         if self.seg_data:
             data_dict['pid'] = {}
             data_dict['pid']['x'] = m.get_data(PIDX, 0, n_read)
@@ -449,7 +449,7 @@ def make_plots_seg(data_dict, max_events, normed_img, pred_dict):
                 pylab.title("pid" + ' - ' + view, fontsize=12)
                 pylab.xlabel('plane', fontsize=10)
                 pylab.ylabel('strip', fontsize=10)
-            
+
             pdf.savefig()
             evt_plotted += 1
 

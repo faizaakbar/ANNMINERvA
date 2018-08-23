@@ -16,6 +16,7 @@ class MnvCategoricalTextRecorder:
     """
     record segments or planecodes in a text file
     """
+
     def __init__(self, db_base_name):
         LOGGER.info('Setting up {}...'.format(
             self.__class__.__name__
@@ -54,4 +55,3 @@ class MnvCategoricalTextRecorder:
             os.remove(self.db_name)
         else:
             raise IOError('Compressed file not produced!')
-
