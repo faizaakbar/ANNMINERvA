@@ -350,6 +350,9 @@ if __name__ == '__main__':
     )
     LOGGER.info("Starting...")
     LOGGER.info(__file__)
+    LOGGER.info(' in-directory contents: {}'.format(
+        ','.join(os.listdir(options.in_dir))
+    ))
 
     files = options.file_list or []
     for ext in ['*.hdf5', '*.h5']:
@@ -363,6 +366,9 @@ if __name__ == '__main__':
 
     LOGGER.info("Datasets:")
     dataset_statsinfo = 0
+    LOGGER.info(' files: {}'.format(
+        ','.join([str(f) for f in files])
+    ))
     for hdf5_file in files:
         fsize = os.stat(hdf5_file).st_size
         dataset_statsinfo += os.stat(hdf5_file).st_size
