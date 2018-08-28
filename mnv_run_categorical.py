@@ -34,6 +34,8 @@ tf.app.flags.DEFINE_string('data_format', 'NHWC',
                            """Tensor packing structure.""")
 tf.app.flags.DEFINE_string('tfrec_type', 'hadmultkineimgs',
                            """TFRecord file type.""")
+tf.app.flags.DEFINE_boolean('do_hdf5', False,
+                            """Use HDF5 data files instead of TFRecords.""")
 #
 # logs and special outputs (models, predictions, etc.)
 #
@@ -158,25 +160,41 @@ def main(argv=None):
     # do a short test run?
     short = FLAGS.do_a_short_run
 
-    # set up file lists - part of run parameters; assume our data_dir and
-    # file_root are both comma-separated lists - we will make every possible
-    # combinaton of them, so be careful, etc.
-    train_list, valid_list, test_list = \
-        utils.get_trainvalidtest_file_lists(
-            FLAGS.data_dir, FLAGS.file_root, FLAGS.compression
-        )
-    # fix lists if there are special options
-    if FLAGS.do_use_test_for_train:
-        train_list.extend(test_list)
-        test_list = valid_list
-    if FLAGS.do_use_all_for_test:
-        do_training = False   # just in case, turn this off
-        test_list.extend(train_list)
-        test_list.extend(valid_list)
-        train_list = []
+    if FLAGS.do_hdf5:
+        # HDF5 options are limited - we can either train or test/predict,
+        # validation is not currently supported.
+        if do_validation:
+            do_validation = False
+            logger.info('Validation is not supported for HDF5 - turning off.')
+        file_list = utils.get_hdf5_filelist(FLAGS.data_dir, FLAGS.file_root)
+        if do_training and (do_testing or do_prediction):
+            logger.error('Cannot support training and inference together.')
+        if do_training:
+            train_list = file_list
+        if (do_testing or do_prediction):
+            test_list = file_list
         valid_list = []
-    if FLAGS.do_use_valid_for_test:
-        test_list = valid_list
+    else:
+        # TFRecords
+        # set up file lists - part of run parameters; assume our data_dir and
+        # file_root are both comma-separated lists - we will make every
+        # possible combinaton of them, so be careful, etc.
+        train_list, valid_list, test_list = \
+            utils.get_trainvalidtest_file_lists(
+                FLAGS.data_dir, FLAGS.file_root, FLAGS.compression
+            )
+        # fix lists if there are special options
+        if FLAGS.do_use_test_for_train:
+            train_list.extend(test_list)
+            test_list = valid_list
+        if FLAGS.do_use_all_for_test:
+            do_training = False   # just in case, turn this off
+            test_list.extend(train_list)
+            test_list.extend(valid_list)
+            train_list = []
+            valid_list = []
+        if FLAGS.do_use_valid_for_test:
+            test_list = valid_list
 
     def datareader_dict(filenames_list, name):
         """use `FLAGS` as a global var to make the datareader class init"""
