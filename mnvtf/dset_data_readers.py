@@ -143,7 +143,7 @@ class DsetMnvHDF5ReaderBase(object):
         self.batch_size = args_dict['BATCH_SIZE']
         self.name = args_dict['NAME']
         if len(self.filenames_list) != 1:
-            raise ValueError('hdf5 datasets work with filelist of lenght 1.')
+            raise ValueError('hdf5 datasets work with filelist of length 1.')
         self.filename = self.filenames_list[0]
 
 
