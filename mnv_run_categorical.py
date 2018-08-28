@@ -160,6 +160,7 @@ def main(argv=None):
     # do a short test run?
     short = FLAGS.do_a_short_run
 
+    train_list, valid_list, test_list = [], [], []
     if FLAGS.do_hdf5:
         # HDF5 options are limited - we can either train or test/predict,
         # validation is not currently supported.
