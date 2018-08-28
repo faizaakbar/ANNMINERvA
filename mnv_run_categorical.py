@@ -154,7 +154,8 @@ def main(argv=None):
 
     # set up run parameters
     runpars_dict = utils.make_run_params_dict(MNV_TYPE, FLAGS)
-    reader_class = utils.get_reader_class(FLAGS.tfrec_type)
+    reader_class = utils.get_hdf5_reader_class() if FLAGS.do_hdf5 \
+        else utils.get_reader_class(FLAGS.tfrec_type)
     runpars_dict['DATA_READER_CLASS'] = reader_class
 
     # do a short test run?

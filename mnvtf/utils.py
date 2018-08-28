@@ -11,6 +11,7 @@ from data_readers import MnvDataReaderHamultKineST
 from data_readers import MnvDataReaderWholevtST
 from data_readers import MnvDataReaderSegmentST
 from dset_data_readers import DsetMnvTFRecReaderPlanecodes
+from dset_data_readers import DsetMnvHDF5ReaderPlanecodes
 from data_constants import HADMULTKINE_GROUPS_DICT, HADMULTKINE_TYPE
 from data_constants import VTXFINDING_GROUPS_DICT, VTXFINDING_TYPE
 from data_constants import IMGING_GROUPS_DICT, IMGING_TYPE
@@ -244,6 +245,10 @@ def get_fields_list(hdf5_type):
         return fields_list
     else:
         raise ValueError('Unknown HDF5 grouping type {}!'.format(hdf5_type))
+
+
+def get_hdf5_reader_class():
+    return DsetMnvHDF5ReaderPlanecodes
 
 
 def get_reader_class(data_file_type, use_dataset=True):
