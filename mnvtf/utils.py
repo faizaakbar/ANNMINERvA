@@ -123,6 +123,15 @@ def get_logging_level(log_level):
     return logging_level
 
 
+def get_hdf5_file(data_dir_str, file_root_str):
+    """
+    Assume we are looking for _one_ HDF5 file (one file per playlist). We will
+    return the file as a list of API consistency.
+    """
+    file_list = []
+    return file_list
+
+
 def get_trainvalidtest_file_lists(data_dir_str, file_root_str, compression):
     """
     Assume we are looking for three sets of files in the form of
