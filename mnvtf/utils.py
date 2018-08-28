@@ -123,12 +123,24 @@ def get_logging_level(log_level):
     return logging_level
 
 
-def get_hdf5_file(data_dir_str, file_root_str):
+def get_hdf5_filelist(data_dir_str, file_root_str):
     """
     Assume we are looking for _one_ HDF5 file (one file per playlist). We will
     return the file as a list of API consistency.
     """
+    import glob
     file_list = []
+    LOGGER.debug('Searching path {} for root {}'.format(
+        data_dir_str, file_root_str
+    ))
+    file_list.extend(
+        glob.glob(data_dir_str + '/' + file_root_str + '*.hdf5')
+    )
+    for filename in file_list:
+        LOGGER.debug('  {}'.format(filename))
+    if len(file_list) == 0:
+        LOGGER.error('No files found at {}'.format(data_dir_str))
+        return None
     return file_list
 
 
