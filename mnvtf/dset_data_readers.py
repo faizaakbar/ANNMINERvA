@@ -180,7 +180,7 @@ class DsetMnvHDF5ReaderPlanecodes(DsetMnvHDF5ReaderBase):
         dgen = self._make_generator_fn()
         x_shape = [None, 127, 94, 2]
         uv_shape = [None, 127, 47, 2]
-        evtid_shape = [None, 1]
+        evtid_shape = [None]
         pcode_shape = [None, 174]
         ds = tf.data.Dataset.from_generator(
             dgen,
