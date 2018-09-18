@@ -62,7 +62,7 @@ class MnvHDF5Reader(object):
             LOGGER.info(msg)
             raise ValueError(msg)
 
-    def get_vtxfinder_data(self, idx):
+    def get_vtxfinder_datum(self, idx):
         x = self._f['img_data']['hitimes-x'][idx]
         x = np.moveaxis(x, 0, -1)
         u = self._f['img_data']['hitimes-u'][idx]
@@ -74,6 +74,19 @@ class MnvHDF5Reader(object):
         oh_pcodes = np.zeros((1, 174))
         oh_pcodes[0, pcodes] = 1
         return x, u, v, evtids, oh_pcodes.reshape(174,)
+
+    def get_vtxfinder_data(self, start, stop):
+        x = self._f['img_data/hitimes-x'][start: stop]
+        u = self._f['img_data/hitimes-u'][start: stop]
+        v = self._f['img_data/hitimes-v'][start: stop]
+        x = np.moveaxis(x, 1, -1)
+        u = np.moveaxis(u, 1, -1)
+        v = np.moveaxis(v, 1, -1)
+        pcodes = self._f['vtx_data/planecodes'][start: stop].reshape([-1])
+        oh_pcodes = np.zeros((pcodes.size, 174), dtype=np.int32)
+        oh_pcodes[np.arange(pcodes.size), pcodes] = 1
+        eventids = self._f['event_data/eventids'][start: stop].reshape([-1])
+        return x, u, v, eventids, oh_pcodes
 
     def get_nevents(self, group=None):
         sizes = [self._f[group][d].shape[0] for d in self._f[group]]

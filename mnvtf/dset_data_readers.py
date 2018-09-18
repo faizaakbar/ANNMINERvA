@@ -164,23 +164,24 @@ class DsetMnvHDF5ReaderPlanecodes(DsetMnvHDF5ReaderBase):
         nevents = reader.get_nevents(group='event_data')
 
         def example_generator_fn():
-            idx = 0
+            start_idx, stop_idx = 0, self.batch_size
             while True:
-                if idx >= nevents:
+                if start_idx >= nevents:
                     reader.close()
                     return
-                yield reader.get_vtxfinder_data(idx)
-                idx += 1
+                yield reader.get_vtxfinder_data(start_idx, stop_idx)
+                start_idx, stop_idx = \
+                    start_idx + self.batch_size, stop_idx + self.batch_size
 
         return example_generator_fn
 
     def make_dataset(self, num_epochs=1, shuffle=False):
         # make a generator function
         dgen = self._make_generator_fn()
-        x_shape = [127, 94, 2]
-        uv_shape = [127, 47, 2]
-        evtid_shape = [1]
-        pcode_shape = [174]
+        x_shape = [None, 127, 94, 2]
+        uv_shape = [None, 127, 47, 2]
+        evtid_shape = [None, 1]
+        pcode_shape = [None, 174]
         ds = tf.data.Dataset.from_generator(
             dgen,
             (tf.float32, tf.float32, tf.float32, tf.int64, tf.int32),
@@ -190,11 +191,12 @@ class DsetMnvHDF5ReaderPlanecodes(DsetMnvHDF5ReaderBase):
              tf.TensorShape(evtid_shape),
              tf.TensorShape(pcode_shape))
         )
-        ds = ds.repeat(num_epochs)
-        ds = ds.prefetch(self.batch_size*10)
-        ds = ds.batch(self.batch_size)
+        # we are grabbing an entire "batch", so don't call `batch()`, etc.
+        # also, note, there are issues with doing more than one epoch for
+        # `from_generator` - so do just one epoch at a time for now.
+        ds = ds.prefetch(10)
         if shuffle:
-            ds = ds.shuffle(buffer_size=self.batch_size*10)
+            ds = ds.shuffle(10)
 
         return ds
 
