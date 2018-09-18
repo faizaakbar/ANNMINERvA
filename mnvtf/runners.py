@@ -181,7 +181,7 @@ class MnvTFRunnerCategorical:
         tf.reset_default_graph()
         initial_batch = 0
         ckpt_dir = self.save_model_directory + '/checkpoints'
-        n_batches = 20 if short else int(1e9)
+        n_batches = 10 if short else int(1e9)
         save_every_n_batch = 5 if short else self.save_freq
         if epoch == 1:
             LOGGER.info('  Saving every {} batches...'.format(
@@ -278,7 +278,7 @@ class MnvTFRunnerCategorical:
         start_time = time.time()
         tf.reset_default_graph()
         ckpt_dir = self.save_model_directory + '/checkpoints'
-        n_batches = 20 if short else int(1e9)
+        n_batches = 10 if short else int(1e9)
 
         with tf.Graph().as_default() as g:
 
