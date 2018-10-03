@@ -47,7 +47,7 @@ class MnvDataReader:
         self.n_planecodes = n_planecodes
         self.img_shp = (127, img_sizes[0], img_sizes[1], 2)
         self.data_format = data_format
-        self.tfrecord_reader = tfrecord_reader_type
+        self.tfrecord_reader_type = tfrecord_reader_type
         self.seg_data = seg_data
 
         ext = self.filename.split('.')[-1]
@@ -66,7 +66,9 @@ class MnvDataReader:
             # attempt to infer the reader type from the filename.
             tfrecord_reader_type = self.filename.split('/')[-1]
             tfrecord_reader_type = tfrecord_reader_type.split('_')[0]
-            self.tfrecord_reader = get_reader_class(tfrecord_reader_type)
+            self.tfrecord_reader = get_reader_class(
+                tfrecord_reader_type, use_dataset=False
+            )
 
         data_dict = {}
         data_dict['energies+times'] = {}
