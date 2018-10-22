@@ -66,7 +66,7 @@ tf.app.flags.DEFINE_string('network_model', 'TriColSTEpsilon',
                            """Nework model class.""")
 tf.app.flags.DEFINE_string('network_creator', 'default',
                            """Nework structure creation function.""")
-tf.app.flags.DEFINE_float('learning_rate', 0.001,
+tf.app.flags.DEFINE_float('learning_rate', 0.0001,  #old value = 0.001
                           """Learning rate.""")
 # TODO - add l2 reg params, etc.
 #
